@@ -1,0 +1,75 @@
+<Slide notes={`纸面上可以先自己走一遍：从 7,3 沿着 x 等于 7 这一列往南走到 7,8，再经 8,8 和 9,8 折向北，全程不穿墙，也不穿过公告对象。
+原作者做过一次四邻接检查：开放布局有 127 个可走格，关闭布局是 126 个，少掉的那一格就是被改动的缺口。各组内部全连通，每个可走格恰好属于一个 Arena，墙和门洞也归到对应的语义区域里。
+这里要特别强调边界：这些数字说明的是纸面自洽，不是系统寻路的验收结果。
+真正运行时，仍然要去看内嵌地图和真实的 MOVE 返回。预检只能帮你确认布局本身没画错，它替代不了运行事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.1　可走格与它的适用边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>纸面自洽，不等于系统验收</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 424, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 26 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>纸面推演路线</Text>
+                <Box style={{ width: 84, height: 26, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 424, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>起点 (7,3)</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>位于连接区西侧，紧邻上口内侧</Text>
+            </Box>
+            <Box style={{ width: 424, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 424, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>沿 x = 7 南行至 (7,8)</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>走到下口内侧，不穿墙也不穿公告</Text>
+            </Box>
+            <Box style={{ width: 424, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 424, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>经 (8,8)、(9,8) 折向北</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>进入集合区，路线在纸面上成立</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>四邻接检查说明了什么</Text>
+            <Box style={{ width: 700, height: 128, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>127 格 与 126 格</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>开放布局 127 个可走格，关闭布局 126 格，差的那一格就是被改动的缺口。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 700, height: 128, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>这是纸面自洽</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>各组全连通，每个可走格恰好属于一个 Arena；墙与门洞也归对应的语义区域。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 700, height: 128, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不是系统寻路验收</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>运行时仍须查内嵌地图与真实 MOVE 结果。纸面预检不替代任何一项运行事实。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,73 @@
+<Slide notes={`一条校验命令，把三样输入合成一次执行。程序与参数决定检查哪个文件；工作目录和环境决定去哪里找依赖、读哪些变量；时间边界决定它最多能跑多久。
+
+进程本身只做一件事：执行已经指定的那段程序。它不解释业务规则，也不判断方案好不好。
+
+跑完之后分三路输出。标准输出装主要结果，也就是校验报告；标准错误装诊断信息，比如文件读不到、JSON 解析失败。退出码是第三种信息，它用三个数字概括这次检查的结论：0 通过，1 方案不合格，2 输入本身有问题。
+
+要特别注意，超时是执行失败，由外层执行器报告，不能把它伪装成校验通过，也不能塞进某个业务退出码里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.1　读懂一条命令的六个部分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一条命令，六份信息</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 48 }}>
+            <Box style={{ width: 340, height: 108, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>程序与 argv</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>解释器、脚本、独立参数</Text>
+            </Box>
+            <Box style={{ width: 340, height: 108, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>cwd 与环境</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>工作目录、依赖、环境变量</Text>
+            </Box>
+            <Box style={{ width: 340, height: 108, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>时间边界</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>超时与终止处理</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1116, height: 28, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text></Box>
+
+        <Box style={{ width: 660, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>子进程　执行已指定程序</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>参数列表直接启动，不经过 Shell 再解释</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1116, height: 28, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text></Box>
+
+        <Box style={{ flexDirection: 'row', gap: 48 }}>
+            <Box style={{ width: 340, height: 108, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>stdout</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>结构化结果，校验报告</Text>
+            </Box>
+            <Box style={{ width: 340, height: 108, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>stderr</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>诊断信息，读取与执行异常</Text>
+            </Box>
+            <Box style={{ width: 340, height: 108, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>退出码</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>0 通过 · 1 不合格 · 2 输入错</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>退出码 2 指文件或 JSON 输入错误；超时由启动它的执行器另行报告，不能伪装成校验通过或某个业务退出码。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

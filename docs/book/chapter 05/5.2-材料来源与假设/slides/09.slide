@@ -1,0 +1,81 @@
+<Slide notes={`S 编号只是作者自己的资料索引，它不是系统里的资源 ID，也不是实验的 UUID。这一点要提前说清，否则接收者会以为拿编号就能在系统里找到东西。
+
+除了编号，实际工作表还要补七样。原文件位置，说明是哪一份文件、存在哪里。获取日期，说明我们拿到的是哪一版。整理人，出了问题知道找谁。采用段落，这是回查的关键。关联材料，说明它和哪些编号互相引用。待确认问题，把还没定的项明确写出来。最后一栏是内容摘要。
+
+摘要的作用是辨认。过两天你看到一份摘要，能认出这是哪一份材料、哪一版，这就够了。它本身不能证明材料正确，也不能证明来源权威。
+
+记住这条线：摘要负责辨认，原文负责证明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.2　建一张能追到原文的来源表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>除了来源，还要登记什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 436, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>来源不是一句“来自文档”，至少要能定位到哪一份文档的哪一段。</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Box style={{ width: 436, height: 186, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>为什么要留原文</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>文件后来改动时，保留本次采用的内容与摘要，接收者才能解释这次实验为什么使用这些文字。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 692, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 692, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 150 }}>原文件位置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>是哪一份文件、存在哪里</Text>
+            </Box>
+
+            <Box style={{ width: 692, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 150 }}>获取日期</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>拿到的是哪一版材料</Text>
+            </Box>
+
+            <Box style={{ width: 692, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 150 }}>整理人</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>这次整理由谁完成</Text>
+            </Box>
+
+            <Box style={{ width: 692, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 150 }}>采用段落</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>用的是哪一段，可回查</Text>
+            </Box>
+
+            <Box style={{ width: 692, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 150 }}>关联材料</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>与哪些 S 编号互相引用</Text>
+            </Box>
+
+            <Box style={{ width: 692, height: 62, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 150 }}>待确认问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>尚未确认、会影响判断的项</Text>
+            </Box>
+
+            <Box style={{ width: 692, height: 62, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B', width: 150 }}>内容摘要</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>用于辨认资料，不用于证明正确</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 23</Text>
+    </Box>
+
+</Slide>

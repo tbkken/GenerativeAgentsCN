@@ -1,0 +1,73 @@
+<Slide notes={`如果手上只有"咨询台好像忘了"这句话，原因仍然未知。要把它查成事实，至少要问三个问题。
+
+第一，补充是否真正投递过：来访者的请求里到底有没有出现那项私人目的。
+第二，后续请求有没有带来新事实：如果补充晚了一轮才到，咨询台在当时确实无从使用。
+第三，对象有没有检索自己的记忆：系统里存过什么，不等于判断的时候用过什么。
+
+三条分别查完，才谈得上修改建议。建议本身也可以是暂不改动、先补齐缺失的证据。在没有依据时把问题保持开放，比写成"已修复"更负责。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.1　先写问题，再写修改</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>原因未知时，把问题保持开放</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 660, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>把猜测查成事实的三条路</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>"咨询台好像忘了"不是原因，是一个待验证的假设。它要拆成三条可以分别查证的问题。</Text>
+
+            <Box style={{ width: 660, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 6 }}>
+                <Box style={{ width: 36, height: 36, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 566 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>补充是否真正投递</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>来访者的请求里到底有没有出现那项私人目的</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 660, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 36, height: 36, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 566 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>后续请求是否带来新事实</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>补充晚了一轮才到，当时确实无从使用</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 660, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 36, height: 36, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 566 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>对象是否检索了自己的记忆</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>系统里存过什么，不等于判断时用过什么</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 16 }}>
+            <Box style={{ width: 460, height: 232, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>暂不改动也是建议</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>问题单里的修改建议，可以写"先补齐缺失的证据"。没有依据时保持问题开放，比把猜测写成已修复更便于别人接手。</Text>
+            </Box>
+            <Box style={{ width: 460, height: 156, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>一个现象，可能几张单子</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>三条路查出来的结论不同，就不该合并成一条修改。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 27</Text>
+    </Box>
+
+</Slide>

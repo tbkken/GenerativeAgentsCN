@@ -1,0 +1,52 @@
+<Slide notes={`接下来看谁在做事。一个能交接的项目里，有三种职责，它们互相不能替代。
+
+作者负责把问题转成材料和实验，也就是委托书、作者材料、精确行为文本。复核者负责检查信息分配、判分和报告，产出差异说明与核查记录。接收者负责按文档实际寻找文件、读取证据并完成约定操作，最后留下接收记录。
+
+这里有一个很容易被误解的地方：这三种是项目分工，不是新增的仿真 Agent。
+
+服务大厅里仍然只有周澈、谭悦、孟川、邱禾和余真五名 Agent，以及咨询台、A 窗口、B 窗口三个绑定 Skill 的对象。分工是人的分工，场景本身没有变。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.1　项目范围与完成条件</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ④</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>④</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>三种职责，六个可交接环节</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 960 }}>这些是项目分工，不是新增的仿真 Agent。场景本身不变，变的是材料往谁手里递、递到他手里之后能不能用。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>作者</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>复核者</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>接收者</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

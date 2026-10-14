@@ -1,0 +1,48 @@
+<Slide notes={`记忆不是一个大口袋，而是一条有生命周期的流。系统给了四个工具：追加、检索、更正、失效。
+
+这一块最要紧的一条纪律：只有收到正式更正证据，才用 supersede 去修正一条仍然有效的认识；而且旧节点保留为历史——不删除、不虚构记忆 ID。
+
+工具替我们保管结构，判断证据是否正式，仍然是角色和写 SOP 的人的责任。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>2　　3.6.2</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>四个工具组成记忆的生命周期</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>只有收到正式更正证据才更正；旧节点保留为历史，不虚构记忆 ID。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 250, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>append　追加</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>search　检索</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>supersede　更正</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>invalidate　失效</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,44 @@
+<Slide notes={`接下来处理"放在哪儿"这个问题。
+
+同一个模型，它可以跑在你自己控制的机器上，也可以由远程服务来跑，还可以用开放权重的方式拿到参数文件，或者把不同任务分给不同的环境。这些选择带来的差别，不只是速度，还包括许可、数据流向和钱。
+
+这一段要把四种方式分清楚，并且看清楚每一种"表面上解决了什么"之后，还留着什么问题要核对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.2.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>开放权重、本地部署与云服务</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>东西放在哪里，改变的不只是速度，还有许可、数据与总成本。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 240, height: 52, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>开放权重</Text>
+            </Box>
+            <Box style={{ width: 240, height: 52, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>本地部署</Text>
+            </Box>
+            <Box style={{ width: 240, height: 52, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>云 API</Text>
+            </Box>
+            <Box style={{ width: 240, height: 52, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>混合使用</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 22</Text>
+    </Box>
+
+</Slide>

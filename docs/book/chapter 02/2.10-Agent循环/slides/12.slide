@@ -1,0 +1,66 @@
+<Slide notes={`循环有三种去向，各自有自己的条件。
+
+起点是这一轮的真实结果：观察到的、工具返回的、以及模型提出的候选。所有判断都从这里出发，不从模型的说法出发。
+
+如果满足完成条件——模型结束了、候选通过了业务校验、交付文件也齐全——那就是成功交付，保存可追溯的结果，并说明验证范围到哪里。
+
+如果有新信息、而且预算还够，那就继续修正：把这一轮的真实观察带进下一轮。
+
+如果达到停止条件，就有原因地停下来：没有进展、到了上限、或者拿不出有效候选。
+
+这里有一组单位必须分清：模型轮数不等于工具请求数，一次响应可以包含多个请求。单次超时也不等于任务总预算，实际产品还需要总时间预算和取消信号。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.3　OpenAI API：把停止条件写在程序里</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>成功、继续与有原因地停止</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>一切判断都从「这一轮真实结果」出发，不从模型的说法出发。</Text>
+
+        <Box style={{ width: 1108, height: 70, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0px 22px', gap: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>本轮真实结果</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>观察到的、工具返回的，以及模型提出的候选</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 26 }}>
+            <Box style={{ width: 352, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>成功交付</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>模型结束、候选通过、保存齐全交付文件。三条同时满足才收工。</Text>
+            </Box>
+            <Box style={{ width: 352, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>继续修正</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>有新信息且仍有预算，带回真实结果再走一轮。</Text>
+            </Box>
+            <Box style={{ width: 352, height: 152, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>有原因地停止</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>无进展、达到上限，或拿不出有效候选。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1108, height: 50, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0px 20px', gap: 14 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>继续修正</Text>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>下一轮真实观察，回到「本轮真实结果」重新判断</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>模型轮数不等于工具请求数　·　单次超时不等于任务总预算</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>一次响应可以包含多个工具请求，两类上限不能混用。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,51 @@
+<Slide notes={`这就是对照段的全文，四句话。
+
+第一句划条件：如果现有信息没有说明是安排未来使用还是报告现有问题，先只询问这一点，暂不建议窗口。第二句给例外：已有明确目的则直接建议。第三句说后续：收到同一人的真实补充后，再按相同服务范围推荐窗口。第四句是停止条件：不重复追问已经回答的字段。
+
+两个细节值得留意。「先只询问这一点」把问题限定在缺失的关键目的上，不同时给未经确认的窗口建议；「按相同服务范围」说明澄清之后的分支逻辑没变，变的只是澄清时机。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.3　对照只替换这一个段落</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>对照段只写这四句</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>两个标记之间的正文被原样替换为下面这四句，文件其他字节内容保持不变。</Text>
+
+        <Box style={{ width: 1152, height: 244, background: '#20344B', borderRadius: 10, padding: '18px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 18, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>DECISION:START</Text>
+            </Box>
+            <Text style={{ fontSize: 18, color: '#FFFFFF', lineHeight: 1.75 }}>若现有信息没有说明「安排未来使用」还是「报告现有问题」，{'\n'}先只询问这一点，<Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>暂不建议窗口</Text>；已有明确目的则直接建议。{'\n'}收到同一人的真实补充后，再按相同服务范围推荐窗口。{'\n'}不要重复追问已经回答的字段。</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 18, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>DECISION:END</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 130, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>同一 skill_key</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>两组使用同一个标识与相同依赖，变化的是内容而不是命名。</Text>
+            </Box>
+            <Box style={{ width: 560, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>独立实验副本</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>两份材料分别保存，不是运行时跟随某个公共资源的 Revision。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', width: 1152 }}>图 5.4-1 的语义：只替换决策段，其余全文一致。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,56 @@
+<Slide notes={`最后收一下这一节真正要交出去的东西。
+第一件是评分规则。它要在运行之前就写好，包含指标的分子分母、观察窗口，以及评分的尺度。规则写在前面，才有资格叫评价。
+第二件是结果表。运行之后填，每一条结果都带上来源：谁评的、按什么规则评的、依据来自哪里、什么时候记录的。没有来源的分数，别人没法核对。
+第三件是没运行时的做法：只交付规则和一张空表，所有分数保留未填写。这看起来像是没干活，其实是关键的一步。
+我一直想强调，评价是用来检验实验的，不是给故事结尾补上一个成功标签。规则先于结果，这条顺序不能反过来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.7　用对照说明改动是否有帮助</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交付一份规则，和一张带来源的表</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', height: 30, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 266 }}><Text style={{ fontSize: 14, color: '#546779' }}>交付物</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>内容</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 266 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>评分规则（运行前）</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>指标口径、分母、观察窗口与评分尺度，全部在运行前定义好</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ width: 266 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>结果表（运行后）</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>带来源的结果表：标注评分者、规则、来源与时间</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 106, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ width: 266 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>尚未运行时</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>只交付规则和空表，所有分数保留未填写</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>规则先于结果</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>评价是用来检验实验的，而不是替故事结尾补上一个成功标签。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

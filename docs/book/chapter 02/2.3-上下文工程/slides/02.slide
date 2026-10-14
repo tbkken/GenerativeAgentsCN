@@ -1,0 +1,100 @@
+<Slide notes={`这一节有六个知识块，回答同一组问题：每一轮请求，到底该带上什么。
+
+第一个知识块先分来源。行为要求、任务资料、外部查询结果和工作状态写在同一段文字里，读起来很顺，但来源不能混，否则分不清哪句是查到的、哪句是猜的。
+
+第二个知识块讲容量。上下文窗口有限，还要给输出留空间，所以全部聊天、文件和工具结果不能一直追加。
+
+第三和第四个知识块讲状态怎么传。一条是应用自己保存历史，把上一轮完整输出加到下一次输入里；另一条是用响应 ID 让服务端接起两轮。选一条就够，不必叠加。
+
+第五个知识块换到产品里：用文件引用和追问，检验新事实出现后旧结论会不会被撤回。
+
+最后一个知识块是练习：写一份两百字以内的交接摘要，交给一个独立任务。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>每轮请求，都要重新决定带上什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>这次到底带上了什么？</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>六个知识块从「怎么分」走到「怎么判断」：先分清来源，再处理容量，然后看两条状态传递路线，换到产品里追问一次，最后用一份交接摘要收口。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>内容可以放在一起，来源不能混在一起</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>四种内容各是什么，各自该怎样使用</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>长上下文不是无限记忆</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>窗口有限，还要给输出与推理留出空间</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>OpenAI API：手工保留多轮状态</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>保存原输入，把完整输出加入下一次输入</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>另一种方式：引用前一次响应</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>用 previous_response_id 衔接会话，边界要清楚</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>WorkBuddy：文件引用、追问与交接</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>新事实出现后，旧结论会不会被撤回</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>失败诊断与练习</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>二百字交接摘要，交给一个独立任务</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 25</Text>
+    </Box>
+
+</Slide>

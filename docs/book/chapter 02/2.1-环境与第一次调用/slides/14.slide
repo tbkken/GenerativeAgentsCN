@@ -1,0 +1,78 @@
+<Slide notes={`先看怎么把密钥安全地放进环境变量，而不是写进代码。
+
+第一行用 Read-Host 读取你输入的 Key，并加上 AsSecureString，这样终端不会把密钥回显出来。第二行把它转成普通字符串交给环境变量。第三行是模型名，这里放的是明确的占位值，必须替换。
+
+之所以用占位而不直接给一个名字，是因为"推荐哪个模型"这种说法很快会过期，而模型能力也随账户不同而不同。
+
+最后一条纪律：不要把密钥粘贴进书稿、提示词、代码或者任何要共享的结果。环境变量只保留在当前终端进程里，练习结束可以清掉。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.4　配置 API，再执行最小调用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>密钥与模型名分开准备</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 46, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>不回显地输入密钥</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>AsSecureString 让终端不显示输入内容</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 46, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>模型名是占位值</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>必须替换成账户里可用、支持所需能力的 ID</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 46, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>变量只在当前进程</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>练习结束可清除当前终端里的设置</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', marginTop: 4 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>不要把密钥粘贴进书稿、提示词、代码或共享结果。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#546779' }}># 在账户中确认模型可用后，再写入环境变量</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#20344B' }}>$bookApiKey = Read-Host '输入本次练习的 OpenAI API Key' -AsSecureString</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#20344B' }}>$env:OPENAI_API_KEY = [System.Net.NetworkCredential]::new('', $bookApiKey).Password</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#CB6B28' }}>$env:OPENAI_MODEL = '替换为账户可用且支持所需能力的模型ID'</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#20344B' }}>python first_response.py</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas', color: '#276FBF' }}>Remove-Item Env:OPENAI_API_KEY</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>练习结束后清除当前终端里的设置，避免被后续脚本误用。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,46 @@
+<Slide notes={`第五个知识块是我个人觉得最值得讲的一块。
+
+前面几页看的都是成绩：准确率、通过率、解决率。这一块要看的是报告里的失败样本——平均分没有说出来的那部分。
+
+报告里的失败样本很有价值，因为它能告诉我们一个高分系统在什么地方会突然不成立。而且失败的关键，往往不是语言够不够流畅，也不是知识够不够多，而是它把自己生成的叙述当成了外部已经发生的事实。这个边界一旦失守，前面那些漂亮的分数就帮不上忙。
+
+接下来的这个例子来自一份厂商系统卡的内部使用记录。它提醒我们，成绩单和可靠性不是同一件事，而可靠性要靠应用侧的证据来支撑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.5.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>高分系统仍会在具体事实处失手</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#CB6B28' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>失败的关键不是语言是否流畅，而是把自己生成的叙述当成外部已经发生的事实。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14, height: 90 }}>
+            <Box style={{ flex: 1, height: 90, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#546779' }}>流畅</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>说得通，不代表发生过</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 90, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#546779' }}>高分</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>难题做得好，边界仍会失守</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 90, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>事实</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>需要外部证据来支撑</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

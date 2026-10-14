@@ -1,0 +1,81 @@
+<Slide notes={`这段代码只做一件事：把教学目录打成 ZIP，而且保证 ZIP 里面只有一个顶层目录。
+
+关键在于 bundle.write 的第二个参数：它不是文件名，而是这个文件在压缩包里的路径。代码用了 path.relative_to(folder.parent)，相对于 skills 目录算，所以解压出来第一层就是 open-day-planner。
+
+很多人打包时只压缩文件内容、丢掉根目录，结果解压后 SKILL.md 和 references 平铺在一起，脚本就找不到材料了。
+
+不想打包也可以走目录式上传：用多份 files[] 表单项，保留每个文件在唯一顶层目录内的路径。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.4　OpenAI 原生 Skills：上传并挂载到托管 Shell</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>打包时保留唯一顶层目录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 700, background: '#F4F7FA', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 2 }}>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>打包脚本　examples / 打包 open-day-planner</Text>
+            <Box style={{ height: 8 }} />
+            <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>from pathlib import Path</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>from zipfile import ZipFile, ZIP_DEFLATED</Text>
+            <Box style={{ height: 8 }} />
+            <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>folder = Path("skills/open-day-planner")</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>output = Path("output/open-day-planner.zip")</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>output.parent.mkdir(parents=True, exist_ok=True)</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>with ZipFile(output, "w", ZIP_DEFLATED) as bundle:</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}for path in sorted(folder.rglob("*")):</Text>
+            <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'        '}if path.is_file() and "__pycache__" not in path.parts:</Text>
+            <Text style={{ fontSize: 13, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'            '}bundle.write(path, path.relative_to(folder.parent).as_posix())</Text>
+        </Box>
+
+        <Box style={{ width: 412, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>按相对路径写入</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>写入路径相对于 skills 目录计算，而不是只写文件名。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>唯一的顶层目录</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>压缩包内只留一个 open-day-planner 根目录，解压不散落。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>目录式上传</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>改用多份 files[] 表单项，保留顶层目录内的相对路径。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>只压缩内容是错的</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>丢掉根目录，包结构就不再自包含。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '10px 16px' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>打包前确认：包里只有本节需要的教学文件。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 27</Text>
+    </Box>
+
+</Slide>

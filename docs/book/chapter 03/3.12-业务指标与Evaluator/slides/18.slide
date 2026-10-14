@@ -1,0 +1,41 @@
+<Slide notes={`走到这里，评价规则已经有了，下一步是把纸上写的和系统里显示的核对起来。
+三个地方必须能互相印证：页面上看到的、报告里记录的、以及结果导出包里保存的。任何一处对不上，前面的分数都不可信。
+核对完之后才是比较。如果我们想说明某一处改动到底有没有帮助，就要保留一个基线，然后只改变要检验的那一个条件。
+很多结论看起来都成立，其实是因为同时改了好几个东西，差异到底来自哪里根本分不清。
+所以这一块的顺序是：先核对一致，再做对照。核对是前提，对照是方法。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>④　　3.12.6 — 3.12.7</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>核对一致，再做对照</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>页面、报告与导出三处要对得上；改动要用保留基线的单因素对照来说明。</Text>
+
+        <Box style={{ flexDirection: 'row', marginTop: 10 }}>
+            <Box style={{ width: 460, height: 88, background: '#EDF4FC', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>页面质量</Text>
+            </Box>
+            <Box style={{ width: 352, height: 88, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>报告</Text>
+            </Box>
+            <Box style={{ width: 340, height: 88, background: '#FFF4E6', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>结果 ZIP 导出</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', flex: 1, lineHeight: 1.6 }}>三处对不上，评价就不可信；比较方案时，一次尽量只改变一个因素。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

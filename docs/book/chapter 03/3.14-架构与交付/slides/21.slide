@@ -1,0 +1,79 @@
+<Slide notes={`验收的时候，最容易混淆的是状态。这里五种状态完全不是一回事，必须分开写。
+
+配置素材已准备：地图、人物、Skill 文本都已经放好了，但还没有装配进实验。
+
+文档已解析：系统能读懂这些资源了，可是还没有进入实验流程。
+
+实验已封存：状态从 DRAFT 变成 SEALED，这才具备运行的条件。
+
+Run 已完成：有执行记录，也有已提交的事实，这是跑过一次的证明。
+
+业务目标已达成：这一条要看业务上的观察和证据，不能因为 Run 完成了就顺口写上「达成」。
+
+本章的验收表和运行记录模板给后续实操预留了证据位置。尚未执行的条目就保持未执行——配置好了和做完了，是两件事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.5　一份实验交付物应包含什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五种状态不是一回事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>阶梯从「准备好的东西」走到「达成的事」；越往下，需要的证据越多。</Text>
+
+        <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 32, height: 32, background: '#B5C7D8', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>配置素材已准备</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>地图、人物、Skill 文本已就位，尚未装配进实验</Text></Box>
+            <Box style={{ width: 190, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#546779' }}>还没开始</Text></Box>
+        </Box>
+
+        <Box style={{ height: 76, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>文档已解析</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>资源能被系统读懂，但还没有进入实验流程</Text></Box>
+            <Box style={{ width: 190, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>只到解析</Text></Box>
+        </Box>
+
+        <Box style={{ height: 76, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>实验已封存</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>DRAFT 变成 SEALED，具备运行条件</Text></Box>
+            <Box style={{ width: 190, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>可以运行了</Text></Box>
+        </Box>
+
+        <Box style={{ height: 76, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 32, height: 32, background: '#26816B', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Run 已完成</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>有执行记录与已提交事实，能证明跑过一次</Text></Box>
+            <Box style={{ width: 190, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#26816B' }}>有记录了</Text></Box>
+        </Box>
+
+        <Box style={{ height: 76, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 32, height: 32, background: '#CB6B28', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+            </Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>业务目标已达成</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>要看业务观察与证据，不能因 Run 完成就顺口写「达成」</Text></Box>
+            <Box style={{ width: 190, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>需要证据</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 29</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,40 @@
+<Slide notes={`前面写的都是规则，最后要在页面上亲手核对一次：完成真实运行后，打开“结果 → Agent”，选择许安，再切换其结构化内容中的“记忆”。
+
+这一步的价值，在于把“计划已调整”这种显示文字，还原成可以追问的证据：认识是什么时候产生的、旧节点怎么处置的、检索还认不认旧认识、行动有没有用上新认识。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>5　　3.6.5</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>在页面上检查一次认识更新</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>完成真实运行后：限定一名人物，再核对新认识的来源。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>结果</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>Agent　选择许安</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>切换“记忆”</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

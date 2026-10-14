@@ -1,0 +1,55 @@
+<Slide notes={`访客到达率最容易含糊的就是分母。我这里固定成两个人：陈晨和许安，也就是这一节定义的目标访客。组织者、志愿者、两个对象各有观察角度，计划表上的二十四、十、十六人也不是这个分母。
+分子只看窗口之内真正走到指定活动站位的目标访客，到达率就是两者相除。
+观察窗口建议从九点五十到第四十八步的十点三十七。它能评价更正之后有没有到位、有没有开始行动，但评价不了十一点半有没有完成手作；窗口一旦改动，指标版本和分母都要一起记录。
+传播延迟另外设起止事实计时，没获知的记成「截至窗口结束未观察到」，不补零延迟。这里只给口径，先不填结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.2　先定义分母和观察窗口</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>分母是两个人，窗口到 10:37</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>计入这个分母</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>陈晨、许安　2 人</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>分别判断各自是否到达指定活动站位</Text>
+            </Box>
+            <Box style={{ width: 566, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不计入这个分母</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>组织者、志愿者、两个对象</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>计划中的 24 / 10 / 16 人也不是这个分母</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>访客到达率　=　窗口内实际到达目标访客数　÷　2</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 230, height: 48, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>09:50　观察起点</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 8, background: '#276FBF' }} />
+            <Box style={{ width: 300, height: 48, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>Step 48　10:37　观察终点</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', flex: 1, lineHeight: 1.6 }}>传播延迟另设起止事实计时；未获知记「截至窗口结束未观察到」，不补零延迟。{'\n'}这里只说明口径，不填写到达结果。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

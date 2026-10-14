@@ -1,0 +1,71 @@
+<Slide notes={`再讲一组特别容易混的数字。这一组有四个口径，必须分开记。
+
+第一，模型轮数，就是模型返回了几次。第二，工具请求数——本章脚本在解析和执行之前就递增这个计数，所以报错或者被阻断的请求，也可能已经消耗了预算。
+
+第三，实际执行数。要判断一次工具到底有没有真的跑，得看工具结果和 not_executed 记录，不能拿请求数去顶。
+
+第四，单次超时。它只限制某一次调用，不限制整个任务的总时长。真实产品里还需要另外一层总时间预算和取消信号。
+
+为什么强调这个？因为一次响应里可能包含多个工具请求。如果你把轮数和请求数当成一个数、把两类上限混着用，预算就会算错。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.3　OpenAI API：把停止条件写在程序里</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种计数分别记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>轮数、请求数、执行数是三个数，不是一个数。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0px 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF', width: 180 }}>模型轮数</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>模型一共返回了几次，与工具请求数不是一回事。</Text>
+            <Box style={{ width: 264, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>单独计数</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0px 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF', width: 180 }}>工具请求数</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>解析与执行前递增；错误或阻断的请求也可能消耗预算。</Text>
+            <Box style={{ width: 264, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>一次响应可含多个</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0px 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B', width: 180 }}>实际执行数</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>看工具结果与 not_executed 记录，只有真正跑完的才算。</Text>
+            <Box style={{ width: 264, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>以结果为准</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0px 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28', width: 180 }}>单次超时</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>只限制一次调用，不限制任务总时长。</Text>
+            <Box style={{ width: 264, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>还需总时间预算</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 4, height: 30, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>两类上限不能混用；实际产品还需要总时间预算与取消信号。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

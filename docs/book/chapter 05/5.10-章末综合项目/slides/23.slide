@@ -1,0 +1,52 @@
+<Slide notes={`交付做完之后，还需要一个可以说明理由的评分方式。
+
+先看一百分怎样分配，再按每一项需要的材料去核对。分值相同，但设计交付与运行交付提供的依据并不一样。这就是为什么评分之前必须先选范围：同样是「未要求运行」，和「要求了运行但拿不出证据」，处理方式完全不同。
+
+这份量表是本书给的教学建议，供讲师调整。它不是系统自动给出的质量分，也不是已经对某一组作业打过的分。
+
+还有一条原则要写清楚：评价的目的是辨认知识与证据的缺口，不是奖励所有任务成功。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.10　章末综合项目</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ⑥</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>⑥</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一份可以说明理由的评分量表</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>先明确设计或运行交付范围，再按维度核对材料；失败也可以形成一份合格的交付。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>先选交付范围</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>按五个维度给分</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>每一处写一句理由</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 31</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,73 @@
+<Slide notes={`调整公共资源和修改实验内的副本，是两项不同的决定，目的也不同。
+
+改公共资源，目的是让未来新项目能选到新材料，它影响的是以后。
+改实验里的那一份副本，目的是让这一轮的执行用上新的输入，它影响的是当下。
+
+两处可以都改，但必须分别确认：哪一个草稿已经采用了新内容，哪些旧实验仍然保留旧内容。只确认一处，就会出现"我以为都更新了"的错位。
+
+还有一种情况要提前想好。Skill 出现同 key 不同内容时，导入会产生冲突。这时候应该明确处理内容选择，不按名字静默覆盖，也不手工改包绕过校验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.4　选对副本，才能改对地方</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>公共资源与实验：两处分别确认</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 292, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 520, height: 52, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>决定一</Text>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>调整公共资源</Text>
+                </Box>
+                <Box style={{ width: 520, height: 54, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>目的：让未来新项目能选到新材料</Text>
+                </Box>
+                <Box style={{ width: 520, height: 54, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>确认：哪些后续项目会采用它</Text>
+                </Box>
+                <Box style={{ width: 520, height: 54, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>既有实验的旧内容不随之改变</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+            </Box>
+
+            <Box style={{ width: 560, height: 292, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 520, height: 52, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>决定二</Text>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>修改实验内的副本</Text>
+                </Box>
+                <Box style={{ width: 520, height: 54, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>目的：让这一轮执行用上新的输入</Text>
+                </Box>
+                <Box style={{ width: 520, height: 54, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>确认：哪一个草稿已采用新内容</Text>
+                </Box>
+                <Box style={{ width: 520, height: 54, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>确认：哪些旧实验仍保留旧内容</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>同名不同内容要显式选择</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>Skill 同 key 异内容产生导入冲突时，不按名字静默覆盖，也不手工改包绕过校验。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 27</Text>
+    </Box>
+
+</Slide>

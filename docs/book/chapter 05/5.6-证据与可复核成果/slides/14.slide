@@ -1,0 +1,48 @@
+<Slide notes={`到了这一步，我们要把叙述里那些听起来像「完成」的句子拆开。
+
+「已收到建议」这四个字，在报告里读起来很圆满。可它究竟是一条已经发生的事实，还是人物在对话里的一句客气话？这两种情况的分量完全不同，而写在同一行字里，读者根本分不出来。
+
+拆的办法只有一个：逐项追问它缺哪一环。缺来源，就写来源待补；缺适配性，就说明建议是否对得上具体任务；缺接收事实，就明确写接收未记录。
+
+这中间有一层要特别注意。很多句子并不是假的，它们只是不够。承认「不够」比强行补完更专业，因为前者别人可以继续查，后者会误导下一轮判断。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.6　证据与可复核成果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ③</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>③</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把叙述中的「完成」拆开验证</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 980 }}>「已收到」「办理好了」都是文字，不是事实。文字能说明什么、还缺哪一环，要逐句分开看。</Text>
+
+        <Box style={{ width: 1152, height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', width: 150 }}>文字声称</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 950 }}>「已收到建议」「我已经办理好了」—— 读起来很圆满，但它只是一句话。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28', width: 150 }}>逐项追问</Text>
+            <Text style={{ fontSize: 16, color: '#546779', width: 950 }}>来源在哪一条记录、建议是否对得上真实需求、有没有人真正接收并确认。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

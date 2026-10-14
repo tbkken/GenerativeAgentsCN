@@ -1,0 +1,67 @@
+<Slide notes={`这里要把两种要求分清楚。
+
+第一种是「返回 JSON」。它只是对输出形式的要求：别用散文，给我一段 JSON。至于字段叫什么、类型对不对，它没有约定。
+
+第二种是严格结构化输出。它进一步要求模型按照一个受支持的 JSON Schema 来生成结果，字段名、类型、必填项都写死在合同里。
+
+但请注意下面这两条：无论哪一种，都不能证明预约已经成立。预约成不成立，要拿真实的预约记录去算。无论哪一种，也不能凭空填补缺失的资料——模型不知道的数字，它凑出来的也只是看起来合理。
+
+形式的要求解决的是「程序能不能读」，不解决「事情对不对」，这两件事必须分开看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.1　检查分四层</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>「返回 JSON」不等于「预约成立」</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 448, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>两种要求，两个层次</Text>
+
+            <Box style={{ height: 136, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>「返回 JSON」</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>只对输出形式提要求：结果是可解析的 JSON，而不是一段散文。</Text>
+            </Box>
+
+            <Box style={{ height: 136, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>严格结构化输出</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>进一步要求模型按支持的 JSON Schema 生成结果，字段与类型都受约束。</Text>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>两者都只回答「程序能不能读」，不回答「事情对不对」。</Text>
+
+        </Box>
+
+        <Box style={{ width: 672, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>这两件事它们都证明不了</Text>
+
+            <Box style={{ height: 152, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不能证明预约已经成立</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>记录可以完全符合合同，同时与手工室 10:00—10:30 的已有预约重叠。合约合规不等于业务可行，要拿真实预约记录去算。</Text>
+            </Box>
+
+            <Box style={{ height: 152, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不能凭空填补缺失的资料</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>合同限定了字段与类型，却不会告诉模型「人数是多少」。资料没给，补出来的只是看起来合理的数字。</Text>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>合同管形式，校验管事实，两者缺一不可。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 23</Text>
+    </Box>
+
+</Slide>

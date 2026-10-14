@@ -1,0 +1,43 @@
+<Slide notes={`先说第一个知识块，也是后面所有讨论的起点。
+
+同样一句"上午中段适合手作"，它可以是一个直觉判断，也可以是一条核对过的结论。这两种说法的差别，不在于措辞，而在于它背后有没有逐条对过条件。
+
+这段内容要建立的意识是：当我们安排一件事的时候，条件是可以被列出来的。人数、时长、开放时间、有没有别的预约、跟前后活动挨不挨着，这些都能写下来，也都能一条一条地核对。
+
+接下来我带大家做一遍逐条核对。做的时候请注意一件事：核对不是"看标题觉得合适"，而是把数字和时刻真的对上去。这两者经常给出不同的答案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.2.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>同一个任务，可以有不同的完成方式</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>五项条件要沿时间轴逐条核对，不是感觉合适就行。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 0 }}>
+            <Box style={{ width: 660, height: 46, background: '#EDF4FC', borderRadius: 6, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>09:00 — 12:00　开放时间</Text>
+            </Box>
+            <Box style={{ width: 110, height: 46, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>已有预约</Text>
+            </Box>
+            <Box style={{ width: 200, height: 46, background: '#FFFFFF', border: '1px dashed #B5C7D8', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#B5C7D8' }}>？</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 22</Text>
+    </Box>
+
+</Slide>

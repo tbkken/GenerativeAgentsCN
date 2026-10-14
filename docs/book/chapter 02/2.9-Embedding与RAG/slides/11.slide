@@ -1,0 +1,66 @@
+<Slide notes={`我们要动手做的这个检索器故意做得小，为的是把每一步都看明白。
+
+先用环境变量指定一个向量模型，官方文档里的 text-embedding-3-small 就是常用的一个。文本回答仍然用之前配好的那个模型，两个变量各有用途，不要混。
+
+然后是读取材料、切分片段、生成向量、计算相似度、取前 k 个交给模型回答。脚本会把检索详情写进一个 JSON 清单，把回答写成一份 Markdown。这个清单比答案更重要，因为它让你能回看：这次到底找到了哪几段，排序是什么样的。
+
+小型练习用内存里的列表就够了，不必先部署一套向量数据库，也不要把工程复杂度提前堆上来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.9.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>做一个看得见每一步的小型检索器</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>它的价值不在代码有多短，而在于每一次检索都留下可以回头检查的记录。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'column', gap: 8 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 46, background: '#F4F7FA', borderRadius: 6, padding: '8px 16px' }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ width: 88, fontSize: 13, color: '#546779' }}>第一步</Text>
+                <Text style={{ width: 190, fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>读取材料</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>从教学材料目录读入原始文件</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 46, background: '#F4F7FA', borderRadius: 6, padding: '8px 16px' }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ width: 88, fontSize: 13, color: '#546779' }}>第二步</Text>
+                <Text style={{ width: 190, fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>切分片段</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>按 Markdown 标题、CSV 行与预约记录切段</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 46, background: '#F4F7FA', borderRadius: 6, padding: '8px 16px' }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ width: 88, fontSize: 13, color: '#546779' }}>第三步</Text>
+                <Text style={{ width: 190, fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>生成向量</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>问题与全部片段一次提交给向量模型</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 46, background: '#F4F7FA', borderRadius: 6, padding: '8px 16px' }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ width: 88, fontSize: 13, color: '#546779' }}>第四步</Text>
+                <Text style={{ width: 190, fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>相似度排序</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>逐条算余弦相似度，从高到低排开</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 46, background: '#ECF7F2', borderRadius: 6, padding: '8px 16px' }}>
+                <Box style={{ width: 3, height: 22, background: '#26816B' }} />
+                <Text style={{ width: 88, fontSize: 13, color: '#546779' }}>第五步</Text>
+                <Text style={{ width: 190, fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>取前 k 并交给模型</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>选中的片段拼进请求，回答只依据这些证据</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 25</Text>
+    </Box>
+
+</Slide>

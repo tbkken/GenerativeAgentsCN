@@ -1,0 +1,52 @@
+<Slide notes={`同一个事实，可以说成一句合适的话，也可以说成一句站不住的话，差别就在数字有没有带着分母和条件。
+
+合适的表述是这样的：在这段人工材料中，按预先给出的判据，闭环为三项比四项；H2 的首次有效回应已经发生，最终闭环仍未发生。它交代了材料性质、判据来源和具体处境。
+
+不合适的说法是把三项比四项说成「模型有百分之七十五的办事能力」。这里既没有真实模型运行，也没有真实行政业务，把人工练习折算成能力百分比，是在替听众下一个我给不出的结论。
+
+所以先有判据，再有数字。判据要在观察结果之前定下来，改过的标准要说明为什么改。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.4　让数字带着分母和条件出现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>3/4 可以说，75% 能力不能说</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ height: 380, flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 556, height: 380, background: '#EDF4FC', borderRadius: 12, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>合适的教学表述</Text>
+                <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>3 / 4</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.75 }}>在这段人工材料中，按预先给出的判据，闭环为 3/4；H2 的首次有效回应已经发生，最终闭环仍未发生。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>材料性质 · 判据来源 · 具体处境，三样都在句子里。</Text>
+            </Box>
+
+            <Box style={{ width: 556, height: 380, background: '#FFF4E6', borderRadius: 12, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>不合适的说法</Text>
+                <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>75%</Text>
+                <Text style={{ fontSize: 17, color: '#CB6B28', lineHeight: 1.75 }}>模型有 75% 的办事能力。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>这里既没有真实模型运行，也没有真实行政业务，等于替听众下了一个给不出的结论。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 120, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>先有判据，再有数字</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>判分标准要在观察结果之前确定；改过的标准要说明改动，否则听众无法判断这个数字到底测到了什么。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 26</Text>
+    </Box>
+
+</Slide>

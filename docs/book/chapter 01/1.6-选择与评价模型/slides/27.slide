@@ -1,0 +1,94 @@
+<Slide notes={`第一章到这里就结束了，我们回头看一眼走过的路。
+
+这一切是从一件很小的事开始的：青禾社区学习中心要办一次开放日，助手很快写出了一份活动方案。但这份方案有没有读对材料、有没有满足房间容量、有没有避开预约冲突，需要另外去检查。
+
+我们先认识了大模型本身，从训练、Token、上下文讲到知识与记忆。然后拆开了能力来源，看清资料、工具、模型、执行与校验怎样配合。接着把聪明变成可以测量的问题，用算例理解指标、分母和重复成功，再逐项读十类能力的指标，学会读有日期、有配置、有出处的公开成绩。
+
+最后回到手上的任务：选模型不该去找最强的那一个，而要先把自己的任务写成可核对的样子。下一章把这些认识变成具体操作，通过 OpenAI API 与 WorkBuddy 真的把活动筹备做出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>第一章　认识大模型，读懂能力与评价</Text>
+            <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>从一份活动安排出发</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>先定义任务，再看表现。选模型不是找最强的那一个，而是把自己的任务写成可以核对的样子。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ height: 70, flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1.1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>从一个回答出发：什么是大模型</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>训练、Token、上下文、知识与记忆</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 70, flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1.2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>从模型到应用：能力来自哪些层</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>资料、工具、模型、执行与校验怎样配合</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 70, flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1.3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>把「聪明」变成可测量的问题</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>指标、分母、重复成功与统计边界</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 70, flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1.4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>当前大模型有哪些能力</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>十类能力、代表基准与评价局限</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 70, flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1.5</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>阅读能力的发展水平</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>带日期、配置与出处的公开成绩</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 70, flexDirection: 'row', gap: 16, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1.6</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>为自己的任务选择模型</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>五步做法、选择说明与章末练习</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 4 }}>
+                <Box style={{ width: 3, height: 30, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>第二章　编写提示、组织上下文、连接工具、构建 Skill，用 OpenAI API 与 WorkBuddy 完成活动筹备</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>第一章　认识大模型，读懂能力与评价</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 27</Text>
+    </Box>
+
+</Slide>

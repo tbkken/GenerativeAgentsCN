@@ -1,0 +1,82 @@
+<Slide notes={`判断一个人到没到，要沿着一条证据链往下走。
+第一段是导航的输入和返回结果：他带着什么地址去查，系统返回了什么路线。第二段是 MOVE 的选择：他有没有真的选择朝这个目标移动。第三段是执行路径：实际发生了哪些位移边。第四段是提交出来的实际坐标和地址。
+这条链上最容易弄混的是 accepted。它只表示这一次动作选择被接受了，并不代表人已经走到了。世界把提交写进 StepResult 之后，它才成为可以回放的事实。
+评分的时候用的就是这条链的最后一段，而不是中间某个返回字段。把这一点分清，很多看起来矛盾的结果立刻就解释得通了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.4　从导航到坐标的证据链</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>哪一环才算事实</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 682, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>证据链四段，自上而下逐段留证</Text>
+
+            <Box style={{ width: 682, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>导航输入／结果</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>用了什么地址查询、返回了哪条路线</Text></Box>
+            </Box>
+
+            <Box style={{ width: 682, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>MOVE 选择</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>是否真的选择了朝该目标移动这一步</Text></Box>
+            </Box>
+
+            <Box style={{ width: 682, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>执行路径</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>实际发生了哪些位移边，逐边计数</Text></Box>
+            </Box>
+
+            <Box style={{ width: 682, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>实际坐标／地址</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>提交出来的位置，用于判断是否进入集合区</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 442, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>两件事必须分开</Text>
+
+            <Box style={{ width: 442, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>accepted 只是动作选择</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>表示这一次选择被接受，并不代表角色已经在世界里的新位置。</Text>
+            </Box>
+
+            <Box style={{ width: 442, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>提交进 StepResult 才是事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>世界把坐标提交之后，它才成为可以回放的运行事实。</Text>
+            </Box>
+
+            <Box style={{ width: 442, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>评分只看最后一段</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>到达率与移动负担都按已执行路径和提交坐标计算。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 26</Text>
+    </Box>
+
+</Slide>

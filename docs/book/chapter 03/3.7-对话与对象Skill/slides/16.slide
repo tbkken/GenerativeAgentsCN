@@ -1,0 +1,48 @@
+<Slide notes={`接下来把公告更新这一段情节拆开。
+
+这一段的重点是证据门槛：候选建议、正式更新和访客获知，三件事不能合并成一件事。
+
+服务台从咨询里给出的，只是一个候选：原来的安排可能可以调整到十点半。这还只是建议。
+
+林岚要自己核实这个候选站不站得住，然后决定要不要发起更新。决定之后，她要通过 INTERACT 真的向公告栏提出请求。
+
+公告栏收到请求，按教案核对请求者和内容，然后由它自己提交一次动作，把状态从原始改成修订。
+
+每一步都要有各自的证据，谁也不能替谁。候选人说了不算，组织者说了也不算，只有公告栏真的提交了才算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3　　3.7.4</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>设计公告更新这一段情节</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>候选建议、正式更新和访客获知不能合并成一件事，每一步都要有各自的证据。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>候选</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>核实</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>提交</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 31</Text>
+    </Box>
+
+</Slide>

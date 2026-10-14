@@ -1,0 +1,56 @@
+<Slide notes={`前面我们能保存响应和报告了，但还缺一条连接：这份排期到底是哪次输入、哪次模型调用、哪次校验产生的？
+
+Langfuse 就是用来补这条连接的。它是一种面向大模型应用的可观测性与评价工具，我们会用它观察第二章的开放日筹备脚本，但不会改动脚本本身的任务规则。
+
+它把记录分成四类，各自回答不同的问题。日志回答某个时刻发生了什么；调用链回答同一次任务有哪些步骤、父子关系和时间；指标回答多次任务整体怎么样；评价回答按哪条规则判了多少分。
+
+这四类记录也各有各的盲区，这也是我特别想强调的地方：日志里一句「已完成」不会因为被放进调用链就变成事实。真正的预约冲突，仍然要由实际材料和校验结果来确认。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>07</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.13.7</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>用 Langfuse 观察一次完整排期任务</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>补上那条缺掉的连接：这份排期是哪次输入、哪次调用、哪次校验产生的。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 270, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>日志 Log</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>某个时刻发生了什么</Text>
+            </Box>
+            <Box style={{ width: 270, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>调用链 Trace</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>步骤、父子关系和时间</Text>
+            </Box>
+            <Box style={{ width: 270, height: 110, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>指标 Metric</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>多次任务整体怎么样</Text>
+            </Box>
+            <Box style={{ width: 270, height: 110, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>评价 Score</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>按哪条规则判为多少分</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 940, height: 54, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>记录放进调用链，也不会把「模型说已完成」变成事实</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 34</Text>
+    </Box>
+
+</Slide>

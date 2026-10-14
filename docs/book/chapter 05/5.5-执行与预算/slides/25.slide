@@ -1,0 +1,55 @@
+<Slide notes={`这一节的最后一块，讲交接记录。
+
+它不需要很长，一段短文就够，但必须回答六个问题：当前完成到哪个阶段；所选实验与 Run 的身份是什么；最后完整提交在哪里；已经触发了哪项预算规则；还有哪些在途或待核对的事项；下一步由谁处理。
+
+这六问有一个共同作用：让接手的人不必从头问你。特别是身份这一项，如果还没有创建 Run，就明确写“未创建”，不要拿教学编号去冒充 UUID。填一个假的编号，比诚实地写“还没有”危险得多。
+
+还有一点要接受：此刻计划可以写得很完整，运行结果却仍然是空的。这不是缺陷，而是这一阶段的真实状态。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ⑥</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 80, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>⑥</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>留下一份{'\n'}别人能接着做的交接记录</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>一段短文就够，但六个问题都要答。此刻计划可以完整，运行结果仍然为空。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 172, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>完成到哪阶段</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>实验与身份</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>最后提交位置</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>已触发规则</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>在途与待核对</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>下一步由谁处理</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 28</Text>
+    </Box>
+
+</Slide>

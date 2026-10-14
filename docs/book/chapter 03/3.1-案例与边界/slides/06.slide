@@ -1,0 +1,70 @@
+<Slide notes={`有一条线要守住：我们不能把执行过程写成剧本。
+
+模型完全可能多问几个问题，也可能晚一步才行动。这些差异恰恰是我们要观察的东西。
+
+只要事先把观察对象和验收规则定好，差异就能被分析。反过来，如果把第三步必须说话、第四步必须到达写进剧本，再把执行剧本当成自主行为，那就是自己骗自己。
+
+另外说明一下材料的性质。这一章提供了一整套案例资料包，里面有地图和人物素材、完整的 Skill、配置说明和验收模板。它是准备录进系统的作者材料，还没有创建新的实验，也没有产生新的运行结果。正文里的操作步骤以当前界面和源码为依据，示意过程不冒充实际运行结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.1　一个可以贯穿全章的问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>不把过程写成剧本</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先定观察对象与验收规则</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>规则先立好，差异才能被分析</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>02</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型可能多问，也可能晚一步</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>这些差异是观察结果，不是故障</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#CB6B28' }}>03</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不把「第 3 步必须说话」写进剧本</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>把执行剧本当成自主行为，是自我欺骗</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 0 }}>
+            <Box style={{ width: 420, background: '#F7F3E8', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>案例资料包</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>地图与人物素材·完整 Skill</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>配置说明 · 验收模板</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ width: 380, height: 46, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>准备录入系统的作者材料</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>尚未创建新的实验，也没有产生新 Run。</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.6 }}>正文步骤以当前界面与源码为依据，示意过程不冒充实际运行结果。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

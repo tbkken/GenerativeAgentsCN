@@ -1,0 +1,82 @@
+<Slide notes={`三个角色从一开始就都在地图上活着，所以我要交代清楚各自的位置和知识边界。
+
+虞诚是交班员。他不知道 K1 到 K5，需要主动去问设备，再把结果整理成一份说明交出去。宋青是接班员，负责接收、复述和核对；如果一直没等到交接，他可以整理用品，或者有边界地等待，但不能凭空知道。
+
+韩平是复核员。他只根据实际发生的发言和设备回复去质询事实或推断，不去读别人的私有记忆。
+
+还有一点很重要：值班室、设备间、资料区这三块地方，三个人一开始就都知道地址。职业身份不授予改设备状态的权限，共同大脑里也没有答案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.2　空间与角色：三人一直都在</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁在哪儿，各自知道什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ width: 430, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>三个 Arena，各供一件事</Text>
+                <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            </Box>
+            <Box style={{ height: 124, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>值班室</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>人物之间交流、通知与回应的场所</Text>
+            </Box>
+            <Box style={{ height: 124, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>设备间</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>放置 T-17，供查询资料与现场复核</Text>
+            </Box>
+            <Box style={{ height: 124, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>资料区</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>放置记录台，供提交与读取交接正文</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 690, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>三名角色，初态与共同职责</Text>
+                <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            </Box>
+            <Box style={{ height: 130, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 70, background: '#276FBF' }} />
+                <Box style={{ width: 150, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>虞诚</Text>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>交班员</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>初始不知道 K1—K5；查询 T-17，整理后提交实际交接正文并通知宋青。</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 130, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 70, background: '#26816B' }} />
+                <Box style={{ width: 150, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>宋青</Text>
+                    <Text style={{ fontSize: 13, color: '#26816B' }}>接班员</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>接收、复述、核对；未获交接时可整理用品，或有边界地等待，不凭空知道。</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 70, background: '#CB6B28' }} />
+                <Box style={{ width: 150, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>韩平</Text>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>复核员</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>只据实际发言与设备回复质询事实或推断，不读别人的私有记忆。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

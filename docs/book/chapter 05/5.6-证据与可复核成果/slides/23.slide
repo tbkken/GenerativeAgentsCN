@@ -1,0 +1,65 @@
+<Slide notes={`最后做一个小练习。有这么一句话：「本系统证明澄清能提高行政服务效率」，请指出它的三个问题。
+
+第一个是业务范围。项目只做咨询，没有行政审批和实际维修机制，「行政服务效率」不在它的范围内。
+
+第二个是样本证据。目前只有教学设计，没有运行记录，也没有真实结果包，任何「证明」都无从谈起。
+
+第三个是外推问题。即便将来跑出结果，那也是给定条件下的小规模教学案例，不能直接推广成行政服务的整体效率。
+
+相称的表述大意是：在给定条件下，待执行方案设计了两种咨询策略与判分方法，用于比较先澄清是否减少错误窗口请求。要讨论真实效果，还需要全部计划内 Run 的索引、每步的已提交事实，以及窗口内的接收与确认记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.7　对外结论写到证据能够支持的位置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习：这句话写到了哪里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 700, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>待审阅的原句</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35, width: 664 }}>「本系统证明澄清能提高行政服务效率」</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>三处问题</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45, width: 664 }}>业务范围：本项目只做咨询，没有行政效率机制</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45, width: 664 }}>样本证据：只有教学设计，没有运行记录与结果包</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45, width: 664 }}>外推问题：单次教学案例不能推广到行政服务整体</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>改成符合交付状态的表述</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 664 }}>在给定条件下，待执行方案设计了两种咨询策略与判分方法，用于比较先澄清是否减少错误窗口请求。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 428, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>还要哪些真实记录</Text>
+            <Box style={{ width: 428, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>全部计划内 Run 的索引</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不靠反复重跑只挑成功样本。</Text>
+            </Box>
+            <Box style={{ width: 428, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>每步的已提交事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>坐标、请求、响应与人物发言。</Text>
+            </Box>
+            <Box style={{ width: 428, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>窗口内的接收与确认</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>这是闭环判据里最容易缺的一环。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

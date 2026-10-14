@@ -1,0 +1,64 @@
+<Slide notes={`留一个练习：「我记得旧公告是杏厅，但现在请去杉厅」，为什么不算传播过期通知？
+
+拆成三点。第一，他引用的是历史观察，说的是「我记得」，指向过去的经历，而不是当前仍在生效的信念。第二，他的行动方向也不一样，他请对方去杉厅，行动目标和新会址是一致的。第三，所以这句 SPEAK 不进过期分母。真正的过期是指向旧会址的行动。
+
+再往前一步：如果只有一个撤销操作、没有给出新址，那会是什么情形？这就要求我们单独设计 invalidate 的条件——撤销旧信念但不提供替代内容，必须另设一组，另外写清口径，不能混进这一次的追加和替代对照里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.6　人工判分与失败解释</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习：旧消息为什么不算传播过期</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>「我记得旧公告是杏厅，但现在请去杉厅」为什么不是传播过期通知？</Text>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 20px' }}>
+            <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>他引用的是历史观察</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>「我记得」指向过去发生过的经历，不是当前仍在生效的信念。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 20px' }}>
+            <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>行动方向与新会址一致</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>他请对方去杉厅，行动目标就是正式会址，不构成过期行动。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 20px' }}>
+            <Box style={{ width: 28, height: 28, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>这句 SPEAK 不进过期分母</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>过期指的是以旧会址为目标或断言的行动，不是提及历史。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 132, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>独立设计：只有撤销、没有新址时</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>invalidate 撤销旧信念但不给替代内容，必须另设一组、另写口径；不混入本次追加／替代对照。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

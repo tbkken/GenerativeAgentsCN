@@ -1,0 +1,84 @@
+<Slide notes={`我们看一条实际会出现的记录。它是一场手作活动，房间是手工室，十月十七号上午十点到十一点，十个人参加。
+
+先说好消息：它是有效的 JSON，引号、逗号、括号全都合法；字段也完全符合约定的结构，人数是整数，房间编号在允许的枚举里面。
+
+但这条记录不能用。手工室十点到十点半已经有预约了，这段候选正好整段落进去，业务上冲突。
+
+还有一个更隐蔽的改法：把人数改成十三。语法照样正确，结构照样合规，可房间容量是十二人，人数和容量对不上。这个错误要到更晚一层才会暴露出来。
+
+同样是「看起来没问题」的结果，问题可能出在完全不同的层。所以别只盯着第一层看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.1　检查分四层</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一条看似合法的活动记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 24 }}>
+                <Box style={{ width: 3, height: 18, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一条手作活动记录</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', padding: '0 16px', gap: 12, height: 20 }}>
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 14, color: '#546779' }}>字段</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>值</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>activity_id</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"craft_workshop"</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>room_id</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"craft"</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>start</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"2026-10-17T10:00:00+08:00"</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>end</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"2026-10-17T11:00:00+08:00"</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>participants</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>10</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 480, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>看起来没问题，其实有两处</Text>
+
+            <Box style={{ height: 92, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>语法与结构都通过</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>引号、逗号、括号合法；人数为整数，房间 ID 属于允许枚举。</Text>
+            </Box>
+
+            <Box style={{ height: 168, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>与手作室预约重叠</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>手工室 10:00—10:30 已有预约，这段候选整段落在里面。格式没有救它，业务这一层不成立。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>业务规则 · 预约冲突</Text>
+            </Box>
+
+            <Box style={{ height: 168, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>把人数改成 13 也一样</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>语法仍然正确，却多出容量与需求人数不一致的问题：房间容量 12 人，需求人数 13 人。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>业务规则 · 容量不符</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 23</Text>
+    </Box>
+
+</Slide>

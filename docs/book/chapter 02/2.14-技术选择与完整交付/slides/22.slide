@@ -1,0 +1,58 @@
+<Slide notes={`有三种技术经常被过早提起：微调、蒸馏和部署。我把它们各自的前置条件说清楚。
+
+微调。模型持续误用术语、格式或领域风格时，先排查提示、示例和数据质量，这三样往往才是原因。等手上有足够多的高质量样本和一个独立测试集，再考虑微调。它改变的是模型对任务模式的适应，不该替代实时事实获取。
+
+蒸馏。做法是让较强系统生成示例，筛选后训练一个较小的模型，目标通常是降延迟、降成本。注意教师的回答本身也可能有错，训练数据仍要验证；训练集和评价集混在一起，会让改进看起来比实际好。
+
+部署还包括身份认证、配置、服务监控、数据保存、并发和密钥管理。命令行程序只是学习样本，优先级应由真实瓶颈决定。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.5　何时研究微调、蒸馏和部署</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>什么时候才研究微调、蒸馏和部署</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>这三件事都有明确的前置条件，凑齐条件之前动手，收益很难说清。</Text>
+
+        <Box style={{ height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 120, height: 108, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>微调</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>先排查提示、示例与数据质量</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>有足够多高质量训练样本和独立测试集再考虑微调。它改变的是模型对任务模式的适应，不应替代实时预约查询。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 120, height: 108, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>蒸馏</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>教师回答也可能有错，训练数据仍需验证</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>通常把较强系统生成并经过筛选的示例用于训练较小模型，目标可能是降低延迟和成本；训练集与评价集混在一起会夸大改进效果。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 120, height: 108, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>部署</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>扩展的优先级由真实瓶颈决定</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>还包括身份认证、配置、服务监控、数据保存、并发与密钥管理。命令行程序是学习样本，不是多租户服务。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 25</Text>
+    </Box>
+
+</Slide>

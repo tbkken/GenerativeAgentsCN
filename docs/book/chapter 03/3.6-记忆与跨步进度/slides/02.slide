@@ -1,0 +1,90 @@
+<Slide notes={`这一节拆成五块。第一块先分清三种容易混在一起的内容：已提交的世界事实、角色自己的认识、待确认的进度——它们可以互相提供依据，但不能互相冒充。
+
+第二块讲四个记忆工具组成的生命周期：追加、检索、更正、失效，重点是更正不删历史。
+
+第三块澄清检索的当前实现：词法匹配，不是向量数据库，这直接决定查询该怎么写。
+
+第四块讲跨步进度：动作之前先写待确认，world-act 被接受就结束本轮，下一轮核实之后才能确认完成。
+
+第五块回到页面，限定一名人物，亲手做一次认识更新的检查。
+
+五个编号和后面的扉页一一对应，方便随时回翻。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6　记忆与跨步进度</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的五件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>沿许安的旧认识，{'\n'}一路追到验收</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>从“他以为十点开始”出发，看认识如何被更正、进度如何被核实，最后在页面上交出证据。</Text>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+                <Box style={{ width: 48, height: 48, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>三种容易混在一起的内容</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>世界事实、角色认识、待确认进度，不能互相冒充</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+                <Box style={{ width: 48, height: 48, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>四个工具组成记忆的生命周期</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>append / search / supersede / invalidate，更正不删历史</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+                <Box style={{ width: 48, height: 48, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>当前检索实现不是向量数据库</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>file_lexical 词法匹配，明确名称比含蓄指代更易召回</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+                <Box style={{ width: 48, height: 48, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>在动作之前写“待确认”</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>world-act 接受即结束本轮，下一轮核实后才确认完成</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+                <Box style={{ width: 48, height: 48, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>在页面上检查一次认识更新</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>记忆面板是摘要，验收至少要回答四个问题</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

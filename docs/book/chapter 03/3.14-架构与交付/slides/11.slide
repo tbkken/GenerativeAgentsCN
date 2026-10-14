@@ -1,0 +1,63 @@
+<Slide notes={`单人移动是一条链，对象交互比它多一个阶段。
+
+林岚要咨询服务台，她提交的是 INTERACT。这个动作被接受之后，服务台并不会立刻出现在同一步里，它是在本步人物动作之后运行的：读取真实请求，产生自己的动作与回复。
+
+这些内容随整步事实一起提交，然后目标人物在下一轮才收到反馈。
+
+多出来的这个阶段，带来两个特别容易误判的地方：请求被接受，不等于状态已经提交；对象已经回复，不等于所有人都已经获知。
+
+恢复的时候，这两个中间态都不能丢——不能把已经投递的消息再发一次，也不能把还没投递的消息永久漏掉。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　·　3.14　沿着一次行动理解架构，整理可交付的实验</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　　3.14.3　从一条咨询看跨步反馈</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>对象交互，多一个阶段</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>服务台在本步人物动作之后运行，回复随整步事实提交，目标人物下一轮才收到。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+            <Box style={{ width: 194, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>人物 INTERACT</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>世界执行</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 68, background: '#FFF4E6', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>对象回复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>整步提交</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 68, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>下一轮反馈</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 29</Text>
+    </Box>
+
+</Slide>

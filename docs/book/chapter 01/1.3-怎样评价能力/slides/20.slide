@@ -1,0 +1,90 @@
+<Slide notes={`配对评价算出来是一个什么数？这里有两种常见口径，一定不能混。
+
+假设甲在十次配对评价里胜六次、平两次、负两次。
+
+第一种口径，事先规定平局算半分。得分就是六加上零点五乘二，再除以十，等于七成。
+
+第二种口径，只统计非平局的场次。十次里有两场是平局，真正分出胜负的是八场，甲胜六场，六除以八，等于七成五。
+
+两个数都不算错，它们回答的问题略有不同：前者把所有场次都纳入，包括读者觉得差不多的情况；后者只在明显分出高下的时候计算。但你必须写清用的是哪一种，否则同样的原始结果会报出两个不同的分数。
+
+还有一点，这里的分母必须是事先写好的规则，不能事后看哪个数好看就选哪个。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.6　开放写作为什么需要偏好评价</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>十次配对：6 胜 2 平 2 负</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>十次配对评价的结果</Text>
+
+            <Box style={{ flexDirection: 'row', height: 66, gap: 6 }}>
+                <Box style={{ width: 54, height: 66, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#FFFFFF' }}>胜</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#FFFFFF' }}>胜</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#FFFFFF' }}>胜</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#FFFFFF' }}>胜</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#FFFFFF' }}>胜</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#FFFFFF' }}>胜</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>平</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>平</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#FFFFFF' }}>负</Text></Box>
+                <Box style={{ width: 54, height: 66, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, color: '#FFFFFF' }}>负</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20, height: 24 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>胜 6 次</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>平 2 次</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>负 2 次</Text>
+            </Box>
+
+            <Box style={{ height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>逐项评价四个维度</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>事实忠实　·　信息完整{'\n'}表达清楚　·　受众适配</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, height: 90, background: '#F4F7FA', borderRadius: 10, padding: '0 18px' }}>
+                <Box style={{ width: 3, height: 46, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>隐藏模型名称，让读者在相同材料下比较两份文本，再作总体选择——这是唯一答案难以覆盖的体验。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 520, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 170, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>口径一　平局算半分</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>( 6 + 0.5 × 2 ) / 10</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#276FBF' }}>= 70%</Text>
+            </Box>
+
+            <Box style={{ height: 170, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>口径二　只统计非平局</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>6 / 8</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#26816B' }}>= 75%</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 70, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>两种口径都能用，但必须写清</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>同一批结果会报出两个不同的分数；口径要在评价开始前定好。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 31</Text>
+    </Box>
+
+</Slide>

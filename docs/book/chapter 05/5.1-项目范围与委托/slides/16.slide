@@ -1,0 +1,68 @@
+<Slide notes={`三种职责各自留下什么，我逐个说清楚。
+
+作者负责把问题转成材料与实验。他要交出委托书、作者材料、精确的行为文本，这些东西决定实验能不能被配置出来。
+
+复核者负责检查信息分配、判分和报告。他不写材料，只检查材料里有没有把该给的信息给对人、判分口径是不是前后一致，产出的是差异说明和核查记录。
+
+接收者负责按文档实际寻找文件、读取证据并完成约定操作，最后留下接收记录。他是在不了解作者思路的前提下走一遍。
+
+特别要提醒的是，这三种是项目分工，不是新增的仿真 Agent。服务大厅里仍然只有五名 Agent 和三个绑定 Skill 的对象，不要因为多了几个角色名就以为场景变复杂了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.4　三类参与者，三种不同职责</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种职责，不是三个新 Agent</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 1152 }}>一个能交接的项目里，三种职责互相不能替代，各自留下一份可检查的材料。</Text>
+
+        <Box style={{ width: 1152, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>作</Text>
+            </Box>
+            <Box style={{ width: 1032, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>作者　把问题转成材料与实验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>交出委托书、作者材料、精确行为文本</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 112, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>复</Text>
+            </Box>
+            <Box style={{ width: 1032, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>复核者　检查信息分配、判分和报告</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>产出差异说明与核查记录，不替作者写材料</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 112, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>接</Text>
+            </Box>
+            <Box style={{ width: 1032, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>接收者　按文档实际寻找文件、读取证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>完成约定操作并留下接收记录，检查层次要写明</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1060 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>这三种是项目分工，不是新增的仿真 Agent</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>服务大厅仍然只有周澈、谭悦、孟川、邱禾、余真五名 Agent，以及咨询台、A 窗口、B 窗口三个绑定 Skill 的对象。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,62 @@
+<Slide notes={`把这三层想成一段台阶，越往上，能站的地方越窄，要的证据也越多。
+
+站在系统机制这一级，我能说的是流程跑通了、权限和路径没有矛盾、提交和恢复身份对得上。
+
+往上走一级到本次模型行为，我能说的是：在一批冻结的条件下、用几次独立 Run，观察到什么样的分布、哪些失败方式、花了多少成本。
+
+再往上那一级，才涉及现实应用效果，它需要现实资料校准和外部验证。
+
+台阶之间有一条线。从"本次模型行为"直接跳到"现实效果"，就是越界。跨过去之前，先问自己有没有第三层要求的那些证据；没有，就把结论老老实实停在下一级。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.1　证据强度的三级台阶（示意）</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>站得越高，要的证据越多</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 660, flexDirection: 'column', alignItems: 'flex-start', gap: 10 }}>
+
+            <Text style={{ fontSize: 14, color: '#546779' }}>越往上，能站的地方越窄</Text>
+
+            <Box style={{ width: 460, height: 84, background: '#FFF4E6', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>现实应用效果</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>需要现实资料校准与外部验证</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 44, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 300, height: 4, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>越界处：仿真结果 ≠ 现实效果</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 84, background: '#ECF7F2', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>本次模型行为</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>冻结条件下的分布、失败与成本</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 84, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>系统机制</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>权限、请求、路径、提交与恢复身份是否成立</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 456, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>每上一级，都要换一批证据</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>系统机制这一级证明流程跑得通；本次模型行为这一级证明在这套条件下观察到了什么；现实应用效果这一级才涉及真实人群。</Text>
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>机制级证据不能替代业务结论，行为级证据不能替代现实结论。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 20</Text>
+    </Box>
+
+</Slide>

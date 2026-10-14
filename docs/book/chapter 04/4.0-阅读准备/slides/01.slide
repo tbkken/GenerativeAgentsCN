@@ -1,0 +1,72 @@
+<Slide notes={`我们从第三章接着往下走。第三章解决了"让角色真的行动"：有位置、有记忆、有不同目标的人在同一张地图上做事，跑完能留下可核查的记录。这一节要解决的是下一步——拿这些行动去回答什么样的问题。
+
+我先说一个最容易犯的错：把问题写成"让大厅更高效"。这句话听起来清楚，其实跑出任何结果都能解释过去，因为它没说清比较什么、看哪个指标、什么情况下算失败。
+
+所以这一节先把提问、管理和取证三组准备讲清楚，再进入九个具体案例。
+
+还有一句必须记住：本章六个主案例、两个选修案例都是虚构教案，还没有新场景的实际运行结果。人工判分只教怎么算，不能提前写成研究发现。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.0 阅读准备</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>从「让角色行动」{'\n'}到「用实验回答问题」</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>第三章让角色在共同世界里真实行动。这一节先不进入案例，而是把九个案例共用的准备动作讲清楚。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>问得准</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>管得住</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>证得出</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>尚无 Run</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 560, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>太宽的问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>让大厅更高效　·　让交接更可靠　·　让导览更好</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>跑出任何结果都能解释过去</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 120, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>能被结果推翻的问题</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>四项固定任务中，先澄清目的是否提高咨询闭环率？</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>写清比较什么、看哪个指标、什么算失败</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>两组独立 Run</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>共同条件保持相同，只替换一个预登记的因素；每组各自建 Run</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 56, background: '#FFF4E6', borderRadius: 10, padding: '8px 18px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>教案尚未运行</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>八个案例均为虚构教案，没有实测效果可供引用</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

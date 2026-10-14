@@ -1,0 +1,87 @@
+<Slide notes={`记忆面板是摘要视图——这里的窗口是示意结构，不是系统截图。
+
+左侧是导航：先选到结果里的 Agent，限定许安一个人。主区是记忆条目：创建 Step、记忆内容、重要度、状态和类型。
+
+两个操作纪律。先限定一名人物，防止把林岚已经知道的消息误算成许安也知道；再定位相关对话或对象响应的时间位置，核对新认识的来源。
+
+还要清楚这个面板是记忆摘要：不完整展示节点 ID、替代关系或访问历史。要确认某次替代究竟关联了哪些节点，得核对原始已提交记忆记录或导出材料里的真实 ID 和关系字段，不能把摘要里的状态文字当作完整证据。字段值要等真实运行后再填，不预填。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.5　在页面上检查一次认识更新</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>记忆面板：摘要，不是完整证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ height: 290, background: '#F4F7FA', borderRadius: 12, flexDirection: 'column' }}>
+
+            <Box style={{ height: 40, background: '#276FBF', borderRadius: '12px 12px 0 0', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px 0 20px' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>结果 → Agent → 许安　·　记忆</Text>
+                <Box style={{ width: 56, height: 24, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flex: 1, flexDirection: 'row' }}>
+
+                <Box style={{ width: 180, background: '#FFFFFF', borderRadius: '0 0 0 12px', flexDirection: 'column', padding: '14px 12px', gap: 8 }}>
+                    <Box style={{ height: 34, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>结果</Text>
+                    </Box>
+                    <Box style={{ height: 34, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>Agent　许安</Text>
+                    </Box>
+                    <Box style={{ height: 34, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>回放</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flex: 1, flexDirection: 'column', padding: '14px 16px', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', gap: 12, padding: '0 6px' }}>
+                        <Box style={{ width: 130 }}><Text style={{ fontSize: 13, color: '#546779' }}>创建 Step</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>记忆内容</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#546779' }}>重要度</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#546779' }}>状态</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#546779' }}>类型</Text></Box>
+                    </Box>
+                    <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 6px', gap: 12 }}>
+                        <Box style={{ width: 130 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>待填</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4 }}>“我当前相信手作十点开始”</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>待填</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>待填</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>待填</Text></Box>
+                    </Box>
+                    <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 6px', gap: 12 }}>
+                        <Box style={{ width: 130 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>待填</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4 }}>“九点五十分看见旧公告写着十点开始”</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>待填</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>待填</Text></Box>
+                        <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>待填</Text></Box>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, flex: 1 }}>先限定一名人物，防止把林岚已知误算成许安也知道；再定位相关对话或对象响应的时间位置，核对新认识的来源。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, flex: 1 }}>面板是记忆摘要：不完整展示节点 ID、替代关系或访问历史——确认替代关系要核对真实 ID 与关系字段。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

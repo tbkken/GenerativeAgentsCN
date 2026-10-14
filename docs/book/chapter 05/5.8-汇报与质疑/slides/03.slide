@@ -1,0 +1,44 @@
+<Slide notes={`我们从最基础的一件事开始：先告诉听众，他们正在看哪一种材料。
+
+同一份讲义里可能同时出现需求表、作者空间草图、软件截图、已提交事件、人工算例和作者解释。它们看起来都很直观，可是证据作用完全不同。一张空间草图说明的是预期的布局和功能区域，一段回放片段说明的是某个已提交窗口里真实发生的变化，而第四章的三分之四只是人工判分练习。
+
+所以开场要先交代项目处于设计、运行还是交付阶段，再让每份材料保留自己的身份。先讲阶段，听众才知道后面听到的哪些是承诺、哪些是已经发生的事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.8　演示与评审</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ①</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>①</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先告诉听众，他们在看哪一种材料</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>需求表、作者空间草图、软件截图、已提交事件、人工算例和作者解释，看起来都很直观，证据作用却不同。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 8 }}>
+            <Box style={{ width: 300, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>设计阶段</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>运行阶段</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>交付阶段</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 26</Text>
+    </Box>
+
+</Slide>

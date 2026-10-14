@@ -1,0 +1,42 @@
+<Slide notes={`第二章讲过 Embedding 与 RAG，很容易顺理成章地以为这里也是向量检索。当前实现不是。
+
+把两条路摆在一起：一条是语义向量近邻，一条是词法匹配。差别的关键在于排序依据和失败方式都不一样。
+
+这一块要防的错误很具体：不能因为工具描述用了“语义检索”的表达，就把当前实现写成已经调用了嵌入模型——评测和 SOP 都要按词法匹配来写。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3　　3.6.3</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>当前检索实现不是向量数据库</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>文本切分、词项重叠、重要度与创建时间排序；返回值标注 file_lexical。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>文本切分</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>按词项重叠得分</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>重要度 + 创建时间排序</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

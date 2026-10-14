@@ -1,0 +1,73 @@
+<Slide notes={`还有两个前提必须在方法里写清楚，不然结论会被误读。
+
+第一个是检索方式。当前用的是 file_lexical，不是向量检索，所以同一个问题有可能取回不同的有效节点。这意味着即使旧信念还躺在记忆里，也不一定每次都被取回来。
+
+第二个是地址记忆和导航知识是两套东西。更新会址信念不会自动改变导航知识，所以这个案子里故意让所有人一开始就知道两间厅的位置，把「不认路」这个因素先控制住。
+
+反过来也要提醒：基线组也可能同时检索到旧、新两条消息，然后选对了；对照组没收到正式更正，也不会自动正确。零过期不等于传播全面，还得同时看覆盖率。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.3　两组共同的条件式 SOP</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>检索与导航：两个必须写清的前提</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 508, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 508, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>检索是 file_lexical</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>不是向量检索。相同的问题可能取回不同的有效节点，所以旧信念不是每次都会被取回来。</Text>
+            </Box>
+
+            <Box style={{ width: 508, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>地址记忆不更新导航知识</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>本案预知同样场所，就是为了控制这一因素：不认路不参与解释结果。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 612, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 612, height: 100, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>基线也可能同时看到旧、新消息而选对</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>limit=8 只是把候选放在一起，最后选哪一条仍由模型判断。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 612, height: 100, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>对照没收到通知，也不会自动正确</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>没有真实更正进入决策输入，个人纠错窗口根本没有开始。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 612, height: 100, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>一次限量检索没返回旧节点，不足以证明纠正</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>要同时看节点有效态，和固定问题下的真实检索结果。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 612, background: '#ECF7F2', borderRadius: 8, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>零过期不等于传播全面</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>先看覆盖率：有多少人真的收到了来源明确的最终更正。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

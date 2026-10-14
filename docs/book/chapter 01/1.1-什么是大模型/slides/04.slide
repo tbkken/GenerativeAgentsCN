@@ -1,0 +1,91 @@
+<Slide notes={`我们把范围画清楚。人工智能是一个很大的领域，识别、预测、规划、行动都在里面。机器学习是它的一个子集，做法是从数据里调整参数。深度学习又是机器学习的一个子集，用多层神经网络来完成这件事。我们今天说的大语言模型，就落在深度学习这一类里面。
+
+这里有一处很容易混的地方：你还会听到"基础模型""多模态"这样的说法。请注意，它们是命名的角度，不是大语言模型下面互斥的子类。一个模型可以既是大语言模型，又被称为基础模型，还可能具备多模态能力——这些标签可以重叠。
+
+再看"大"这个字。它没有统一的门槛。参数规模说的是训练中调整的数值有多少，训练数据量说的是训练时用了多少资料，训练计算量说的是训练投入了多少计算。这是三个不同的量。
+
+计算最优训练的研究还告诉我们，在同一个预算下，模型规模和数据量怎么分配是会互相影响的，所以不能只追求把参数堆得更多。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.1　从人工智能到大语言模型</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>技术归属，与"大"的三个维度</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40, alignItems: 'center' }}>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 640, height: 274, borderRadius: 12, border: '1px solid #B5C7D8', background: '#F7FAFD', padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>人工智能　AI</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>识别、预测、规划、行动</Text>
+                </Box>
+                <Box style={{ width: '100%', height: 198, borderRadius: 10, background: '#EDF4FC', padding: 16, flexDirection: 'column', gap: 10 }}>
+                    <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>机器学习　ML</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>从数据中调整参数</Text>
+                    </Box>
+                    <Box style={{ width: '100%', height: 126, borderRadius: 8, background: '#D6E6F7', padding: 14, flexDirection: 'column', gap: 10 }}>
+                        <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>深度学习　DL</Text>
+                            <Text style={{ fontSize: 15, color: '#546779' }}>多层神经网络</Text>
+                        </Box>
+                        <Box style={{ width: '100%', height: 62, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>大语言模型 LLM</Text>
+                        </Box>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779', marginTop: 12 }}>包含关系示意：内层属于外层，不是并列的四种技术</Text>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+            <Box style={{ flexDirection: 'column', gap: 8, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>"基础模型""多模态"是命名角度</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>它们可以重叠，并不是大语言模型下面的互斥子类。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>"大"由哪三个量描述</Text>
+
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 6, height: 34, background: '#276FBF', borderRadius: 3 }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>参数规模</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>训练中调整的数值有多少</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 6, height: 34, background: '#276FBF', borderRadius: 3 }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>训练数据量</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>训练时使用了多少资料</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 6, height: 34, background: '#276FBF', borderRadius: 3 }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>训练计算量</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>训练投入了多少计算</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 26</Text>
+    </Box>
+
+</Slide>

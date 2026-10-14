@@ -1,0 +1,74 @@
+<Slide notes={`出了问题要定位代码，顺序是按数据流倒着走。
+
+先看能力服务对请求的校验。身份、可用能力、参数格式，在动作进入世界之前就在这里被拦下；如果这里没通过，后面什么都不会发生。
+
+再看世界提交怎样构造事实。实际消费了多少路径、提交了哪些字段、有没有把这次动作写进整步结果，都在这一层。
+
+最后看回放读取器如何限制已提交边界。它只应该读到提交为止，读不到的东西就不该出现在画面里。
+
+有一条必须守住：不要从页面文字反推一条不存在的底层事件。画面上写了什么，不代表底层真的提交过什么；找不到记录，就说找不到记录，不能替它编一个。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.2　从一条 MOVE 看完整链条</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>出现问题时先看哪三处</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>顺着数据流倒着找</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 380 }}>请求怎么被校验、事实怎么被构造、回放怎么限制边界——三处对上了，一条链就闭合了。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6, flex: 1 }}>不要从页面文字反推一条不存在的底层事件。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 752, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 752, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 196, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>能力服务</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>capabilities/server.py</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>看它怎样校验请求：身份、可用能力与参数在进入世界之前就被拦下。</Text>
+            </Box>
+
+            <Box style={{ width: 752, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 196, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>世界提交</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>engine/world.py</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>看它怎样构造事实：实际消费了哪段路径、把哪些字段写进整步结果。</Text>
+            </Box>
+
+            <Box style={{ width: 752, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ width: 196, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>回放读取器</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>ga_replay/reader.py</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>看它如何限制已提交边界：只读到提交为止，读不到的不进画面。</Text>
+            </Box>
+
+            <Box style={{ width: 752, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#546779' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6, flex: 1 }}>三处对上，才能说清楚「画面上这一步」究竟对应哪条已提交事实；对不上，就如实写对不上。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 29</Text>
+    </Box>
+
+</Slide>

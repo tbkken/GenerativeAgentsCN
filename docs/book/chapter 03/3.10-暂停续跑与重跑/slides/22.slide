@@ -1,0 +1,82 @@
+<Slide notes={`重跑是读原来那个 Run 内嵌的实验，然后创建一个新的 Run。
+
+这里有一个容易被误解的地方：即使公共资源后来变了，重跑用的输入仍然以原 Run 里保存下来的那份内容为准。这样两次运行之间才具备可比性，否则比的就不是同一个条件。
+
+当前后端和命令行具备独立的重跑能力。这次源码核查没有确认存在专门的前端“重跑此 Run”按钮，所以我不会写出一条看起来能点的操作路径。
+
+还有一种情况：如果想修改林岚的 SOP，再比较公告更正的速度，那不算重跑。正确做法是在界面上复制封存实验，编辑出一份新的独立草稿，重新预检，再执行。它属于修改条件之后的新的实验运行，不能标成原 Run 的续跑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.6　重跑与修改后再跑</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>重跑与修改后再跑</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 552, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>重跑：新的 Run，旧的输入</Text>
+
+            <Box style={{ width: 552, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>读原 Run 的内嵌实验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>输入从一个已经保存下来的实验副本里取，而不是重新挑一份。</Text>
+            </Box>
+
+            <Box style={{ width: 552, height: 130, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>公共资源变了也不换输入</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>即使公共资源已经改变，重跑的输入仍以原 Run 中保存的内容为准。</Text>
+            </Box>
+
+            <Box style={{ width: 552, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>未确认前端有「重跑此 Run」按钮</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>后端与 CLI 具有独立重跑能力；本次核查没有确认专门的前端入口。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 568, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>修改条件后再跑：四个动作</Text>
+
+            <Box style={{ width: 568, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>复制封存实验</Text>
+            </Box>
+
+            <Box style={{ width: 568, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>编辑一份新的独立草稿</Text>
+            </Box>
+
+            <Box style={{ width: 568, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>重新预检</Text>
+            </Box>
+
+            <Box style={{ width: 568, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>执行新的实验运行</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.6 }}>这是修改条件后的新实验运行，不应标为原 Run 的续跑。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

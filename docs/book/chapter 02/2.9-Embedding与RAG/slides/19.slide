@@ -1,0 +1,54 @@
+<Slide notes={`同一件取证任务，我们在产品里再做一遍，看看工具入口长什么样。
+
+做法是选一个教学工作空间，把问题涉及的目录或文件引用进来，然后把要求写清楚：找出手作体验的时长、允许房间、开放时间和预约冲突依据，逐项给出文件位置与相关原文，再提出候选。这四类依据正好对应前面讲的证据范围。
+
+官方文档支持选择工作空间、引用上下文和添加文件，这就是这个练习用的产品入口。
+
+要留一个心眼：它给出了位置和原文，你就要打开原文件核对。只读到了房间容量，就该继续查预约；如果查到的是旧日期记录，要重新限定范围。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.9.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>用文件搜索完成相同的取证任务</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>要求写得越具体，回来的依据越容易核对；重点是位置与原文，不是一段流畅的总结。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'column', gap: 20 }}>
+            <Box style={{ width: 1152, height: 110, background: '#F7F3E8', borderRadius: 8, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>引用问题涉及的目录或文件，发送</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>请找出手作体验的时长、允许房间、开放时间和预约冲突依据；逐项给出文件位置与相关原文，再提出候选。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 44 }}>
+                <Box style={{ width: 354, height: 124, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>选择教学工作空间</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>先框定这次能读到哪些材料</Text>
+                </Box>
+                <Box style={{ width: 354, height: 124, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>引用文件与上下文</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>也可以另外添加文件作为补充</Text>
+                </Box>
+                <Box style={{ width: 354, height: 124, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>打开原文件核对</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>引用要能落到那一段原文上</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 25</Text>
+    </Box>
+
+</Slide>

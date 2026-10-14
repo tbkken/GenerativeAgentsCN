@@ -1,0 +1,39 @@
+<Slide notes={`下一块看得更具体一点：系统看见了什么，和它评了什么。
+行为质量页拿到的是一份确定性投影，它从所有已提交的 StepResult 里提取 Brain 和对象 Skill 的执行记录算出来，按事实身份生成问题标识，覆盖多个 Attempt，而不是只看最后一次尝试。
+投影给出的告警需要人来解释：首次检索没有历史记忆可能完全合理，一次正确的权限拒绝甚至可能正是边界对照预期的结果。
+但合理不等于删掉。原记录要保留，另外在分析表里说明它的用途。还有一点：同样的文字出现在不同人物、不同 Step，是两个问题，不能直接去重。
+至于评价本身有没有真的执行过，是下一层的事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　　3.12.4 — 3.12.5</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>行为质量页与 Evaluator</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>系统看见了什么，和它到底评了什么，是两件需要分别确认的事。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 12, marginTop: 10 }}>
+            <Box style={{ width: 900, height: 56, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', borderRadius: 4 }} />
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>确定性投影：从已提交事实里提取执行记录</Text>
+            </Box>
+            <Box style={{ width: 900, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 8, height: 8, background: '#CB6B28', borderRadius: 4 }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>告警解释：保留原记录，在分析表里说明用途</Text>
+            </Box>
+            <Box style={{ width: 900, height: 56, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 8, height: 8, background: '#26816B', borderRadius: 4 }} />
+                <Text style={{ fontSize: 16, color: '#26816B' }}>评价状态：SKIPPED 与 NOT_EVALUATED 都保持未执行</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

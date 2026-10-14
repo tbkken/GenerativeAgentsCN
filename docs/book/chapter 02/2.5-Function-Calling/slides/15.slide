@@ -1,0 +1,54 @@
+<Slide notes={`这段就是回路的骨架，我强调两个细节。
+
+第一个细节是顺序。history.extend(response.output) 这一句在前，追加 function_call_output 的循环在后。先留住模型这次发出的全部输出条目，再把工具结果补上去。颠倒过来，或者只留下调用名和最后那段文字，会话需要的其他条目就没了。用推理模型的时候，丢掉相关条目会直接影响下一轮。
+
+第二个细节是范围。这段展示的是调用之后的衔接，不是省略了保护措施的完整运行器。配套的完整脚本还检查响应状态、调用预算、参数和工具错误，任何一项不过关都不会往下走。
+
+读代码的时候请把这两层分开看：骨架说明顺序，保护措施说明边界。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.3　完整回路比单次请求重要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先保留完整输出，再追加结果</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ height: 350, background: '#F4F7FA', borderRadius: 12, padding: '20px 26px', flexDirection: 'column', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>response = client.responses.create(</Text>
+            <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'    model=model, instructions=instructions,'}</Text>
+            <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'    input=history, tools=TOOLS,'}</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>)</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>history.extend(response.output)</Text>
+            <Text style={{ fontSize: 14, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'calls = [item for item in response.output if item.type == "function_call"]'}</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>for call in calls:</Text>
+            <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'    args = json.loads(call.arguments)'}</Text>
+            <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'    result = dispatch_tool(call.name, args)'}</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'    history.append({'}</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'        "type": "function_call_output",'}</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'        "call_id": call.call_id,'}</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'        "output": json.dumps(result, ensure_ascii=False),'}</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.4 }}>{'    })'}</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>顺序不能颠倒</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>先保留完整输出，再追加各条工具结果；只留调用名或最终文字会丢掉会话需要的条目。</Text>
+            </Box>
+            <Box style={{ width: 560, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>这不是完整的运行器</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>完整脚本另外检查响应状态、调用预算、参数和工具错误，任一不过关都不往下走。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 26</Text>
+    </Box>
+
+</Slide>

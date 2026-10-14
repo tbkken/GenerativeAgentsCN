@@ -1,0 +1,37 @@
+<Slide notes={`接下来要讲的是这次干预在作者操作上怎么做才干净。
+核心原则只有一条：两套布局必须只差一个格子。做法是先做一份开放布局，把它当作基线；然后复制成一份独立草稿，只在这份草稿里把 8,3 改成阻挡。
+两份布局分别封存，封存的时刻碰撞就已经确定，运行中不会再改动。这样一来，任何结果差异都可以追到那个格子上，而不是被「谁在什么时候改了地图」污染。
+换句话说，干预要能被隔离出来，对照才成立。如果两套布局之间还差着别的东西，后面所有的解释都会失效，再漂亮的数据也救不回来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>②　　4.7.2 作者操作：只动一个碰撞格</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把干预隔离出来</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>开放布局作为基线，复制成独立草稿，只改一格后分别封存。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 460, height: 120, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>开放草稿（基线）</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>两处缺口都开</Text>
+            </Box>
+            <Box style={{ width: 100, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 40, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 460, height: 120, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>对照副本（关闭）</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>只封 (8,3)，下口不动</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 26</Text>
+    </Box>
+
+</Slide>

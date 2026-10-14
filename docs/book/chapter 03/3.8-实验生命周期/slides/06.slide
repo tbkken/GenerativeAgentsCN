@@ -1,0 +1,69 @@
+<Slide notes={`创建之所以是在换一份材料，关键在复制闭包这件事上。
+
+地图进来的时候，连着图像、语义和对象 Skill 一起进来；Brain 进来的时候，连着子 Skill、脚本和模板；人物连着自己的资料和图片；模型连着配置内容。
+
+Crowd 会展开成一个个独立人物，这时候要核对四个实际 Agent 身份。公共 ID 重复会被去重，agent_key 冲突则直接拒绝创建。摘要数量有疑问，就进草稿数实际成员，不能靠名字看起来一样来解释合并结果。
+
+由此就能理解一个常见现象：后来在公共 Agent 里改了许安的目标，已经创建的青禾实验仍保留原来的目标。这是副本隔离，不是同步延迟。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.1　创建的结果是一份独立材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>复制进去的是整份闭包</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+
+        <Box style={{ width: 668, flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 668 }}>选中资源只是入口，真正进到实验里的是它和依赖构成的完整材料。</Text>
+
+            <Box style={{ width: 668, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 76 }}>地图</Text>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>图像、语义表与对象 Skill</Text>
+            </Box>
+
+            <Box style={{ width: 668, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 76 }}>Brain</Text>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>子 Skill、脚本与模板</Text>
+            </Box>
+
+            <Box style={{ width: 668, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 76 }}>人物</Text>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>自身资料与图片；Crowd 展开为独立人物</Text>
+            </Box>
+
+            <Box style={{ width: 668, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 76 }}>模型</Text>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>配置内容随实验一起保存</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 468, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ width: 468, height: 138, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>副本隔离的结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>后来在公共 Agent 中修改了许安的目标，已经创建的青禾实验仍保留原目标。</Text>
+            </Box>
+            <Box style={{ width: 468, height: 152, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>要改就分成两条路</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>改本次实验：进入它自己的智能体页面编辑。{'\n'}让以后的新实验采用：修改公共作者资源。</Text>
+            </Box>
+            <Box style={{ width: 468, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两者可以相同，也可以不同</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>这是有意的设计，不是数据没同步。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

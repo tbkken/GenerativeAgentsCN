@@ -1,0 +1,64 @@
+<Slide notes={`要把「完成」这件事说准，得接受一个有点别扭的结论：两句话可以同时成立。
+
+本案可以报告的业务成果是「获得适配说明并确认下一步」。请注意这个措辞的边界 —— 它不包括行政审批，也不包括实际维修，这个项目根本没有这两套机制。
+
+第四章的人工题里，H2 已经有适配入口建议，也已经抵达 A 服务区。但它没有目标窗口的回复，也没有完成确认。所以「首次有效回应已发生」和「尚未闭环」两句话都是真的，同时写出来并不矛盾。
+
+还有一条底线：人工材料没有真实事件 ID。我们不补造编号，也不用截图代替身份。缺口就留在那里，写明它是缺口。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.4　把叙述中的「完成」拆开验证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个成果，两种状态同时成立</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>把成果的边界写清楚</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 460 }}>报告里最容易走偏的一步，是把「获得了说明」读成「问题已经解决」。</Text>
+            <Box style={{ width: 460, height: 156, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>本案可报告的业务成果</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5, width: 424 }}>获得适配说明并确认下一步。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 424 }}>这是它成立的全部内容，多一点都没有。</Text>
+            </Box>
+            <Box style={{ width: 460, height: 136, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>它不包括什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 424 }}>本项目没有行政审批和实际维修机制，不能据此认定审批或维修已完成。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 660, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 660, height: 120, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>H2 已经做到的</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 624 }}>适配入口建议 · 已抵达 A 服务区</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 120, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>H2 还缺的</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 624 }}>目标窗口回复 · 完成确认</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 120, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>所以两句话同时成立</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 624 }}>「首次有效回应已发生」＋「尚未闭环」</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>不补造身份</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 624 }}>人工材料没有真实事件 ID，不补造编号，也不用截图代替身份。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

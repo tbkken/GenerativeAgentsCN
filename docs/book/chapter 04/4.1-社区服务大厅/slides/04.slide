@@ -1,0 +1,73 @@
+<Slide notes={`四项任务，我逐个说清。
+
+周澈要借活动室办读书会，先要确认照明能不能满足；谭悦要预约手工作品展示，先要确认桌面照明。这两个人问的是以后怎么用。
+
+孟川今天发现东侧一盏灯不亮，邱禾发现入口灯持续闪烁，他们要问的是现在怎么报告。这两个人问的是已经发生的事。
+
+注意他们说的第一句话：周澈和孟川完全一样，谭悦和邱禾完全一样。
+
+完整表只给作者和评分者看。每位来访者只拿到自己的目的和第一句话，被问到才如实补充，没被问就不主动补齐那些故意省略的目的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.1　四项需求与信息边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四项需求，四种说法</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 28 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 14, color: '#546779' }}>人物／任务</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>本人初始知道的目的</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 14, color: '#546779' }}>首次对咨询台说的话</Text></Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 14, color: '#546779' }}>窗口与下一步</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>周澈 H1</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>下周借活动室办读书会，需确认照明</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>“我想问活动室照明和使用的事。”</Text></Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>A；准备日期、人数、设施需求</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>谭悦 H2</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>想预约手工作品展示，需确认桌面照明</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>“我想问活动室灯具的安排。”</Text></Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>A；准备日期、人数、设施需求</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>孟川 H3</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>今天发现东侧一盏灯不亮，想了解如何报告</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>与 H1 相同</Text></Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>B；记录位置、现象、发现时间</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>邱禾 H4</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>今天发现入口灯持续闪烁，想了解如何报告</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>与 H2 相同</Text></Box>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>B；记录位置、现象、发现时间</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 4 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>完整表只供作者与评分者：每位来访者只得本人的目的与首句，被问后如实补充；未被问，不主动补齐故意省略的目的。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

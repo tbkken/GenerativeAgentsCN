@@ -1,0 +1,72 @@
+<Slide notes={`三个环节具体怎么打分，这里给出一组可操作的判据。
+
+检索命中用 Recall@k。做法是人工先确定这个问题需要哪些相关片段，再看前 k 个结果把其中的多少找回来了。分母是预先标注的相关片段总数，不是问题数，也不是必要条件的条数。
+
+引用支持，看的是每一条可以验证的断言有没有被引用支持，有没有漏掉关键条件。比如容量片段被找回来了，检索命中会变高，但它支持不了「十点半没有预约」这句话。
+
+业务通过，要交给业务校验器，看最终排期是不是真的满足人数、时长、房间、开放时间这些规则。
+
+今天这个练习的重点是：三个环节独立评分，三种评分不能互相代替。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.6　检索命中、引用支持、最终正确分别测量</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个环节各测各的</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 44 }}>
+
+            <Box style={{ width: 354, height: 280, background: '#EDF4FC', borderRadius: 8, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>检索命中</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>需要的相关片段，在前 k 个结果里找回了多少。</Text>
+                <Box style={{ width: 318, height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>判据：Recall@k，先标注相关片段集合，再算分母。</Text>
+            </Box>
+
+            <Box style={{ width: 354, height: 280, background: '#EDF4FC', borderRadius: 8, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>02</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>引用支持</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>每条结论是否真的有依据，有没有遗漏关键条件。</Text>
+                <Box style={{ width: 318, height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>判据：逐条断言回到片段核对支持关系。</Text>
+            </Box>
+
+            <Box style={{ width: 354, height: 280, background: '#ECF7F2', borderRadius: 8, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#26816B' }}>03</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>业务通过</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>最终排期是否满足人数、时长、房间与开放时间。</Text>
+                <Box style={{ width: 318, height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>判据：交给业务校验器，按规则逐项检查。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>找回容量片段，不能证明十点半没有预约</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>它提高了检索命中，却支持不了这句结论——这正是引用支持要单独测的原因。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 90, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>三个环节独立评分，三种评分不能互相代替</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>测对了环节，才知道下一步该改检索、改提示，还是改规则校验。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 25</Text>
+    </Box>
+
+</Slide>

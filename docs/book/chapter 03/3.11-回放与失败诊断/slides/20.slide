@@ -1,0 +1,63 @@
+<Slide notes={`后两类更接近「真的是问题」，但它们的性质仍然不同。
+
+第三类是执行问题。模型持续报错、检查点成员哈希不一致、已经提交的帧出现缺口，都属于这一类。处理的时候要记录错误和最后完整边界，千万不能把失败之后产生的临时文件继续当成已提交事实来用，否则后面所有结论都会建立在错误的基础上。
+
+第四类是页面或展示问题。已提交的位置是对的，画面上人物却出现在错误区域；状态事件明确存在，图片却没有切换；切换 Run 之后仍显示上一次的结果。这一类必须同时保存帧证据和页面截图，才能把渲染问题和模型行为问题区分开。
+
+分类清楚了，才谈得上改哪里、要不要改。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.5　分清四类问题再处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>执行问题与展示问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 210, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>第三类 · 执行问题</Text>
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 362, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>模型持续报错</Text>
+                </Box>
+                <Box style={{ width: 362, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>检查点成员哈希不一致</Text>
+                </Box>
+                <Box style={{ width: 362, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>已提交帧出现缺口</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>记录错误与最后完整边界；不把失败之后的临时文件继续当作已提交事实。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 210, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>第四类 · 页面或展示问题</Text>
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 362, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>位置正确，人物却在错误区域</Text>
+                </Box>
+                <Box style={{ width: 362, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>状态事件存在，图片没有切换</Text>
+                </Box>
+                <Box style={{ width: 362, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>切换 Run 后仍显示前一次结果</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同时保存帧证据与页面截图，才能区分渲染问题与模型行为问题。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>四类问题处理方式不同：先分类，再决定要不要改动、改在哪里。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 27</Text>
+    </Box>
+
+</Slide>

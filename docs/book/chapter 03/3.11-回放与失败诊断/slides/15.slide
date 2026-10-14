@@ -1,0 +1,67 @@
+<Slide notes={`再说两个容易出漏洞的地方。
+
+第一个是 MOVE。移动同时带着坐标和活动语义，比如「前往手作室核实时间」描述的是移动目的。目的话可以解释行为，但不能当成抵达证据；反过来，坐标发生变化也不能自动替它补上一条没有提交过的活动目的。两条信息各有各的来源，谁也不能替谁说话。
+
+第二个是对象状态。回放可能从中段开始，这时候页面不能从素材目录里的当前状态或默认图片重新开始，而要先带上此前已经提交的对象状态，再应用当前窗口里的更新。
+
+记住这一点，才能解释为什么同一个对象在两次回放里外观可能不同：差别不在素材，在归约的历史。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.4　对 MOVE、公告更新和回复分别取证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>移动语义与对象状态归约</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>MOVE：坐标与活动各说一半</Text>
+                <Box style={{ width: 564, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>「前往手作室核实时间」描述的是移动目的</Text>
+                </Box>
+                <Box style={{ width: 564, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 40, background: '#546779' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>活动文字可以解释行为，不能当成抵达证据</Text>
+                </Box>
+                <Box style={{ width: 564, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>坐标变了，也不能自动补出未提交的活动目的</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>对象状态：按历史归约</Text>
+                <Box style={{ width: 564, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>从时间线中段开始播放时，页面要带上此前的已提交状态</Text>
+                </Box>
+                <Box style={{ width: 564, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 40, background: '#546779' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>再应用当前窗口中的更新，而不是从默认外观重新开始</Text>
+                </Box>
+                <Box style={{ width: 564, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>不能每次都用公共资源里的当前状态或默认图片</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>归约的输入是已提交历史，不是素材目录里当前的那份文件。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 27</Text>
+    </Box>
+
+</Slide>

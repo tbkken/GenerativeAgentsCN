@@ -1,0 +1,74 @@
+<Slide notes={`这个目录是本章配套的教学包，名字叫 open-day-planner。
+
+最上面一行是目录名，也就是 Skill 的身份。SKILL.md 是唯一的入口，里面写适用条件、操作步骤和停止条件。references 放青禾的规则和输入材料。scripts 放校验脚本和它的辅助模块。assets 放 schedule.schema.json，规定方案的数据结构。
+
+我建议这样读：先读入口文件，知道它什么时候适用；再读参考资料，知道依据什么事实；最后看脚本和数据结构。
+
+有个细节值得留意：脚本要按自己的位置去找 references，而不是假定你站在 Skill 根目录下。后面验证时会专门检查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.1　Skill 的几个组成部分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个自包含的教学目录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>本章配套的 open-day-planner 是一个自包含的教学目录，四层结构各管一件事。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 700, background: '#F4F7FA', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>open-day-planner/</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>├── SKILL.md                    # 适用条件、操作步骤与停止条件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>├── references/                 # 青禾的教学规则和输入材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>├── scripts/                    # 校验脚本及其辅助模块</Text>
+                <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>└── assets/</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>{'    '}└── schedule.schema.json      # 方案的数据结构</Text>
+            </Box>
+
+            <Box style={{ width: 412, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>SKILL.md</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>入口文件：它什么时候适用，按什么步骤做。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>references/</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>依据什么事实：规则、brief 与预约材料。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>scripts/ ＋ assets/</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>怎样确认完成：校验脚本与方案的数据结构。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 3, height: 22, background: '#26816B' }} />
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>脚本按自身位置发现材料，不假定已切到 Skill 根目录。</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 27</Text>
+    </Box>
+
+</Slide>

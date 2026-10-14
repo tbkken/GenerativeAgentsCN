@@ -1,0 +1,68 @@
+<Slide notes={`收到工具请求之后，应用面对的是三条分支，不是一条。
+
+第一条是执行。工具名在允许列表里，参数符合约定，这次调用也没有超出预算，那就真的去调用那个只读函数。
+
+第二条是回传诊断。参数可以修正的错误，比如房间编号不在枚举里、日期字段类型不对，不能直接执行，也不该当作崩溃处理，而是把明确的错误类别交回模型，让它自己修正输入再试。
+
+第三条是停止。预算用完了，或者同一件事反复没有新进展，就停下来，并且把停止的原因记下来。停下来不等于失败，它是保护。
+
+这三条分支有一个共同前提：工具名必须来自允许列表。模型返回的字符串不能直接交给动态执行，未知工具、无效 JSON、字段类型错误都要走受控的错误分支。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.4　参数错误、工具失败与无进展</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>收到工具请求后的三种去向</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>收到工具请求后，应用要区分三种去向：执行、回传诊断、停止。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 36 }}>
+            <Box style={{ width: 360, height: 340, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>符合条件才执行</Text>
+                <Box style={{ width: 56, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>工具在允许列表里，参数合法，预算没有超。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '10px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>调用本地只读函数，拿到真实结果。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 360, height: 340, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>可回传的输入错误</Text>
+                <Box style={{ width: 56, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>房间编号不在枚举里、字段类型不对这类可以修正的错误。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '10px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>拒绝任意执行，返回明确诊断让模型修正。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 360, height: 340, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>停止条件</Text>
+                <Box style={{ width: 56, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>预算耗尽，或者同一件事反复出现、没有新进展。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '10px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>停止并保留原因，报告已完成的部分。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', height: 84 }}>
+            <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>工具名必须来自允许列表；未知工具、无效 JSON、字段类型错误一律进入受控错误分支，不交给 eval、动态导入或任意 Shell。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 26</Text>
+    </Box>
+
+</Slide>

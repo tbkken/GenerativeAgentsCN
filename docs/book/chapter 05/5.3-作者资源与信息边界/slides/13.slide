@@ -1,0 +1,73 @@
+<Slide notes={`打开周澈的资料，应该看到未来读书会的私人目的和规定首句；不应该看到「正确窗口 A」这样的评分提示。前者是他的处境，后者是判分答案。
+
+打开孟川的资料，应该看到他对现有灯光问题的初始经历；他的首次话语和周澈一样，容易被当成错误。
+
+打开余真的资料，他应该知道服务分工和咨询台位置，但初始不知道四项具体任务。他的共同策略是「对实际遇到且求助的人说明入口与已知地址，不替咨询台预先分类」。如果加上主动逐人问询，看起来只是人物更热情，实际会改变两组拿到的信息渠道。
+
+公共 Brain 可以要求「被问到后如实补充自己的目的」，但不能把各人的私人目的再汇总抄一遍。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.3　把人物初态与对象知识分别核对</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>逐人打开，各看各的</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 668, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 668, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 106, background: '#276FBF' }} />
+                <Box style={{ width: 602, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>核对周澈</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>应看到未来读书会的私人目的和规定首句</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>看不到「正确窗口 A」的评分提示</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 106, background: '#276FBF' }} />
+                <Box style={{ width: 602, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>核对孟川</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>应看到对现有灯光问题的初始经历</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>首次话语与周澈相同，这一点不是错误</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 106, background: '#26816B' }} />
+                <Box style={{ width: 602, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>核对余真</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>知道服务分工和咨询台位置，初始不知道四项具体任务</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>共同策略：说明入口与已知地址，不替咨询台预先分类</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 452, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ width: 452, height: 230, background: '#EDF4FC', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>公共 Brain 的写法</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65, width: 400 }}>可以要求「被问到后如实补充自己的目的」。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65, width: 400 }}>不能把各人的私人目的再汇总抄一遍，那等于把四份材料合并成一份。</Text>
+            </Box>
+
+            <Box style={{ width: 452, height: 200, background: '#FFF4E6', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>需要判断的地方</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.35 }}>多问一句也会改变条件</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65, width: 400 }}>给余真加上主动逐人问询，看起来只是人物更热情，实际上会改变两组拿到的信息渠道。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 27</Text>
+    </Box>
+
+</Slide>

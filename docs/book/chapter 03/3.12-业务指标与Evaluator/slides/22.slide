@@ -1,0 +1,40 @@
+<Slide notes={`就算对照做对了，结论也要说清它能推多远。
+如果统计显示，通知更正之后访客的行动更合理，这句话支持的其实是一件事：在我们当前的设定和模型条件下，出现了一次可以复现的仿真观察。它是站得住的。
+但它推不出真实世界。青禾里的四个人物是虚构的，他们没有代表真实社区的抽样依据。所以「真实居民一定也会这样行动」这种结论，我们没有资格下。
+我在写评分表的时候会把条件和结论绑在一起：这条分数是在什么设定、什么模型、什么窗口下得到的。
+仿真的价值在于，它让我们能在受控条件下反复观察一件事；它的边界也同样清楚，结论只对应当前设定。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.7　用对照说明改动是否有帮助</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>仿真里的观察，能推多远</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 170, background: '#ECF7F2', borderRadius: 10, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 80, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>这条结论支持什么</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>在当前的设定与模型条件下，通知更正之后访客的行动更合理；这是一次可以复现的仿真观察。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 210, background: '#FFF4E6', borderRadius: 10, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 110, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>这条结论不能推出什么</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>四名虚构人物没有代表真实社区的抽样依据，不足以推断真实居民一定会怎样行动。即使统计显示差别，也只支持当前设定和模型条件下的仿真观察。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

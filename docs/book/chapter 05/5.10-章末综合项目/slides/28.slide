@@ -1,0 +1,63 @@
+<Slide notes={`做完综合作业之后，很多人会问下一步往哪走。常见的三个方向，各自改变了不同的层，要重新核对的东西也完全不同。
+
+第一类是改变策略，比如用清单核对替代自由整理。这主要进入 Skill 和研究设计。策略一变，行为文本要重写，研究问题里比较的对象也跟着变。
+
+第二类是改变输入与场景，比如增加角色数量或者更换通知渠道。这需要重新核对信息分配、空间和比较条件。角色变多会影响走位和拥堵，通知渠道变了会改变信息到达的顺序。
+
+第三类是新增系统机制，比如真实队列容量、动态碰撞或者新的工具权限。这一类需要独立的工程设计与验证，不能由一句标准流程自动获得。
+
+先想清楚改的是哪一层，再决定要准备什么证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.7　进一步扩展时，先识别改变了哪一层</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三类扩展，各自改变哪一层</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>先识别改变了哪一层，再决定要重新核对什么、需要准备什么证据</Text>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 21 }}>
+
+            <Box style={{ width: 370, height: 340, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>改变策略</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>例如用清单核对替代自由整理</Text>
+                <Box style={{ width: 326, height: 168, background: '#FFFFFF', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>主要进入 Skill 和研究设计。策略变了，行为文本要重写，研究问题里比较的对象也跟着变。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 370, height: 340, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#26816B' }}>改变输入与场景</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>例如角色数量或通知渠道</Text>
+                <Box style={{ width: 326, height: 168, background: '#FFFFFF', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>需要重新核对信息分配、空间和比较条件。角色变多会影响走位与拥堵，渠道变了会改变信息到达顺序。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 370, height: 340, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>新增系统机制</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>例如真实队列容量、动态碰撞或新的工具权限</Text>
+                <Box style={{ width: 326, height: 168, background: '#FFFFFF', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>需要独立工程设计与验证。这类改动不能由一句 SOP 自动获得，要像新功能一样设计与核对。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同样的现象，可能来自完全不同的层</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>把扩展归到正确的层，才知道要重做哪一段设计、重新取得哪一类证据</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>28 / 31</Text>
+    </Box>
+
+</Slide>

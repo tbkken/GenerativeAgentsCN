@@ -1,0 +1,49 @@
+<Slide notes={`最后一块，也是整节最容易被跳过的一块：怎么知道真的做完了。
+
+答案是不要用一个「完成」概括所有工作。同一份资源，至少要分四栏记录：文稿备齐了吗？公共资源保存了吗？实验副本核对了吗？运行证据拿到了吗？
+
+这四栏允许状态不一样。文稿可能已经改好，图片却还没上传；公共 Skill 可能已经更新，实验里还是旧内容；预检可能通过了，但一次 Run 都还没跑。
+
+把这四栏分开记，接收者才能一眼看出哪些检查已经完成、哪些还需要继续，也才不会把「文件有了」当成「工作做完了」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.6　用状态表避免「文件有了就是完成了」</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ⑥</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>⑥</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>用状态表避免「文件有了就是完成了」</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 980 }}>接收检查至少分出四个并列核对项，它们允许有不同状态，不能只用一个绿色「完成」覆盖全部工作。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, gap: 14 }}>
+            <Box style={{ width: 230, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>文稿已备？</Text>
+            </Box>
+            <Box style={{ width: 230, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>公共资源已保存？</Text>
+            </Box>
+            <Box style={{ width: 230, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>实验副本已核对？</Text>
+            </Box>
+            <Box style={{ width: 230, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>运行证据已取得？</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 27</Text>
+    </Box>
+
+</Slide>

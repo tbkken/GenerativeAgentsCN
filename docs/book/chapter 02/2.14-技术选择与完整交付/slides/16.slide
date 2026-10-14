@@ -1,0 +1,69 @@
+<Slide notes={`对话里说得再好听，最后都要回到文件上确认。WorkBuddy 的界面右侧有几个面板，我用它们来核对。
+
+第一个是工作空间文件。打开 data 和 output 目录，看实际读的是什么、写出来的在哪里。这是最权威的一层。
+
+第二个是变更。看这一轮到底改了哪些文件，候选和最终排期是不是同一份，失败和修正的记录在不在。
+
+第三个是产物。交付文件的实际位置在这里，它应该和对话里给出的下载链接互相对应。
+
+如果用了浏览器预览，还要回到文件本身确认保存位置。因为预览看到的是渲染结果，不代表文件真的落到了那个路径上。
+
+一句话，对话里的说法和文件里的内容要能互相指认。对不上就以文件为准。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.3　一次完整的 WorkBuddy 路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>对话之外，回到文件确认</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 480, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 220, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>工作空间文件</Text>
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                    <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>data/ 是任务材料的权威来源</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                    <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>output/ 放本轮的产物与校验报告</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                    <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>读取以 data/ 为准，不用 fixtures/</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 160, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>先建立工作空间</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>复制本章练习目录，选副本作为任务工作空间，原始材料就不会被改动。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 648, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 190, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>变更</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>看这一轮改了哪些文件，候选与最终排期是不是同一份，失败与修正记录有没有留下。</Text>
+            </Box>
+
+            <Box style={{ height: 190, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>产物</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>交付文件的实际位置在这里，它应与对话中的下载链接、工具卡片互相对应。用浏览器预览后，仍要回到文件确认保存位置。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 25</Text>
+    </Box>
+
+</Slide>

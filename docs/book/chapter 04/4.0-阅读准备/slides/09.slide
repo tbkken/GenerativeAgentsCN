@@ -1,0 +1,62 @@
+<Slide notes={`用大厅那个咨询任务来举例会更清楚。
+
+人物自己为什么要来，属于私有材料，放在中间那一层。窗口的分工，按角色和对象的职责分配出去。
+
+正确的窗口和判据，留在评阅材料那一侧，不能出现在角色读得到的地方。右边写"共同材料"，只表示这些内容允许共同知道，仍然要说清它是从哪次初始输入、哪次感知或哪条消息拿到的。
+
+还有一点容易忽略：在普通记忆里写下一个地址，并不会自动建立导航需要的已知空间。这两件事在系统里是分开的，写进去不等于用得上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.2　以大厅咨询任务 H1 为例</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>姓名不同，不等于信息已隔离</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>三份材料，三种取得方式</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>能读到的内容，必须能说出它从哪条渠道来；说不出渠道的内容，就不能算角色"知道"。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.65 }}>在普通记忆里写入地址，不会自动建立导航所需的已知空间；地址与可达路径是两件事。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 716, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>共同材料</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>场所、公开规则、任务方法；说明通过初始资料、感知还是消息进入。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>私有材料</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>各人／对象自己的事实、目标、进度；不能借共享 Skill 或总结模板泄漏。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>评阅材料</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>完整条件、答案与判据；不实时帮助人物成功。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 20</Text>
+    </Box>
+
+</Slide>

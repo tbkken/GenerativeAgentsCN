@@ -1,0 +1,64 @@
+<Slide notes={`接下来这一块要说明两组到底做什么。
+
+我先把容易误解的地方说清楚：基线组和对照组在绝大多数环节上是完全一样的。相同的模型、相同的窗口、相同的工具可用性、相同的检索方式、相同的 SOP，连查询公告和提交申请的顺序都一样。
+
+它们唯一不一样的地方，是收到正式更正之后，怎么对待那条旧的当前会址信念。基线组是追加一条新信念，旧的那条仍然有效；对照组是用相同的新内容替代掉旧信念，让旧节点退出有效态、只留在历史里。
+
+所以这一块要先把共同部分讲透，下一块才讲那个唯一的差别。不然读者会以为两组连流程都不一样，那结果就说不清是什么造成的了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>2　　4.4.3</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>两组走的是同一套动作</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>条件式 SOP 逐字相同：什么时候查询、什么时候确认、什么时候才允许发送更正。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 14, marginTop: 10 }}>
+
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>基线组　与　对照组　—　相同的前半段</Text>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 304, height: 60, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#276FBF' }}>查询并保存信念</Text>
+                </Box>
+                <Box style={{ width: 44, height: 60, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 304, height: 60, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#276FBF' }}>报备并提交申请</Text>
+                </Box>
+                <Box style={{ width: 44, height: 60, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 304, height: 60, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#276FBF' }}>逐人收到正式更正</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 304, height: 60, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#546779' }}>同一模型与窗口</Text>
+                </Box>
+                <Box style={{ width: 44, height: 60 }} />
+                <Box style={{ width: 304, height: 60, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#546779' }}>同一检索与工具</Text>
+                </Box>
+                <Box style={{ width: 44, height: 60 }} />
+                <Box style={{ width: 304, height: 60, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#546779' }}>其余 SOP 相同</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

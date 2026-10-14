@@ -1,0 +1,88 @@
+<Slide notes={`第一轮回复拿到以后，先做核对，再谈方案。
+
+要核对的具体事实有三个：阅读室容量是三十人，阅读分享是二十四人，手作体验持续六十分钟。这三个数字要能在材料里一一对上。对不上的话，先别往下走。
+
+核对通过，再让它生成候选安排。这样分开做，就能区分“没有读到文件”和“读到了但理解错误”这两种失败。前者要检查材料有没有真的进任务，后者要检查提示和材料本身的表述。
+
+接下来是比较三种写法。三种提示要分别放在独立的任务里，不能在同一段对话里连着试——前一轮的对话已经把答案说出来了，后一轮就不是干净的开始。
+
+比较的时候，模型、材料、模式和工具配置都要保持一致。
+
+最后看结果，别只看对话里那句“已经完成”。要到“工作空间文件”或“产物”里打开实际文件，核对内容对不对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.5　WorkBuddy：先检查读到了什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先核对读到了什么，再生成</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 400 }}>
+
+            <Box style={{ width: 560, background: '#EDF4FC', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 5, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>先核对三件事</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
+                    <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                        <Text style={{ fontSize: 15, color: '#546779', width: 130 }}>阅读室容量</Text>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>三十人</Text>
+                    </Box>
+                    <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                        <Text style={{ fontSize: 15, color: '#546779', width: 130 }}>阅读分享</Text>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>二十四人</Text>
+                    </Box>
+                    <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                        <Text style={{ fontSize: 15, color: '#546779', width: 130 }}>手作体验时长</Text>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>六十分钟</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779' }}>逐条核对通过后，再让它生成候选安排。</Text>
+            </Box>
+
+            <Box style={{ width: 560, background: '#F4F7FA', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 5, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>比较时的三条纪律</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 4, height: 46, background: '#26816B' }} />
+                        <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>三种提示分别放在独立任务中</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 4, height: 46, background: '#26816B' }} />
+                        <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>保留同一模型、材料、模式与工具配置</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 4, height: 46, background: '#26816B' }} />
+                        <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>到“工作空间文件”或“产物”里核对</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779' }}>避免前一次对话已经把答案说出来。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 120, background: '#FFF4E6', borderRadius: 10, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 5, height: 62, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>图标与声明都不能当证据</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>只看到附件图标不足以证明文件内容已被使用；也不要只看对话里的完成声明，要打开实际文件核对内容。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

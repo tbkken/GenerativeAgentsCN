@@ -1,0 +1,53 @@
+<Slide notes={`远程工具还要单独过一遍，因为它的变量更多。
+
+三个设置要分别核对：这次导入哪些工具，发送调用之前怎样批准，服务端允许这个身份做什么。这三件事互相独立，不是协议规定的固定时序。
+
+有一个地方特别容易误判：把审批改成从不询问，并不能修好认证、网络或业务合同上的错误。它只是让调用者预先接受了数据发送。
+
+最后用一个停用练习收尾。把服务停掉，再提出同一个查询任务，看表现对不对；恢复服务之后，比较原始返回和最终答案里的房间、日期和时间区间是否一致。
+
+还要想一个问题：只读的服务是不是就不需要控制读取范围了？答案是需要，只读也可能读到不该暴露的内容。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.5　通过 OpenAI Responses 使用远程服务 · 2.6.7　本节练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>远程工具的独立检查</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.6.5 · 2.6.7</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>远程工具的独立检查</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#CB6B28' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>工具范围、审批与服务身份分别核对，停用练习做收尾。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>工具范围</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>审批过程</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>服务身份与授权</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 27</Text>
+    </Box>
+
+</Slide>

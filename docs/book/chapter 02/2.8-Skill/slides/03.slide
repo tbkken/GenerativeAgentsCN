@@ -1,0 +1,60 @@
+<Slide notes={`一个 Skill 说到底就是一个目录。它不需要平台、不需要数据库，你在文件管理器里就能把它看明白。
+
+目录里有四样东西。SKILL.md 是唯一的入口文件，写明适用条件和操作步骤。references 放青禾的教学规则和输入材料。scripts 放校验脚本和它依赖的辅助模块。assets 放方案的数据结构，也就是 schedule.schema.json。
+
+我想强调「自包含」这三个字：这套材料拿到别的机器上，只要目录完整，脚本就能按自己的位置找到 references，不需要额外配置。所以判断一个 Skill 好不好用，第一件事就是看这个目录能不能独立跑起来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.8.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>材料包里有什么</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>一个目录、一个 SKILL.md、三组辅助文件，就能描述一整套方法。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 264, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>SKILL.md</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>适用条件与操作步骤</Text>
+            </Box>
+            <Box style={{ width: 264, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>references/</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>青禾的规则与输入材料</Text>
+            </Box>
+            <Box style={{ width: 264, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>scripts/</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>校验脚本与辅助模块</Text>
+            </Box>
+            <Box style={{ width: 264, height: 88, background: '#F7F3E8', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>assets/</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>方案的数据结构</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 264, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>读得完、认得清、带得走的材料包</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 27</Text>
+    </Box>
+
+</Slide>

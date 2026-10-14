@@ -1,0 +1,44 @@
+<Slide notes={`两组的共同条件很多，真正的差异只有一处，我要把它讲得很窄。
+
+不管哪一组，每一轮都要根据当前虚拟日期、实际位置、有效进度和真实消息来决定下一件事。动作之前只记“待确认”，等下一轮有了提交事实或者目标回复支持，才更新成完成。一次性任务和按日期重复的活动要分开记。成功选择世界动作之后，这一轮就结束。
+
+两组都声明了同一个包内的原子依赖，名字叫校园事实整理，配置文字也完全相同，复制同一份。
+
+唯一的差别是：对照这一组在第一次发现当地日期变化、而且这一天还没有成功整理的时候，会额外调用一次事实整理子技能。多出来的就是这一次调用，没有任何额外权限，也没有更好的事实来源。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>2　　4.8.3 — 4.8.4</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>唯一变化：跨日时{'\n'}额外整理一次</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>共同规则、模型、依赖与检索实现都不动，只让对照多整理一次已有事实。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 320, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>两组共同的每轮规则</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 420, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>仅对照：跨日额外整理一次</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 320, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>证据链完整保留</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,51 @@
+<Slide notes={`第二个问题是：合同到底怎么写。
+
+很多团队写 Schema 的时候很随意，字段想起来就加，类型随手写个 string 就算完。这样写出来的合同挡不住错误，因为程序能核对的，只有你写清楚的那部分。
+
+一份适合程序使用的合同，至少要回答三件事：哪些字段必须出现，哪些字段只能取有限几个值，以及能不能临时加字段。
+
+这三件事看起来琐碎，但它们决定了错误会在哪一层被拦住。必填项写清楚，缺字段就不会一路跑到下游；枚举写清楚，房间名就不会一会儿叫阅读室、一会儿叫阅览室。
+
+下面我们就把本章这份合同拆开来看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 280, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.4.2　设计适合程序使用的合同</Text>
+        </Box>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>设计适合程序使用的合同</Text>
+        <Text style={{ fontSize: 17, color: '#546779' }}>合同写得越明确，程序越早发现错误，模型也越难自由发挥。</Text>
+    </Box>
+
+    <Box style={{ height: 360, background: '#EDF4FC', borderRadius: 14, padding: 24, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+        <Text style={{ fontSize: 16, color: '#276FBF', fontWeight: 'bold' }}>根对象的三个固定字段</Text>
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 344, height: 156, background: '#FFFFFF', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>date</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>方案针对哪一天</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#276FBF' }}>"2026-10-17"</Text>
+            </Box>
+            <Box style={{ width: 344, height: 156, background: '#FFFFFF', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>timezone</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>所有时刻按哪个时区理解</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#276FBF' }}>"Asia/Shanghai"</Text>
+            </Box>
+            <Box style={{ width: 344, height: 156, background: '#FFFFFF', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>activities</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>方案里的活动列表</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#276FBF' }}>[ ... ]</Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 23</Text>
+    </Box>
+
+</Slide>

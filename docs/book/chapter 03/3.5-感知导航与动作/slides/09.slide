@@ -1,0 +1,77 @@
+<Slide notes={`导航接受两种目标，二选一，不能同时发。
+
+第一种是 target_coord，一个可见范围内的坐标，比如公告栏旁边的某一格。第二种是 target_address，用三层或四层地址指定目标，比如中心、阅读区、公告栏这样的层级组合，前提是这个地址在当前已感知或系统已知的空间上下文里。
+
+最容易犯的错是拼地址：把“那边的教室”这种自然语言说法直接拼成一条路径。地址的每一层都必须来自实际材料或工具结果，自创的路径过不了校验。
+
+选哪种参数，取决于手头证据是坐标还是地址，而不是哪个写着方便。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.2　导航是查询，不是移动</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两种参数，二选一</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 60, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两种参数二选一，不同时发送</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>地址的每一层都必须来自实际材料或工具结果</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 556, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>target_coord</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可见范围内的目标坐标</Text>
+                <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF' }}>(x, y)</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>目标必须落在当前视野之内，超出可见范围的坐标不会被接受。</Text>
+            </Box>
+
+            <Box style={{ width: 556, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>target_address</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>已感知或系统已知空间中的三层／四层地址</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Box style={{ flexDirection: 'row', gap: 8 }}>
+                        <Box style={{ width: 64, height: 40, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#FFFFFF' }}>一层</Text>
+                        </Box>
+                        <Box style={{ flex: 1, height: 40, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#26816B' }}>青禾社区学习中心</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 8 }}>
+                        <Box style={{ width: 64, height: 40, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#FFFFFF' }}>三层</Text>
+                        </Box>
+                        <Box style={{ flex: 1, height: 40, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#26816B' }}>阅读区</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 8 }}>
+                        <Box style={{ width: 64, height: 40, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#FFFFFF' }}>四层</Text>
+                        </Box>
+                        <Box style={{ flex: 1, height: 40, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#26816B' }}>公告栏</Text>
+                        </Box>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>地址来自感知结果或允许的已知空间，不能自创。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,77 @@
+<Slide notes={`还有一个问题没回答：模型怎么把相隔较远的信息联系起来？
+
+先看一件具体的事。手作室的信息是"容量 12 人"，手作活动的信息是"拟安排 15 人"。这两条信息要一起用，才能得出"超出容量"这个判断。它们不是各自独立的，必须被放到一起比较。
+
+还有一组对照很能说明问题。"甲交给乙"和"乙交给甲"，用的字完全一样，只是顺序不同，但意思正好相反。模型如果丢掉了顺序，这两句话就分不出来了。
+
+支撑这两件事的，是 Transformer 里的注意力机制。它让不同位置的信息可以相互关联，同时位置与顺序的信息也参与计算。
+
+这里有两点要提醒。第一，"注意力"是一个技术名称，它不表示模型有主观体验或者专注状态。第二，模型能关联信息，不等于它一定会把 12 和 15 比对，判断是否正确仍然要单独检查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.3　一段回答是怎样生成的</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>关联与顺序，都在参与计算</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 36 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>两条信息要一起用</Text>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, border: '1px solid #B5C7D8' }}>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>手作室</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>容量 12 人</Text>
+                </Box>
+                <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, border: '1px solid #B5C7D8' }}>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>手作活动</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>拟安排 15 人</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 120 }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', border: '1px solid #E5C9A8', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>比较约束：15 大于 12</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>超出容量</Text>
+            </Box>
+
+            <Text style={{ fontSize: 15, color: '#546779' }}>把两条相关信息放在一起，才能得出超出容量这个结论。</Text>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>同样的词，顺序不同</Text>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', border: '1px solid #B5C7D8', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>过程甲</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>甲 交给 乙</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>钥匙从甲手里到了乙手里</Text>
+            </Box>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', border: '1px solid #B5C7D8', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>过程乙</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>乙 交给 甲</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>钥匙从乙手里到了甲手里</Text>
+            </Box>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>用词相同、顺序相反，含义正好相反。位置与顺序的信息也参与计算。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>注意力机制让不同位置的信息相互关联；连线含义为示意，不是真实注意力权重。</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 26</Text>
+    </Box>
+
+</Slide>

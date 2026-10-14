@@ -1,0 +1,63 @@
+<Slide notes={`四类文件都能拿到，但能做的事差别很大，所以清单不能只写「一个 ZIP」。
+
+普通结果 ZIP 能查看固定提交边界里的结果、报告和审计材料；要核对它的内容范围和来源 Step，它不会自动变成正式 Run 包。
+
+config 资源包通常是 .zip，能导入所选的地图、人物、Skill 等基础资源；要核对它自身的附件和跨资源依赖，不能当成已完成的实验。
+
+exp 和 .gaexp 能取得完整实验输入与装配；要核对协议、完整性、环境和执行条件。
+
+run 和 .garun 能取得内嵌实验与执行事实，供回放以及符合条件的恢复和重跑；要核对身份、帧、恢复边界和目标环境。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.3　四类文件对应不同用途</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>能做什么，还要核对什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 34, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 20 }} />
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 220 }}>类型</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 420 }}>接收者可以据此做什么</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 436 }}>仍需核对什么</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F7F3E8', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 220 }}>普通结果 ZIP</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 420 }}>查看固定提交边界的结果、报告与审计材料</Text>
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, width: 436 }}>内容范围、来源 Step；它不自动成为正式 Run 包</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 220 }}>config　资源包</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 420 }}>导入所选地图、人物、Skill 等基础资源</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 436 }}>自身附件及跨资源依赖，不能当作已完成实验</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 220 }}>exp　.gaexp</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 420 }}>取得完整实验输入与装配</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 436 }}>协议、完整性、环境和执行条件</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 220 }}>run　.garun</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 420 }}>取得内嵌实验与执行事实，供回放及符合条件的恢复／重跑</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 436 }}>身份、帧、恢复边界和目标环境</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,50 @@
+<Slide notes={`「获知」这两个字最容易出问题，因为附近有一块新公告，不等于参与者真的知道了。
+所以我要求在运行之前就选定一种证据口径，比如成功读取正式内容之后形成的有效记忆，或者明确确认新时间已经生效的回复。选了哪一种，所有样本都得用同一种。
+第二种情形要特别小心：服务台只是说「可以考虑十点三十」，这只是候选方案，不能直接算成获知了正式更正。候选和正式发布是两回事。
+第三种情形是只有行动没有知识证据。这时候我把结论写成「行为符合新安排」，而不去推断他内部已经理解了新安排。
+口径必须在动手之前定，不能等结果出来，再挑一个看起来好看的证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.2　先定义分母和观察窗口</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先选一种证据口径，再谈谁获知了</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>选定一种口径</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>运行前确定用什么算获知：成功读取正式内容后形成的有效记忆，或明确确认新时间已生效的回复；所有样本一致使用</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>候选方案</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>服务台提出「可考虑 10:30」只是候选方案，不能直接计作获知正式更正</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>不推断理解</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>只有外在行动而没有知识证据时，结论写成「行为符合新安排」，不推断内部已经理解</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>「获知」不能等同于附近有一块新公告</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>口径在运行前选定，并在所有样本中一致使用；不能等结果出来之后，再回头挑一个看起来好看的证据。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

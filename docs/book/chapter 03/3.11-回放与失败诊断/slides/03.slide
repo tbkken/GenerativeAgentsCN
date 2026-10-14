@@ -1,0 +1,44 @@
+<Slide notes={`这一块要解决的问题只有一个：凭什么说一件事真的发生过。
+
+一次行动在系统里其实走了好几段路。模型先提出行动，MCP 校验身份、权限和参数，校验通过以后动作选择被接受，这一步只说明「这个选择被允许」，根 Skill 在这一轮就结束了，世界还没有任何改变。
+
+真正的变化发生在世界提交之后，由 StepResult 把本步的参与者状态、事件、效果和会话统一记录下来，再由持久边界推进可见状态和 committed_step。
+
+回放读的就是这条线之后的已提交事实，而不是模型说过什么。记住这个顺序，后面判断一个结论站不站得住，就有了统一的尺子。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>①　　3.11.1 — 3.11.2</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>事实从哪里来</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>画面与活动文字只是过程；能证明世界发生改变的，是提交到持久边界的事实。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>动作被接受</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>World Commit</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>Replay 只读</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 27</Text>
+    </Box>
+
+</Slide>

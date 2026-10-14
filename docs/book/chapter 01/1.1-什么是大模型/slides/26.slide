@@ -1,0 +1,54 @@
+<Slide notes={`我们把这一节收一下。五句话，请大家带走。
+
+第一句，会写不等于写得对。模型能写出通顺、完整、看起来很专业的方案，但通顺和正确是两回事。我们开头那份开放日方案就是例子。
+
+第二句，Token 是片段，不是字数。一个片段可能是字、词的一部分或者标点，没有固定换算。编号负责查位置，向量负责参与计算，它们都不等于词义。
+
+第三句，回答是一步一步接上去的。模型每生成一个片段，就把它接回已有内容，再继续。它停下来，可能是写完了，也可能是撞到了长度上限。
+
+第四句，训练改的是参数，日常提问通常只改这一次的上下文。今天交给它的材料，下一次不一定还在。
+
+第五句，出错的时候不要只说"幻觉"。记录具体错在哪，定位它是参数、上下文、外部资料还是持久记忆的问题，检查才有落点。
+
+这五句话，就是我们后面阅读评测指标时的底子。`} style={{ width: 1280, height: 720, background: '#F4F7FA', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 150, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
+        <Text style={{ fontSize: 14, color: '#26816B' }}>1.1 小结</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>本节回顾</Text>
+    </Box>
+
+    <Box style={{ height: 450, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 14 }}>
+
+        <Box style={{ width: 900, flexDirection: 'row', gap: 18, alignItems: 'center', background: '#FFFFFF', borderRadius: 10, padding: '16px 22px' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', width: 34 }}>01</Text>
+            <Text style={{ fontSize: 19, color: '#20344B' }}>会写，不等于写得对</Text>
+        </Box>
+
+        <Box style={{ width: 900, flexDirection: 'row', gap: 18, alignItems: 'center', background: '#FFFFFF', borderRadius: 10, padding: '16px 22px' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', width: 34 }}>02</Text>
+            <Text style={{ fontSize: 19, color: '#20344B' }}>Token 是片段，不是字数；编号查位置，向量做计算</Text>
+        </Box>
+
+        <Box style={{ width: 900, flexDirection: 'row', gap: 18, alignItems: 'center', background: '#FFFFFF', borderRadius: 10, padding: '16px 22px' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', width: 34 }}>03</Text>
+            <Text style={{ fontSize: 19, color: '#20344B' }}>回答是一步一步接上去的，停下来可能是写完了，也可能是到了上限</Text>
+        </Box>
+
+        <Box style={{ width: 900, flexDirection: 'row', gap: 18, alignItems: 'center', background: '#FFFFFF', borderRadius: 10, padding: '16px 22px' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', width: 34 }}>04</Text>
+            <Text style={{ fontSize: 19, color: '#20344B' }}>训练改参数，提问通常只改这一次的上下文</Text>
+        </Box>
+
+        <Box style={{ width: 900, flexDirection: 'row', gap: 18, alignItems: 'center', background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', border: '1px solid #E5C9A8' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28', width: 34 }}>05</Text>
+            <Text style={{ fontSize: 19, color: '#CB6B28' }}>出错时落到具体环节去查，不要只说"幻觉"</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>下一节：1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 26</Text>
+    </Box>
+
+</Slide>

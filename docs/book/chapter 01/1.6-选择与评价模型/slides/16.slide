@@ -1,0 +1,69 @@
+<Slide notes={`两个候选都答对了二十四项里的二十项，这是同一个数字。但它们的失败落在完全不同的地方。
+
+第一个候选主要的失败方式是漏写非关键说明，比如少写了一句备注、少列了一项待确认事项。这类问题人用之前读一遍就能发现，补上也很快。
+
+第二个候选的问题是：在查询失败的时候，宣布预约已经成功。这是无依据的完成声明。它只出现几次，但每一次都可能让下游的人以为事情已经办好了。
+
+如果这两个候选分别被派去起草活动宣传语，前者完全可以接受，人在发布前会自己看一遍。如果被派去自动处理预约状态，后者的那两次声明就值得优先分析，而且不能被更低的费用掩盖。
+
+还有一句要提醒：候选乙在这二十四项里没有出现这类错误，也不代表它以后永远不会出现。零次观察不等于永不出错，它只说明这次没看到。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.4　第四步：先看错误分布，再看总分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同样二十项，风险不一样</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>同样答对二十项任务，两个候选可能很不一样。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 130, background: '#EDF4FC', borderRadius: 12, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#276FBF', lineHeight: 1 }}>20/24</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>候选一</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>同样的成功数</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, height: 130, background: '#EDF4FC', borderRadius: 12, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#276FBF', lineHeight: 1 }}>20/24</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>候选二</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>同样的成功数</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 160, background: '#ECF7F2', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>主要漏写非关键说明</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>少了备注或待确认事项，人在使用前读一遍就能发现并补上。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 160, background: '#FFF4E6', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>查询失败时宣布预约成功</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>无依据的完成声明，会让下游以为事情已经办妥，必须优先分析。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 60, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 34, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B' }}>为零次观察不证明永不出错；任务不同，同一个数字的含义也不一样。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 27</Text>
+    </Box>
+
+</Slide>

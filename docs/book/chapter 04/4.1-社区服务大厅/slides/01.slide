@@ -1,0 +1,62 @@
+<Slide notes={`我们要观察的问题很具体：把咨询台多说的一句话改掉，会不会让人少走一次冤枉路。
+
+四位来访者走进青禾社区便民服务站。第一位想借活动室办读书会，第二位想预约手工作品展示，他们说的话几乎一样；第三位和第四位发现灯出了问题，说的也几乎一样。
+
+关键在于，同一句话背后可能是安排未来，也可能是报告现在，而这两件事归不同的窗口管。
+
+这一节我不模拟审批、维修和排队，只比较咨询策略：先问清楚，究竟省了什么，又添了什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.1　案例一</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>先问清楚，{'\n'}会不会少走一次？</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>四个人走进同一个社区服务大厅。他们说的第一句话几乎一样，心里要办的事却不一样。咨询台多说一句，可能省下一次往返，也可能多等一会儿。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>四人四任务</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>两个窗口</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>唯一变化</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 600, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>四个人提交的规定首句</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>“我想问活动室灯光的事。”</Text>
+            </Box>
+            <Box style={{ width: 600, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>咨询台</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>缺一个字段时，追问它，还是先给一次最可能的建议？</Text>
+            </Box>
+            <Box style={{ width: 600, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 290, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>A 窗口</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>安排未来的{'\n'}场地与设施使用</Text>
+                </Box>
+                <Box style={{ width: 290, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>B 窗口</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>报告现在的{'\n'}设施故障与现象</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

@@ -1,0 +1,52 @@
+<Slide notes={`请求这一侧，运行时会提供 request_id，也就是这次请求的身份；还有 agent_key 和 agent_name，说明是谁提出来的；再带上请求内容与观察时间。
+
+回复这一侧更严格：对象只能引用自己当前待处理的真实请求 ID，答复正文写在 message 里，并必须通过本次 world-act 的 responses 提交出去。
+
+如果只把答复写进最终总结，那不算发送，谁也不会收到；重复、伪造或不属于该对象的请求 ID，都会被拒绝。
+
+校验落在对象交互系统里，可对照 GameObjectInteractionSystem.interact_selected 去读。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.2　INTERACT 只负责发出请求</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>请求与回复要带什么字段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 312, background: '#EDF4FC', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>请求侧：带什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.9 }}>·　request_id　运行时提供的请求身份{'\n'}·　agent_key 与 agent_name　是谁提的{'\n'}·　请求内容　例如查询当前公告正文{'\n'}·　观察时间　提出请求的时刻</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>选择键必须从感知结果里取，不能按名字自己拼写。</Text>
+            </Box>
+
+            <Box style={{ width: 566, height: 312, background: '#ECF7F2', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>回复侧：怎么回</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.9 }}>·　只能引用自己当前待处理的真实请求 ID{'\n'}·　答复正文写在 message 里{'\n'}·　必须通过本次动作的 responses 提交{'\n'}·　重复、伪造或不属于该对象的 ID 会被拒绝</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>只写在最终总结里的答复，等于没有发送。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>回复恰好一次、只投递给真实接收者，不向全场广播</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#20344B' }} />
+            <Text style={{ fontSize: 14, color: '#546779' }}>源码定位：GameObjectInteractionSystem.interact_selected</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 31</Text>
+    </Box>
+
+</Slide>

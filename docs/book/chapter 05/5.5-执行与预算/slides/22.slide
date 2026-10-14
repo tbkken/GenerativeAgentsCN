@@ -1,0 +1,97 @@
+<Slide notes={`这五个对应关系可以横向读：左边问的是“这件事属于什么”，右边给出的是“所以下一步查什么”。
+
+猜错窗口属于策略行为结果，不是故障，保留下来继续观察纠错与成本。正确权限拒绝说明我们的参数或边界有问题，要回去检查真实输入。反复请求失败通常同时牵涉调用和预算，所以先核对类型，再看进展和预算还剩多少。路径事实、对象反馈或页面身份违反合同，属于实际系统问题，要停止当前构建或运行的验收，保存证据并报告具体问题。达到预算但还没闭环，就把未完成状态保留下来，交由负责人决定后续阶段。
+
+左右两列不是先后的执行顺序，而是同一现象的两面。两列之间没有箭头，正是因为它们不构成一条流水线。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.5　故障决策应指向不同的下一步</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>属于什么，决定下一步查什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>左右两列是同一现象的两面，不是先后顺序：左列说明它属于什么，右列给出对应该查哪里、该做什么。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 556, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ height: 44, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', padding: '0 20px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>属于什么</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#546779' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>猜错窗口</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>策略行为结果</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#546779' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>正确权限拒绝</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>参数或边界问题</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#546779' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>反复请求失败</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>调用与预算问题</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 72, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>事实违反合同</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>实际系统问题</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 72, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>预算已达到</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>项目停止条件</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 556, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', padding: '0 20px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>下一步</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>保留并观察纠错与成本</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>检查真实输入与 SOP</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>核对类型、预算与进展</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>留证并停止该项验收</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>记录未完成状态与决定</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 28</Text>
+    </Box>
+
+</Slide>

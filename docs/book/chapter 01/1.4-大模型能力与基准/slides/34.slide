@@ -1,0 +1,63 @@
+<Slide notes={`第二个错题案例来自 Epoch 自己。FrontierMath 第一版 2024 年 11 月发布，参与出题的有六十多位数学家。
+
+后来 Epoch 自己审计了一次，结论不太好看：四成以上的题目有错，包括题面有问题、参考答案有误、判分规则不对。对研究级数学题来说，这个比例相当高。
+
+于是在 2026 年 6 月 12 日，他们发布了修正后的第二版。第二版共三百三十八道题：第一到第三层二百九十五道，第四层四十三道；其中第四层修正了十二道、删掉了七道。公开可见的只有十二道，其余都是私有的。
+
+这说明，一个基准连出题人自己都会审出错。所以引用任何分数，都要看版本和审计记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑥　1.4.6　错题三：出题人自己审出错题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>FrontierMath：一次评审改了四成</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 354, height: 250, background: '#F7F3E8', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>2024-11</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>v1 发布</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>六十多位数学家参与出题与复核，大量题目是研究级难度。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>当时被当作数学能力的标杆</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#CB6B28' }}>›</Text></Box>
+
+            <Box style={{ width: 354, height: 250, background: '#FFF4E6', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>审计</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>42% 的题有错</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>题面本身有误、参考答案不对、判分规则有问题——出题方自查得出。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>对研究级题目来说，这个比例很高</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 354, height: 250, background: '#ECF7F2', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>2026-06-12</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>v2 修正发布</Text>
+                <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>共 338 题 = 第 1–3 层 295 题 ＋ 第 4 层 43 题；修正 12 题、删 7 题。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#26816B' }}>仅 12 题公开，其余为私有集</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>连出题人自己都会审出错题；引用任何分数，都要看版本号与审计记录，新旧分数不可混用</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>34 / 36</Text>
+    </Box>
+
+</Slide>

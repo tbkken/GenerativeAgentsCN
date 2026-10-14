@@ -1,0 +1,80 @@
+<Slide notes={`这一节我打算按四步走。
+
+第一步先把事项的身份分清：一次性任务、周期活动、自愿承诺，这三类东西的“结束”和“重复”含义完全不同，混在一起就没办法判断昨天办完的事今天要不要再办。
+
+第二步把时间账算清楚：起点定在十月十九日早上八点，步长十分钟，那么跑满二十四小时到底是第几步，跨过午夜又意味着什么。
+
+第三步是唯一改动的地方：对照这一组在第一次发现当地日期变化、而当天还没有成功整理的时候，额外调用一次事实整理子技能，其余条件两组完全一样。
+
+第四步看账怎么算：四个指标的分子分母从哪里来，人工判分算出的百分之四十、百分之百和百分之七十五分别说明什么，以及预算为什么要在开跑之前先定好。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8　长时程校园生活：跨过午夜以后，还记得什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 18 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 300 }}>先把事项身份和时间窗立好，再只改一处整理策略，最后核对比率与成本是怎么算出来的。</Text>
+            <Box style={{ width: 300, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>唯一变量是什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>World、Sector、人物、模型、依赖与检索实现都不动，只让对照多整理一次</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把三类事项分开，再把时间账算清</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>一次性任务、周期活动、自愿承诺身份不同，承诺还先要有人明确接受。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>唯一变化：跨日时额外整理一次</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>首次发现日期变化且本日未成功整理时，才多调用一次整理子技能。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>四个指标的分子、分母与人工判分</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>重复、闭环、承诺兑现、整理保真各有各的分母，不能互相推得。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>预算在长跑之前固定，失败沿五步定位</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>先定好停下来重评的条件，再沿记忆链路找出是哪里丢了事实。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 27</Text>
+    </Box>
+
+</Slide>

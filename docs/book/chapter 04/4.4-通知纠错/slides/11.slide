@@ -1,0 +1,45 @@
+<Slide notes={`现在讲本节唯一的变化。
+
+两条会址分支写进记忆的新内容是完全相同的，都写着本次正式会址改为杉厅、来源是正式更正，以及生效时间。操作不同在哪里？区别只在原来那条「本次正式会址为杏厅」的当前信念，还剩不剩下有效状态。
+
+基线组用追加：新信念进来了，旧的那条也还活着，两条都在有效态里。对照组用替代：用相同的新内容替换掉旧的那条，旧节点保留在历史里，但不再作为当前有效信念被检索。
+
+这一步为什么值得单独做实验？因为很多系统默认就是追加，谁也没规定新消息一定让旧消息失效。而人物在行动前要检索一次，如果检索把旧的那条取回来，他就可能照旧走去杏厅。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3　　4.4.4</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>唯一变化：旧信念还算不算数</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>写进去的新内容完全相同，变的只是原来那条当前会址信念是否还在有效态里。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 140, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 5 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>当前信念</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>本次正式会址为杏厅</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>使用实际存储的记忆 ID</Text>
+            </Box>
+            <Box style={{ width: 44, height: 140, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 380, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 380, height: 66, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>追加：旧当前信念仍有效</Text>
+                </Box>
+                <Box style={{ width: 380, height: 66, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>替代：旧节点退出有效态</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

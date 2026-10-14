@@ -1,0 +1,108 @@
+<Slide notes={`六套常被引用的样本集放在一起，看的是它们的构成差别。
+
+HLE 两千五百题，专家级闭卷问答，覆盖一百多学科，另有更严格的子集 Diamond。
+
+GPQA Diamond 只有一百九十八题，全是生物、物理、化学的四选一，设计目标就是搜不到答案，专家约八成。
+
+SWE-bench Verified 是五百道真实仓库的问题记录，改代码、跑测试，已在 2026 年 2 月退役。
+
+FrontierMath 第四层只有四十三道研究级数学题，私有题集，2026 年 6 月修正过。
+
+ARC-AGI-2 是视觉格子推理题，每道必须完全答对，没有部分分。MMLU-Pro 约一万两千道十选一，覆盖十四学科。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>③　1.4.3　样本集：六套常被引用的题库放在一起看</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六套样本集总览</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 8 }}>
+            <Box style={{ width: 248, height: 40, justifyContent: 'center', padding: '0 16px' }}><Text style={{ fontSize: 14, color: '#546779' }}>样本集</Text></Box>
+            <Box style={{ width: 196, height: 40, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#546779' }}>题量</Text></Box>
+            <Box style={{ width: 688, height: 40, justifyContent: 'center', padding: '0 18px' }}><Text style={{ fontSize: 14, color: '#546779' }}>题目构成与状态</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 8 }}>
+            <Box style={{ width: 248, height: 70, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>HLE</Text>
+            </Box>
+            <Box style={{ width: 196, height: 70, background: '#F4F7FA', borderRadius: 8, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>2,500</Text>
+            </Box>
+            <Box style={{ width: 688, height: 70, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>专家级闭卷问答，覆盖 100 多个学科；24% 选择题，其余简答</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 8 }}>
+            <Box style={{ width: 248, height: 70, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>GPQA Diamond</Text>
+            </Box>
+            <Box style={{ width: 196, height: 70, background: '#F4F7FA', borderRadius: 8, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>198</Text>
+            </Box>
+            <Box style={{ width: 688, height: 70, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>生／物／化四选一，设计目标就是联网搜不到；专家约 81%</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 8 }}>
+            <Box style={{ width: 248, height: 70, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>SWE-bench Verified</Text>
+            </Box>
+            <Box style={{ width: 196, height: 70, background: '#F4F7FA', borderRadius: 8, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>500</Text>
+            </Box>
+            <Box style={{ width: 688, height: 70, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>真实仓库问题记录，改代码并跑测试；2026 年 2 月退役</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 8 }}>
+            <Box style={{ width: 248, height: 70, background: '#F7F3E8', borderRadius: 8, padding: '0 16px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>FrontierMath Tier 4</Text>
+            </Box>
+            <Box style={{ width: 196, height: 70, background: '#F4F7FA', borderRadius: 8, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>43</Text>
+            </Box>
+            <Box style={{ width: 688, height: 70, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>研究级数学，私有题集；v2 于 2026 年 6 月修正</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 8 }}>
+            <Box style={{ width: 248, height: 70, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>ARC-AGI-2</Text>
+            </Box>
+            <Box style={{ width: 196, height: 70, background: '#F4F7FA', borderRadius: 8, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>数百</Text>
+            </Box>
+            <Box style={{ width: 688, height: 70, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>视觉格子推理，全靠现场推规则；每格必须对齐，无部分分</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 8 }}>
+            <Box style={{ width: 248, height: 70, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>MMLU-Pro</Text>
+            </Box>
+            <Box style={{ width: 196, height: 70, background: '#F4F7FA', borderRadius: 8, alignItems: 'center', justifyContent: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>约 1.2 万</Text>
+            </Box>
+            <Box style={{ width: 688, height: 70, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>十选一的多学科选择题，覆盖 14 个学科；选项多降低蒙对概率</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 36</Text>
+    </Box>
+
+</Slide>

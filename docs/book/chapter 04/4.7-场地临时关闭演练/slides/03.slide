@@ -1,0 +1,48 @@
+<Slide notes={`先把场地本身说清楚，后面的对照才站得住。
+这是一张 17 列 11 行的作者网格，坐标从 0 开始数。最外一圈边框是阻挡，内部有一道竖墙落在 x 等于 8 这一列，除了两个口子以外都是实心的。上面那个口子在 y 等于 3，下面那个在 y 等于 8，基线布局里两个都是通的。
+两处缺口虽然在同一道墙上，位置的意义并不一样：上面的口子紧贴北部和中部几个人的行进方向，下面的口子更靠近南侧。
+这个位置差正是后面解释「为什么关闭对三个人的影响不一样」的起点。南区的人物在基线里本来就可能走下面这个口子，封掉上面那一个，对他们几乎没有额外负担。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>①　　4.7.1 用地图说明唯一干预</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先把场地画出来</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>17 列 11 行的作者网格，一道竖墙在 x = 8，基线上口与下口都开。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 200, height: 56, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>墙段</Text>
+            </Box>
+            <Box style={{ width: 220, height: 56, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>通口 (8,3)</Text>
+            </Box>
+            <Box style={{ width: 200, height: 56, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>墙段</Text>
+            </Box>
+            <Box style={{ width: 220, height: 56, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>通口 (8,8)</Text>
+            </Box>
+            <Box style={{ width: 200, height: 56, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>墙段</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 4 }}>
+            <Box style={{ width: 84, height: 30, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779' }}>坐标从 0 开始，外边框阻挡；两处缺口都在同一道竖墙上</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 26</Text>
+    </Box>
+
+</Slide>

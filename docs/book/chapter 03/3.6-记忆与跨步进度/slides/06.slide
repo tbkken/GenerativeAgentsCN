@@ -1,0 +1,82 @@
+<Slide notes={`还要澄清一个常见误解：模型并不会天然记得整段 Run 的全部历史。
+
+每一轮，运行时通过 IterationContext 把当轮输入交给 Brain——当前身份、时间、坐标、空间语义与运行变量。Agent 一侧的变量包括人物资料、current_action、known_spatial_memory 和新收到的 external_observations。
+
+所以跨轮的连续性不是免费的，要靠记忆工具显式维护：该记的打算、该标的待确认，都得写进记忆流，下一轮才拿得到。
+
+反过来也要记住：本轮输入只是本轮的快照，不能拿它推断角色记得整段历史。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.1　三种容易混在一起的内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本轮输入，不等于整段历史</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>模型不会天然记得{'\n'}整段 Run 的历史</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>每轮拿到的是当轮输入；跨轮的连续性要靠记忆工具显式维护——该写的打算、该标的待确认，都要进记忆流。</Text>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 170, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>IterationContext　给出本轮输入</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ flex: 1, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>当前身份</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>时间</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>坐标</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>空间语义</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>运行变量</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>BrainRuntime._agent_variables　组织这些当轮输入</Text>
+            </Box>
+
+            <Box style={{ height: 190, background: '#F7F3E8', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Agent 的变量</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ flex: 1, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#20344B' }}>人物资料</Text>
+                    </Box>
+                    <Box style={{ flex: 1.2, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#20344B' }}>current_action</Text>
+                    </Box>
+                    <Box style={{ flex: 1.6, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#20344B' }}>known_spatial_memory</Text>
+                    </Box>
+                    <Box style={{ flex: 1.6, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#20344B' }}>external_observations</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>新收到的观察在变量里，过去的轮次不在——它们只存在于记忆流</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>这些是本轮输入，不等于模型天然记得整段 Run 的所有历史</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

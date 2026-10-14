@@ -1,0 +1,60 @@
+<Slide notes={`有三件事不能省，我逐条说。
+
+第一件，不能拿房间 ID 代替 call_id 去匹配结果。房间是会重复出现的：十分钟前查过一次 craft，现在再查一次，两次的房间编号一模一样。只有 call_id 能说明这条结果是哪一次请求的答案。
+
+第二件，不能把不同工具的结果随意拼接。查询工具给的是预约记录和查询范围，校验工具给的是通过与否的判定，两者的含义完全不同，混在一起就说不清哪条支持哪个结论。
+
+第三件才是正确做法：先保留完整的 response.output，再把对应结果追加进去。顺序对了，每条结果各归各位，后面核对的时候才有依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.2　一轮调用包含哪些证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>不能替换，也不能随意拼接</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>图省事的三种写法</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>前两种看上去都能跑通，问题出在结果多了以后：一旦有两条以上工具结果，就没有办法说明哪条支持哪个结论。</Text>
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 120, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不能换成房间 ID</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>房间会重复出现，只有 call_id 能说明这条结果属于哪一次请求。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 120, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不能把不同工具的结果随意拼接</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>查询与校验返回的是两类东西，混在一起就分不清哪条支持哪个结论。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 120, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 72, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>保留完整输出，再逐条追加</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先留住完整 response.output，再按 call_id 把每条结果放进历史。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 26</Text>
+    </Box>
+
+</Slide>

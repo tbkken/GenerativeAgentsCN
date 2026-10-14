@@ -1,0 +1,73 @@
+<Slide notes={`检查一次行为，把三个层次连起来看。
+
+第一层，Brain 得到的输入是什么：身份、记忆、消息——没读到的它不可能知道。第二层，通过哪些工具获得新证据：检索、感知、调用子 Skill，每次调用都留下轨迹。第三层，最终提交了什么动作：有没有被接受、进入 World Commit。
+
+"我已经通知了大家"不能当验收，它只说明模型生成了文本。证明通知要找到真实的 SPEAK 或对象回复事实；证明公告更新要找到状态变化。accepted: true 也首先只表示请求被接受，仍须以 World Commit 与 StepResult 核对。
+
+只看最后一句回答，无法判断有没有跳过咨询、误用建议或提前宣布成功。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.5　怎样判断 Brain 做对了</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个层次连起来看</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, color: '#20344B' }}>「我已经通知了大家」——这句话只说明模型生成了文本</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 344, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>Brain 得到的输入是什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>身份、记忆、消息；没读到的它不可能知道</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 344, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>通过哪些工具获得新证据</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>检索、感知、调用子 Skill，每次调用留下轨迹</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 344, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>最终提交了什么动作</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>world-act 是否被接受、是否进入 World Commit</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>要什么才算证据</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>证明通知发生 → 真实的 SPEAK 或对象回复事实；证明公告更新 → 对象提交的状态变化。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>accepted: true 还不是结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>首先表示动作请求已被接受，之后仍须以 World Commit 和已提交 StepResult 核对结果。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 34, background: '#20344B' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>只看最后一句回答，无法判断有没有跳过咨询、误用子技能建议或提前宣布成功。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 22</Text>
+    </Box>
+
+</Slide>

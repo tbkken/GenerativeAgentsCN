@@ -1,0 +1,77 @@
+<Slide notes={`左边是第二章的设想：Embedding 把查询和记忆都变成向量，按语义相似度取近邻。右边才是当前文件记忆的实现：把查询与记忆内容做文本切分，按词项重叠得到分数，再结合重要度和创建时间排序，返回值标注 retrieval_method 为 file_lexical。
+
+差别落在行为上：同义改写和指代省略，在向量检索里也许还能命中，在词法匹配里就可能漏；反过来，词面一致但语义无关的便签也可能挤进结果。
+
+所以不能因为工具描述用了“语义检索”的表达，就把这里写成已经调用了嵌入模型——评测和 SOP 都要按词法匹配来写。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.3　当前检索实现不是向量数据库</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>不是 Embedding，是词法匹配</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 56, background: '#F7F3E8', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>第二章的设想：Embedding 与 RAG</Text>
+                </Box>
+                <Box style={{ height: 82, background: '#FFFFFF', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                    <Box style={{ width: 96 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>匹配方式</Text></Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>查询与记忆都转为语义向量</Text>
+                </Box>
+                <Box style={{ height: 82, background: '#FFFFFF', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                    <Box style={{ width: 96 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>排序依据</Text></Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>向量距离（语义相似度）</Text>
+                </Box>
+                <Box style={{ height: 82, background: '#FFFFFF', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                    <Box style={{ width: 96 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>返回</Text></Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>语义近邻 Top-K</Text>
+                </Box>
+                <Box style={{ height: 82, background: '#FFFFFF', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                    <Box style={{ width: 96 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>失败方式</Text></Box>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>语义近似，未必事实一致</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 56, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>当前实现：file_lexical 词法匹配</Text>
+                </Box>
+                <Box style={{ height: 82, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                    <Box style={{ width: 96 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>匹配方式</Text></Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>文本切分后按词项重叠打分</Text>
+                </Box>
+                <Box style={{ height: 82, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                    <Box style={{ width: 96 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>排序依据</Text></Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>词项重叠分数 + 重要度 + 创建时间</Text>
+                </Box>
+                <Box style={{ height: 82, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                    <Box style={{ width: 96 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>返回</Text></Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>最多 limit 条，标注 retrieval_method</Text>
+                </Box>
+                <Box style={{ height: 82, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                    <Box style={{ width: 96 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>失败方式</Text></Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>同义改写、指代省略可能降低召回</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', flex: 1 }}>不能因为工具描述用了“语义检索”的表达，就写成已经调用了嵌入模型</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

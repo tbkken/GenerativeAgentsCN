@@ -1,0 +1,65 @@
+<Slide notes={`有一条边界经常被搞混：回复里出现了地址，并不等于工具已经允许导航。
+
+系统在给人物做检查的时候，要求目标地点必须已经在他的已知空间里，或者在实际感知中出现过。如果两条都不满足，他得先去探索，并且真的感知到那个地方，再来查询路径。
+
+普通记忆也不能绕过这项检查。人物不能凭「我记得那个厅在这边」就直接前往，因为那等于绕开了真实信息这一环。
+
+还有一点要说清楚：如果信息不足，允许人物沿着已知的公共空间探索，发现新区域之后再核实。这不是钻空子，而是符合现实的行为方式，我们也必须把它记进证据里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.3　相同 SOP，让位置通过真实信息起作用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>回复里有地址，不等于可以导航</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 403, background: '#F4F7FA', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一条容易混的边界</Text>
+            <Box style={{ width: 355, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>回复里有地址</Text>
+            </Box>
+            <Box style={{ width: 355, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+            </Box>
+            <Box style={{ width: 355, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>工具允许导航</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>目标要么已在已知空间里，要么在实际感知中出现过。</Text>
+        </Box>
+
+        <Box style={{ width: 717, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>导航前的三项检查</Text>
+
+            <Box style={{ width: 717, height: 80, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 92 }}>信息侧</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>回复中出现地址，只说明这条信息被说出过，不构成导航许可</Text>
+            </Box>
+
+            <Box style={{ width: 717, height: 80, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 92 }}>空间侧</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>目标须已在已知空间，或在实际感知中出现；否则先探索并感知，再核实</Text>
+            </Box>
+
+            <Box style={{ width: 717, height: 80, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 92 }}>记忆侧</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>普通记忆不能绕过检查，「我记得在哪」不能替代真实感知与核实</Text>
+            </Box>
+
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>未获必要信息时：先探索，发现新区域后再核实——这条路径要记进证据，不能省略。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

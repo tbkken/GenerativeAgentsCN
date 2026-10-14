@@ -1,0 +1,91 @@
+<Slide notes={`这一节要看清四件事，顺序不能颠倒。
+
+第一件，先说清接收者要完成什么。同一个项目，接收者可能只审设计、核文件、看回放、复算分数，或者干脆重新执行；这五类检查回答的问题完全不同，不能互相替代。
+
+第二件，用一张清单把需求、证据和文件对上，并且认清手上到底是哪种包。普通的结果 ZIP 与 config、exp、run 三种正式包不是一回事，改后缀改变不了文件合同。
+
+第三件，接收方先做只读核验，不需要模型凭据，只要程序、包和素材能读。它分字节与来源、协议与事实、交付结论三层。
+
+第四件，把正式复现当成一件单独的工作。新跑、续跑、重跑、复算的身份规则不同，最后要落成一份允许写「尚未验证」的交付记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>材料被下载，不等于有人能接手。四件事依次把「谁要做什么、拿到哪份文件、验到哪一层」写清楚。</Text>
+            <Box style={{ width: 340, height: 50, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>材料能被下载</Text>
+            </Box>
+            <Box style={{ width: 340, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 340, height: 50, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>接收者知道要做什么</Text>
+            </Box>
+            <Box style={{ width: 340, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 340, height: 50, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>交付范围说得清楚</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 784, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 784, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 678 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先说清接收者要完成什么</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>五类检查回答五个不同问题，不能相互替代；签收材料不等于每一级验证都通过</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 784, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 678 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一张清单与四类文件</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>用清单把需求、证据与文件对上；普通结果 ZIP 与 config／exp／run 是不同合同</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 784, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 678 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>接收方先做只读核验</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>字节与来源、协议与事实、交付结论三层；失败结果要分类登记，不统一写成复现失败</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 784, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 678 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>正式复现与可执行的交付记录</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>新跑／续跑／重跑／复算的身份规则不同；交付记录允许清楚地写「尚未验证」</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

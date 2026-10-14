@@ -1,0 +1,98 @@
+<Slide notes={`固定了条件，还要有一份能落地的记录。我建议至少记下这几类字段。
+
+第一类是任务本身：任务编号、任务类别、输入文件以及内容摘要。第二类是模型标识：完整的模型标识、服务或产品版本、执行日期。这里要强调完整，只写一个显示名，过一段时间就不知道当时用的到底是哪一个。第三类是配置：提示版本、可用工具、推理与输出设置。第四类是结果：是否成功、失败类别、关键证据、评分者是谁。
+
+再往后是量：逻辑调用数、物理尝试数、端到端耗时。这两者要分开，一次逻辑请求可能重试了好几次。还有输入输出用量、费用，以及人工介入的情况。
+
+最后一条最实用：暂时拿不到的数据就写未提供或者未记录。不要从回答长度去猜 Token，也不要把等待页面的总时长全部当成模型计算时间。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.3　第三步：固定比较条件</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一份最小评价记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>条件固定之后，用一组固定字段把每次评价都记下来。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 12 }}>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, color: '#20344B' }}>任务编号、任务类别</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>输入文件及内容摘要</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, color: '#20344B' }}>模型完整标识、服务或产品版本</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>执行日期</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, color: '#20344B' }}>提示版本、可用工具</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>推理与输出设置</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, color: '#20344B' }}>是否成功、失败类别</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>关键证据、评分者</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 12 }}>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, color: '#20344B' }}>逻辑调用数、物理尝试数</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>端到端耗时，不是模型计算时间</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, color: '#20344B' }}>输入与输出用量、费用</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>只记录实际可见的用量</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 164, background: '#FFF4E6', borderRadius: 8, padding: '20px 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Box style={{ flexDirection: 'column', gap: 8 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>拿不到的数据怎么写</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>写「未提供」或「未记录」</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不要从回答长度猜 Token</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不要把等待页面的总时长当成模型计算时间</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 27</Text>
+    </Box>
+
+</Slide>

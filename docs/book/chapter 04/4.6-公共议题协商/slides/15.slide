@@ -1,0 +1,56 @@
+<Slide notes={`最后一块讲怎么算数。
+主要指标是理由准确纳入率。分子是最终记录里准确纳入的重要理由数，分母是讨论中已经真实公开的重要理由数。
+为什么要这样定？因为这场协商并不以有没有共识判成功。重要的理由就是 R1 到 R5 这五条，事先登记好，每条只计一次。
+围绕主指标，还有几个必须同时报的口径：理由公开得全不全、记录有没有定稿、明确回应覆盖了多少人、保留事项记下来多少、事实性错误有多少。
+只有把这几件事分开报，读者才能分辨「回应很完整」和「理由记得很准」是两回事。
+最后还要处理失败解释和练习，把观察到的现象和应该去查的证据对应起来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4　　4.6.5 — 4.6.7</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>指标、人工判分与失败解释</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>回应完整、理由准确、分歧保留是三件事，必须分开报；支持率不是主要成功指标。</Text>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginTop: 6 }}>
+            <Box style={{ width: 440, height: 60, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>最终记录准确纳入的重要理由数</Text>
+            </Box>
+            <Box style={{ width: 60, height: 60, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#20344B' }}>÷</Text>
+            </Box>
+            <Box style={{ width: 440, height: 60, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>讨论中已真实公开的重要理由数</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 276, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>准确纳入</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>理由准不准</Text>
+            </Box>
+            <Box style={{ width: 276, height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>明确回应</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>态度全不全</Text>
+            </Box>
+            <Box style={{ width: 276, height: 84, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#546779' }}>保留事项</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>分歧留没留</Text>
+            </Box>
+            <Box style={{ width: 276, height: 84, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>一致意见</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>是否形成</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

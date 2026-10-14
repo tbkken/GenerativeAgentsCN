@@ -1,0 +1,80 @@
+<Slide notes={`同样是 HLE，为什么不同站点给的分数不一样？三个原因。
+
+第一，协议不同。带工具和不带工具不是一回事。带工具意味着模型可以跑代码、可以联网检索；不带工具就是纯靠内部推理。同一批题，两者能差六到七个百分点。
+
+第二，快照时间不同。榜单每天在变，今天的第一名和上个月的第一名，可能是不同版本，也可能是不同模型。引用分数必须写清哪一天。
+
+第三，聚合来源不同。有的站点直接抄官方榜单，有的自己重跑，有的只收录厂商公布的数字。
+
+结论就是，不要问这个基准的最高分是多少，要问在什么协议、什么时间、由哪个来源给出的最高分是多少。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑤　1.4.5　领先模型：同一个基准，分数为什么不一样</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>榜单怎么读</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 240, background: '#EDF4FC', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>协议</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>带不带工具、跑几次、给多少预算。带工具的分通常明显高于闭卷。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>同一批题上，两者能差六到七个百分点</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 240, background: '#F7F3E8', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>快照时间</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>榜单每天在变。月初与月末的第一名，可能不是同一个模型，也可能不是同一个版本。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>引用分数必须写清哪一天</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 240, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>来源</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>有的站点照抄官方榜单，有的自己重跑，有的只收厂商公布的数字。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>不同来源之间不可直接比较</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 8 }}>
+            <Box style={{ flexDirection: 'row', gap: 10, padding: '0 6px' }}>
+                <Text style={{ width: 380, fontSize: 13, color: '#546779' }}>同一时段的 HLE 头名（不同来源）</Text>
+                <Text style={{ width: 420, fontSize: 13, color: '#546779' }}>协议</Text>
+                <Text style={{ width: 120, fontSize: 13, color: '#546779' }}>分数</Text>
+                <Text style={{ width: 200, fontSize: 13, color: '#546779' }}>快照日期</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10, background: '#F4F7FA', borderRadius: 8, padding: '12px 6px', alignItems: 'center' }}>
+                <Text style={{ width: 380, fontSize: 14, color: '#20344B', padding: '0 0 0 6px' }}>聚合站点 A</Text>
+                <Text style={{ width: 420, fontSize: 14, color: '#546779' }}>最高配置，允许使用工具</Text>
+                <Text style={{ width: 120, fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>67.7%</Text>
+                <Text style={{ width: 200, fontSize: 14, color: '#546779' }}>2026-09-28</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10, background: '#F4F7FA', borderRadius: 8, padding: '12px 6px', alignItems: 'center' }}>
+                <Text style={{ width: 380, fontSize: 14, color: '#20344B', padding: '0 0 0 6px' }}>聚合站点 B</Text>
+                <Text style={{ width: 420, fontSize: 14, color: '#546779' }}>头名行未标注工具</Text>
+                <Text style={{ width: 120, fontSize: 15, fontWeight: 'bold', color: '#546779' }}>65.0%</Text>
+                <Text style={{ width: 200, fontSize: 14, color: '#546779' }}>2026-09-28</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10, background: '#FFF4E6', borderRadius: 8, padding: '12px 6px', alignItems: 'center' }}>
+                <Text style={{ width: 380, fontSize: 14, color: '#CB6B28', padding: '0 0 0 6px' }}>聚合站点 C（更早快照）</Text>
+                <Text style={{ width: 420, fontSize: 14, color: '#CB6B28' }}>来源为厂商公布值</Text>
+                <Text style={{ width: 120, fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>55.5%</Text>
+                <Text style={{ width: 200, fontSize: 14, color: '#CB6B28' }}>2026-09-07</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 36</Text>
+    </Box>
+
+</Slide>

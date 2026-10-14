@@ -1,0 +1,68 @@
+<Slide notes={`四个工具各管一段。append 追加独立的事实或认识；search 默认检索有效内容，当前方法是 file_lexical；supersede 在获得正式更正证据后，修正一条仍为 ACTIVE 的认识；invalidate 表示某条有效记忆已经不能继续使用，必须说明理由。
+
+身份问题要特别注意：当前参与者身份由运行时注入，模型不能传另一个人的 ID 去读取别人的记忆。对象也使用自己的记忆身份，与 Agent 隔离。
+
+另外，需要引用已有记忆时，要用工具真实返回的记忆 ID，不能自己编一个。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.2　四个工具组成记忆的生命周期</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个工具，各管一段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 244, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>memory-stream-append</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>追加独立的事实或认识；必需字段是自然语言 content</Text>
+                </Box>
+                <Box style={{ width: 244, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>memory-stream-search</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>默认检索有效内容；当前方法 file_lexical</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 244, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>memory-stream-supersede</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>获正式更正证据后，修正一条仍为 ACTIVE 的认识</Text>
+                </Box>
+                <Box style={{ width: 244, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>memory-stream-invalidate</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>某条有效记忆不能继续使用，必须说明理由</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 628, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 220, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>参与者身份由运行时注入</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>模型不传另一个人的 ID 来读取其记忆；对象也使用自己的记忆身份，与 Agent 隔离。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>记忆是谁的，由运行时决定，不由调用参数决定。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#ECF7F2', borderRadius: 10, padding: '16px 22px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>引用已有记忆，用真实返回的记忆 ID</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>evidence_memory_ids 里放工具返回过的 ID；自己编造 ID，证据链就断了。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

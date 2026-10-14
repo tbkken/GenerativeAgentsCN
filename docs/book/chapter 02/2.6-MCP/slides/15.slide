@@ -1,0 +1,70 @@
+<Slide notes={`云端的可达性有一条硬边界，值得单独说清楚。
+
+本机的盘符路径，还有 127.0.0.1 这样的地址，含义都是「访问者自己」。谁去访问，它就指向谁。云端服务去访问这两个地址，得到的是云端自己的本机，不会进入读者的电脑。所以本机调试地址不能直接给远程使用。
+
+OpenAI 目前另有安全 MCP 隧道，也允许用 tunnel_id 去连接相应的本地服务。但它需要真实安装、真实配置、真实建立连接，不能拿一个虚构的隧道编号来代替。这一点在教学里经常被跳过去，结果调试半天找不到原因。
+
+更普遍的一条是：没有经过验证的本机地址，都不应该直接填进 server_url。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.3　可达性的边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三条不能想当然的边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ width: 320, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>本机路径与 127.0.0.1</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>本机调试地址</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>不会自动对云端可达</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>它表示的是「访问者自己」；云端去访问它，得到的是云端自己的本机。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ width: 320, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>MCP 隧道</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>需要真实的 tunnel_id</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>需实际安装、配置与连接</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>本节不假定隧道已经开通；虚构的隧道编号不能代替真实连接。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ width: 320, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>未经验证的本机地址</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不能代替真实部署</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>不要直接填进 server_url</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>本机脚本路径对远端没有意义，可达性与授权要分别确认。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#20344B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>地址写对只是第一步</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>可达性、认证与授权都要单独确认，不能靠推测代替核对。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 27</Text>
+    </Box>
+
+</Slide>

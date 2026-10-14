@@ -1,0 +1,56 @@
+<Slide notes={`「记住」这个词在日常对话里很含糊，但在系统里它至少对应三种不同的东西。
+
+一种是把历史真的传进这次请求，这叫会话上下文。另一种是程序自己记录的进度，比如哪份候选通过了校验、还缺什么、预算剩多少，这叫应用任务状态。还有一种是跨任务读出来的偏好和记录，那才是长期记忆。
+
+它们的可用范围完全不同：上下文只在真的传进去时才有用，任务状态由程序掌握，长期记忆可以跨任务检索，但也可能是过期的。
+
+「继续工作」可能是下一轮调用，也可能是新任务接手。先分清是哪一种「记住」，再决定哪些事实需要重新确认。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.10.4 — 2.10.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>三种「记住」与动手体验</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先分清是哪一种「记住」，再决定哪些事实需要重新确认。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 72, marginTop: 6 }}>
+            <Box style={{ width: 336, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>会话上下文</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>实际传入的历史与工具结果</Text>
+            </Box>
+            <Box style={{ width: 336, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>应用任务状态</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>候选、输入摘要、校验与预算</Text>
+            </Box>
+            <Box style={{ width: 336, height: 96, background: '#F7F3E8', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>长期记忆</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>跨任务读取的偏好与记录</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 336, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#CB6B28' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 960, height: 48, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>分不清边界，就会把过期的事实当成当前的事实</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

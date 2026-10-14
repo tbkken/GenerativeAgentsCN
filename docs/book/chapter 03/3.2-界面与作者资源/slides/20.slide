@@ -1,0 +1,68 @@
+<Slide notes={`同一份作者材料，需要从三个方向分别核对。
+
+稳定 ID 回答「这是哪一个资源」。它是最硬的身份依据，改名不会改变它。内容摘要用来辨识实际保存的内容，帮助确认这次改的到底是不是这一份。实验装配指定人物在青禾的初始位置和已经知道的空间，也就是落点。
+
+要特别注意：显示名称不能代替身份。两个资源可以叫同一个名字，也可能带着同一个标识被复制。改名不是发布新版本，保存也不是建立一个业务 Revision。
+
+所以修改人物资料，和改变它在青禾的落点，要在对应的范围里分别核对。公共侧的修改，也不会自动更新已经导入的实验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.6　稳定身份、直接编辑与整理资源</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三件事分别核对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+            <Box style={{ width: 520, height: 64, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同一份作者材料，需要分别核对</Text>
+            </Box>
+            <Box style={{ width: 520, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 36 }}>
+
+            <Box style={{ width: 340, height: 150, background: '#EDF4FC', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>稳定 ID</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>确认这是哪一个资源；改名不会改变它</Text>
+            </Box>
+
+            <Box style={{ width: 340, height: 150, background: '#EDF4FC', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>内容摘要</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>辨识实际保存了什么内容</Text>
+            </Box>
+
+            <Box style={{ width: 340, height: 150, background: '#ECF7F2', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>实验装配</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>指定人物初始位置与已知空间；公共侧存资料与图片，副本侧存出生装配</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 0 }}>
+            <Box style={{ width: 520, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>显示名称不能代替身份</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>直接编辑不创建业务 Revision；公共修改不会自动更新已经导入的实验。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 22</Text>
+    </Box>
+
+</Slide>

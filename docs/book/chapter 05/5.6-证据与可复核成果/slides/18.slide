@@ -1,0 +1,72 @@
+<Slide notes={`成本账还有三条规则要守。
+
+第一，区分四层计量：参与者轮次、逻辑调用、物理尝试、工具调用。一次对象轮次可能调用模型多次，一次动作也可能回复多个请求，它不等于现实中的接待人数。第二，保留全部消耗。人物、引导员、对象的消耗都要留下；重试不是第二项业务任务，不能只计最终成功的物理请求。第三，原记录缺少 Token、费用或完整调用信息时，写「未记录／无法核验」，不用人数乘步数伪造账单。
+
+结果状态也要分开写：未完成就写明缺失环节，证据不足就保留待判断项，执行失败则另记执行状态与已提交范围。另外，要保留全部计划内 Run，不能靠反复重跑只挑成功样本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.5　失败的成本不能随未提交事实一起消失</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>成本账的三条规则</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>成本账还须遵守三条规则</Text>
+            <Box style={{ width: 440, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>一 · 区分四层计量</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 408 }}>参与者轮次 · 逻辑调用 · 物理尝试 · 工具调用。一次轮次可能调用模型多次。</Text>
+            </Box>
+            <Box style={{ width: 440, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>二 · 保留全部消耗</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 408 }}>人物、引导员与对象的消耗都保留；重试不是第二项业务任务。</Text>
+            </Box>
+            <Box style={{ width: 440, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>三 · 缺用量就写未记录</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 408 }}>原记录缺 Token、费用或完整调用信息时写「未记录／无法核验」，不用人数乘步数伪造账单。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 688, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>结果状态也要分开写</Text>
+
+            <Box style={{ width: 688, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 112, background: '#CB6B28' }} />
+                <Box style={{ width: 636, flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>未完成</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>判断依据：有证据表明未形成闭环</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>报告方式：写明缺失环节</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 688, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 112, background: '#546779' }} />
+                <Box style={{ width: 636, flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>证据不足</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>判断依据：归档不足，无法判断</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>报告方式：保留待判断项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 688, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 112, background: '#546779' }} />
+                <Box style={{ width: 636, flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>执行失败</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>判断依据：系统错误终止</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>报告方式：另记执行状态与已提交范围</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

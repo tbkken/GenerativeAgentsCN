@@ -1,0 +1,99 @@
+<Slide notes={`从一份被授权的材料，到一句可以引用的答案，中间要走四步。
+
+第一步是限定材料并切片，切片时保留 chunk_id，方便后面定位。第二步是检索排序，拿问题去和每个片段算相似度。第三步是从排序里挑出候选依据，取前 k 个。第四步才是生成答案，让模型引用片段，遇到资料里没有的就明确说不知道。
+
+还有一条还没实现的扩展叫精确条件筛选：先按房间编号和活动日期把范围锁小，需要时放在检索之前。读取授权也仍然由应用负责。
+
+人工复核核对的是日期、身份、断言支持和完整性，它是核对对象，不在流水线上。
+
+最容易弄错的一点：相似片段进入上下文，只说明它「像」，不说明它已经足够回答问题。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.2　切分材料时保留能解释证据的上下文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从授权资料到可引用答案的通路</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ flexDirection: 'row', height: 76 }}>
+            <Box style={{ width: 228 }} />
+            <Box style={{ width: 398, height: 76, background: '#FFF4E6', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>可选扩展：精确条件筛选</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>room_id = craft 与活动日期；本例脚本未实现</Text>
+            </Box>
+            <Box style={{ flex: 1 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 22 }}>
+            <Box style={{ width: 404 }} />
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ flex: 1 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 160, alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 160, background: '#EDF4FC', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>限定材料与切片</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>按形态切分{'\n'}保留 chunk_id</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 160, background: '#EDF4FC', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>检索排序</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>问题与片段{'\n'}逐条算相似度</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 160, background: '#EDF4FC', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>选择候选依据</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>取排序前 k 个{'\n'}片段带来源</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#26816B' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 160, background: '#ECF7F2', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>生成答案</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>引用片段{'\n'}资料不足就说清</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 64 }}>
+            <Box style={{ width: 178 }} />
+            <Box style={{ width: 497, height: 64, background: '#EDF4FC', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>语义查找</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>「手工体验」与「手作室使用说明」相近，靠方向排上来</Text>
+            </Box>
+            <Box style={{ flex: 1 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 64 }}>
+            <Box style={{ width: 598 }} />
+            <Box style={{ width: 513, height: 64, background: '#FFF4E6', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>人工复核（核对对象，不在流水线上）</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>日期、身份、完整性与每条断言是否被支持</Text>
+            </Box>
+            <Box style={{ flex: 1 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 96 }}>
+            <Box style={{ width: 566, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>实线箭头是片段进入答案的路线</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>图上标了教学图，不是界面截图，也不是实测结果。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>相似片段进入上下文，不等于它够用</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>读取授权由应用负责，检索前就要过滤掉无权访问的材料。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 25</Text>
+    </Box>
+
+</Slide>

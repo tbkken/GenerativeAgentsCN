@@ -1,0 +1,57 @@
+<Slide notes={`关于时间，有两条纪律必须守住。
+
+第一条，时延必须有起止点。"Run 开始到闭环"和"首次咨询到有效回复"是两段不同的时间，不能混在一起报。对象在本步处理、人物要下一轮才能接收到，所以还受到步长限制——这两件事发生的时刻本来就不一样。
+
+第二条，窗口结束还没完成的任务，要保留成"截至截止时刻未完成"。不能把它们删掉只统计成功者，也不能把截止时间当成完成时间填进去。截止以后事件什么时候发生是未知的，这类数据涉及右删失。
+
+资料调试记录可以保留，但条件一旦改动，就要重新登记正式比较的范围。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.2　时延口径与未完成样本</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>时延要有起止点，未完成要留在分母里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 616, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>时延必须有起止点</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                        <Text style={{ fontSize: 15, color: '#276FBF' }}>Run 开始　→　闭环</Text>
+                    </Box>
+                    <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                        <Text style={{ fontSize: 15, color: '#276FBF' }}>首次咨询　→　有效回复</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>两段不同的时间，不能混着报；对象本步处理、人物下轮接收，还受到步长限制。</Text>
+            </Box>
+
+            <Box style={{ width: 504, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>未完成要留在分母里</Text>
+                <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>截至截止时刻未完成</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不能删掉后只算成功者，也不能把截止时间填成完成时间。</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.6 }}>截止后事件时刻未知，涉及右删失。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>资料调试记录保留；条件改动后，重新登记正式比较范围。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 20</Text>
+    </Box>
+
+</Slide>

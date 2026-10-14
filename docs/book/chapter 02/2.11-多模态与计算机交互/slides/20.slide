@@ -1,0 +1,68 @@
+<Slide notes={`第二条练习线是网页操作。要动浏览器，就要先装一个能操作浏览器的 Skill。
+
+在技能里找官方介绍过的 agent-browser。找的过程本身就是一次练习：先核对来源，是不是官方的；再读说明，看它到底能做什么；然后看依赖，装之前要知道它会带来什么。三件事确认完，再启用。
+
+这里要划一条清楚的界线。右侧能显示一个网页预览，那是给人看的；agent-browser 做的是打开、滚动、点击、截图，那是让程序去操作页面。这两件事不是一回事，谁也不能顶替谁。
+
+如果环境里没有可用的浏览器 Skill，也可以人工把同样的动作做一遍，但记录时必须写清楚这是人工操作，不能声称模型控制了浏览器。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.5　在 WorkBuddy 中分别练习读图与网页操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>浏览器 Skill 与页面预览不是一件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 320, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>装之前先核对三件事</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>来源、说明与依赖，这三样确认清楚再启用。装好之后，它负责打开、滚动、点击和截图。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>核对来源　是不是官方介绍的那个</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>名字像不代表同一个；以官方说明页为准。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>读说明　它能做哪几类页面动作</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>打开、滚动、点击、截图，各对应练习里的哪一步。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>看依赖　装完会带来什么</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>确认它运行在哪里，需要的运行环境与权限是什么。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '15px 20px' }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>显示一个网页预览，不等于能操作浏览器</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>没有可用 Skill 时可人工完成，但要记录为人工操作。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 26</Text>
+    </Box>
+
+</Slide>

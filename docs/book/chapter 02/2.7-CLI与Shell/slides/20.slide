@@ -1,0 +1,69 @@
+<Slide notes={`看一段最短的托管调用。请求里指定模型，声明一个 shell 工具，环境类型是 container_auto，输入是一道算术题：二十四加十再加十六。托管执行返回五十。
+
+这段代码只完成了云端那一半。如果把环境类型改成 local，应用就必须接收 shell_call，自己把命令跑出来，再以匹配的 call_id 送回 shell_call_output。只发一次请求、打印一段文字，并没有完成本地 Shell 回路。
+
+对本节的固定任务来说，前面的受控函数包装器已经足够。只有需要更广泛的文件和命令处理时，才值得实现原生本地 Shell 的执行器。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.5　OpenAI 原生 Shell 工具的两种位置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一段短例，一条回路</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 516, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>托管执行的短例</Text>
+            <Box style={{ background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>{'client = OpenAI(timeout=30, max_retries=0)'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>{'response = client.responses.create('}</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.55 }}>{'    model=os.environ["OPENAI_MODEL"],'}</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.55 }}>{'    tools=[{"type": "shell",'}</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.55 }}>{'            "environment":'}</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.55 }}>{'            {"type": "container_auto"}}],'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>{'    input="计算 24、10、16 的总和",'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>{')'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>{'print(response.output_text)'}</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779' }}>托管执行返回 24 + 10 + 16 = 50</Text>
+        </Box>
+
+        <Box style={{ width: 604, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ height: 86, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>托管执行一次 responses.create 即可，容器读不到本机文件。</Text>
+            </Box>
+
+            <Box style={{ height: 86, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>要校验青禾材料，先把脚本与输入送入该环境。</Text>
+            </Box>
+
+            <Box style={{ height: 86, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>本地模式须接收 shell_call 并用 call_id 回传结果。</Text>
+            </Box>
+
+            <Box style={{ height: 86, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>只发一次请求并打印文字，没有完成本地 Shell 回路。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>本节固定任务用受控函数包装器已经足够。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

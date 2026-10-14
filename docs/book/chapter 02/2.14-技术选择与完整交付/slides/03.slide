@@ -1,0 +1,46 @@
+<Slide notes={`选技术这件事，最常见的错误是从技术清单出发：先把 MCP、Agent、多 Agent 都装上，再去找地方用。这条路走不通。
+
+我建议从缺口出发。一个任务做不出来，跑不掉五种原因：该给的材料没进输入；需要当前的事实而模型拿不到；计算、转换和读写要真的被执行；一套做法要反复使用；出了问题不知道是哪一次调用出的。
+
+这五类缺口对应的是不同层，不是一个层里的不同档位。补错了层，力气就白花了。
+
+从这一节开始，每讲一种技术，都先问它对应哪一类缺口。答得上来，再谈怎么用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.14.1　按问题选择技术</Text>
+            <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15, textAlign: 'center' }}>先找缺口，再选技术</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 28 }}>
+            <Box style={{ width: 208, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>输入缺口</Text>
+            </Box>
+            <Box style={{ width: 208, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>事实缺口</Text>
+            </Box>
+            <Box style={{ width: 208, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>执行缺口</Text>
+            </Box>
+            <Box style={{ width: 208, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>方法缺口</Text>
+            </Box>
+            <Box style={{ width: 208, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>验证缺口</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 16, color: '#546779', textAlign: 'center' }}>五类缺口不是都要补，缺哪一类才补哪一层。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 25</Text>
+    </Box>
+
+</Slide>

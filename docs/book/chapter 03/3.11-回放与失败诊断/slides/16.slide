@@ -1,0 +1,44 @@
+<Slide notes={`这一块是整节最实用的部分：看到异常之后，先判断它属于哪一类。
+
+很多人一发现问题就直奔「系统有缺陷」。但回放里出现的现象，来源差别很大：可能是边界被正确地处理了，可能是行为策略本身需要调整，可能是执行真的出错，也可能只是页面表现和事实不一致。这四类问题的处理方式完全不同。
+
+所以在分类之前有两个动作不能省：先核对对应的事实，再把身份定位到具体的 Run、Attempt、Step 和参与者。没有这两步，分类就只是猜测。
+
+这四类会依次展开，每一类都有明确的处理口径。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　　3.11.5</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>分清四类问题</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>不因模型文字或画面停留直接判定系统缺陷：先核对事实，再定位身份，最后判断它属于哪一类。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>核对事实</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>定位身份</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>分类处理</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,38 @@
+<Slide notes={`交接最难的部分不是让对方听到，而是让对方真的用上。
+
+「收到」和「正确使用」必须同时成立才算数。我把这两个条件画成并列的两半，中间用 AND 连起来：只有一边成立，这项事实就不计分。
+
+分母固定是五，因为事实只有 K1 到 K5 五项，而且每项只计一次，来源还要能追得回去。
+
+有几种情况要排除掉：有人凭猜测说对了，但没有经交接得到，这个不算；有人早就自己查过、后来才收到，那要标成「交接前已知」，也不当作新增到达。如果来源混合、没法判断，就单列出来，但分母仍然是五。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>④　　4.2.4 — 4.2.7</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>收到与正确使用，缺一不可</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>交接到达要看两件事同时成立；丢失发生在哪一环，解释就只能停在哪一环。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 340, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>经交接渠道实际收到</Text>
+            </Box>
+            <Box style={{ width: 96, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>AND</Text>
+            </Box>
+            <Box style={{ width: 340, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>正确复述或使用</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

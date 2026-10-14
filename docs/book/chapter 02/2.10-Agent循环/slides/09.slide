@@ -1,0 +1,67 @@
+<Slide notes={`ReAct 和反思经常被放在一起讲，但它们做的事其实不一样。
+
+ReAct 强调的是推理和行动交替。根据当前的观察选一个行动，再根据行动的结果更新下一步。这里我要澄清一个常见误解：不需要模型公开完整的内部推理链。可观察到的证据，是工具请求、参数和结果。让助手简要说明「为什么查这个房间」和「下一步检查什么」，就够了。
+
+反思不一样，它是让模型回顾失败、提出调整。比如发现手作活动被安排在 09:30 到 10:30，模型可以指出它和已有预约重叠了。
+
+但请注意反思的边界：反思文本仍然需要下一次真实校验。如果只是反复改写「我应该更加谨慎」，排期文件没有任何变化，那任务就没有取得进展。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.2　规划、ReAct 与反思分别增加什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>推理与行动交替，反思提出调整</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', padding: '0px 20px' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>ReAct　推理与行动交替</Text>
+            </Box>
+            <Box style={{ width: 566, height: 52, background: '#26816B', borderRadius: 8, justifyContent: 'center', padding: '0px 20px' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>反思　回顾失败并提出调整</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'flex-start' }}>
+            <Box style={{ width: 566, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 566, height: 118, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>看什么证据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>工具请求、参数和真实返回的结果，都可以被观察到。</Text>
+                </Box>
+                <Box style={{ width: 566, height: 118, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>要不要公开推理链</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>不需要公开完整的内部推理链，可观察的证据已经足够。</Text>
+                </Box>
+                <Box style={{ width: 566, height: 118, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>说什么就够用</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>简要说明为什么查这个房间、下一步准备检查什么。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 566, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 566, height: 118, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>它做什么</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>让模型回顾失败，提出下一步可以怎样调整。</Text>
+                </Box>
+                <Box style={{ width: 566, height: 118, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>一个具体例子</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>手作活动安排在 09:30—10:30，与已有预约重叠，需要改期。</Text>
+                </Box>
+                <Box style={{ width: 566, height: 118, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>它的边界</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>反思文本仍需下一次真实校验；只改措辞，文件没变化，就是没进展。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

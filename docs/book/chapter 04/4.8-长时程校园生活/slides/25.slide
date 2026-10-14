@@ -1,0 +1,76 @@
+<Slide notes={`如果发现角色反复重办同一件事，我不建议先去改模型，而是沿一条链往回查。
+
+第一站看完成证据：这件事到底有没有留下完成的凭据。第二站看有效记忆：凭据有没有写进能被后续用到的记录里。第三站看检索：轮到该想起它的时候，有没有真的把它检索出来。第四站看整理输出：整理后的文本是不是还在，有没有被改写或丢掉。第五站看下一动作：拿到这些记录之后，角色实际做了什么。
+
+这条链上要分清两种完全不同的错：一种是输入里根本没有提供这个事实，那是上游没给；另一种是输入里有、但整理的时候把它丢了。前者不该怪记忆，后者才是记忆环节的问题。
+
+另外，编造完成会拉低保真率；运行状态显示成功或未评估，都不能替代业务判分。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.7　失败定位</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>反复重办，沿这条链查</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ width: 1096, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 160 }}>完成证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>这件事有没有留下真实回复、完成便签等可供核对的凭据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ width: 1096, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 160 }}>有效记忆</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>凭据有没有写进后续轮次真正会读取的那部分记录。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ width: 1096, height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 160 }}>检索</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>该想起它的时候，这次检索有没有把这条记录取回来。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ width: 1096, height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 160 }}>整理输出</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>整理后的文本是否仍在、是否被改写或遗漏；输入没提供 ≠ 总结丢失。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+            </Box>
+            <Box style={{ width: 1096, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 160 }}>下一动作</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>拿到记录之后角色实际做了什么；编造完成会直接拉低保真率。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 27</Text>
+    </Box>
+
+</Slide>

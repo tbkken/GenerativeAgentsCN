@@ -1,0 +1,85 @@
+<Slide notes={`我们回到开头那件事。助手写出了一份方案，容量和时段都出了问题。现在我们知道该怎么做了。
+
+第一步，提供容量表。把"手作室容量十二人"这条信息，放进这一次的请求里。注意，是放进请求，不是放在电脑里等它自己发现。
+
+第二步，查询预约。让工具真的去查一次十点这个房间的记录。查了才知道，不查就只能猜。
+
+第三步，检查候选方案。拿到真实数据之后，逐条比对：人数有没有超，时段有没有撞。这一步必须独立做，不能只看它写得顺不顺。
+
+这三步补的是材料、记录和校验，不是换一种说法重新问一遍。
+
+下一节 1.2，我们继续解释这些能力在应用里是怎样配合起来的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.6　为什么回答会变化，为什么会有"幻觉"</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>回到青禾：下一步做什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 42 }}>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', border: '1px solid #B5C7D8', alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 20, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>提供容量表</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>把"手作室容量 12 人"放进这一次的请求</Text>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 18, color: '#276FBF', textAlign: 'center' }}>↓</Text>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', border: '1px solid #B5C7D8', alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 20, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>查询预约</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>让工具真的查一次 10:00 的房间记录</Text>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 18, color: '#276FBF', textAlign: 'center' }}>↓</Text>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', border: '1px solid #26816B', alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 20, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>检查候选方案</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>逐条比对人数与时段，确认两项约束都通过</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>不是换一种说法重新问一遍</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>这三步补上的是三样不同的东西：材料、记录、校验。</Text>
+
+            <Box style={{ flexDirection: 'column', gap: 10, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px' }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>材料：模型这一次能看到什么</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>记录：工具有没有真的执行</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>校验：数字与约束有没有被独立核对</Text>
+            </Box>
+
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.7 }}>下一节 1.2 继续解释：这些能力在应用里怎样配合。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 26</Text>
+    </Box>
+
+</Slide>

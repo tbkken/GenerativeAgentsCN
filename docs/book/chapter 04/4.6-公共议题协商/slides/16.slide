@@ -1,0 +1,73 @@
+<Slide notes={`理由准确纳入率这个指标，关键在分母。
+分子是最终记录里准确纳入的重要理由数；分母是讨论中已经真实公开的重要理由数。这里有一道关卡：分母只放真实公开过的理由。教师知道、但角色从来没有说出口的内容，不进分母。
+R1 到 R5 事先登记，每条只计一次。
+什么叫准确纳入？要同时保留四样东西：是谁提出的、关键时间和内容、限制强度，以及原意。
+举个例，宋遥说十九点半必须离开，这是硬条件。如果把它缩写成「希望早点回去」，就不能算准确纳入。部分正确只留解释，不给半分；可以写明不采纳，但不能省略这条要求。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.5　主要指标：记录已经讨论过的理由</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>理由准确纳入率</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ height: 412, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 650, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Box style={{ width: 650, height: 250, background: '#F4F7FA', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>理由准确纳入率</Text>
+                    <Box style={{ width: 606, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, color: '#276FBF' }}>最终记录准确纳入的重要理由数</Text>
+                    </Box>
+                    <Box style={{ width: 606, height: 20, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 606, height: 2, background: '#B5C7D8' }} />
+                    </Box>
+                    <Box style={{ width: 606, height: 52, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, color: '#CB6B28' }}>讨论中已真实公开的重要理由数</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 650, height: 80, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>R1—R5 预先登记，每条只计一次</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 470, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>「准确纳入」要保留什么</Text>
+                <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>主体：这是谁提出的理由</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>关键时间／内容：如 19:30 必须离开</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>限制强度：不可妥协、固定条件</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>原意：不能缩成「希望早点回去」</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 90, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>教师知道但角色从未说出的内容不入分母；部分正确只留解释、不给半分；可以写明不采纳，但不能省略这条要求。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

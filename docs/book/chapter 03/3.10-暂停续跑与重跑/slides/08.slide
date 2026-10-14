@@ -1,0 +1,44 @@
+<Slide notes={`接下来换一个角度：边界从哪里开始算。
+
+模型在计算下一步的时候，可能已经产生了一些日志和临时文本，但只要这一帧还没有提交，它就不进入回放可见的事实。回放看得到的东西，只到最后一个已提交的边界为止。
+
+所以恢复的时候，不能把这些临时产生的文本当成已经完成的动作来重建。系统会核验 Run、Attempt、Step、虚拟时间、成员文件和帧哈希是否相符，全部对上了才允许恢复。
+
+这条边界决定了后面所有操作的判断口径：先看提交到哪一步，再看能不能恢复；最新已提交边界的完整快照不在，就不能往下接。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>②　　3.10.2</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>系统认的是{'\n'}已提交的事实</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>最后一帧提交到哪一步，恢复就从哪里接上；没有被提交的画面进度和临时文本都不算数。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>已提交到 k</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>核验恢复快照</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>新 Attempt 从 k 接</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

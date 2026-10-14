@@ -1,0 +1,47 @@
+<Slide notes={`有两个说法特别容易被人误读，我先替大家挡住。
+
+第一个是“采用”。我们说本次采用二十乘十六格、采用两段咨询台文本，意思是作者决定这一轮用这些条件。它约束的是这次实验，不是现实社区的办事规章。别人拿它去指导真实大厅的窗口分工，就跑偏了。
+
+第二个是“未知”。很多人看到材料里写着“日期待定”，第一反应是补一个上去，觉得表格整齐一点更好看。但周澈还没确定具体日期和人数，恰恰是 A 窗口需要问他的原因。如果我们擅自补成某个日期、二十人和一个已经成功的预约，问题就消失了，实验也就没得做了。
+
+所以未知不是缺陷，它是有用的信息。你要做的是把它标出来，而不是替它下结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.1　先给每句话标明性质</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>“采用”不等于规章，“未知”也不是错误</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>先接住两个容易混淆的说法，后面的登记表才不会写成另一件事。</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>分清这两件事，整理材料时就不会把作者的判断写成规定，也不会把空白填成结论。</Text>
+        </Box>
+
+        <Box style={{ width: 728, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+
+            <Box style={{ width: 728, height: 148, background: '#EDF4FC', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>“采用”的含义</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.65 }}>本轮用什么条件，由作者决定。它约束的是这次实验，不是真实社区的规章，也不是审批规则。</Text>
+            </Box>
+
+            <Box style={{ width: 728, height: 232, background: '#FFF4E6', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>“未知”也可能是有用的</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>周澈尚未确定具体日期和人数——A 窗口才需要告诉他准备哪些信息。</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>不能为了表格整齐，擅自补成某个日期、二十人和一个已经成功的预约。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 23</Text>
+    </Box>
+
+</Slide>

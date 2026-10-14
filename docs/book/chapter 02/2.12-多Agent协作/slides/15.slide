@@ -1,0 +1,45 @@
+<Slide notes={`到这里，步骤的归属就成了关键问题：这几个环节，到底是谁定下来的。
+
+固定工作流由程序预先规定步骤和分支。举个具体的例子——两个审阅都完成后才汇总，本地校验失败就停下来。这些分支在写代码的时候就确定好了，运行时不会变。它的好处是调用次数清楚、失败路径可预测，出了问题也容易复现。
+
+自主协作则把决定权交给协调者：它可以根据任务动态选择角色、继续追问，甚至临时改变分工。这显然更灵活，但调用次数、上下文扩散和失败传播都更难预测，成本也更难算。
+
+两种方式没有绝对的好坏，区别在于你愿不愿意用确定性去换灵活性。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', justifyContent: 'center', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.12.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>工作流和自主协作的差异</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>谁定步骤，决定了调用成本与失败能不能被预测。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 330, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>程序预定分支</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>协调者动态选择</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>灵活与可预测的取舍</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,80 @@
+<Slide notes={`说清楚一次发言需要带什么。
+
+人物用 world-act 的 SPEAK 来说话，要提供两个东西：一个参与键列表，也就是 participant_agent_keys，还有一段 message 正文。这里的关键限制是，当前实现要求恰好一个其他 Agent。
+
+所以想表达「四个人一起商量」，只能一轮一轮来：周宁先对林岚说，林岚再对周宁说，需要的话再各自对第三个人说。一条消息不能同时塞给三个收件人。
+
+周宁转述服务台答复、并向林岚提问，这是一次发言；林岚要确认自己真的拿到了发言内容，然后以本人身份做出回应，这是另一次发言。把这两次混成一条消息，就等于替对方说话了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.1　一次 SPEAK 连接两名 Agent</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一条 SPEAK 只连一个人</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>world-act：SPEAK</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>提供 participant_agent_keys 与 message；参与键要写真实存在的其他 Agent</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 96, flexDirection: 'row' }}>
+            <Box style={{ width: 140, height: 96, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>周宁</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 480, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>SPEAK：转述服务台答复并提问</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>participant_agent_keys 只填林岚一人</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 140, height: 96, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>林岚</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 96, flexDirection: 'row' }}>
+            <Box style={{ width: 140, height: 96, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>林岚</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 480, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>SPEAK：以本人身份回应问题</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>先在感知结果里核对现场与所属会话，再发言</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 140, height: 96, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>周宁</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>当前实现要求恰好一个其他 Agent</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>「四个人开会」必须由多轮双人消息组成，不能一次塞入三个收件人。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 31</Text>
+    </Box>
+
+</Slide>

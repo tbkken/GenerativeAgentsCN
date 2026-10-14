@@ -1,0 +1,72 @@
+<Slide notes={`作者侧要准备什么、保存后要登记什么，是两件事，要分开记。
+
+地图与三个对象：作者侧要有背景、节点、碰撞、对象位置和交互说明；保存后要登记实际资源和节点身份、显示绑定与语义。
+
+五名 Agent 与 Crowd：作者侧要有各自的资料、图片和五人名单；保存后要核对稳定身份、成员数以及实际保存下来的内容。
+
+Brain 与对象 Skill：作者侧要有完整正文、包内的 skill_key 以及依赖；保存后要登记真实键、内容摘要和绑定关系。
+
+模型配置：登记所选配置和凭据的环境要求，但密钥正文不进登记项。
+
+实验装配：保存后登记实验身份、实际坐标和保存结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.4　完整资源闭包需要逐项点清</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>保存之后还要登记什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 30, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 216 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>资源项</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>作者侧应备齐</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>保存后需登记</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 216 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B', lineHeight: 1.45 }}>地图与三个对象</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>背景、节点、碰撞、对象位置与交互说明</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>实际资源及节点身份、显示绑定与语义</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ width: 216 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B', lineHeight: 1.45 }}>五名 Agent{'\n'}与 Crowd</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>各自资料、图片、五人名单</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>稳定身份、成员数、保存后的内容</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 216 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B', lineHeight: 1.45 }}>Brain 与{'\n'}对象 Skill</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>完整正文、包内 skill_key 及依赖</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>真实键、内容摘要、绑定关系</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ width: 216 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B', lineHeight: 1.45 }}>模型配置</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>实际服务和适用参数说明</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.5 }}>所选配置与凭据环境要求，不登记密钥正文</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 216 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B', lineHeight: 1.45 }}>实验装配</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>出生、已知空间、时间与运行参数</Text></Box>
+            <Box style={{ width: 424 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>实验身份、实际坐标、保存结果</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 27</Text>
+    </Box>
+
+</Slide>

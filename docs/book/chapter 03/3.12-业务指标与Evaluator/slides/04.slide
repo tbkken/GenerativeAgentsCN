@@ -1,0 +1,64 @@
+<Slide notes={`同一个 Run 分出来的是三条并行的报告线，不是评分的先后顺序。
+执行状态这一条最简单：请求的步骤有没有完成、在哪里中断，看的是 Run 状态、Attempt 和已提交边界。青禾走完四十八步，这条线是通的。
+行为质量这一条看过程：有没有空检索、无动作、回退、重复调用，或者偏离了 SOP。它的证据是已提交的效果、MCP 调用记录、规则和必要的专门评价，通常由确定性投影直接给出。
+业务成效这一条看世界：公告是不是真的改成了新时间，许安是不是真的知道了，参与者是不是按新安排行动。到达率和传播延迟都属于这一条。
+三条线可以互相解释，但不能互相替代。未执行的评价保持未执行，不能顺手当成通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.1　三层评价各回答一个问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个 Run，三层分开作答</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 64, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 17, color: '#546779' }}>同一个 Run，分开作答</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 36 }}>
+            <Box style={{ width: 360, height: 210, background: '#EDF4FC', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 328, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>执行状态</Text>
+                </Box>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>是否结束、在哪里中断</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>证据：Run 状态、Attempt、已提交边界</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>青禾：四十八步走完，状态 COMPLETED</Text>
+            </Box>
+            <Box style={{ width: 360, height: 210, background: '#FFF4E6', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 328, height: 40, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>行为质量</Text>
+                </Box>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>空检索、无动作、回退、重复、偏离 SOP</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>证据：已提交效果、MCP 调用、规则与专门评价</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>由确定性投影给出，必要时另接专门评价</Text>
+            </Box>
+            <Box style={{ width: 360, height: 210, background: '#ECF7F2', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 328, height: 40, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>业务成效</Text>
+                </Box>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>通知更正、获知、到达与行动</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>证据：对象变化、会话、记忆更新、位移与活动</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>青禾：到达率与传播延迟在这一点上回答</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', flex: 1, lineHeight: 1.6 }}>COMPLETED 不自动推出业务通过；NOT_EVALUATED 不算通过。未执行的评价保持未执行。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

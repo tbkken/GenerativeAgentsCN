@@ -1,0 +1,54 @@
+<Slide notes={`最后一块，是让结论站得住、让计划能判分。
+
+首先要承认不确定性。三次演算的样本太少，中心值后面必须跟着范围和失败情况，不能只报一个好看的平均数。
+
+其次，观察单位要独立。同一个 Run 里的角色和消息不是独立样本，要按 Run 重采样，保留成对批次的结构。
+
+第三，跨场景比较之前先统一尺度，否则把两个名字相近的比率相减，算出来的差没有意义。
+
+最后，把计划写成能被别人判分的一页。写完之后请另一个人按规则判一段示例，判不动就先改量表，而不是先改实验。
+
+我用四组「应做」和「避免」把这些纪律列清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4　　4.9.6 — 4.9.9</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>④ 让结论站得住，让计划能判分</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>重复要独立，尺度要先统一，计划要能被别人按规则判分。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 240, height: 72, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>独立重复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 72, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>统一尺度</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 72, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>六个问题</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 72, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>结果与局限</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 25</Text>
+    </Box>
+
+</Slide>

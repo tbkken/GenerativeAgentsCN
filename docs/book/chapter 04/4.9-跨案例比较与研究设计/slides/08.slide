@@ -1,0 +1,48 @@
+<Slide notes={`接下来是这一节最关键的一层：分母和权重。
+
+我举一个极端的反例。两次 Run，第一次只有一项任务而且成功了，就是 1/1；第二次有九项任务只成功一项，就是 1/9。
+
+如果把每个 Run 看成同样重要，先各算比率再平均：100% 加上 11.1% 再除以 2，大约 55.6%。这时候是那场只有一项任务的 Run 说了算。
+
+如果把每项任务看成同样重要，直接合并：一共十项任务成功两项，就是 20%。
+
+两个数都能算对，但它们回答的问题不一样：一个是「平均一场怎么样」，另一个是「全部任务里有多少成功」。
+
+关键在于，观察单位和权重必须在看结果之前就固定下来，不能等算完了挑一个好看的报出去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>2　　4.9.3 — 4.9.4</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>② 分母与权重，同一个数回答不同问题</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>观察单位和权重，必须在看结果之前固定；事后挑一个好看的，结论就不可复查。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 320, height: 72, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>一次 Run：1 / 1</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 320, height: 72, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>一次 Run：1 / 9</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 72, background: '#FFF4E6', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>权重事先选定</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,80 @@
+<Slide notes={`任务发出去以后，怎么判断它真的读到了材料？我用三步来检查。
+
+第一步看日期和待查项。核对开放日日期对不对，再看需求表、房间表和预约材料里还有哪些是待查的，也就是它有没有认出"哪些信息我还没有"。
+
+第二步做交叉核对。引用 requests.csv 和 rooms.csv，把人数和容量对一遍。这里有个关键点：材料没提供预约时应该保留"待查询"这个状态，而不是当成"没有冲突"。
+
+第三步最有说服力：在结果区打开实际文件，让"已保存"和文件里的内容对得上。发送之前还要检查附件加了没有、工作空间选对没有。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.6　在 WorkBuddy 中完成第一次任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三步检查读取是否有效</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>核对日期与待查项</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>开放日期是否正确；需求表、房间表、预约材料里哪些还待查。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>引用两张 CSV 做交叉核对</Text>
+                    <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#276FBF' }}>data/requests.csv　data/rooms.csv</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>逐一对照人数与容量，不允许凭印象判断。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 110, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>打开实际文件对照</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>在结果区打开文件，让"已保存"与文件内容对应起来。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>没有预约就写"待查询"</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>材料未提供预约时应保留待查询状态，不能默认成"没有冲突"。</Text>
+            </Box>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>发送前顺手检查两件事</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>附件是否已经添加，工作空间是否正确——这两处最容易出错。</Text>
+            </Box>
+
+            <Box style={{ background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>界面以当前版本为准</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>截图位置、可用模型与功能会随版本变化。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

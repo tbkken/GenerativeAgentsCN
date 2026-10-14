@@ -1,0 +1,109 @@
+<Slide notes={`这一节要看清六件事，它们是一条链，不是六份清单。
+
+第一件，交付全文。两组文本只在中间的咨询决策段不同，身份、服务范围、回复和停止条件必须逐字相同。第二件，把这份全文写成可以直接审阅的样子，并且跟踪一个真实请求 ID 怎样走到下一轮。
+
+第三件，对照只替换一个段落，其余字节内容全部保留。第四件，其余三份材料也要写完整：共同 Brain、余真的分支、两个窗口的根 Skill。
+
+第五件，用四类反例分别检查决策时机、完成证据、对照条件和停止条件。第六件，交付记录要写清采用了哪份文本、哪段差异、引用了哪些公共能力，以及还有哪些行为没有验证过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的六件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>把方法整理成可审阅的行为材料，让接手者能回答：运行时究竟读到了什么，两组到底差在哪里。</Text>
+            <Box style={{ width: 360, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>一句差异</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>一份完整全文</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>一份可复核对照</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2, width: 670 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>交付全文，不只交付一句差异</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>两组全文只有决策段不同，其余逐字保持一致</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2, width: 670 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>一份可直接审阅的咨询台全文</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>五段正文与一个真实请求 ID 的两步提交链路</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2, width: 670 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>对照只替换这一个段落</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>保留其他字节内容，两份材料分别存在独立实验副本里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2, width: 670 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>其余三份材料怎样写完整</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>共同 Brain 的来访者部分、余真的分支、两个窗口的根 Skill</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2, width: 670 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>作者与观察者分别审什么</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>四类反例：决策时机、完成证据、对照条件与停止条件</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>⑥</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2, width: 670 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>一次内容审阅怎样交付</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>写清采用哪份文本、哪段差异、哪些能力与哪些未验证行为</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 27</Text>
+    </Box>
+
+</Slide>

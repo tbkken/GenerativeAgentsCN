@@ -1,0 +1,62 @@
+<Slide notes={`选完技术，接下来要把它们真的跑一遍。API 这条路线一共五步，我按顺序说。
+
+第一步是本地检查：跑单元测试，再用规则校验器检查 fixtures 里的样板排期。这两条命令都不访问模型，它们只回答一个问题——资料和本地逻辑是不是对的。
+
+第二步是普通文本，先看一次最基本的响应长什么样。
+
+第三步是受约束的候选，让模型按 Schema 输出一份排期。
+
+第四步是带工具反馈的完整循环，模型可以看到查询结果再调整。
+
+第五步是独立校验，用同一条命令行重新检查最终排期。
+
+顺序很重要：先确认本地这一层，再评价模型。反过来做，出了问题你分不清是材料错了还是模型错了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 26 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.14.2　一次完整的 API 路线</Text>
+            <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15, textAlign: 'center' }}>先跑本地，再跑模型</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+
+            <Box style={{ width: 208, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>本地检查</Text>
+            </Box>
+            <Box style={{ width: 28, height: 96, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 208, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>普通文本</Text>
+            </Box>
+            <Box style={{ width: 28, height: 96, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 208, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>受约束候选</Text>
+            </Box>
+            <Box style={{ width: 28, height: 96, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 208, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>工具闭环</Text>
+            </Box>
+            <Box style={{ width: 28, height: 96, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#26816B' }}>›</Text></Box>
+
+            <Box style={{ width: 208, height: 96, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>独立校验</Text>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 16, color: '#546779', textAlign: 'center' }}>前两步不访问模型，中间两步访问服务，最后一步由命令行独立复核。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 25</Text>
+    </Box>
+
+</Slide>

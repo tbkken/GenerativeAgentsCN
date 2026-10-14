@@ -1,0 +1,92 @@
+<Slide notes={`地图、人物和活动目标都准备好了，接下来是真正的问题：林岚怎样发现安排需要调整？周宁什么时候协助来访者？许安面对新的消息，怎样改变原来的打算？
+
+这些决定不能由我替角色写死。把"第几步必须说哪句话"当作自主行为，角色就只是提线木偶。
+
+这一节把这项工作交给 Brain 和 Skill：Brain 是 Agent 本轮行动的组织者；子 Skill 可以比较方案、整理证据或提出建议；内核负责检查动作是否合法、提交事实和推进时间。
+
+学完之后应该能回答两个问题：决定写在什么材料里，以及凭什么说它做对了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.4</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>Brain 与 Skill：{'\n'}让角色自己决定下一步</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>不为四个人画四张固定流程图，也不把"第几步必须说哪句话"当作自主行为。决定写成条件与证据，交给运行中的角色。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 118, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>类型与位置</Text>
+                </Box>
+                <Box style={{ width: 118, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>条件式 SOP</Text>
+                </Box>
+                <Box style={{ width: 118, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>依赖核对</Text>
+                </Box>
+                <Box style={{ width: 118, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>事实判断</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 0 }}>
+
+            <Box style={{ width: 560, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>4 名 Agent　·　人物资料、位置、私有记忆各自不同</Text>
+                <Box style={{ flexDirection: 'row', gap: 8 }}>
+                    <Box style={{ width: 122, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>林岚</Text>
+                    </Box>
+                    <Box style={{ width: 122, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>周宁</Text>
+                    </Box>
+                    <Box style={{ width: 122, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>陈晨</Text>
+                    </Box>
+                    <Box style={{ width: 122, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>许安</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 68, background: '#276FBF', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>qinghe-open-day-brain</Text>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>组织本轮行动</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 274, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>比较方案 · 整理证据</Text>
+                </Box>
+                <Box style={{ width: 274, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>只返回建议，不写结局</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 60, background: '#20344B', borderRadius: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>调用 world-act</Text>
+                <Text style={{ fontSize: 16, color: '#B5C7D8' }}>›</Text>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>内核检查合法性并提交事实</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

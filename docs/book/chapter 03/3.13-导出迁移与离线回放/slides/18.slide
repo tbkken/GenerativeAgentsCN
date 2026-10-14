@@ -1,0 +1,93 @@
+<Slide notes={`密钥的处理是交付环节里最容易出事的地方。模型密钥不进入实验包，也不进入运行包。包里保存的是环境变量名这类连接要求，真正的凭据由目标机器在运行时注入。
+为了图方便，把密钥补进 Skill 文档、补进 JSON、或者留在分享截图里，都是不应该的。
+目标机器除了凭据，还需要兼容的程序版本、Python 环境和模型服务条件。
+最后区分两件事：能离线回放，不代表能重新执行模型调用；能启动模型，也不代表地图和对象状态已经正确回放了。这两件事要分开下结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.5　迁移时哪些东西需要重新配置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>密钥与兼容条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 460 }}>包负责说清「需要什么连接」，不负责带着凭据到处走。</Text>
+
+            <Box style={{ width: 460, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不要把密钥补进可分享的文本</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不补进 SKILL.md、不补进 JSON、也不留在分享截图里。需要连接要求，就写环境变量名。</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>回放只读事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>Replay 只读 Run 的事实与包内素材，不要求公共资源数据库保留原记录。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 660, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>包内只存连接要求</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>保存环境变量名等连接要求。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#CB6B28' }} />
+                <Box style={{ width: 210 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>凭据由目标机注入</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>密钥不进包，运行时由目标机器提供。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>目标机器要兼容</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>程序版本、Python 与模型服务条件。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>回放不等于执行</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>能离线回放，不代表能重新调用模型。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>启动不等于状态正确</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>能启动模型，不代表地图与对象状态已正确回放。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,70 @@
+<Slide notes={`同一份资源，要分四个面分别核对。
+
+第一个面：文稿备齐了吗？也就是作者资料有没有审读过。第二个面：公共资源保存了吗？实际内容和素材有没有真的存进去。第三个面：实验副本核对了吗？把实验重新打开，检查包里面装的到底是什么。第四个面：运行证据拿到了吗？有没有可以定位的真实提交事实。
+
+这四栏允许状态不一样，而且经常不一样。文稿已改、公共资源已保存、实验副本还没同步、Run 还没跑，是很常见的一种中间状态。
+
+如果只用一个绿色的「完成」把这四栏盖住，接收者就不知道你到底检查到哪一步。运行证据要和前三项分得最开——它是唯一需要真的跑起来才能拿到的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.6　用状态表避免「文件有了就是完成了」</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一份资源，四个核对面</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 273, height: 300, background: '#EDF4FC', borderRadius: 12, padding: '22px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>第一面</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.3 }}>文稿{'\n'}已备？</Text>
+                <Box style={{ width: 40, height: 3, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>记什么</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 233 }}>作者资料是否已经审读通过。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 300, background: '#EDF4FC', borderRadius: 12, padding: '22px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>第二面</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.3 }}>公共资源{'\n'}已保存？</Text>
+                <Box style={{ width: 40, height: 3, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>记什么</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 233 }}>实际内容与素材是否真的存进了公共资源。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 300, background: '#ECF7F2', borderRadius: 12, padding: '22px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>第三面</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B', lineHeight: 1.3 }}>实验副本{'\n'}已核对？</Text>
+                <Box style={{ width: 40, height: 3, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>记什么</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 233 }}>重新打开实验，检查包内实际装了什么。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 300, background: '#FFF4E6', borderRadius: 12, padding: '22px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>第四面</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.3 }}>运行证据{'\n'}已取得？</Text>
+                <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>记什么</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 233 }}>是否有可定位的真实提交事实。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#FFF4E6', borderRadius: 12, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+            <Box style={{ width: 1076, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>四栏可以有不同状态</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不能只用一个绿色「完成」覆盖全部工作；本章当前示例都尚未执行这些系统操作。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,135 @@
+<Slide notes={`进入仿真诊断，打开检查点，这里要看的是具体的值。
+
+第一层是概要：最新的 Step 是多少、属于哪个 Attempt、虚拟时间走到哪里、帧哈希是什么、校验结果是否通过，以及恢复说明怎么写的。
+
+再往下一层展开详情：人物的坐标、当前动作、剩余路径，还有会话和存储里的内容。这些都是判断状态有没有接上的原始材料。
+
+页面上有检查点的详情和预览入口，所以要保存的是这些具体内容，而不是“共有几个检查点”这样的数量截图。数量的截图证明不了边界对不对，也证明不了对象状态有没有接上。
+
+我把这一层当成取证的入口：后面的每一项核对，都要回到这些具体的值上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.3　暂停后的浏览器检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>检查点里要核对的实际值</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 660, height: 460, background: '#F4F7FA', borderRadius: 12, padding: 16, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 628, height: 44, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>仿真诊断 · 检查点</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 88, height: 32, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>Step</Text>
+                </Box>
+                <Box style={{ width: 88, height: 32, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>Attempt</Text>
+                </Box>
+                <Box style={{ width: 100, height: 32, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>虚拟时间</Text>
+                </Box>
+                <Box style={{ width: 100, height: 32, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>Hash</Text>
+                </Box>
+                <Box style={{ width: 88, height: 32, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>校验</Text>
+                </Box>
+                <Box style={{ width: 124, height: 32, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>恢复说明</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 88, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>12</Text>
+                </Box>
+                <Box style={{ width: 88, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>第 2 次</Text>
+                </Box>
+                <Box style={{ width: 100, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>10:37</Text>
+                </Box>
+                <Box style={{ width: 100, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>实际值</Text>
+                </Box>
+                <Box style={{ width: 88, height: 52, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>通过</Text>
+                </Box>
+                <Box style={{ width: 124, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>从 12 接</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 88, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>11</Text>
+                </Box>
+                <Box style={{ width: 88, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>第 1 次</Text>
+                </Box>
+                <Box style={{ width: 100, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>10:36</Text>
+                </Box>
+                <Box style={{ width: 100, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>实际值</Text>
+                </Box>
+                <Box style={{ width: 88, height: 52, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>通过</Text>
+                </Box>
+                <Box style={{ width: 124, height: 52, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>—</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 628, height: 132, background: '#F7F3E8', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>展开详情</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>人物坐标　·　当前动作　·　剩余路径{'\n'}会话内容　·　存储内容</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 300, height: 46, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>继续执行 · Step …</Text>
+                </Box>
+                <Box style={{ width: 160, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>预览</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 460, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>概要要看的六项</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>最新 Step · Attempt · 虚拟时间 · Hash · 校验结果 · 恢复说明</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 128, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>详情要看的四项</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>人物坐标 · 当前动作 · 剩余路径 · 会话与存储内容</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 176, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>数量截图证明不了边界</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>不能只保存“共有几个检查点”的截图；要保存具体的检查点详情与预览内容。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

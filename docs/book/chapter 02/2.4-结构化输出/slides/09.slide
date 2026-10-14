@@ -1,0 +1,86 @@
+<Slide notes={`这是本章方案的实际结构，我们一层一层看。
+
+最外面是根对象，固定三个字段：date、timezone 和 activities，分别说明日期、时区和活动列表。三个之外不能再临时添加字段。
+
+再往里，activities 列表里的每一项活动包含五个字段：活动编号、房间编号、开始时间、结束时间、参加人数。前面那条手作记录，就是列表里的一项。
+
+第三个设计最容易被忽略：房间不用中文名，用稳定的英文 ID——reading、craft、discussion。展示名称另从房间表读取。如果直接把名字写进结果，模型可能写成阅读室，也可能写成阅览室，程序会把它们当成两个不同的地方，排期立刻乱掉。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.2　设计适合程序使用的合同</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>合同的三层结构</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 40, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>房间用稳定 ID、展示名称另取；时间必须含完整日期与时区偏移。</Text>
+        </Box>
+
+        <Box style={{ height: 440, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 344, height: 440, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>根对象（固定三字段）</Text>
+                <Box style={{ height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#20344B' }}>date</Text>
+                </Box>
+                <Box style={{ height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#20344B' }}>timezone</Text>
+                </Box>
+                <Box style={{ height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#20344B' }}>activities</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>三个字段之外，不能临时发明未约定的字段。</Text>
+            </Box>
+
+            <Box style={{ width: 424, height: 440, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>每项活动包含五个字段</Text>
+                <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>activity_id</Text>
+                </Box>
+                <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>room_id</Text>
+                </Box>
+                <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>start</Text>
+                </Box>
+                <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>end</Text>
+                </Box>
+                <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>participants</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>完整合同见 schedule.schema.json。</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 440, background: '#ECF7F2', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>房间使用稳定 ID</Text>
+                <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"reading"</Text>
+                </Box>
+                <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"craft"</Text>
+                </Box>
+                <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"discussion"</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>展示名称另从房间表读取，避免「阅读室」「阅览室」被程序误认成两个地方。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 23</Text>
+    </Box>
+
+</Slide>

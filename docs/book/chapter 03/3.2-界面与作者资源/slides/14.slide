@@ -1,0 +1,60 @@
+<Slide notes={`现在把这四个人组织起来。切换到「人群」页签，点击「＋ 新建人群」。
+
+Crowd 是作者侧的一种组织方式，不是第五个在地图里行走的人物。它的作用是把几位 Agent 打包成一次选择，方便在装配实验的时候一次性带进去。
+
+这里有一条机制要讲清楚：创建实验的时候，人群成员会展开成独立的 Agent。也就是说，最终在地图里活动的，仍然是那四个各自独立的人物，不是一个人群对象。
+
+正因为如此，成员的身份需要唯一。同一个 Agent 不会重复展开，而不同资源如果携带相同的身份标识，系统会明确拒绝，不会靠显示名称去合并。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.2.4　用 Crowd 组织一次选择</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>3.2.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把四位人物组织成一次选择</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>Crowd 是作者侧的组织方式，不是第五个在地图中行走的人物。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 140, height: 56, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>林岚</Text>
+            </Box>
+            <Box style={{ width: 12, height: 56 }} />
+            <Box style={{ width: 140, height: 56, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>周宁</Text>
+            </Box>
+            <Box style={{ width: 12, height: 56 }} />
+            <Box style={{ width: 140, height: 56, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>陈晨</Text>
+            </Box>
+            <Box style={{ width: 12, height: 56 }} />
+            <Box style={{ width: 140, height: 56, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>许安</Text>
+            </Box>
+            <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 320, height: 56, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>人群「开放日四人」</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 22</Text>
+    </Box>
+
+</Slide>

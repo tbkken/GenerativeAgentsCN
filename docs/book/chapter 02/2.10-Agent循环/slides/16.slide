@@ -1,0 +1,80 @@
+<Slide notes={`如果一个任务被中断了，我们想接着往下做，需要留下什么？这一条讲的是恢复的前提。
+
+要保存的东西有：输入摘要、候选版本、每次查询的时间、校验结果，以及已经用掉的预算。没有这些，恢复之后根本不知道上次做到哪里。
+
+其次，恢复时要定义可重复执行的只读操作，并且在执行之前确认事实没有变化。查询是只读的，可以重跑；但重跑之前得确认数据还是上次那份。
+
+最后，对付款、发信、预约这一类有副作用的动作，要另外设幂等标识，并用真实结果去核对。绝对不能依靠「模型记得自己做过」。
+
+这里我要明确一句边界：本章的示例，中断之后再执行是一次新的尝试，没有实现跨进程的断点续跑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.3　OpenAI API：把停止条件写在程序里</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>暂停与恢复要留下什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+            <Box style={{ width: 360, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>恢复工作前，先把状态留下</Text>
+                <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>中断之后继续，不是重新开始，而是要接着上一轮的真实进度走。所以状态必须由程序记录，不能靠对话记忆。</Text>
+            </Box>
+
+            <Box style={{ width: 768, flexDirection: 'column', gap: 14 }}>
+
+                <Box style={{ height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>一</Text>
+                    </Box>
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>保存可恢复的状态</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>输入摘要、候选版本、查询时间、校验结果与预算。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>二</Text>
+                    </Box>
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>只读操作可以重跑</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>定义可重复执行的只读操作，并在执行前确认事实未变。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>三</Text>
+                    </Box>
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>副作用要另设幂等标识</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>付款、发信、预约等动作，用真实结果核对，不能靠「模型记得做过」。</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F7F3E8', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 42, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>本章示例没有实现跨进程断点续跑</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>中断后再执行是一次新的尝试，恢复能力需要自己补齐。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

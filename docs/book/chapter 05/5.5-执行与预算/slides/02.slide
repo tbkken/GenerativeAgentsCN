@@ -1,0 +1,66 @@
+<Slide notes={`这六个知识块可以按三个问题来记：谁负责、什么时候算过关、要花多少又什么时候停。
+
+前两块讲组织和门禁。角色与仿真角色分开，是说周澈、谭悦这些人物不会替项目完成验收；按证据推进，是说每个阶段都要先回答一个具体问题，答得上来才进下一步。
+
+中间两块最容易被忽略。数量要先算清八个参与者乘七十六步，再按假设乘出调用与尝试次数；预算则要连同阈值和停止条件一起写，否则它只是一张估算纸。
+
+最后两块讲收尾。故障要分清是行为结果、调用问题还是系统问题，处理方式完全不同；日志要留下别人能接着做的那几个关键身份。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的六件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>谁负责{'\n'}什么时候算过关{'\n'}要花多少又什么时候停</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65, width: 380 }}>这六个问题按顺序走完，一份别人能接着做的执行计划就成立了。编号①到⑥与后面的六张扉页一一对应。</Text>
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'row', flexWrap: 'wrap', gap: 20 }}>
+
+            <Box style={{ width: 356, height: 158, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>① 角色分开</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>世界里的五个人，不等于项目里的三类职责；人物不会替项目完成验收。</Text>
+            </Box>
+
+            <Box style={{ width: 356, height: 158, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>② 六道证据门</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>材料、配置、输入、运行、结果、交付，每个阶段都要先回答一个具体问题。</Text>
+            </Box>
+
+            <Box style={{ width: 356, height: 158, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>③ 先列数量</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>八个参与者乘七十六步得到轮次，再按假设推出逻辑调用与物理尝试。</Text>
+            </Box>
+
+            <Box style={{ width: 356, height: 158, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>④ 可行动的表</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>预算既含预计消耗，也含停止与复核条件；阈值必须写出到达后的动作。</Text>
+            </Box>
+
+            <Box style={{ width: 356, height: 158, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>⑤ 五种处置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>猜错窗口、正确拒绝、请求失败、违反合同、预算达到，指向完全不同的下一步。</Text>
+            </Box>
+
+            <Box style={{ width: 356, height: 158, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>⑥ 留下什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>交接记录要写清阶段、身份、提交边界、已触发规则与下一步由谁处理。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 28</Text>
+    </Box>
+
+</Slide>

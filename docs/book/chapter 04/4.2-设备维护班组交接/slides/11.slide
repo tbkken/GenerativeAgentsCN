@@ -1,0 +1,51 @@
+<Slide notes={`宋青其实有两条获取信息的路径，我得把它们分开算。
+
+第一条是经交接到达：他打开记录台，读到虞诚提交的那份正文。这一条才进关键交接信息到达率。
+
+第二条是他自己走到设备那里直接查询。这条路径很有用，能补上遗漏，但它不叫「经交接到达」，所以不能回填主指标。要报，就另外报一个最终掌握率。
+
+还有一件事容易混：记录台状态变成 recorded，只说明正文存下来了。它不证明宋青读过，更不证明他理解。所以我们永远拿「实际收到并且正确复述或使用」当分子，而不是拿「文件里写着」当分子。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.2　空间与角色：三人一直都在</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两条来源不能互相回填</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>同一个「知道了」，证据强度并不一样。</Text>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>经交接到达</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>宋青在记录台读到虞诚提交的那份正文</Text></Box>
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>计入关键交接信息到达率</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>独立查询</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>宋青直接向 T-17 提出请求，补充遗漏的资料</Text></Box>
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>可补救遗漏，不能回填主指标</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>记录台 recorded</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>只证明提交的正文已经保存下来</Text></Box>
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>不等于宋青已读取或已理解</Text></Box>
+        </Box>
+
+        <Box style={{ height: 132, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>补救要另报，不能合并进交接分数</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>最终掌握率另报独立查询等补救后的掌握；每项事实只计一次，来源必须可追。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

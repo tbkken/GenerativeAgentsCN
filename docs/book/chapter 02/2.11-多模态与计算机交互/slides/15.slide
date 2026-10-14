@@ -1,0 +1,71 @@
+<Slide notes={`把这四个角色串起来看，就是一条闭环。
+
+宿主先取得真实的屏幕观察，得到一张截图。它把当前任务和这张截图一起交给模型服务。模型服务返回的不是最终答案，而是一个动作请求，以及一个真实的 call_id。
+
+接下来这一步经常被跳过：应用自己要先检查。这个动作在页面范围内吗，坐标合不合理，有没有超出这次任务允许的操作。
+
+检查通过，才真正去执行点击或输入。执行之后，页面会变，宿主再取得一张新截图，用匹配原来 call_id 的 computer_call_output 回传回去，然后根据新截图核对状态，决定下一步。
+
+还有一层边界要守住：页面上的文字属于外部数据，它说"忽略原任务"，不构成任何新授权。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.4　计算机工具：从动作请求到真实页面</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>观察、执行、新截图组成闭环</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 18, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>只有网页入口的查询任务，只能走这条路；本节的练习对象是只读的静态教学页面。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 190, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>取得真实屏幕观察</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>宿主在小范围页面内截图，作为本次的全部视野。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 190, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 255, height: 190, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>提交任务与截图</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>把当前任务和这张截图一起发给模型服务。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 190, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 255, height: 190, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>返回动作请求</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>模型给出动作与坐标，以及一个真实的 call_id。动作可能成批返回。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 190, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 255, height: 190, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>检查并实际执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>宿主核对页面范围、坐标与权限，再真正执行点击或输入。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#ECF7F2', borderRadius: 8, height: 46, padding: '0 20px' }}>
+            <Text style={{ fontSize: 18, color: '#26816B' }}>↑</Text>
+            <Text style={{ fontSize: 15, color: '#26816B' }}>执行后的新截图回传：computer_call_output 匹配原 call_id，再据新截图核对状态、决定下一步。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>模型给出坐标，只证明它提出了动作；页面没有变，就等于没执行。</Text>
+            </Box>
+            <Box style={{ width: 566, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.55 }}>页面改变，加上后续核对，才提供执行证据。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 26</Text>
+    </Box>
+
+</Slide>

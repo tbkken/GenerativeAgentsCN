@@ -1,0 +1,65 @@
+<Slide notes={`交付记录应当写明四件事，每一件都对应接手时的一个疑问。
+
+第一，采用哪份完整文本。要说清这一组用的是哪一份，而不是笼统地说「用了同一个 Skill」。第二，哪段差异。要指出唯一替换段的位置和内容，让读者能自己找到那几行。
+
+第三，引用哪些公共能力。记忆检索、记忆写入、world-act 这些依赖要列出来，因为依赖变化同样会改变结果。第四，还有哪些未验证行为。这一条最容易被省略，但它决定了别人能不能放心引用你的结论。
+
+最后说清当前状态：本节只给出可审阅的文字材料，没有四份已经保存的资源，没有正式实验包，也没有模型的执行结果。把没做的部分明写出来，比含糊过去更有用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.6　一次内容审阅怎样交付</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交付记录要写明四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>记录写清楚，接手者才知道手里拿的是什么，以及哪些结论暂时不能引用。</Text>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>一</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 250 }}>采用哪份完整文本</Text>
+            <Text style={{ fontSize: 15, color: '#546779', width: 800 }}>说清这一组用的是哪一份，不只写「用了同一个 Skill」。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>二</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 250 }}>哪段差异</Text>
+            <Text style={{ fontSize: 15, color: '#546779', width: 800 }}>指出唯一替换段的位置与内容，让读者能自己找到那几行。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>三</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 250 }}>引用哪些公共能力</Text>
+            <Text style={{ fontSize: 15, color: '#546779', width: 800 }}>记忆检索、记忆写入、world-act 等依赖，依赖变化同样改变结果。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>四</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 250 }}>还有哪些未验证行为</Text>
+            <Text style={{ fontSize: 15, color: '#546779', width: 800 }}>明确写出尚未检查的部分，它决定别人能不能放心引用结论。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 90, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center', marginTop: 4 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>当前的交付状态</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>本节仅给出可审阅文字：没有四份已保存资源，没有正式实验包，也没有模型执行结果。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 27</Text>
+    </Box>
+
+</Slide>

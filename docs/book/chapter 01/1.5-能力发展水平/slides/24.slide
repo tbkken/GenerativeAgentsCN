@@ -1,0 +1,66 @@
+<Slide notes={`这一节读了很多数字，最后留下三个条件，以后看到任何成绩都可以拿它们去核一遍。
+
+第一，有日期。报告日期和调用日期是两件事，都要记；查不到就写未披露，不能用查阅日期补上。同一个名字的基准也可能已经换过题，所以还要写清版本。
+
+第二，有配置。题目范围、样本量、用不用工具、预算多少、采样和推理设置是什么，这些都不是技术细节，它们直接决定这个百分比意味着什么。
+
+第三，有出处。这是厂商自报，还是基准维护方公布，性质不同；报告没有披露的字段，就照着写"未披露"。
+
+这三样齐了，一组成绩才配拿来和别的成绩比，也才配拿来判断我们自己的任务能不能交给它。下一节，我们就把这一套用到自己的一小批任务上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>1.5　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>先问条件，再看分数</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>一组公开成绩只有带上日期、配置与出处，才能被比较，也才能用在自己的任务上。缺哪一项就写清缺哪一项。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>期</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>有日期</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>报告日期与调用日期分开记；查不到就写未披露</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#ECF7F2', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>配</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>有配置</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>题集版本、工具条件、预算上限与推理设置</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#FFF4E6', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>源</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>有出处</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>厂商自报还是维护方公布；未披露项照写</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 6 }}>
+                <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>下一节　1.6　为自己的任务选择模型</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

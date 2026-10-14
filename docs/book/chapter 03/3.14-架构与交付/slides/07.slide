@@ -1,0 +1,67 @@
+<Slide notes={`我们不再一块一块地看模块，而是跟着一次真实的行动走。
+
+陈晨在交流室，他想去阅读桌附近。要走完这一趟，中间至少经过六个环节：先从实际上下文和感知拿到目标地址，再调用导航得到可走终点和路径信息，然后由 Brain 选择 MOVE。
+
+动作发出去以后，world-act 会接收并校验它，返回 accepted。accepted 只说明动作选择被接受，不等于整步事实已经持久提交。
+
+真正提交的是 Runtime：它按移动预算消费实际路径、保留剩余路径，构造 Event 和结构化载荷，再通过 StepResult 提交。回放读的是已提交坐标、轨迹和活动，不是模型的一句「我已抵达」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　·　3.14　沿着一次行动理解架构，整理可交付的实验</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>②　　3.14.2　从一条 MOVE 看完整链条</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一条 MOVE，六个环节</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>从目标地址到可回放的事实，每一环都能单独定位；被接受与已提交是两件事。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+            <Box style={{ width: 152, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>感知</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 152, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>导航</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 152, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>决策</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 152, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>校验</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 152, height: 68, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>提交</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 152, height: 68, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>回放</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 29</Text>
+    </Box>
+
+</Slide>

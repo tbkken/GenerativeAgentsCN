@@ -1,0 +1,66 @@
+<Slide notes={`用一个具体例子说明“不重复、不丢失”。
+
+暂停之前，服务台已经回复过林岚的预约查询。续跑之后，系统不能再把这个请求当成一个新请求重新处理一遍，否则林岚会收到两次回复。
+
+反过来，如果有一条回复还没有投递给目标人物，它就应该在正确的下一轮里恰好投递一次——不能因为续跑就丢了，也不能投递两次。
+
+人物的剩余路径也一样。它从检查点恢复，该走多远就走多远，不能因为续跑就跳到目的地。
+
+仓库里的测试文件说明这些场景已经有回归目标。本次编书没有重新执行这些测试，也没有拿它们替代浏览器上的实际验收；验收记录还是要保存真实的前后状态。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.4　继续执行时验证四件事</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>续跑不是跳步</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 516, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 516, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>暂停前：已经发生的事</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>服务台已经回复了林岚的预约查询，这条回复属于已提交事实。</Text>
+            </Box>
+
+            <Box style={{ width: 516, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>续跑后：不能再来一次</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>同一个请求不能再次当成新请求处理，否则同一条回复会被送出两次。</Text>
+            </Box>
+
+            <Box style={{ width: 516, height: 132, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>尚未投递的回复</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>应在正确的下一轮恰好投递一次，既不丢失也不重复。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 604, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 604, height: 160, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>人物剩余路径从检查点恢复</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>该走多远就走多远，不能因为续跑就直接跳到目的地；位置和路径都要能对上暂停时的记录。</Text>
+            </Box>
+
+            <Box style={{ width: 604, height: 160, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>测试源文件是目标，不是验收结果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>这些测试说明仓库已经有相应的回归目标；本次编书没有重新执行它们，也没有用它们替代浏览器验收。</Text>
+            </Box>
+
+            <Box style={{ width: 604, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>验收记录要保存前后状态</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>暂停前与恢复后的对象、会话、回复原始值各记一份，才能说明没有重复也没有丢失。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

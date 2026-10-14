@@ -1,0 +1,82 @@
+<Slide notes={`把常见的几类问题摆在一起，遇到时就能对号入座。
+
+环境变量缺失，先确认当前终端里有没有设、名字有没有拼错；这类问题常出现在换终端窗口之后。
+
+认证或权限错误，要查这个 Key 属于哪个项目、开通了哪些模型、权限到哪里；修正后重试，不要反复提交同一个错误请求。
+
+模型或参数不支持，核对模型能力和接口文档，换模型或调整参数。限流或额度不足，看清错误代码和账户用量，先分清是请求太快还是额度用完。
+
+网络超时，保留原始错误，确认原因后再有限度地重试。内容与任务不符，要从实际发送的输入、指令和材料上改，只调网络参数没用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.5　出错时先分清发生在哪一层</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六类现象与合理处理</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', height: 24, padding: '0 16px', gap: 14 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 14, color: '#546779' }}>现象</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>先检查什么</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>合理处理</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 70, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14, marginTop: 6 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>环境变量缺失</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>当前终端是否设置，名称是否拼写正确</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.45 }}>在同一终端设置后重试</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 70, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14, marginTop: 6 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>认证或权限错误</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>密钥所属项目、可用模型与账户权限</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.45 }}>修正配置，避免反复提交同一错误请求</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 70, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14, marginTop: 6 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>模型或参数不支持</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>模型能力与所用 API 文档</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>选择支持该能力的模型或调整参数</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 70, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14, marginTop: 6 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>限流或额度不足</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>返回错误代码与账户用量</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>区分速率限制与账户额度，再决定处理</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 70, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14, marginTop: 6 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>网络超时</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>连接、代理、服务状态与请求超时</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>保留错误；确认原因后有限重试</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 70, background: '#FFF4E6', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14, marginTop: 6 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>返回内容与任务不符</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>实际发送的输入、指令与材料</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>从提示和任务定义改进，不能只调网络参数</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 44, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14, marginTop: 10 }}>
+            <Box style={{ width: 4, height: 30, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>先读错误类型；不要为了"检查"把 Key 打印出来。一次调用成功，只证明这次请求能得到响应。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

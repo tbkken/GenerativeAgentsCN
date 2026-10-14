@@ -1,0 +1,61 @@
+<Slide notes={`机构之间会互相挑错，也会推翻自己之前的说法。
+
+第一个例子是退役。OpenAI 在 2026 年 2 月宣布不再报告它的成绩。理由是题目来自公开的 GitHub 仓库，仓库和修复记录早就进了训练数据，模型有时不是解出来的，是背出来的。能被背答案的基准，就不再测量能力。
+
+第二个例子是避嫌。Epoch AI 做基准审计，但明确不审自家基准，理由是利益冲突。
+
+第三个例子是改题。Epoch 审 FrontierMath 第一版时发现四成以上的题目有错，2026 年 6 月发布修正版，删掉若干问题题。
+
+这三种自我修正，说明这个领域在认真对待测量。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>②　1.4.2　评估机构：承认缺陷本身也是可信度的一部分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>机构也会推翻自己</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 320, background: '#FFF4E6', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 28, background: '#CB6B28', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>退役</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>SWE-bench Verified</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>OpenAI 在 2026 年 2 月停止报告它的成绩：题目来自公开仓库，修复记录早已进入训练数据，模型可能在背答案。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>一个基准能被背答案，就不再测量能力</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 320, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 28, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>避嫌</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>不审自家基准</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>Epoch AI 做基准审计，却明确把自己做的基准排除在外，理由是利益冲突，并承认自家基准也可能有错。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>自己审自己，不算独立验证</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 320, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 28, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>改题</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>FrontierMath v2</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>审计第一版时发现四成以上的题目有错，2026 年 6 月发布修正版，并删掉了若干有问题的题。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>分数不可跨版本比较</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F7F3E8', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>愿意公开缺陷、修改题目、退出失效榜单，本身就是可信度的一部分——这比多拿几分更值得看</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 36</Text>
+    </Box>
+
+</Slide>

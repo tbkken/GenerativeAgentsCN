@@ -1,0 +1,68 @@
+<Slide notes={`语义判分不要只写对错。
+
+先为成立、不成立、部分成立和无法判断各写一个例子，把边界说清楚，后面判起来才有依据。"部分成立"这一档尤其重要，它逼你说出究竟满足的是哪一部分判据。
+
+重要的样本可以请两位评阅者独立评分，分歧保留下来，不要强行合并掉。
+
+用模型辅助评分也可以，但必须记录用的是哪个模型、输入是什么、规则是什么，关键分歧仍然要人工复核。
+
+最后提醒一句：主要指标回答业务问题，时延、错误和成本用来解释取舍，不要把所有指标硬揉成一个总分，那样反而看不出问题在哪。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.3　语义判分与评阅分歧</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>判分先写清四种结果，分歧要保留</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>先写例子，再开始判</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>四档边界各写一个例子。重要样本可由两位评阅者独立评分，保留分歧；模型辅助评分也须记录模型、输入和规则，人工复核关键分歧。</Text>
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>主要指标回答业务问题；时延、错误和成本解释取舍，不将所有指标强行揉成总分。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 656, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', height: 68, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110, height: 40, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>成立</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>判据全部满足，证据链完整</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 68, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110, height: 40, background: '#546779', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>不成立</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>关键判据未满足，或所需证据缺失</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 68, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>部分成立</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>只满足部分判据，写明是哪一部分</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 68, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110, height: 40, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>无法判断</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>证据不足或互相矛盾，不作结论</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 20</Text>
+    </Box>
+
+</Slide>

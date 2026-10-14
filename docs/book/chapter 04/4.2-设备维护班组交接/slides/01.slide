@@ -1,0 +1,79 @@
+<Slide notes={`今天我们从一次设备交接说起。夜里设备间的指示灯开始间歇闪橙色，交班员要在下班前，把情况完整地留给接班员。
+
+请大家先注意一件事：设备能给出的事实其实很少。它只公开一个 attention 状态，一条显示值 7，再加上前一次记录里只写了外观观察。这些加起来并不等于「某个部件已经损坏」。
+
+所以这个实验要问的是：把设备事实固定住，只改整理方式，接班员能不能更准确地拿到该知道的东西，同时少说没有依据的完成结论。
+
+后面所有的比率，分母都从这里开始。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.2</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>设备维护班组交接</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5, width: 560 }}>把「做过什么」与「还不知道什么」交出去</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 560 }}>固定设备事实，用五项清单整理，是否改善信息到达并减少无依据声明？本案为虚构教案，尚未制作资源和运行。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 6 }}>
+                <Box style={{ width: 130, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>五条有限事实</Text>
+                </Box>
+                <Box style={{ width: 130, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>真实交接渠道</Text>
+                </Box>
+                <Box style={{ width: 130, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>无依据声明</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 20, justifyContent: 'center' }}>
+
+            <Box style={{ width: 560, height: 268, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>设备间 T-17　面板示意</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 22 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>橙色指示灯间歇出现</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>显示 7　（虚构教学单位，无正常范围）</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>state = attention</Text>
+                <Box style={{ width: 520, height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>公开状态只表示「值得关注」；K1—K5 属设备私有资料，人物初始不知道。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 200, background: '#EDF4FC', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>资料区记录台　状态示意</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 140, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, color: '#546779' }}>empty</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 46, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 140, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, color: '#26816B' }}>recorded</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>只保存实际提交的交接正文，按请求 ID 回复；不补缺项，也不保证正文正确。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 24</Text>
+    </Box>
+
+</Slide>

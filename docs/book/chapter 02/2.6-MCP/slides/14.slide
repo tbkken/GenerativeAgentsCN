@@ -1,0 +1,80 @@
+<Slide notes={`两条路线并排看，对照点很清楚。
+
+本地 stdio 里，宿主和 Python 进程都在读者这台电脑上。宿主用命令和参数启动进程，双方通过标准输入和输出传协议消息，整条链路不出本机。
+
+远程 HTTP 里，发起请求的是 OpenAI 服务，它在远端；它按配置的 server_url 去访问一个可访问的 MCP 服务。这个服务用什么方式部署、怎么认证，由提供方决定。
+
+最需要警惕的是地址的可达性。本机路径和 127.0.0.1 表示的是访问者自己，云端服务不会因为你把 127.0.0.1 填进配置就跑进你的电脑。
+
+要跨越这个边界，需要真实存在的隧道，而且必须实际安装、配置、建立连接。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.3　两条路线的地址边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本地 stdio 与远程 HTTP 对照</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 48 }}>
+
+            <Box style={{ width: 552, height: 350, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>本地 stdio　读者电脑内</Text>
+                <Box style={{ width: 512, height: 58, background: '#EDF4FC', borderRadius: 6, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>本地宿主</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>桌面应用，持有命令与参数</Text>
+                </Box>
+                <Box style={{ width: 512, height: 58, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>启动本机进程</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>command 与 args 分开配置</Text>
+                </Box>
+                <Box style={{ width: 512, height: 58, background: '#ECF7F2', borderRadius: 6, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Python MCP 进程</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>服务端与宿主同机</Text>
+                </Box>
+                <Box style={{ width: 512, height: 58, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>标准输入 / 输出传消息</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>日志必须走标准错误</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 552, height: 350, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>远程 HTTP　远端</Text>
+                <Box style={{ width: 512, height: 58, background: '#ECF7F2', borderRadius: 6, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>OpenAI 服务</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>远端请求发起方</Text>
+                </Box>
+                <Box style={{ width: 512, height: 58, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>server_url 连接</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>地址在工具配置里给出</Text>
+                </Box>
+                <Box style={{ width: 512, height: 58, background: '#F7F3E8', borderRadius: 6, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>可访问的 MCP 服务</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>Streamable HTTP，部署由提供方安排</Text>
+                </Box>
+                <Box style={{ width: 512, height: 58, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>先确认可达性与授权</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>认证方式由服务端决定</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两条路线不能共用一个未经验证的本机地址</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>localhost 指访问者自己；把本机脚本路径填进 server_url 也不会让远端访问到它。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 27</Text>
+    </Box>
+
+</Slide>

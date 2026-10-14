@@ -1,0 +1,53 @@
+<Slide notes={`三种正式包里，config 用来交换基础资源，实验包用来执行一个固定实验，运行包用来回放，或者用于符合条件的恢复与重跑。它们都使用同一套协议和同一个版本号，真正的区分点在清单里的 package_kind 字段。
+需要特别留意的是，结果页直接下载出来的普通结果 ZIP 和检查点 ZIP，并不在这三个正式分支里面。它们有真实用途，但用途要按包内的真实内容去说明。
+把结果 ZIP 的后缀改成 .garun，不会补齐任何协议字段，也不能证明完整性或者可恢复性。所以先学会辨认类型，再谈用途。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.1　三种包回答三个问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种正式包，以及不在分支里的 ZIP</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>三种正式包按 package_kind 区分，各自解决一个明确问题；普通结果 ZIP 单独说明用途。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, height: 206, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', fontFamily: 'Consolas, monospace' }}>.zip</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>config　基础资源包</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>一项或多项基础资源及其自身附件，用于资源交换。资源本身的内容随身携带。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 206, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B', fontFamily: 'Consolas, monospace' }}>.gaexp</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>exp　实验包</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>完整资源内容与实验装配，用于执行一个固定实验。装配包含地图与运行参数。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 206, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas, monospace' }}>.garun</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>run　运行包</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>完整内嵌实验与执行事实，用于回放、符合条件的恢复或重跑。执行事实不可再造。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '12px 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>普通结果 ZIP 与检查点 ZIP 不在这条分支上</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>按真实内容说明用途；修改后缀不能补齐协议，也不能证明完整性或可恢复性。</Text>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>三者均使用 ga-package、schema_version 为 2，由清单中的 package_kind 区分。目录是工作形态，归档是交换形态；改名不会创建新的业务身份。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

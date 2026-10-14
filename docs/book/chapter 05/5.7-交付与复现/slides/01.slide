@@ -1,0 +1,56 @@
+<Slide notes={`我先强调一个经常被忽略的事实：一份项目材料能被下载，并不等于另一个人能理解它，更不等于他能接着往下做。
+
+接收者可能是三种完全不同的人。有人只想审阅结论，看看这个设计值不值得做；有人需要离线回放，确认当时到底发生了什么；还有人准备在自己的机器上继续研究。
+
+这三种需求要的材料范围、验证深度都不一样。所以在动手整理之前，先把「接收者要完成什么」写成一句话，后面的材料清单才有依据。
+
+还要提醒一句：服务大厅项目目前只有待实施的设计，没有任何真实导出和异机结果。凡是没发生的，就写「未生成」或「未验证」，不能拿一份演算数据填成已完成的仿真报告。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.7　交付与复现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交付与复现</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>让接收者知道{'\n'}拿到了什么</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 540 }}>文件能被下载，并不等于另一个人能理解或继续工作。交付之前先写清接收者要完成什么，才能决定材料范围和验证深度。</Text>
+            <Box style={{ width: 372, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginTop: 4 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>五类接收检查，不能相互替代</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 560, height: 88, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>文件已经下载</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>原名、类型、大小都对得上，压缩包也能解开</Text>
+            </Box>
+            <Box style={{ width: 560, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>接收者要完成什么？</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>审设计、核文件、看回放、复算分数，还是重新执行</Text>
+            </Box>
+            <Box style={{ width: 560, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>本项目尚未生成材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>空项保留「未生成／未验证」，不填演算数据</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 24</Text>
+    </Box>
+
+</Slide>

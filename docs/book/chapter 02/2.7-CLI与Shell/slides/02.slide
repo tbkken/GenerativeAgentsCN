@@ -1,0 +1,96 @@
+<Slide notes={`这一节有六个知识块，全都围绕同一条校验命令展开。
+
+前两块先把命令本身讲清楚：一条命令由参数、工作目录与环境、标准输出、标准错误和退出码共同构成一份合同；而时间重叠之所以适合程序判断，是因为活动占用是半开区间，重叠有确定的判定条件。
+
+中间两块讲做法：先手工把三次运行跑通、留下可信基线，再把命令包成一个只接受白名单输入名称的受控函数，交给模型调用。
+
+最后两块讲位置与取证：原生 Shell 可以跑在托管容器里，也可以跑在本地；在教学工作区里执行时，要核对实际命令、退出码和报告文件。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的六件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>先读懂命令，再交出去</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>六个知识块从「一条命令由什么组成」走到「怎样在教学工作区里取证」：先立合同，再谈规则，然后建立手工基线，最后把命令包成受控函数并选好执行位置。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 11 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>读懂一条命令的六个部分</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>参数、工作目录、输出、错误与退出码合成一份进程合同</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>为什么时间边界适合确定性检查</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>占用是半开区间，重叠有可以逐条判定的条件</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先手工运行，再让模型调用</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>三次运行留下退出码与报告，建立可信基线</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>在 OpenAI 应用中包装受控命令</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>模型只交出输入名称，命令由应用自己拼</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>原生 Shell 工具的两种位置</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>托管容器执行，或由本地执行环境处理并回传</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>⑥</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>在教学工作区执行与本节练习</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>展示实际命令与报告，保留失败记录并解释退出码</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,133 @@
+<Slide notes={`这一段是本节最关键的一个判断。
+
+背景是十月十七号、上海时区，手工室已经有人约了十点到十点半。
+
+现在有三段六十分钟的候选。候选 A 从九点到十点，候选 B 从十点到十一点，候选 C 从十点半到十一点半。
+
+我们把区间写成左闭右开：候选是 [a, b)，预约是 [c, d)，包含起点、不包含终点。这个约定决定了十点半这一刻属于哪一边。
+
+候选 A 的终点正是十点，预约的起点也是十点，端点相接，不算重叠。候选 C 的起点是十点半，预约的终点也是十点半，同样相接。候选 B 从十点开始，正好压在预约上，冲突。
+
+最后记住：不重叠只说明时间上不冲突，时长和人数还得继续满足。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.4　让独立程序裁定业务规则</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>半开区间上的三个候选</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2026-10-17　·　Asia/Shanghai　·　手工室已有预约（左闭右开）10:00 至 10:30</Text>
+        </Box>
+
+        <Box style={{ height: 26, flexDirection: 'row' }}>
+            <Box style={{ width: 192 }} />
+            <Box style={{ width: 160, flexDirection: 'column', justifyContent: 'flex-end', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>09:00</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+            </Box>
+            <Box style={{ width: 160, flexDirection: 'column', justifyContent: 'flex-end', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>09:30</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+            </Box>
+            <Box style={{ width: 160, flexDirection: 'column', justifyContent: 'flex-end', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>10:00</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+            </Box>
+            <Box style={{ width: 160, flexDirection: 'column', justifyContent: 'flex-end', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>10:30</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+            </Box>
+            <Box style={{ width: 160, flexDirection: 'column', justifyContent: 'flex-end', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>11:00</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+            </Box>
+            <Box style={{ width: 160, flexDirection: 'column', justifyContent: 'flex-end', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>11:30 → 12:00</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+            </Box>
+        </Box>
+
+        <Box style={{ height: 56, flexDirection: 'row' }}>
+            <Box style={{ width: 192, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>已有预约</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>10:00—10:30</Text>
+            </Box>
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>预约</Text>
+            </Box>
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+        </Box>
+
+        <Box style={{ height: 60, flexDirection: 'row' }}>
+            <Box style={{ width: 192, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>候选 A</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>09:00—10:00</Text>
+            </Box>
+            <Box style={{ width: 320, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>端点相接，不重叠</Text>
+            </Box>
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+        </Box>
+
+        <Box style={{ height: 60, flexDirection: 'row' }}>
+            <Box style={{ width: 192, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>候选 B</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>10:00—11:00</Text>
+            </Box>
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 320, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>与预约重叠 · 冲突</Text>
+            </Box>
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+        </Box>
+
+        <Box style={{ height: 60, flexDirection: 'row' }}>
+            <Box style={{ width: 192, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>候选 C</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>10:30—11:30</Text>
+            </Box>
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 320, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>端点相接，不重叠</Text>
+            </Box>
+            <Box style={{ width: 160 }} />
+        </Box>
+
+        <Box style={{ height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>两个半开区间相交的条件</Text>
+                <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#276FBF' }}>{'a < d 且 c < b'}</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779' }}>区间都包含起点、不包含终点</Text>
+        </Box>
+
+        <Box style={{ height: 74, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>「不重叠」只表示与这条预约不重叠：10:30 可紧接，10:15 开始则冲突；时长、人数和其他规则仍须满足。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 23</Text>
+    </Box>
+
+</Slide>

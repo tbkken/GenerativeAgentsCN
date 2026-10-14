@@ -1,0 +1,126 @@
+<Slide notes={`按交接产物，我把项目分成六个工作环节，每一个环节结束时都应该有一份能递出去的材料。
+
+先确定问题与边界，形成委托书。再准备材料和精确 Skill，形成作者资料。随后按预算完成配置与运行，形成全部运行索引。之后依据事实判分，形成报告。再整理实际导出，由接收者核查，形成接收记录。最后记录接收反馈，按修改影响安排维护。
+
+这六个环节不是系统必须执行的固定流程。Brain 仍然根据 SOP 决定调用顺序，Runtime 仍然按原有合同提交事实。这里的阶段只是作者组织工作的方式。
+
+它有一个实际好处：如果发现任务表含混，可以回到材料阶段，而不必先完成一轮昂贵的运行。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.5　用阶段产物控制工作量</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六个环节，六份可以递出去的材料</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 1152 }}>沿交接产物把项目分成六个工作环节，每一环的产物就是交给下一位参与者的东西。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 155, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 155, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 12px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>环节一</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>明确需求</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>问题、范围、判据</Text>
+                </Box>
+                <Box style={{ width: 155, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>委托书</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 155, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 155, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 12px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>环节二</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>准备输入</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>来源、信息边界与精确 Skill</Text>
+                </Box>
+                <Box style={{ width: 155, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>作者资料</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 155, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 155, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 12px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>环节三</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>配置执行</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>保存、身份、预算与全部 Run</Text>
+                </Box>
+                <Box style={{ width: 155, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>全部运行索引</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 155, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 155, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '14px 12px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>环节四</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>分析证据</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>逐项判分、结果与局限</Text>
+                </Box>
+                <Box style={{ width: 155, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>报告</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 155, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 155, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '14px 12px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>环节五</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>接收复查</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>实际文件、约定验证范围</Text>
+                </Box>
+                <Box style={{ width: 155, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>接收记录</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 155, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 155, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '14px 12px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>环节六</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>反馈与维护</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>记录修改影响，保留原始事实</Text>
+                </Box>
+                <Box style={{ width: 155, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>维护安排</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1060 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>这些环节组织作者的工作，不规定 Brain 的调用顺序</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>Brain 仍按 SOP 决定调用顺序，Runtime 仍按原有合同提交事实；本案例也尚未执行。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

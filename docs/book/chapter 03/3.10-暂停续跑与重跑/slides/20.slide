@@ -1,0 +1,109 @@
+<Slide notes={`取消这件事有一个容易看错的时间顺序。
+
+Runtime 先向模型发出一个同步请求，这个请求会进入等待。操作者在这段时间里点击取消，系统会在文件里写下控制标志，并且返回“控制请求已提交”。
+
+请注意这个回执出现的位置：它在最终状态核对之前。也就是说，拿到回执只能说明请求被记录下来了，不能说明别的。
+
+真正去读取取消信号，靠的是 Runtime 里已有的那些控制检查位置。模型请求实际以什么方式结束，要单独记录下来。
+
+标了问号的那一段，就是在途请求能不能立即中断。这个问题目前还没有做专门验收，所以不能给出远端推理停止的时刻。另外，各节点之间的间隔不代表真实的响应时长。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.5　取消请求与「立即停止」需要分别验证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>取消的时序与未验收边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 380, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779' }}>时间从左到右；节点间隔不按比例</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 120, height: 68, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>模型请求</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 220, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>发出同步请求</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#546779' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 300, height: 56, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>？在途等待：能否立即中断</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#546779' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 300, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>实际结束方式需记录</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 120, height: 68, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>操作者</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 264 }} />
+                    <Box style={{ width: 300, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>点击取消，记录请求时刻</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 120, height: 68, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>文件控制标志</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 264 }} />
+                    <Box style={{ width: 300, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>控制请求已提交</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 120, height: 68, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>Runtime</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 264 }} />
+                    <Box style={{ width: 300, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>在已有控制检查位置读取信号</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 340, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>核对最终状态与最后提交 Step</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.6 }}>「控制请求已提交」的回执早于最终状态核对，所以按钮成功只证明提出了取消；问号所在的模型等待阶段仍须专项验收。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

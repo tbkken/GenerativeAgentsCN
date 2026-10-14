@@ -1,0 +1,79 @@
+<Slide notes={`项目委托书已经把本章共用的条件整理好了。制作的时候可以直接复制它，填上本机的路径、参与人员和预算。
+
+这里有一条纪律要特别强调：不要把空白字段变成想象中的系统事实。系统还没有创建身份的时候，run_id 就应该保持「待创建」；文件还没有导出的时候，哈希就应该保持「待计算」。写成具体的编号和摘要看着更完整，其实是编造，接手的人会照着它去找一个不存在的东西。
+
+另外要说明哪些人可以阅读哪些文件。本章采用的都是虚构人物，不需要收集真实的办事记录，也不需要取得真实居民的信息，这一点在交付约定里写清楚，后面就不会有争议。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.2　建立一页足够具体的项目约定</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>空白字段要写清是空白</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 630, flexDirection: 'column', gap: 10 }}>
+            <Box style={{ width: 630, height: 40, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>项目委托书字段</Text>
+                <Box style={{ width: 56, height: 26, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 630, height: 330, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 590, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>本机路径</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填写</Text>
+                </Box>
+                <Box style={{ width: 590, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>参与人员与预算</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填写</Text>
+                </Box>
+                <Box style={{ width: 590, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>run_id</Text>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>待创建</Text>
+                </Box>
+                <Box style={{ width: 590, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>文件哈希</Text>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>待计算</Text>
+                </Box>
+                <Box style={{ width: 590, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>阅读权限说明</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待写明</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 490, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 490, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>可以复制委托书，填写本机路径、参与人员与预算</Text>
+            </Box>
+
+            <Box style={{ width: 490, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>不要把空白字段变成想象中的系统事实</Text>
+            </Box>
+
+            <Box style={{ width: 490, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>哪些人可以阅读哪些文件，应在交付约定中说明</Text>
+            </Box>
+
+            <Box style={{ width: 490, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.7 }}>系统尚未创建身份，run_id 保持「待创建」；文件尚未导出，哈希保持「待计算」。本章人物均为虚构，无需收集真实办事记录。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

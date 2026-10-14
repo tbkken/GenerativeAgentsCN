@@ -1,0 +1,60 @@
+<Slide notes={`交付不是交一张截图，而是一组能回答问题的材料。
+
+我把它拆成八个位置：研究问题与参数理由，要能回答为什么设这些角色、时间、视野和对照；地图与人物素材，要能回答图片、语义、碰撞和实际位置是否对应；精确 Skill 与依赖，要能回答当时到底执行了什么方法、有没有遗漏；实验包，要能回答装配了哪些独立副本、身份与摘要是什么。
+
+后半是：Run 与 Attempt 记录，要能回答哪次执行、从哪里恢复、提交到哪一步；关键事实与质量明细，要能回答哪些条件成立、哪些失败、证据定位到哪里；包和导出核验，要能回答原始文件、时间、状态、大小和摘要是否明确；复现说明，要能回答哪些环境前提已经验证、哪些仍然未知。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　·　3.14　沿着一次行动理解架构，整理可交付的实验</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>⑤　　3.14.5　一份实验交付物应包含什么</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>交付物，要能回答八个问题</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>每个位置对应一个读者会问的问题；答不上来的位置，就是这次交付还缺的内容。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 14, marginTop: 8 }}>
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 276, height: 68, background: '#F7F3E8', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>研究问题与参数理由</Text>
+                </Box>
+                <Box style={{ width: 276, height: 68, background: '#F7F3E8', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>地图与人物素材</Text>
+                </Box>
+                <Box style={{ width: 276, height: 68, background: '#F7F3E8', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>精确 Skill 与依赖</Text>
+                </Box>
+                <Box style={{ width: 276, height: 68, background: '#F7F3E8', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>实验包</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 276, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>Run 与 Attempt 记录</Text>
+                </Box>
+                <Box style={{ width: 276, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>关键事实与质量明细</Text>
+                </Box>
+                <Box style={{ width: 276, height: 68, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#26816B' }}>包和导出核验</Text>
+                </Box>
+                <Box style={{ width: 276, height: 68, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#26816B' }}>复现说明</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 29</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,56 @@
+<Slide notes={`这一节讲完了，我把要带走的东西收成三步。
+
+第一步，看懂输入。图片能证明房间标注和相对位置，容量和预约要去查数据文件；录音先转写，数字、时间、否定词和人名都要回听原音频；网页截图只说明这一次页面显示成什么样。
+
+第二步，转写之后必须核对。确认过的文本才可以进入排期流程，不能因为它是从语音来的，就把人数、日期和预约的校验跳过去。
+
+第三步，执行要留下痕迹。模型给出坐标只代表它提出了动作，页面变了并且核对过，才提供执行证据。
+
+把顺序记住：看懂输入，核对关键事实，执行留痕，最后才谈结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.11　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25, textAlign: 'center' }}>看见什么与执行什么，分开验收</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 354, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>看懂输入</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>图看标注与相对位置，业务事实另查两个数据文件</Text>
+            </Box>
+            <Box style={{ width: 44, height: 132, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 354, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>核对关键事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>转写结果回听原音频，人数、时间与否定词逐项确认</Text>
+            </Box>
+            <Box style={{ width: 44, height: 132, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 354, height: 132, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>执行留痕</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>页面真的变了并核对过，动作才算执行到位</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 82, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>先把证据的边界说清楚，再谈结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>一段流畅的介绍、一张漂亮的截图、一个准确的坐标，都不是结论本身。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.12　多 Agent 协作与工作流</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 26</Text>
+    </Box>
+
+</Slide>

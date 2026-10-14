@@ -1,0 +1,75 @@
+<Slide notes={`围绕"大"这个字，有三种说法经常被混在一起，我们逐条分开。
+
+第一句，"1B 就是十亿字"。不对。参数规模里的 1B，指的是十亿个可训练数值，不是十亿个汉字，也不是十亿字的内容。
+
+第二句，"参数多，一次就能读得多"。这是把两件事混了。参数量说的是模型内部有多少可调的数值，上下文容量说的是这一次能送入多少内容，它们是两个不同的指标。
+
+第三句，"模型越大，一定越好"。这也站不住。还要看训练用了什么数据、用什么方法训练、投入了多少计算预算，以及具体任务是什么。
+
+计算最优训练的研究就说明了这一点：在同一个预算下，模型规模和数据量怎么分配，会直接影响最终效果，所以不能只追求把参数堆得更多。
+
+请记住一个态度："大"是一个相对的说法，不是一道及格线。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.1　从人工智能到大语言模型</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种说法，要分开看</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.35 }}>"大"没有统一门槛</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>计算最优训练的研究表明：在同一个预算下，模型规模与数据量如何分配，会影响最终效果。所以不能只追求更多参数。</Text>
+            <Box style={{ background: '#F4F7FA', borderRadius: 8, padding: '12px 14px' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>研究依据 · arXiv:2203.15556</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Text style={{ width: 268, fontSize: 15, color: '#546779' }}>容易混淆的说法</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>应当怎样理解</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 268, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', border: '1px solid #E5C9A8' }}>
+                    <Text style={{ fontSize: 18, color: '#CB6B28', fontWeight: 'bold' }}>"1B 就是十亿字"</Text>
+                </Box>
+                <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', border: '1px solid #B5C7D8' }}>
+                    <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.55 }}>参数规模中的 1B，指十亿个可训练数值，不是字数</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 268, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', border: '1px solid #E5C9A8' }}>
+                    <Text style={{ fontSize: 18, color: '#CB6B28', fontWeight: 'bold' }}>"参数多，一次就能读得多"</Text>
+                </Box>
+                <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', border: '1px solid #B5C7D8' }}>
+                    <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.55 }}>参数量与上下文容量是两个不同的指标</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 268, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', border: '1px solid #E5C9A8' }}>
+                    <Text style={{ fontSize: 18, color: '#CB6B28', fontWeight: 'bold' }}>"模型越大，一定越好"</Text>
+                </Box>
+                <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', border: '1px solid #B5C7D8' }}>
+                    <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.55 }}>还要看数据、训练方法、计算预算和具体任务</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 26</Text>
+    </Box>
+
+</Slide>

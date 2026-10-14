@@ -1,0 +1,98 @@
+<Slide notes={`这一节有六个知识块，它们串成一条准备资源的路线。
+
+第一个知识块先解决最容易出错的问题：我正在改的到底是公共材料，还是这个实验的副本。同名资源可以出现在两边，保存的落点完全不同。
+
+第二个知识块认识七类作者资源，同时记住一条边界：能保存一份资源，不等于运行链已经用上了它。Embedding 和 Evaluator 这两项尤其容易看错。
+
+接下来三个知识块做具体准备：写四位人物的资料，把人组织成一次选择，再配一份模型服务。
+
+最后一个知识块给出一套收尾的核对方式，身份、内容、实验装配要分别确认，并留下交付清单。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先把编辑范围认清楚，再准备作者材料</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>我现在改的是哪一份？</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>六个知识块从「认范围」走到「交清单」：先分清公共资源与实验副本，再认识七类资源和它们的边界，然后把人物、人群和模型配置准备好，最后统一核对。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ height: 74, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先看清正在编辑哪一份内容</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>公共作者资源与实验独立副本，同名但落点不同</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 74, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>认识资源，不把源码合同当作已完成操作</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>七类资源的用途，以及哪里还没有编辑入口</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 74, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>创建四位人物，描述动机而非强制剧情</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>写目标与背景经历，不替人物写死结果</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 74, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>用 Crowd 组织一次选择</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>四个人物组织成一次选择集，成员仍是独立 Agent</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 74, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型配置：可选择不等于已经可用</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>保存配置只是把信息存下来，连接要单独测试</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 74, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>稳定身份、直接编辑与整理资源</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>身份、内容和实验装配要分别核对</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 22</Text>
+    </Box>
+
+</Slide>

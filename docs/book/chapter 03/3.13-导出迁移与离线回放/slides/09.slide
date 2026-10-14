@@ -1,0 +1,89 @@
+<Slide notes={`资源交换的界面分成导出和导入两条路。导出的时候先选已经保存好的资源，再看要不要同时打包关联资源，这个选择决定了跨资源依赖会不会跟着走。
+有一点容易忽略：想分享编辑器里刚做出的新内容，应该先保存。没有保存的画面不会被当成导出内容。
+导入的时候先上传，然后看资源清单，挑出需要的条目和关联资源，再确认导入。入口同时接受基础资源包、实验包和运行包，是为了让你能从里面挑基础资源，并不等于把一个运行包的全部执行历史恢复到运行列表里面去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.2　在资源中心交换所需内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>资源中心里的导出与导入</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 216, background: '#F4F7FA', borderRadius: 12, padding: 16, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 1120, height: 34, background: '#B5C7D8', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>资源中心 · 资源交换</Text>
+                <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#CB6B28' }}>示意</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+                <Box style={{ width: 552, height: 140, background: '#FFFFFF', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>导出资源包</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>选择已保存资源 → 决定是否同时打包关联资源 → 生成资源归档</Text>
+                    <Box style={{ flexDirection: 'row', gap: 8 }}>
+                        <Box style={{ width: 80, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#276FBF' }}>地图</Text>
+                        </Box>
+                        <Box style={{ width: 80, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#276FBF' }}>Agent</Text>
+                        </Box>
+                        <Box style={{ width: 80, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#276FBF' }}>Crowd</Text>
+                        </Box>
+                        <Box style={{ width: 80, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#276FBF' }}>Skill</Text>
+                        </Box>
+                        <Box style={{ width: 80, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#276FBF' }}>Brain</Text>
+                        </Box>
+                        <Box style={{ width: 80, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#276FBF' }}>模型配置</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>图片、脚本等附件必须齐全；未保存的画面不算导出内容。</Text>
+                </Box>
+
+                <Box style={{ width: 552, height: 140, background: '#FFFFFF', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>导入资源包</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>上传 → 查看资源清单 → 选择条目与关联资源 → 确认导入</Text>
+                    <Box style={{ flexDirection: 'row', gap: 8 }}>
+                        <Box style={{ width: 168, height: 30, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#26816B' }}>基础资源包</Text>
+                        </Box>
+                        <Box style={{ width: 168, height: 30, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#26816B' }}>实验包 .gaexp</Text>
+                        </Box>
+                        <Box style={{ width: 168, height: 30, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#26816B' }}>运行包 .garun</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>入口接受实验包或运行包，是为了从其中挑选基础资源。</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>导出后核对范围</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>资源本身的附件应齐全；跨资源依赖是否一并导出，由所选范围决定。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>导入后别扩大结论</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>这不等于把一个 Run 的全部执行历史恢复到运行列表里。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

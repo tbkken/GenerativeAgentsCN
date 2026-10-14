@@ -1,0 +1,135 @@
+<Slide notes={`这两张图点数不一样，是故意的。
+
+左边每一组只有三个点，因为每组只跑三次 Run，横线是汇总闭环率。
+
+右边每个点是一项已经闭环的任务，A 组有六项、B 组有八项，一共十四个点，横线各自落在成功子集的中位数上：A 是 9.5 分钟，B 是 13.5 分钟。
+
+为什么不能把右边的两点连起来当成配对任务的用时差？因为两组的成功子集可能不是同一批任务，连起来就等于假定了它们一一对应。
+
+还有一点得说清楚：这里没有给未完成的任务估一个完成时间。60 分钟只是截止，把它填成完成时间会同时抬高平均值和时间分布。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.4　成功子集的用时</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>闭环率与时延，点数为什么不同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 40, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 28, background: '#276FBF' }} />
+            <Text style={{ fontSize: 14, color: '#546779' }}>左：每一点是一次 Run 的闭环率　·　右：每一点是一项已闭环任务的时延　·　未完成的任务没有完成时间</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>每组 3 次 Run，每次 4 项任务（示意）</Text>
+
+                <Box style={{ width: 524, height: 52, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 48 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>A01</Text></Box>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#D7E2EC', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#D7E2EC', borderRadius: 6 }} />
+                    <Text style={{ fontSize: 15, color: '#546779' }}>2 / 4 ＝ 50%</Text>
+                </Box>
+
+                <Box style={{ width: 524, height: 52, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 48 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>A02</Text></Box>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#D7E2EC', borderRadius: 6 }} />
+                    <Text style={{ fontSize: 15, color: '#546779' }}>3 / 4 ＝ 75%</Text>
+                </Box>
+
+                <Box style={{ width: 524, height: 52, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 48 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>A03</Text></Box>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#D7E2EC', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#D7E2EC', borderRadius: 6 }} />
+                    <Box style={{ width: 44, height: 44, background: '#D7E2EC', borderRadius: 6 }} />
+                    <Text style={{ fontSize: 15, color: '#546779' }}>1 / 4 ＝ 25%</Text>
+                </Box>
+
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>实心＝该项任务闭环。横线＝汇总闭环率 50%；B 组三次为 75%、75%、50%，汇总约 66.7%。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>已闭环任务：A 6 项，B 8 项</Text>
+
+                <Box style={{ width: 524, height: 44, flexDirection: 'row', alignItems: 'flex-end' }}>
+                    <Box style={{ width: 48, height: 44, justifyContent: 'flex-end' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>A</Text></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#276FBF', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#276FBF', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#276FBF', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#276FBF', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#276FBF', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#276FBF', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                </Box>
+
+                <Box style={{ width: 524, height: 44, flexDirection: 'row', alignItems: 'flex-end' }}>
+                    <Box style={{ width: 48, height: 44, justifyContent: 'flex-end' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>B</Text></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#26816B', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#26816B', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#26816B', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#26816B', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#26816B', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#26816B', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 6, background: '#D7E2EC', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#26816B', borderRadius: 3 }} /></Box>
+                    <Box style={{ width: 34, height: 44, justifyContent: 'flex-end' }}><Box style={{ width: 34, height: 36, background: '#26816B', borderRadius: 3 }} /></Box>
+                </Box>
+
+                <Box style={{ width: 524, height: 16, flexDirection: 'row' }}>
+                    <Box style={{ width: 48 }} />
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>6</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>7</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>8</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>9</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>10</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>11</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>12</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>13</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>14</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>15</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>16</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>17</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>18</Text></Box>
+                    <Box style={{ width: 34 }}><Text style={{ fontSize: 11, color: '#546779' }}>19</Text></Box>
+                </Box>
+
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一格一分钟，实心＝该分钟有一项任务闭环。中位数 A＝9.5 分钟，B＝13.5 分钟；未闭环 A 6 项、B 4 项。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>B 闭环更多，已经闭环的那部分任务典型用时反而更长。这不能证明 B 对每个人都更慢，也不能说某个任务因为澄清才成功，因为两组的成功子集本来就可能不是同一批任务。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 25</Text>
+    </Box>
+
+</Slide>

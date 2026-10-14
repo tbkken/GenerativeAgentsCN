@@ -1,0 +1,109 @@
+<Slide notes={`这一段的路子很简单：先用一份职责清单，把「谁是谁」讲清楚，再沿两次真实的行动走一遍，看每个环节到底留下了什么。
+
+一次是陈晨从交流室走到阅读桌，这是单人移动；另一次是林岚向服务台咨询，这是对象交互。前者看的是校验和提交，后者多了一个跨步反馈的阶段。
+
+有了这两条链，我们才能谈边界：哪些东西可以换，换了以后什么必须保持不变。
+
+最后把这条链落成一份清单——一份实验交付物到底要包含哪些位置，以及四道练习该怎么答。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14　本节导览</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要串起的七件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 352, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>从职责到行动，{'\n'}从行动到交付</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 352 }}>七个知识块按顺序读：先认五个职责，再走一次移动和一次咨询，然后划清可变与不变的边界，最后整理交付物、设想新问题、动手练习。</Text>
+            <Box style={{ background: '#F7F3E8', borderRadius: 10, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>本章的所有图示都是教学示意或源码合同，不是系统截图；页面上的界面一律标注「示意」。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 780, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>五个职责如何配合</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>Protocol、Studio、Runtime、Replay 与适配层各自守哪一段</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>从一条 MOVE 看完整链条</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>感知、导航、决策、校验、提交、回放六环各留一笔</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>从一条咨询看跨步反馈</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>对象在本步人物动作之后运行，回复随整步事实提交</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Brain 决定做法，内核守住事实边界</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>方法可以换，身份、提交与恢复合同不变</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#CB6B28', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>一份实验交付物应包含什么</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>八个位置，每个位置回答一个读者问题</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#26816B', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>从已有能力走向新场景</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>先提可测量的假设，每次只改变清楚的因素</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#26816B', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>7</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>章末练习与参考思路</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>四道题都在练同一件事：先证据，后结论</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 29</Text>
+    </Box>
+
+</Slide>

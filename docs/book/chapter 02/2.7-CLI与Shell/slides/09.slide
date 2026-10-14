@@ -1,0 +1,69 @@
+<Slide notes={`时间不冲突，只是通过的必要条件之一，不是全部。
+
+在检查重叠之前，还要过几道关：日期必须是 2026 年 10 月 17 日，时区是 Asia/Shanghai，开放窗口是 09:00 到 12:00；所有时间要写成带 +08:00 偏移量的 ISO 8601 字符串；开始时间必须早于结束时间，精确到整分钟。
+
+再往后是完整性：每项活动恰好安排一次，人数、时长和材料要和 requests.csv 一致，房间必须在允许列表里。如果方案里干脆少了手作活动，它同样不合格——不是因为冲突，而是因为该做的事没做。
+
+还有一条边界：校验器只判断已经形式化的条件，它不替组织者挑选最好的方案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.2　为什么时间边界适合确定性检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>通过不只是「没有冲突」</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 448, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>先过格式与窗口，再看完整性</Text>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>四道关，缺一道都不通过</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.8 }}>校验器只判断已经形式化的条件。它负责指出「违反了哪一条」，不负责判断这个方案是不是组织者心里最好的那个。</Text>
+        </Box>
+
+        <Box style={{ width: 672, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>日期与开放窗口</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>落在 2026-10-17 的 09:00–12:00 之内</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>时区与时间格式</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>带 +08:00 的 ISO 8601 字符串，精确到整分钟</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>开始早于结束</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不允许零长度或反向的区间</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>时长与覆盖完整性</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>每项活动恰好一次；缺少手作活动的方案同样不合格</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

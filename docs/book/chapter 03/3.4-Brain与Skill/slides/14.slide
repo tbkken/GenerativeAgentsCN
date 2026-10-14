@@ -1,0 +1,53 @@
+<Slide notes={`调用次数有硬边界。SkillRuntime 使用运行配置传入的 max_hops：它既限制单个循环里的工具调用，也累计整棵调用树的工具次数；除此之外还会检查完全重复的调用，以及语义上重复且没有进展的调用。
+
+所以 SOP 里写"最多尝试三次"只是行为约定，改不了内核上限。写长调用链的时候，要为必要的记忆处理和最终动作留出预算，而不是把所有可用技能依次调用一遍——预算都花在要建议上，真正要提交的动作就没得提交了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.3　当前系统怎样读取 SKILL.md</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>调用的硬边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 480, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 480, height: 400, background: '#20344B', borderRadius: 12, padding: '26px 28px', flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#FFFFFF' }}>max_hops</Text>
+                <Box style={{ width: 56, height: 4, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#B5C7D8', lineHeight: 1.7 }}>由运行配置传入。{'\n'}既限制工具循环，也累计整棵调用树的工具次数。</Text>
+                <Box style={{ width: 424, height: 92, background: '#2C4258', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>还会检查两类调用</Text>
+                    <Text style={{ fontSize: 13, color: '#B5C7D8' }}>完全重复；语义上重复且没有进展</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 640, height: 128, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>SOP 写"最多尝试三次"只是行为约定</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>写在 SOP 里的次数不能修改内核上限；真正的天花板始终由运行配置决定。</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>为记忆处理与最终动作留出预算</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>编写长调用链时，必要的记忆处理和最终要提交的动作，都要在调用预算之内。</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 128, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>不要把可用技能依次调用一遍</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>调用是为了补证据，不是为了凑流程；没冲突、没困难，就不必动用子 Skill。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 22</Text>
+    </Box>
+
+</Slide>

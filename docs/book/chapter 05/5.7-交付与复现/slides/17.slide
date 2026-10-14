@@ -1,0 +1,49 @@
+<Slide notes={`正式复现不是一件事，而是四种不同的工作：新跑、续跑、重跑、复算。
+
+很多争论都来自把它们混为一谈。有人做完一次新跑，就说「复现通过了」；有人做了一次回放，就说「模型行为能复现」。这两句话都不成立，因为它们的输入、身份和后置产物都不一样。
+
+所以要先选清楚这次到底做哪一项，再准备目标环境。选择的对象也决定了要核对哪些条件：新跑从封存实验开始，续跑要从一个完整检查点接上，重跑要拿旧 Run 的内嵌实验，复算只用既有事实和判据。
+
+最后还要落成一份能执行的交付记录。它允许清楚地写「尚未验证」，因为接收者真正需要的，是知道缺哪一项、下一步该做什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.7　交付与复现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ④</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>④</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>正式复现与可执行的交付记录</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>新跑、续跑、重跑、复算是四种工作，不是一件事的四种叫法。选清哪一项，再准备目标环境。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 6 }}>
+            <Box style={{ width: 276, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>新跑</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>续跑</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>重跑</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>复算</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

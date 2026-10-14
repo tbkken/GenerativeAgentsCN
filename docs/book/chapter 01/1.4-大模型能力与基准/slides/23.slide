@@ -1,0 +1,57 @@
+<Slide notes={`看完这些题，我们把判分标准理一遍，一共四种。
+
+第一种精确匹配。HLE 的简答题、GPQA 的选项字母都这样，答案必须和标准答案完全一致，格式写错就算零分。
+
+第二种编辑相似度。DocVQA 用的就是它，把预测答案改成参考答案需要改几个字符，换算成接近程度。目的是避免轻微识别误差一律得零分，但字符接近不等于业务上可接受，姓名错一个字可能就得重核。
+
+第三种数值容差。ChartQA 对数值答案允许百分之五的偏差，因为从图形里估数本来就有误差。但这个容差不能搬到报名统计上：从柱高估出约两百人，和系统确认有两百零一条记录，是两件事。
+
+第四种全对才算，没有部分分。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>④　1.4.4　样本展示：答案对错的四种判定口径</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>答案怎么判</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 94, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Text style={{ width: 190, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>精确匹配</Text>
+            <Text style={{ width: 882, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>HLE 简答、GPQA 选项字母——答案必须完全一致，格式写错即零分</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 94, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Text style={{ width: 190, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>编辑相似度</Text>
+            <Text style={{ width: 882, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>DocVQA 的 ANLS——按"改几个字符"折算接近程度，差异过大计零分</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 94, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+            <Text style={{ width: 190, fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>数值容差</Text>
+            <Text style={{ width: 882, fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>ChartQA——数值答案允许 5% 偏差；非数值答案仍要求精确匹配</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 94, background: '#ECF7F2', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 54, background: '#26816B' }} />
+            <Text style={{ width: 190, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>全对才算</Text>
+            <Text style={{ width: 882, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>SWE-bench 测试全过、ARC-AGI-2 每格颜色全对——没有部分分</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F7F3E8', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>口径不同，同一份作答会有不同结果；引用成绩时必须写明用的是哪一种</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 36</Text>
+    </Box>
+
+</Slide>

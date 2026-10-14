@@ -1,0 +1,72 @@
+<Slide notes={`综合作业要交出四组材料，它们是一条链上的四段。
+
+第一组是问题和材料，包含委托、来源登记与各项假设。第二组是行为与对照，交出两组咨询台的完整文本和它们之间唯一的差异。第三组是运行或计划，运行作业在这里交实际证据，设计作业交待采集的表。第四组是接收反馈，记录另一个人实际检查了什么、作者怎样处理。
+
+第三组是唯一分岔的地方，也是容易出问题的地方。设计作业交的是采集计划，加上一段明确标注的人工判分练习，用来证明你知道怎样判；运行作业交的是真实记录。两者不能互相冒充，把计划写成结果，或者拿一段演示冒充实验，都会让整份交付失去可核对性。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.1　先选择要交付的范围</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四组材料，不能互相冒充</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 128, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>问题与材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>委托 · 来源 · 假设</Text>
+            </Box>
+            <Box style={{ width: 44, height: 128, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 128, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>行为与对照</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>完整文本 · 唯一差异</Text>
+            </Box>
+            <Box style={{ width: 44, height: 128, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 128, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>运行或计划</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>真实证据 / 待采集表</Text>
+            </Box>
+            <Box style={{ width: 44, height: 128, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 128, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>接收反馈</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>实际检查与处理</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓　第三组按所选范围分岔　↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>设计作业：交采集计划</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>空白采集表，加上一段明确标注的人工判分练习——展示自己知道怎样判，而不是伪装成已取得数据</Text>
+            </Box>
+            <Box style={{ width: 566, height: 112, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>运行作业：交实际证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>真实记录、全部样本与全部结果；即使所有任务都没有闭环，也要说明失败发生在哪里、证据是否足够</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>计划与结果不能互相冒充</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>设计作业交待采集计划，运行作业交实际证据与全部结果，两者的证据等级不同</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 31</Text>
+    </Box>
+
+</Slide>

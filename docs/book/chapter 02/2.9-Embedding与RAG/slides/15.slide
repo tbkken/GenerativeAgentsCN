@@ -1,0 +1,56 @@
+<Slide notes={`不想自己写切分和检索，还有一条路：用 Responses API 里托管的文件搜索。
+
+它的思路是把麻烦的部分交给服务端。你不需要自己决定按几行切、怎么编号，也不用自己维护一个向量表。上传文件、创建向量存储、把文件关联进去，处理完成以后，请求里只要带上向量存储的 ID 就行。
+
+检索的时候，服务端会把语义和关键词结合起来做，你不用自己拼那套排序逻辑。
+
+代价也要说清楚：文件上传到了服务端，资源在那边建立，所以上传范围和保留要求得自己管。本章的主示例仍然选前面那个透明的小实现，为的是每一步都看得见。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.9.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>托管 File Search 是另一条实现路线</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>把切分、索引与检索交给服务端，换来省事，也要交出对上传范围的控制权。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'column', gap: 20 }}>
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 566, height: 118, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>不用自己写切分</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>上传支持的文件，处理方式由服务端决定，练习里不再出现片段的编号规则。</Text>
+                </Box>
+                <Box style={{ width: 566, height: 118, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>不用自己存向量</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>索引保存在服务端的向量存储里，请求只需要提供它的 ID。</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 566, height: 118, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>检索由服务端执行</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>综合语义与关键词，不必自己拼排序逻辑，也不必自己维护索引。</Text>
+                </Box>
+                <Box style={{ width: 566, height: 118, background: '#F7F3E8', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>代价是资源在服务端</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>上传范围与保留要求要自己管理，不能用提示词代替数据治理。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 25</Text>
+    </Box>
+
+</Slide>

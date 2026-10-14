@@ -1,0 +1,93 @@
+<Slide notes={`这五个动作有先后顺序，我按书稿讲。
+
+先按 Run 把全部 Attempt 收齐。业务事实只认已经提交的边界，但失败那一步真的调用过模型，这笔成本要留着。
+
+第二，每项预登记任务单独一行，要能指回真实人物、Step、Event、请求、会话与记忆身份；教学任务可以自己定键名，运行 UUID 绝不能编造。
+
+第三，判闭环逐条核对：窗口适不适配、可执行答复收到没有、下一步是否真的确认。一句 ACT 描述不能替代真实回复。
+
+第四，记录损坏导致判断不了的，单列出来，既不当成功，也不从分母里删掉。
+
+第五，同一事件被截取、恢复后重现，不重复计成功。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.1　从事实到结果，一条链不能少</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五个动作，把一次 Run 接成一条链</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 700, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>收齐 Attempt</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>按 Run 收齐全部 Attempt；失败 Step 里已发生的真实模型尝试仍计成本</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>任务一行</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>每项预登记任务一行，关联真实人物、Step、Event、请求、会话、记忆身份</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>闭环核对</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>窗口适配、可执行答复已收到、下一步已确认，三条都对上才判闭环</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 76, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#CB6B28', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>损坏单列</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>记录损坏导致无法判断的，单列出来，不当成功，也不从分母里删去</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>重现不重复</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>同事件截取或恢复后重现不重复计成功；先失败后成功可按预登记规则计闭环</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 416, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ width: 416, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不能只数成功的路径</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>分子要含未闭环任务、全部 Attempt、恢复前的失败与真实重试。去掉它们，代价一定被报低。</Text>
+            </Box>
+
+            <Box style={{ width: 416, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>可以补救，但成本留下</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>先失败后成功仍可计闭环，前提是预登记规则里写清楚了；失败与重复访问照样计入代价。</Text>
+            </Box>
+
+            <Box style={{ width: 416, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>观察单位是 Run</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>同一个 Run 里的多个角色与消息不是独立样本，算不确定度时要连成一批看。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 25</Text>
+    </Box>
+
+</Slide>

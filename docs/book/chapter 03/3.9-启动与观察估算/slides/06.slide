@@ -1,0 +1,86 @@
+<Slide notes={`记录表至少要写清楚这些内容：实验 ID、Run ID、实际使用的模型标识、Brain 与对象 Skill 的内容、起始虚拟时间、步长、请求步数和启动时间。
+
+这些都必须在启动时落到纸面上，因为事后回看的时候，光靠一个成功提示是还原不出实验条件的。
+
+特别要注意 ID：实验和 Run 的编号是系统实际产生的，必须照抄系统给出的值，不能拿书里的名字或示意编号顶替。模型标识也一样，要写实际调用到的那一个，而不是计划里想用的那一个。
+
+这张表看着琐碎，但它是后面所有核对的参照。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.1　启动时固定了哪些输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>启动记录表至少要记这些</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>八个字段，缺一个都会让事后核对说不清</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>ID、模型与 Skill 内容要用系统实际产生的值，不能用书里的名字或示意编号</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 20 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 273, height: 112, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 01</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>实验 ID</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>内嵌实验的标识</Text>
+                </Box>
+                <Box style={{ width: 273, height: 112, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 02</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Run ID</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>本次运行的编号</Text>
+                </Box>
+                <Box style={{ width: 273, height: 112, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 03</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>实际模型标识</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>真正调用到的模型</Text>
+                </Box>
+                <Box style={{ width: 273, height: 112, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 04</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Skill 内容</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>Brain 与对象 Skill 全文</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 273, height: 112, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 05</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>起始虚拟时间</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>2026-10-17 09:50</Text>
+                </Box>
+                <Box style={{ width: 273, height: 112, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 06</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>步长</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>一分钟，即 60 秒</Text>
+                </Box>
+                <Box style={{ width: 273, height: 112, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 07</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>请求步数</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>48 步</Text>
+                </Box>
+                <Box style={{ width: 273, height: 112, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 08</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>启动时间</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>墙钟上的启动时刻</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 42, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>ID 由系统实际产生，不能用书中的名称或示意编号冒充；模型标识也要写实际调用的那一个。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 23</Text>
+    </Box>
+
+</Slide>

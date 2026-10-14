@@ -1,0 +1,64 @@
+<Slide notes={`把四个层次摊开看，它们测到的东西完全不同。
+
+模型生成能力，问的是它有没有产出可解析、能用的候选。工具选择与参数能力，问的是选没选对工具、参数填对没有、调用时机对不对——工具返回成功，不代表任务就成功了。应用控制逻辑，问的是程序自己那一部分：循环怎么走、报错怎么处理、多步之间怎么关联、什么时候该停。最终筹备结果，问的是文件交出来没有、三条硬约束全过没有。
+
+所以测其中一层时，要把其他条件尽量固定。本章的小数据集可以先在本地保存输入和评分结果，使用平台的评估服务并不是开始评估的前提。
+
+还要记住一句话：测试路线的数量，不等于被测层次的个数，三类结果不能相互冒充。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.1　先确定被测对象</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个层次，测到的东西不同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 270, height: 205, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>模型生成能力</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>给定输入与上下文，能不能产出可解析、可用的候选；失败常是格式不合规或漏读条件。</Text>
+            </Box>
+            <Box style={{ width: 270, height: 205, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>工具参数能力</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>选没选对工具、参数填得对不对、调用时机对不对；工具返回成功不等于任务成功。</Text>
+            </Box>
+            <Box style={{ width: 270, height: 205, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>应用控制逻辑</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>循环、关联、错误处理与停止条件有没有被正确处理，属于程序自己那一部分。</Text>
+            </Box>
+            <Box style={{ width: 270, height: 205, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>最终筹备结果</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>交付物是否齐全，人数、容量、时段三项硬约束是否全部通过。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>测一层，固定其他层</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>测模型时固定工具与数据；测工具时固定模型与任务。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>先定义，再运行</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>小数据集可以先在本地保存输入与评分结果。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>三类结果不能相互冒充</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>测试路线的数量不等于被测层次的个数；人工参考输入或模拟 API 响应得到的通过，不能当成真实模型成绩。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 34</Text>
+    </Box>
+
+</Slide>

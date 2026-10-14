@@ -1,0 +1,77 @@
+<Slide notes={`跨场景比较最容易出错的地方，是把名字相似的两个指标直接相减。
+
+交接案例关心关键事实有没有到达，学习案例关心约束有没有被满足，两边口径不一样，一个减去另一个得到的差没有意义。
+
+能比较的是方法：两个案例的核对方法怎样保留来源，这一点可以互相参照。
+
+所以要比之前先统一五件事：证据完整程度、开销、机制、鲁棒性、应用价值，分别看失败能否定位、模型与窗口是否一致、差异是否明确、扰动是否事前定义、目标与外部验证是否相同。
+
+同名 Skill 迁移也要重验内容与工具条件；换模型、地图或视野属于新条件，不覆盖旧结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.7　跨场景先统一尺度</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>跨场景比较，先统一五件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 356, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>界面相似，{'\n'}不等于可比</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 356 }}>交接与学习两个案例可以互相核对「方法怎样保留来源」，但不能直接把「信息到达率」减去「约束满足率」。</Text>
+            <Box style={{ width: 356, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>同名 Skill 也要重验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>迁移到新场景要重新验证内容与工具条件；换模型、地图或视野属于新条件，不覆盖旧结果。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 760, flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 26 }}>
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 14, color: '#546779' }}>可比方面</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>先统一什么</Text></Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>证据完整程度</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>输入、提交、评分、失败是否都能定位</Text></Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>开销</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>模型、计价、窗口、参与者规模是否一致</Text></Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一种机制</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>同类任务、共同基线、差异是否明确</Text></Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>鲁棒性</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>事前定义模型、布局、事实扰动，逐条件报告</Text></Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 76, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>应用价值</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>共同业务目标、现实约束、外部验证</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,50 @@
+<Slide notes={`现在换到评阅者这一侧。评阅一份报告，不需要逐行审查所有文件，那样既慢又抓不到重点。
+
+比较有效的做法是：先挑一个主要结论，然后沿着它的证据链往回走。从这句话出发，找到它引用的记录，再找到记录对应的运行与提交边界。往回走的过程中，通常会立刻暴露关键缺口——比如结论说闭环，记录里却只有一条建议。
+
+我准备用五个问题做这件事，它们分别针对比较对象、判分标准、证据定位、不利样本和结论范围。这五个问题覆盖的是一条证据链最容易断掉的几个位置。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.8　演示与评审</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ⑥</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>⑥</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>评阅者可以从五个问题开始</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>先挑一个主要结论，沿它的证据链往回走，通常就能暴露关键缺口。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+            <Box style={{ width: 216, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>比较对象</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>判分标准</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>证据定位</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>不利样本</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>结论范围</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 26</Text>
+    </Box>
+
+</Slide>

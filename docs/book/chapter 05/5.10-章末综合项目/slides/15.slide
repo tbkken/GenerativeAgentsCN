@@ -1,0 +1,71 @@
+<Slide notes={`运行记录的第一步是分清楚哪些运行算数。
+
+正式运行是纳入项目比较的那些，要逐条进入运行索引。诊断运行是中途用来查问题的，它也要保留，并且写明用途，不能因为不进入比较就丢掉。失败、重试和没有闭环的任务一律保留，它们本身就是代价的一部分。
+
+重复次数和预算必须在开始之前确定。如果只跑得动很少几次，就如实说明这属于小型探索，不要拿它做普遍优越的推断。
+
+还有一条纪律要提前写在实验计划里：哪些样本进入比较、哪些只算工程诊断，在跑之前就定好。看到结果以后再交换标签，比较就失去意义，分母也被人为修饰过了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.4　第三份交付：运行和结果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>运行索引：正式运行与诊断运行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 694, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 694, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 628, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>正式运行</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>纳入项目比较的运行，逐条进入运行索引，附身份与首个尝试</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 694, height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+                <Box style={{ width: 628, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>诊断运行</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>用于排查问题的运行同样保留，并注明它的用途，不进入比较</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 694, height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 628, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>失败与未完成</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>一律登记，不删除也不改名；它们就是代价的一部分</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 426, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>开始之前就要写定的两件事</Text>
+
+            <Box style={{ width: 426, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>哪些样本进入比较</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>看到结果之后不得随意交换比较与诊断的标签</Text>
+            </Box>
+
+            <Box style={{ width: 426, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>重复次数与预算</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>在开始前确定；只能跑很少几次时如实说明属于小型探索</Text>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>运行记录沿用第四章的全部运行索引，不再另建一套含义相同的表。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 31</Text>
+    </Box>
+
+</Slide>

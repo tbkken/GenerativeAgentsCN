@@ -1,0 +1,79 @@
+<Slide notes={`六种原语逐个过。
+
+MOVE 走向服务台或阅读区，要核对执行路径、实际终点、剩余路径。ACT 在当前位置阅读、整理资料，要核对非空的 predicate 和 object，以及当前位置。WAIT 用于等待答复或已知时间边界，要核对等待原因与适当的预期边界。SPEAK 向一名角色传达消息，要核对参与者、消息与稳定会话身份。INTERACT 查询公告或向服务台咨询，要核对实际 selection_key、请求及后续回复。SET_OBJECT_STATE 修改对象自身状态，要核对对象身份、状态补丁与提交事实。
+
+每一行的核对项就是排查清单，缺一项就不能说动作成立了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.4　六种动作分别表达什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六种原语，各核对什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>统一经 world-act 提交；每名参与者每 Step 最多成功选择一次。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 26 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>原语</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>典型用途</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>需要核对的事实</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>MOVE</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>走向服务台或阅读区</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>执行路径、实际终点、剩余路径</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>ACT</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>在当前位置阅读、整理资料</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>非空 predicate、object，当前位置</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>WAIT</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>等待答复或已知时间边界</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>等待原因与适当的预期边界</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>SPEAK</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>向一名角色传达消息</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>参与者、消息与稳定会话身份</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>INTERACT</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>查询公告或向服务台咨询</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>实际 selection_key、请求及后续回复</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 38, background: '#26816B' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>SET_OBJECT_STATE</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>修改对象自身状态</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>对象身份、状态补丁与提交事实</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 23</Text>
+    </Box>
+
+</Slide>

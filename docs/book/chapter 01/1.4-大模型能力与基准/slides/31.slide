@@ -1,0 +1,61 @@
+<Slide notes={`错题不是一种东西，至少要分成三类，因为它们对我们的意义完全不同。
+
+第一类是真不会。题目是对的，答案也清楚，就是目前的模型做不出来。这类错题标记的是能力的真实边界。
+
+第二类是题目有错。可能是题面缺条件，可能是参考答案本身就错，也可能是判分规则太死或太松。这类错题标记的是测量的缺陷，和模型强弱无关。
+
+第三类是学过头。模型在训练数据里见过这道题甚至标准答案，于是它答对了，但它是回忆出来的，不是推出来的。这类最危险，因为会让分数虚高，看起来比实际强。
+
+三类失败要用不同的办法查。第一类看解题记录，第二类靠人工复核题目，第三类要查训练数据的边界。混在一起说，只会得出错误的结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑥　1.4.6　尚未解决的错题：先把失败分清楚</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>错题分三类</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 322, background: '#EDF4FC', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 92, height: 28, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>第一类</Text></Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>真不会</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>题目是对的，答案也清楚，就是现在的模型做不出来。这类错题标记的是能力的真实边界。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.45 }}>查法：看解题记录，找卡在哪一步</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 322, background: '#FFF4E6', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 92, height: 28, background: '#CB6B28', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>第二类</Text></Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>题目有错</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>题面缺条件、参考答案本身有误、判分规则太死或太松。这类错题标记的是测量的缺陷，与模型强弱无关。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>查法：人工逐题复核题面与判分</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 322, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 92, height: 28, background: '#546779', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>第三类</Text></Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>学过头</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>模型在训练数据里见过这道题甚至标准答案，于是答对了，但那是回忆不是推理。这类最危险，会让分数虚高。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>查法：追溯题目与训练数据的重叠</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>三类混在一起谈，只会得出错误结论；前两类压分，第三类抬分，方向正好相反</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>31 / 36</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,74 @@
+<Slide notes={`这一节按四个知识块推进，顺序不能打乱，因为前一块的结论是后一块的输入。
+
+第一块解决怎么说话：给材料标性质，分清场景设定、作者假设、待核实和实际观察。第二块解决怎么找得回来：来源要能定位到原文段落，两份材料打架时先登记冲突编号，再决定采用谁。第三块解决暂时这么定的条件凭什么能改：每一条假设都要配一条会改变它的证据，整理时还要保住原意和空白。第四块解决交出去的东西：接收者要能自己找到采用的原文、明确的条件和未完成事项。
+
+我建议大家听的时候带着自己的材料想：我手上这一句，属于哪一块。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把材料整理成一套能解释的资料集</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>接收者要能自己回答：哪些是本次采用的条件、每条来源能不能定位到原文、哪些空白必须保留。</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>四个知识块按 5.2.1 到 5.2.6 的顺序推进，编号与后面四张扉页一一对应。</Text>
+        </Box>
+
+        <Box style={{ width: 748, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 748, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>5.2.1　先给每句话标明性质</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>场景设定、作者假设、待核实事项、实际观察，四类材料不能合并成一列“已验证事实”。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 748, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>5.2.2 — 5.2.3　来源能追到原文，冲突先登记</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>来源要定位到哪一份文档的哪一段；两份材料打架时先登记冲突编号，再决定本次采用谁。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 748, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>5.2.4 — 5.2.5　假设写成可检查的约束，整理时保住原意</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>每个“暂时这么定”都要配一条会改变它的证据；整理不能把目标改写成已经取得的结果。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 748, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>5.2.6　交给下一位作者的是什么</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>采用的原文与来源、整理后的明确条件、冲突与未完成事项——接收者要能自己找到这三样。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 23</Text>
+    </Box>
+
+</Slide>

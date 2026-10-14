@@ -1,0 +1,95 @@
+<Slide notes={`材料齐了以后，通过第三章的浏览器路径把内容选进独立实验，核对五个人、三个对象以及它们的依赖，不是看一眼导入提示就算过。
+
+接着装配出生与已知空间，保存，再从同一个实验重新打开——只有重开，才能看到真正存进去的是什么。
+
+两组的共同条件要写全：都是 2026 年 10 月 18 日九点到十点十五分，时区 Asia/Shanghai，每步一分钟，一共 76 步。身份和实验名称可以不一样，共同内容不能漂移。
+
+核对顺序：先打开孟川资料看私人目的与首句，再打开咨询台 Skill 看它有分工但没有答案表，然后打开地图看公共语义有没有泄露任务，最后打开实验内人物，对比出生地址和公共副本的区别。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.5　按内容关系安排作者操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>装配条件与核对顺序</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 550, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 550, height: 200, background: '#EDF4FC', borderRadius: 12, padding: '24px 28px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>选入独立实验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 494 }}>通过第三章的浏览器路径选入，核对五人、三个对象及依赖，而不是只看导入提示。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 494 }}>再装配出生与已知空间，保存并从同一实验重开。</Text>
+            </Box>
+
+            <Box style={{ width: 550, height: 150, background: '#F7F3E8', borderRadius: 12, padding: '24px 28px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>两组共同条件</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 494 }}>2026-10-18 09:00—10:15　·　Asia/Shanghai　·　每步一分钟　·　76 步</Text>
+            </Box>
+
+            <Box style={{ width: 550, height: 100, background: '#FFF4E6', borderRadius: 12, padding: '0 28px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6, width: 466 }}>身份和实验名称可以不同，共同内容不能随之漂移。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 570, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 570, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ width: 488, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>打开孟川资料</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>看私人目的与首句</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 570, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ width: 488, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>打开咨询台 Skill</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>看有分工，但没有四人的答案表</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 570, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ width: 488, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>打开地图</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>看公共语义没有泄露任务</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 570, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ width: 488, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>打开实验内人物</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>核对实际出生地址与公共副本的区别</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 570, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 490 }}>检查的是信息流，不只是字段有没有填满。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 27</Text>
+    </Box>
+
+</Slide>

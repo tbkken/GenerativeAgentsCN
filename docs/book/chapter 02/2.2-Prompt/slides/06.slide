@@ -1,0 +1,62 @@
+<Slide notes={`条件写出来之后，还要区分它们的强度，否则模型遇到冲突时不知道先保哪一条。
+
+硬约束是不能破的。手作室容量十二人，这场活动十个人，人数不能超；手作体验持续六十分钟，也不能为了让时间表好看就压缩。开放时间、已有预约同样属于这一类。
+
+偏好是可以权衡的。尽量把活动集中在上午前半段，这是一个愿望，不是一条规则。先满足规则，再说明偏好为什么没满足。不能因为想让安排紧凑，就把活动时长压短。
+
+还有一条常被误解：角色名称不授予权限。给模型一个“最专业的排程专家”的头衔，它既不会因此补齐预约记录，也不会获得预订权限。角色描述可以辅助语气，但它替代不了材料，也替代不了工具。
+
+这也是为什么提示里要明确写出：本轮只提出方案，不声称已预订、发布或通知任何人。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.1　六个问题构成一份任务说明</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>硬约束先满足，偏好再权衡</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 24 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>同一份提示里的条件强度并不相同。先分清哪些不能破，哪些只是尽量。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 280 }}>
+
+            <Box style={{ width: 560, background: '#FFF4E6', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 6, height: 30, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>硬约束　必须先满足</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>·　手作室容量 12 人，本场活动 10 人，不得超出{'\n'}·　手作体验持续 60 分钟，不能为紧凑而压缩{'\n'}·　开放时间与已有预约以材料为准，不得占用</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>破一条，候选就不成立。</Text>
+            </Box>
+
+            <Box style={{ width: 560, background: '#EDF4FC', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 6, height: 30, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>可权衡偏好　尽量满足</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>·　尽量把活动集中在上午前半段{'\n'}·　先满足规则，再说明偏好未满足的原因{'\n'}·　不得为制造可行方案改变原始人数或时长</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>没满足要说清原因，不能偷偷改数据。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 152, background: '#FFF4E6', borderRadius: 12, padding: '22px 26px', flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+            <Box style={{ width: 6, height: 84, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>角色名称不授予权限</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>“最专业的排程专家”仍不能补齐预约记录，也不会获得预订权限。角色描述可以辅助语气，替代不了材料与工具。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

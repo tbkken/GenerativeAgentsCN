@@ -1,0 +1,66 @@
+<Slide notes={`托管路线可以这样走。
+
+第一步是上传。把 examples 目录下的 open-day-planner 打成 ZIP，或者直接上传目录，POST 到 /v1/skills。第二步是记录身份。服务会返回 Skill ID 和实际版本，一定要记下来，后面的请求要引用它。第三步是挂载：在请求里声明 shell 工具，environment 设成 container_auto，skills 里放一条 skill_reference，指向刚才的 skill_id。
+
+要注意两件事。这条路要求模型和账号都支持相应的托管工具，不是所有账号都能直接调。另外，上传成功只说明包存在了，不代表这次任务就会用上它。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.4　OpenAI 原生 Skills：上传并挂载到托管 Shell</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>上传、记录身份、挂载 Shell</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>先把这个包送到服务端，得到一个可以被引用的身份。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 7, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第一步</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>上传目录 / ZIP</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>POST /v1/skills，把教学包交给服务端。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 7, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第二步</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>记录真实身份</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>记下返回的 Skill ID 与上传后的实际版本。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 30, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 7, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第三步</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>挂载托管 Shell</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>把 skill_id 交给 skill_reference，供本次任务引用。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>本小节先走这条路线</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>本地 Shell 与应用层 SOP 加载留到 2.8.5，两组的路径与权限写法完全不同。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>模型与账号须支持托管工具</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>挂载前先确认所选模型与账号可以使用对应的托管工具，否则请求会被拒绝。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 27</Text>
+    </Box>
+
+</Slide>

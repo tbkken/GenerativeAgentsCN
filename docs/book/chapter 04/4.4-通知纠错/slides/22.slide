@@ -1,0 +1,110 @@
+<Slide notes={`出了问题要倒着查，别停在摘要上。
+
+先从结果出发，看相关行动和过期计数；再往下走到具体的 Agent，区分是哪一个角色的动作；再落到具体人物，看他的接收时刻和判断；最后才到记忆和对话这一层，去找摘要和原始记录。
+
+核对的时候要用真实材料。第一，已提交记录，确认动作和发言真的提交过，不是只存在于摘要里。第二，状态导出，用来核对记忆节点的有效态和替代关系，包括记忆 ID 对不对得上。第三，检索结果，看固定问题在这个 Run 下真实返回了哪些节点。第四，对话与便签，确认角色之间真的发生过那次 SPEAK，以及待确认便签有没有兑现。
+
+顺序别跳：摘要看起来对，不代表底下的证据链成立。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.6　人工判分与失败解释</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从结果倒着核对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 452, flexDirection: 'column', gap: 10 }}>
+
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>从结果一层层往下走</Text>
+
+            <Box style={{ width: 452, height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>结果</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>相关行动与过期计数</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 452, height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>Agent</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>是哪个角色的动作</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 452, height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>人物</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>接收时刻与来源判断</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 452, height: 88, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 26, height: 26, background: '#546779', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>记忆／对话</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>摘要与原始记录</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 668, flexDirection: 'column', gap: 10 }}>
+
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>拿这四类真实材料去核对</Text>
+
+            <Box style={{ width: 668, height: 88, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>已提交记录</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>动作与发言真的提交过，不是只写在摘要里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 88, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>状态导出</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>核对节点有效态、替代关系与真实记忆 ID</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 88, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>检索结果</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>固定问题在该 Run 下真实返回了哪些节点</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 88, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>对话与便签</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>确认那次 SPEAK 真实发生、待确认便签是否兑现</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,60 @@
+<Slide notes={`再往下看一个更细的层次：同样是"有工具"，工具换来换去，测到的东西也在变。
+
+第一种条件，只让模型自己算。这时候测到的是它在当前输入和生成条件下的计算表现，还可能会算错，也可能漏掉条件。
+
+第二种条件，允许它用计算器。表面上只是多了一个工具，其实测的东西变成了四件事：它能不能识别出这里需要计算、能不能把参数正确地传进去、能不能理解返回的结果、最后能不能把结果组织成答案。失败的方式也变了——表达式传错了，或者结果算对了但用错了。
+
+第三种条件，允许它查预约。这时候测的是选日期、选房间、读记录、把事情做完这一整套。失败可能是查错了日期，可能是漏读了记录，也可能是查询失败之后直接编了一个。
+
+所以有两条纪律：工具成功和任务成功要分开记录；评测要写清可用工具、数据、调用预算和最终判据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.3　工具会扩展能力，也会改变评价对象</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>工具成功，不等于任务成功</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 14, color: '#546779' }}>任务条件</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>主要测到什么</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 14, color: '#546779' }}>仍可能怎样失败</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>只让模型计算</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>当前输入与生成条件下的计算表现</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>算错、漏条件</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>允许计算器</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>识别需要、传参、理解结果、组织答案</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>表达式传错、结果用错</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>允许查预约</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>选日期、选房间、读记录、完成任务</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>查错日期、漏读、查询失败后编造</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>工具成功与任务成功，分开记录</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>评测应写清可用工具、数据、调用预算和最终判据。WebArena 就在给定网页环境中评价代理执行任务的结果；第三章还会加入身份、可见信息和动作校验。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 22</Text>
+    </Box>
+
+</Slide>

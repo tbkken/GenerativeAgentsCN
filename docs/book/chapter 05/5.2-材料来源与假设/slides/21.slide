@@ -1,0 +1,79 @@
+<Slide notes={`资料集里具体放什么，我建议按这三种内容来组织。
+
+第一种，采用的原文与来源。按 S 编号排，每一项都能定位到原文段落，接收者想核对随时能翻回去。第二种，整理后的明确条件。这一轮用什么时间、多少个人、多少个对象，写清楚，并且注明它对本轮结论的影响。
+
+第三种，冲突、假设和未完成事项。C 编号的冲突、材料表里的假设、还有那些仍然待确认的问题，都放在一起。
+
+目录可以按原始材料、采用说明、待办和接收检查这样分类。但我必须强调一句：它只是作者侧的资料组织方式，不是可以直接导入的 ga-package 清单。这两件事别混。
+
+目录的示意只是帮助理解分组思路，它不是系统界面，也不是可以直接导入的清单。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.6　交给下一位作者的应是什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>资料集里要有三种内容</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 564, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+            <Box style={{ width: 564, height: 120, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>采用的原文与来源</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>按 S 编号能定位到哪一份文档的哪一段</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 120, background: '#ECF7F2', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>整理后的明确条件</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>本轮采用的值，以及它们怎样影响结论</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 120, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>冲突、假设和未完成事项</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>C 编号、材料表假设、仍然待确认的问题</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 564, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+            <Box style={{ width: 564, height: 300, background: '#F4F7FA', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>资料集目录</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>示意</Text>
+                </Box>
+                <Box style={{ width: 520, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>原始材料——收到的原文，按 S 编号</Text>
+                </Box>
+                <Box style={{ width: 520, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>02</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>采用说明——本次用哪些条件、为什么</Text>
+                </Box>
+                <Box style={{ width: 520, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>03</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>待办——冲突、假设、未确认问题</Text>
+                </Box>
+                <Box style={{ width: 520, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>04</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>接收检查——这份资料集能否被解释</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, height: 120, background: '#FFF4E6', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>一条边界</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>它只是作者的资料组织方式，不是可导入的 ga-package 清单。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,85 @@
+<Slide notes={`共享率的分母是四，也就是四个 F 条件。
+
+假设真实发言只覆盖了 F1、F2、F3，那共享率就是三比四，百分之七十五。
+
+有一种情况要特别防：角色可能恰好把阅读安排到阅览室，方案看起来对了，但他从来没有说过 F4 这条事实。这时候不能补记共享——猜到不等于共享。所以共享要和方案得分分开算，两者不能互相推算。
+
+还有一类表述也不能得分：「设备安排没意见」。这句话没有说出具体活动和教室，它没有传递任何可以核对的事实。
+
+这两条合起来说明一件事：共享看的是有没有真的说出来，而不是结果看起来对不对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.6　教师解答与人工判分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>共享率 3/4，猜中不补记</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 512, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>必要信息共享{'\n'}只看有没有真的说过</Text>
+
+            <Box style={{ width: 512, height: 130, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 68, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>3 / 4</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>＝ 75%　F 条件共享率</Text>
+            </Box>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 512 }}>若真实发言只覆盖 F1、F2、F3，共享率就是 3/4；方案得分不能拿来推算共享率。</Text>
+
+            <Box style={{ width: 512, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>猜中阅览室也不补记 F4 共享；重复说同一条也不重计</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 608, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>四条 F 条件的共享登记</Text>
+
+            <Box style={{ width: 608, height: 76, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>F1</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>阅读早于手作　·　已真实表达</Text>
+            </Box>
+
+            <Box style={{ width: 608, height: 76, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>F2</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>拼图 11 点开始　·　已真实表达</Text>
+            </Box>
+
+            <Box style={{ width: 608, height: 76, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>F3</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>手作在操作室　·　已真实表达</Text>
+            </Box>
+
+            <Box style={{ width: 608, height: 76, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>F4</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#CB6B28', flex: 1 }}>阅读在阅览室　·　未真实表达</Text>
+            </Box>
+
+            <Box style={{ width: 608, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, flex: 1 }}>「设备安排没意见」没有具体活动与教室，不能得该事实分</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 26</Text>
+    </Box>
+
+</Slide>

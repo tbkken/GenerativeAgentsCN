@@ -1,0 +1,78 @@
+<Slide notes={`四个知识块，围着同一个问题展开：一个能力要怎样才算真正接进来了。
+
+先分清角色。谁负责对话和模型，谁负责维护连接，谁提供能力，这三个身份落在不同的组件上。分不清它们，排查时就没有方向。
+
+再分清两条路线各管哪一段。函数调用管一次请求和结果的往返；MCP 管连接、发现和调用。连接既可以走本机的标准输入输出，也可以走远程的 HTTP。
+
+然后是怎么验收。业务合同要看清楚，服务怎么启动、日志往哪里写都有讲究，配好之后还要按顺序核对一遍。
+
+最后是远程工具的检查。工具范围、审批方式、服务身份是三件独立的事，任何一件没做对，接入都不算完成。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>让能力以自己的方式被接入</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>先分清角色，{'\n'}再谈接入</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>四个知识块从角色分工走到远程检查：先看清谁在连接谁，再分清两条路线各管哪一段，然后按证据验收接入，最后单独核对远程工具。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>谁在连接谁</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>宿主、客户端与服务端的职责分工，以及服务端能表达的三类能力</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>两条路线各管哪一段</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>函数调用管一次请求与结果，MCP 管连接与发现；本机标准流与远程 HTTP</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>接上之后怎么验收</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>先看业务合同，再启动服务、配好宿主，按顺序核对并留下证据</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>远程工具的三个独立检查</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>工具范围、审批与服务身份分别核对，再用停用练习检验</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 27</Text>
+    </Box>
+
+</Slide>

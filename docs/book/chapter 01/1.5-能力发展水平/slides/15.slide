@@ -1,0 +1,101 @@
+<Slide notes={`这四条是具体的核对动作。
+
+第一条，同一名称：都写着 SWE-bench，不代表是同一份题。要看任务版本、有没有经过修订、评测用的是哪一份任务文件；系统卡自己也说，不能直接与较早任务文件上的成绩比较。
+
+第二条，同一百分比：都写 80%，要问分母是什么——是题目、是测试，还是任务？三者含义完全不同。
+
+第三条，同一档位：都叫 high 不代表算力一样，不同厂商的档位命名是各自定的。
+
+第四条，同样用了工具：都有检索或执行，还要看工具集合和单次使用上限，是只能搜索，还是能打开网页、执行代码。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.4　工程与长上下文：高分背后包含执行环境</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四种"看似一样"</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 30 }}>
+            <Box style={{ flex: 1, padding: '0 20px' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>表面相似</Text></Box>
+            <Box style={{ flex: 1, padding: '0 20px' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>还要核对</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 96 }}>
+            <Box style={{ flex: 1, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同一名称</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>都写着同一个榜单的名字</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同一名称</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>任务版本与修订是哪一份</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 96 }}>
+            <Box style={{ flex: 1, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同一百分比</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>两行都写着 80%</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同一百分比</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>分母是题目、测试还是任务</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 96 }}>
+            <Box style={{ flex: 1, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同一档位</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>都标着 high</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同一档位</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>不等于同样的计算预算</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 96 }}>
+            <Box style={{ flex: 1, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同样用了工具</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>都有检索或执行</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>同样用了工具</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>工具集合与使用上限各是什么</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

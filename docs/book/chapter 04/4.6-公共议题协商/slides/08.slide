@@ -1,0 +1,93 @@
+<Slide notes={`现在换成教师的眼睛，把四个候选逐列读下来，看谁被挡住。
+A 在十八点到十九点：何澄可以，宋遥也可以；但秦川十九点以前无法到场，A 被卡住。
+B 在十九点到二十点：何澄和秦川符合，可是宋遥十九点半必须离开，不能完整参与。
+C 在十九点五十到二十点五十：秦川符合；何澄二十点以后需要安静；宋遥仍然不能完整参与。
+D 在十九点到二十点、静默共读：何澄符合；秦川的交流需求没有被满足；宋遥还是不能完整参与。
+结论是没有一个候选满足全员的硬条件。这份分析只用来判分，它不是隐藏的正确候选，真正要检查的是我有没有强行造一个一致同意出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.2　私有理由与教师分析分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四候选 × 三人：教师的核对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ height: 430, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 694, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>候选（四者均满足共同场地规则）</Text>
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', width: 40 }}>A</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>18:00 — 19:00</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>正常交谈</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', width: 40 }}>B</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>19:00 — 20:00</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>正常交谈</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', width: 40 }}>C</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>19:50 — 20:50</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>正常交谈</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B', width: 40 }}>D</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>19:00 — 20:00</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>静默共读</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 426, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>逐列核对：谁被挡住</Text>
+                <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>何澄、宋遥条件符合；秦川 19:00 前无法到场</Text>
+                </Box>
+                <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>何澄、秦川条件符合；宋遥 19:30 离开，不能完整参与</Text>
+                </Box>
+                <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>秦川条件符合；何澄 20 点后需安静；宋遥不能完整参与</Text>
+                </Box>
+                <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>何澄条件符合；秦川交流需求未满足；宋遥不能完整参与</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>没有满足全员条件的候选，也不替任何人声明同意或反对</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>这不是隐藏正确答案，而是检查有没有强行造出「一致同意」</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>图 4.6-1 语义重绘（示意）：教师分析，不是实际投票</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

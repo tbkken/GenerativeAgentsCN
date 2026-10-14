@@ -1,0 +1,83 @@
+<Slide notes={`这两个例子要一起读，它们是一对。
+
+第一对时间：已有预约是十点到十点半，新活动是十点半到十一点半。这两段时间首尾相接，中间没有共同的一秒，所以时间上不冲突。但要注意，时间不冲突只是过了时间这一条，其他规则还要继续检查。
+
+第二对时间：已有预约还是十点到十点半，新活动改成九点四十五到十点四十五。这两段时间在十点到十点四十五之间是重叠的，所以这个候选不能采用。
+
+两个例子放在一起，模型学到的是一条判断规则：区间重叠不能采用，端点相接可以。规则学会了，换个时间它也能判断。
+
+还有一点很重要。如果预约改成十点半到十一点半，第一个例子里那个十点半到十一点半的新活动就不能再直接照抄了，因为事实变了，得重新取。
+
+用示例教规则，不要用示例代替事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.3　用示例澄清边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两个示例，一条判断规则</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ height: 50, background: '#F7F3E8', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 5, height: 28, background: '#546779' }} />
+            <Text style={{ fontSize: 16, color: '#20344B' }}>时间区间采用半开区间 [开始, 结束)：端点相接不算重叠，区间有共同部分才算重叠。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 360 }}>
+
+            <Box style={{ width: 560, background: '#ECF7F2', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 5, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#26816B' }}>例一　首尾相接</Text>
+                </Box>
+                <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>已有预约</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>10:00 — 10:30</Text>
+                </Box>
+                <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>新活动</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>10:30 — 11:30</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>判断</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>两段时间首尾相接，时间上不冲突；仍须检查其他规则。</Text>
+            </Box>
+
+            <Box style={{ width: 560, background: '#FFF4E6', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 5, height: 28, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>例二　存在重叠</Text>
+                </Box>
+                <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>已有预约</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>10:00 — 10:30</Text>
+                </Box>
+                <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>新活动</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>09:45 — 10:45</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>判断</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>存在重叠，不可采用这一候选。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 90, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 5, height: 48, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>教的是规则，不是数字</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>预约改成十点半至十一点半之后，旧例子的时间就不能充当当前事实。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

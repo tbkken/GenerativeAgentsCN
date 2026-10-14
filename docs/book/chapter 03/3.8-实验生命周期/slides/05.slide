@@ -1,0 +1,83 @@
+<Slide notes={`新建实验的向导分三步，每一步都要留下以后能核对的文字。
+
+第一步定义实验，填名称、目标、负责人和标签。目标不要写「运行成功」这种话，那对后面查证据没有帮助。青禾的目标可以写成：观察四位角色如何根据现场公告与服务台回复调整安排，核对实际移动、记忆更新和活动开始。它明确了稍后要查的事实。
+
+第二步选择资源，显式挑出聊天模型、Embedding 模型、大脑 Skill、地图，以及一个或多个 Crowd。本案例选入前面准备的四人群体。这一步要逐项核对，不用同名条目或者无关的旧地图来充当本次材料。
+
+第三步确认创建，检查名称、资源的成员摘要，然后创建草稿。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.1　创建的结果是一份独立材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>向导三步，逐项核对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+
+        <Box style={{ width: 700, height: 470, background: '#F4F7FA', borderRadius: 12, flexDirection: 'column' }}>
+            <Box style={{ width: 700, height: 44, background: '#276FBF', borderRadius: 12, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>新建实验　向导</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 56, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+            <Box style={{ padding: 18, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 664, height: 108, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 36, height: 36, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>定义实验</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>名称、目标、负责人和标签</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 664, height: 108, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 36, height: 36, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>选择资源</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>聊天模型、Embedding 模型、大脑 Skill、地图、一个或多个 Crowd</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 664, height: 108, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 36, height: 36, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>3</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>确认创建</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>检查名称、资源与成员摘要，创建草稿</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 430, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ width: 430, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>目标写成可核对的事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>观察四位角色如何根据公告与服务台回复调整安排，核对实际移动、记忆更新和活动开始。</Text>
+            </Box>
+            <Box style={{ width: 430, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>本案例选入四人群体</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>Crowd 会展开为独立人物，核对四个实际 Agent 身份。</Text>
+            </Box>
+            <Box style={{ width: 430, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>创建前逐项核对</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不用同名条目或无关旧地图充当本案例材料。</Text>
+            </Box>
+            <Box style={{ width: 430, height: 74, background: '#FFFFFF', borderRadius: 10, padding: '10px 18px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>重复公共 ID 会去重，agent_key 冲突则拒绝创建。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

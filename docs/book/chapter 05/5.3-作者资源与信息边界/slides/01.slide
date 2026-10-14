@@ -1,0 +1,88 @@
+<Slide notes={`把材料整理清楚只是第一步。接下来要决定的是，同一份整理稿里的每一句话，究竟该让谁看到。
+
+作者和评分者需要看到完整答案表，因为那是他们判断的依据；来访者本人只能知道自己要办什么事、第一句话说什么，不能提前知道窗口怎么分工。咨询台和窗口人员知道自己负责哪块业务，但同样不该知道每个人属于哪一类。
+
+最容易出错的地方，是把方便当成正确。为了调试顺利，把完整需求表塞进共同 Brain，看起来谁都不会走错，可整个澄清策略就失效了——咨询台一开始就知道答案，还谈什么先问清楚。
+
+所以材料装错位置，不是模型出了问题，是我们自己把答案提前泄露了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.3　作者资源与信息边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>作者资源与信息边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>每句话{'\n'}该放在哪里</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>来源清楚以后，还要决定同一份整理稿里每句话的归属。装错了位置，不是模型出了问题，而是材料本身泄露了答案。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 160, height: 42, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>一份整理稿</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>四类接收者</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>完整资源闭包</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 600, height: 64, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>一张作者表　·　同一份整理稿</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, flexDirection: 'row', gap: 18 }}>
+                <Box style={{ width: 291, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>作者／评分者</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>完整目的与四任务答案表</Text>
+                </Box>
+                <Box style={{ width: 291, height: 84, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>该来访者本人</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>只知道本人目的与首句</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 600, height: 12 }} />
+
+            <Box style={{ width: 600, flexDirection: 'row', gap: 18 }}>
+                <Box style={{ width: 291, height: 84, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>其他来访者</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不预先得到此人的目的</Text>
+                </Box>
+                <Box style={{ width: 291, height: 84, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>咨询台与窗口</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>已知窗口职责，未知私人目的</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 600, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 78, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>教师答案表：单独一类</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>只给作者／评分者，不进入角色或公共 Brain</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,60 @@
+<Slide notes={`最后留三组对照，都是可以自己动手做的。
+
+第一组是同一句请求、两种条件。先在不提供查询工具的情况下问手作室的预约，再在接入工具之后把同一句话重复一遍。前者应该老实说明无法核实，后者应该拿工具结果说话。比较的对象是证据有没有到位，不是第二次回答得有没有更自信。
+
+剩下两组是失败对照。查询一个不存在的房间编号，应该返回无效请求或者要求澄清，不能悄悄换成别的房间。校验十点到十一点的手作候选，应该发现和已有预约冲突并要求修正候选，不能去改原来的预约。
+
+把调用意图、执行结果和最终判定连成一条线，这三组对照就有据可查了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.6　失败诊断与练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两次请求与两个失败对照</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+            <Box style={{ width: 560, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>不提供查询工具时询问</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>应先说明无法核实这次预约，不凭旧记录下结论。</Text>
+            </Box>
+            <Box style={{ width: 560, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>接入后重复同一请求</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>应使用工具结果，并留下这次查询与返回的记录。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+            <Box style={{ width: 560, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>查询不存在的房间 ID</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>返回无效请求或请求澄清，不能悄悄换成别的房间</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 560, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>校验 10:00—11:00 的手作候选</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>发现预约冲突并修正候选，不能修改原来的预约</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>把调用意图、执行结果与最终判定连成一条证据链。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 26</Text>
+    </Box>
+
+</Slide>

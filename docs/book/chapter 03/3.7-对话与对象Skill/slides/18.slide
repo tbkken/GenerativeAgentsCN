@@ -1,0 +1,86 @@
+<Slide notes={`把从候选到正式更正的路走一遍，一共四道门槛。
+
+第一道是服务台的私有事实：手作室十点到十点半有预约。
+
+第二道是真实咨询。林岚去问，服务台才给出答复，提出可以调整到十点半的候选。
+
+第三道是林岚自己核实与决定。她不能凭对方一句话就照办，要判断这个候选站不站得住，再通过 INTERACT 提出更新请求。
+
+第四道是公告栏按教案核对请求的来源与内容。它检查的是请求者身份，不是文本里说了什么。
+
+四道都过完，公告栏才用自己的动作去改状态，并在同一次动作里带上回复。最后世界执行并整步提交，状态从原始变成修订。候选只是建议，正式更正必须走完这四步。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.4　设计公告更新这一段情节</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从候选到正式更新的四道门槛</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ width: 250 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>服务台私有预约事实</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>10:00—10:30 已有预约，只写在服务台材料里。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ width: 250 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>真实咨询答复</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>提出可调整到 10:30 的候选，这仍然只是建议。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ width: 250 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>林岚核实与决定</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>以真实咨询结果为依据，通过 INTERACT 请求更新。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ width: 250 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>公告栏按教案核对</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>检查真实请求者与内容，不看文本里的自称。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>公告栏自身 world-act：SET_OBJECT_STATE，同次动作携带 responses</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>世界执行并整步提交：original → revised。对象只改变自身，不代别人做决定。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 31</Text>
+    </Box>
+
+</Slide>

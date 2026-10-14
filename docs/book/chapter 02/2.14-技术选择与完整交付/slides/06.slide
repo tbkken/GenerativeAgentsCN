@@ -1,0 +1,108 @@
+<Slide notes={`六种常见技术，我按它们经常解决的缺口排一下。
+
+要求含糊、输出偏题，用 Prompt 和例子去补，看同一批材料下输出是不是更稳定地满足评分表。
+
+格式程序读不了，用结构化输出。能被解析只是第一步，还要另外过一次业务校验，字段对了不代表内容对。
+
+需要当前预约这种外部事实，用 Function Calling，关键是它真的执行了工具、并且用了返回的结果。
+
+同一只读能力要被多个宿主接入，才轮到 MCP；判断要看协议、传输、认证和工具合同是否真的兼容。
+
+重复的计算和检查交给命令行，看固定输入能否复现、退出码对不对。做法反复使用就用 Skill，看它有没有正确选用步骤、脚本和验收条件。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.1　按问题选择技术</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>单次任务用得上的六种技术</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 200, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>判断的标准只有一个</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>相同材料、相同任务下，换掉这项技术之后，结果是否更稳定、更可核对。达不到这一点，换来的只是流程更复杂。</Text>
+            </Box>
+
+            <Box style={{ height: 200, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>说不清缺口的，先不加</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>要求含糊补 Prompt，格式不可解析补 Schema，缺事实补工具，缺复用补 Skill。一次只补一类缺口。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 688, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Prompt 与例子</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>要求含糊，输出偏题</Text>
+                </Box>
+                <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+                <Text style={{ flex: 1, fontSize: 13, color: '#546779', lineHeight: 1.5 }}>相同材料下是否更稳定满足评分表</Text>
+            </Box>
+
+            <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Structured Outputs</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>格式无法被程序消费</Text>
+                </Box>
+                <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+                <Text style={{ flex: 1, fontSize: 13, color: '#546779', lineHeight: 1.5 }}>是否可解析、符合 Schema，且另行通过业务校验</Text>
+            </Box>
+
+            <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Function Calling</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>需要当前预约等外部事实</Text>
+                </Box>
+                <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+                <Text style={{ flex: 1, fontSize: 13, color: '#546779', lineHeight: 1.5 }}>是否真实执行工具并使用返回结果</Text>
+            </Box>
+
+            <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>MCP</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>相同能力要被多个宿主接入</Text>
+                </Box>
+                <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+                <Text style={{ flex: 1, fontSize: 13, color: '#546779', lineHeight: 1.5 }}>协议、传输、认证与工具合同是否实际兼容</Text>
+            </Box>
+
+            <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>CLI 或受控 Shell</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>重复的计算、转换和检查</Text>
+                </Box>
+                <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+                <Text style={{ flex: 1, fontSize: 13, color: '#546779', lineHeight: 1.5 }}>固定输入下能否复现，退出码是否正确</Text>
+            </Box>
+
+            <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Skill</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>做法需要重复使用</Text>
+                </Box>
+                <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+                <Text style={{ flex: 1, fontSize: 13, color: '#546779', lineHeight: 1.5 }}>是否正确选用 SOP、脚本与验收步骤</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 25</Text>
+    </Box>
+
+</Slide>

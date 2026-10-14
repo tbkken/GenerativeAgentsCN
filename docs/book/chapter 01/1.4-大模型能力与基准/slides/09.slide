@@ -1,0 +1,63 @@
+<Slide notes={`判断一个基准的权威性，不看名字响不响，看四根支柱。
+
+第一根，公开可查。题干、评分代码、运行配置能不能拿到。拿不到，外面就没法验证。
+
+第二根，可复现。换一个人、换一台机器，按文档能不能跑出接近的结果。
+
+第三根，独立审计。有没有第三方来查它的题和判分。Epoch 那次审计，十五个热门基准里有九个被判有问题。
+
+第四根，专家背书。题目是不是由真正懂这个领域的人写和复核的。GPQA 要求出题人和复核人都有博士学历，还刻意不让研究相近领域的人互相复核。
+
+四根缺一根，成绩就要打折看。但有审计也不等于零缺陷，Epoch 自己就承认审不了自家基准。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>②　1.4.2　评估机构：权威不是名气，是可核查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>权威性的四根支柱</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 276, height: 392, background: '#EDF4FC', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 64, height: 176, background: '#276FBF', borderRadius: 8 }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>公开可查</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>题干、评分代码、运行配置都能拿到</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 392, background: '#EDF4FC', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 64, height: 148, background: '#276FBF', borderRadius: 8 }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>可复现</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>换人换机按文档跑，能得到接近的结果</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 392, background: '#ECF7F2', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 64, height: 120, background: '#26816B', borderRadius: 8 }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>独立审计</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>有第三方来查它的题目与判分规则</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 392, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 64, height: 92, background: '#546779', borderRadius: 8 }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>专家背书</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>写题与复核的是真正的领域专家</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.55 }}>四根支柱缺一根，成绩就要打折看；有审计也不等于零缺陷——Epoch 自己都不审自家基准</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 36</Text>
+    </Box>
+
+</Slide>

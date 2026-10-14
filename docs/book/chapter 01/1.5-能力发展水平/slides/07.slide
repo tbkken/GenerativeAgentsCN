@@ -1,0 +1,65 @@
+<Slide notes={`还有一件很容易忽略的事：名字差不多，题可能已经换过了。
+
+Google 在 2026 年 9 月的方法报告里给出 HLE-Verified 的 54.9%，但它用的题集不是原来那 2,500 道。分母是 1,811 道：668 道沿用了原有的已核验题，1,143 道是修订过的题，同时排除了原集里 689 道不确定的题。
+
+所以这个数字不能拿去和前面的 65.0% 排名。题集不一样，已披露的设置也不一样，排在一起就等于把两个不同的问题当成同一个问题。
+
+它真正有用的结论只有一个方向：在这个重新核验过的高难集合里，仍然有大量问题没有被正确解决。也就是说，剩下的空间很大，而且是可测量的空间。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.1　专家级问题已经能解决一部分，工具会改变能力边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一个名字，可能已经换题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ flex: 55, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>HLE-Verified　·　Gemini 3.8 Flash　·　报告日期 2026 年 9 月　·　厂商自报</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 12 }}>
+                <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>54.9%</Text>
+            </Box>
+            <Box style={{ width: 88, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.7 }}>这是一个重新核验过的高难集合。在其中，仍有大量问题没有被正确解决。</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>通用方法为默认采样、除另有注明外按 pass@1 报告；精确 API 快照、推理等级与该行工具可用性未在所引段落披露。</Text>
+        </Box>
+
+        <Box style={{ flex: 45, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>分母是 1,811 题</Text>
+            </Box>
+
+            <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 80 }}><Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>668</Text></Box>
+                <Text style={{ fontSize: 16, color: '#546779' }}>道沿用原有已核验题</Text>
+            </Box>
+
+            <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 80 }}><Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>1,143</Text></Box>
+                <Text style={{ fontSize: 16, color: '#546779' }}>道为修订题</Text>
+            </Box>
+
+            <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 80 }}><Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>689</Text></Box>
+                <Text style={{ fontSize: 16, color: '#546779' }}>道不确定题被排除</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 3, height: 56, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>题集不同、已披露设置也不同，不能与 2,500 题上的 65.0% 排名。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

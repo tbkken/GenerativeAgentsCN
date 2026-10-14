@@ -1,0 +1,67 @@
+<Slide notes={`白榆社团资料交流日是一个虚构教案，还没有创建地图、实验或 Run，所以先把它当成一份纸面设计来读。
+场地是 17 列 11 行的作者网格，World 叫白榆校园，Sector 叫社团活动中心，两者都覆盖整张图。最外一圈边框是阻挡，内部有一道竖墙落在 x 等于 8 这一列，基线在上面留了一个口子，坐标是 8,3，下面还有一个口子，坐标是 8,8。
+这次做对照只改一件事：把 8,3 从可走改成阻挡，8,8 原样不动。「临时」指的是本次采用关闭布局，碰撞在封存之前就确定好了，Run 的过程中不会再动态改变。
+正因为只动这一处，后面才有资格说，两组之间的差别可以归到这一个格子上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.7 场地临时关闭演练</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 420, height: 400, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
+            <Box style={{ flexDirection: 'row', gap: 10, height: 300 }}>
+                <Box style={{ width: 96, height: 300, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>连接区</Text>
+                </Box>
+                <Box style={{ width: 88, flexDirection: 'column' }}>
+                    <Box style={{ width: 88, height: 58, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙</Text>
+                    </Box>
+                    <Box style={{ width: 88, height: 52, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>封</Text>
+                    </Box>
+                    <Box style={{ width: 88, height: 82, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙</Text>
+                    </Box>
+                    <Box style={{ width: 88, height: 52, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>通</Text>
+                    </Box>
+                    <Box style={{ width: 88, height: 56, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 86, height: 300, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>集合区</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 30 }}>
+                <Box style={{ width: 84, height: 30, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>上口封闭　下口可走</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 692, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>4.7.1 — 4.7.6　草稿布局与人工判分</Text>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>只封一个缺口，{'\n'}目标还剩下几条路</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 692 }}>常用通路关闭，目标仍可能可达；导航可以直接返回绕行路线，不必先撞墙。目标和信息相同，只关一处缺口，怎样影响集合与移动负担？</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 150, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>只改一格</Text>
+                </Box>
+                <Box style={{ width: 150, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>两种可走条件</Text>
+                </Box>
+                <Box style={{ width: 150, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>人工判分</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

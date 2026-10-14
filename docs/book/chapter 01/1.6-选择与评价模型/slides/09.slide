@@ -1,0 +1,76 @@
+<Slide notes={`六组任务各自考什么，我把它讲具体一点。
+
+材料理解这一组，考的是能不能把条件对应到正确的对象上。题面里会有明示条件，也会有跨段才能看出来的条件，还会故意放一些名字相近的房间和无关信息来干扰。
+
+事实与缺失这一组，考的是分不分得清已知、未知和传闻。四项分别是资料完整、缺容量、缺日期，以及只给了未经证实的说法。这一组特别重要，因为模型在信息不足时最容易编。
+
+结构与抽取这一组看输出格式，固定字段、多个活动、空值、字段之间的关系都要对。时间与数量这一组是硬规则，容量边界、预约重叠、相邻时间段、持续时间。
+
+工具结果理解这一组，四项分别是查询成功、查询失败、错误房间和没有调用证据，看它会不会把失败当成成功。跨轮信息修正这一组，考的是接到新证据以后是否按新事实修改，而不是嘴上说改了、实际还留着旧方案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.2　第二步：准备小而有区分度的任务集</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六组任务各测什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+
+        <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 240, paddingLeft: 18 }}><Text style={{ fontSize: 14, color: '#546779' }}>任务组</Text></Box>
+            <Box style={{ width: 480, paddingLeft: 12 }}><Text style={{ fontSize: 14, color: '#546779' }}>四项任务应覆盖什么</Text></Box>
+            <Box style={{ width: 432, paddingLeft: 12 }}><Text style={{ fontSize: 14, color: '#546779' }}>主要看什么</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 236, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>材料理解</Text></Box>
+            <Box style={{ width: 480, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>明示条件、跨段条件、相近房间名、无关信息干扰</Text></Box>
+            <Box style={{ width: 432, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>把正确条件对应到正确对象</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 236, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>事实与缺失</Text></Box>
+            <Box style={{ width: 480, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>完整资料、缺容量、缺日期、只有未经证实的说法</Text></Box>
+            <Box style={{ width: 432, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>分清已知、未知和传闻</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 236, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>结构与抽取</Text></Box>
+            <Box style={{ width: 480, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>固定字段、多个活动、空值、字段关系</Text></Box>
+            <Box style={{ width: 432, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>可读结构与内容是否同时正确</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 236, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>时间与数量</Text></Box>
+            <Box style={{ width: 480, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>容量边界、预约重叠、相邻时间段、持续时间</Text></Box>
+            <Box style={{ width: 432, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>是否满足明确规则</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 236, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>工具结果理解</Text></Box>
+            <Box style={{ width: 480, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>查询成功、查询失败、错误房间、没有调用证据</Text></Box>
+            <Box style={{ width: 432, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>正确使用结果并承认执行边界</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 236, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>跨轮信息修正</Text></Box>
+            <Box style={{ width: 480, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>预约更新、人数更新、旧方案保留、冲突未解决</Text></Box>
+            <Box style={{ width: 432, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>按新证据修正而不伪造进展</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 27</Text>
+    </Box>
+
+</Slide>

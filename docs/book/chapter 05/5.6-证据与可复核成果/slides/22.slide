@@ -1,0 +1,58 @@
+<Slide notes={`对外发布之前，有三条措辞和口径上的约定，看起来很小，但直接影响别人怎么读你的报告。
+
+第一是命名。组别统一叫「直接建议组」和「先澄清组」，地点统一叫「A 窗口」和「B 窗口」。不要一处叫「对照组」，另一处叫「基线组」，读者会以为是两组不同的东西。
+
+第二是索引。所有图表都要指向同一个运行索引和同一份评分来源，不要出现图一来自这次 Run、图二来自另一次的情况。
+
+第三是取舍。如果少走错窗口，代价却是多花轮次和调用，这个交换必须完整报告，不能只写好的那一面。
+
+最后是交付名称。当前只有教学设计，交付名称应当是「待执行方案和判分方法」，不要写成已完成或已验证。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.7　对外结论写到证据能够支持的位置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>措辞与口径的三条约定</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>三条约定</Text>
+            <Box style={{ width: 460, height: 146, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>一 · 命名</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 428 }}>组别称「直接建议组／先澄清组」，地点称「A 窗口／B 窗口」，避免混淆。</Text>
+            </Box>
+            <Box style={{ width: 460, height: 146, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>二 · 索引</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 428 }}>图表指向同一运行索引和评分来源，不混用两次运行的图。</Text>
+            </Box>
+            <Box style={{ width: 460, height: 146, background: '#F7F3E8', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>三 · 取舍</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 428 }}>若少走错窗口却多花轮次与调用，应完整报告取舍。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 660, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>交付名称要与证据相称</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 660 }}>当前只有教学设计：没有创建或运行服务大厅实验，没有生成真实结果 ZIP、.gaexp 或 .garun。</Text>
+            <Box style={{ width: 660, height: 190, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>所以名称这样写</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5, width: 624 }}>「待执行方案和判分方法」</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 624 }}>不写「已验证」「已上线」「效果显著」，这些词都超出了现有材料。</Text>
+            </Box>
+            <Box style={{ width: 660, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>为什么这条单独强调</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 624 }}>名称是接收者对成果的第一印象，写重了，后面所有材料都要替它解释。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,66 @@
+<Slide notes={`同一条链，换一个使用目标，要准备的东西就完全换了。
+
+先说目标 A：减少报名整理中的遗漏。它要准备报名材料，人工把应该提取的信息标出来，再检查模型找到多少、误报多少。本质是一次提取，可以逐项对答案。
+
+再说目标 B：可靠地调整活动安排。这个目标不能只看文字。助手说要改到哪个房间，我必须核对调整之后的实际结果：房间是不是真的换了，容量够不够，有没有顶掉别的安排。
+
+目标 A 的答案在材料里躺着，是静态的；目标 B 的答案取决于系统真实状态的变化，是动态的。用错目标，后面选样本、定判据都会跟着错。
+
+本节的人物、题目、运行记录和数值均为虚构教学数据，不是任何实际模型的测评成绩。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3　导言</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两个目标，两种做法</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ height: 215, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>目标 A</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>减少报名整理中的遗漏</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>先准备报名材料；人工标出应提取的信息；再检查模型找到多少、误报多少。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>答案就在材料里，可以逐项对</Text>
+            </Box>
+
+            <Box style={{ height: 215, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>目标 B</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>可靠地调整活动安排</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>必须核对调整之后的实际结果，不能只数回答中出现了多少正确字段。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>答案取决于系统真实状态的变化</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ height: 230, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>评价是一条链</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.8 }}>使用目标{'  ›  '}任务样本{'  ›  '}可观察输出{'\n'}判分规则{'  ›  '}汇总指标{'  ›  '}适用范围</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>六个环节依次确定，不能事后补</Text>
+            </Box>
+
+            <Box style={{ height: 200, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>数据说明</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>全篇人物、题目、运行记录与数值均为虚构教学数据，不是任何实际模型的测评成绩。引用的论文与资料用于说明评价方法。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 31</Text>
+    </Box>
+
+</Slide>

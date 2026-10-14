@@ -1,0 +1,53 @@
+<Slide notes={`最后一个知识块跟交付的可复用性有关。
+
+讲师需要一页问题和讨论提示，操作者需要环境和接收说明，研究读者需要全体结果和判分记录。这三种材料长短不同、重点不同，但它们应该引用同一份事实底稿。摘要更新之后，要回头检查图注、讲稿和报告里的数字是否同步，避免一份材料还写着三项成功，另一份已经改成两项。
+
+项目资料能不能被别人再用，还取决于来源、内容说明和访问方式。FAIR 原则强调数字资料应当便于寻找、访问、互操作与再利用，并要求说明来源；它也允许必要的认证与授权，并不意味着所有资料必须公开。本章借鉴这些原则组织交付入口，但我不声称获得了任何认证。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.8　演示与评审</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ⑦</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>⑦</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>为不同听众保留同一事实底稿</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>材料可以长短不同，事实只能有一份。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 0, marginTop: 8 }}>
+            <Box style={{ width: 400, height: 110, background: '#F7F3E8', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>同一份事实底稿</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>全体结果与判分记录</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 400, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Box style={{ height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>讲师：问题与讨论提示</Text>
+                </Box>
+                <Box style={{ height: 30, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>操作者：环境与接收说明</Text>
+                </Box>
+                <Box style={{ height: 30, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>研究读者：全体结果与判分记录</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 26</Text>
+    </Box>
+
+</Slide>

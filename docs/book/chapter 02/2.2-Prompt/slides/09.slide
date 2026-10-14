@@ -1,0 +1,48 @@
+<Slide notes={`第三版提示值得逐句读一遍，它是这一节最完整的一份任务合同。
+
+第一句交代对象和日期：为青禾社区学习中心十月十七日的开放日提出候选安排。
+第二、三句管输入和约束：先从材料里提取活动、人数、时长、允许使用的房间和开放时间；活动全部只安排一次，并且不得改变原始人数或时长去制造可行方案。这一句是防作弊的。
+第四句管未知项：预约状态以查询结果为准，没拿到结果就明确标为待核对。
+第五句管格式：时间统一用 Asia/Shanghai，保存成带时区偏移的完整日期时间。
+第六句管输出：约束清单、候选安排、各项依据和待确认事项分别给出。
+第七、八句管边界：条件冲突就具体说明冲突，不要编造房间或预约事实；本轮只提出方案，不声称已经预订、发布或通知任何人。
+
+最后这句看起来像废话，其实是最关键的一句。它把“提出方案”和“执行动作”明确分开。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.2　从模糊提示逐步改进</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>第三版写进的验收规则</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>提示里写进的四类要求</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>·　从材料提取活动、人数、时长、可用房间与开放时间{'\n'}·　活动全部只安排一次，不得改人数或时长{'\n'}·　预约状态以查询结果为准，未查询标为待核对{'\n'}·　时间用 Asia/Shanghai，输出带时区偏移</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>本轮只提出方案</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不声称已预订、发布或通知任何人。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, background: '#F7F3E8', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 5, height: 24, background: '#546779' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>第三版提示（原文）</Text>
+            </Box>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 2.0 }}>请为青禾社区学习中心 2026-10-17 的开放日提出候选安排。{'\n'}先从材料提取活动、人数、时长、允许使用的房间及开放时间。{'\n'}活动全部安排一次；不得改变原始人数或时长来制造可行方案。{'\n'}预约状态以查询结果为准；未取得结果时，明确标为待核对。{'\n'}时间使用 Asia/Shanghai，保存为带 +08:00 的完整日期时间。{'\n'}分别输出约束清单、候选安排、各项依据和待确认事项。{'\n'}如条件冲突，请具体说明冲突，不要编造新的房间或预约事实。{'\n'}本轮只提出方案，不声称已预订、发布或通知任何人。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

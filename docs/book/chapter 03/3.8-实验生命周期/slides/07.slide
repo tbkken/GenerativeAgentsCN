@@ -1,0 +1,44 @@
+<Slide notes={`这一块要解决一个很容易被忽略的问题：草稿能改，那改完之后凭什么说它改对了。
+
+创建成功首先得到的是一份 DRAFT，它只说明材料还可以编辑，并不说明空间和行为已经达到我们要观察的目的。系统可以在创建时给出初始位置，但作者仍然要按照场景重新装配。
+
+装配完还不算完，关键是保存之后要从同一个实验重新打开。要看的是服务器保存下来的那份副本，而不是还留在输入框里、尚未提交的内容。图片和地图保存完了，同样要重看素材、对象状态图和人物比例。
+
+核对的位置也要放对：坐标属于这一次实验，公共 Agent 资料里没有坐标，不等于配置漏了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>2　　3.8.2　草稿装配完成后，重新打开核对</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>草稿能改，改完要重开</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 920 }}>DRAFT 表示材料可编辑，不表示空间与行为已经达到实验目的；核对的对象是保存后的副本，不是还停在输入框里的内容。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 340, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>按场景重新装配</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>保存并等待结果</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>从同一实验重开核对</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

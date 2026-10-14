@@ -1,0 +1,65 @@
+<Slide notes={`要让接班这件事真的发生，得让宋青真的参与进来，而不是被动接收。
+
+具体是四件事。第一，宋青收到通知后要去记录台读那条记录，然后向虞诚复述事实和不确定的地方，有疑问就追问。第二，他要接近设备，提交规定的现场资料复核请求，并在实际地点提交一次外观核对动作。
+
+第三，韩平的角色是质询。谁要是说「已完成」或者「已恢复」，他就要对方指出来源；缺证据的，就保留为待办事项。
+
+第四，也是最容易被忽略的一点：如果没有新的事实，合格的结果本来就允许是「资料已经交接，设备仍未确认恢复」。
+
+这里还牵涉一个边界：正常接班复核是规定任务，不能因为交班员已经查过就当成重复劳动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.4　让对方真正参与</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>让对方真正参与进来</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 14, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center' }}>
+            <Box style={{ width: 34, height: 34, background: '#26816B', borderRadius: 17, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B' }}>收到交班消息后查询已保存记录，向虞诚复述事实和不确定性，有疑问继续追问</Text></Box>
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#26816B' }}>宋青</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center' }}>
+            <Box style={{ width: 34, height: 34, background: '#26816B', borderRadius: 17, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B' }}>接近设备，提交规定的现场资料复核请求，并在实际地点提交一次外观核对 ACT</Text></Box>
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#26816B' }}>宋青</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center' }}>
+            <Box style={{ width: 34, height: 34, background: '#CB6B28', borderRadius: 17, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B' }}>收到「已完成／已恢复」或冲突声明时，要求指出来源；缺证据的一律保留为待办</Text></Box>
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>韩平</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center' }}>
+            <Box style={{ width: 34, height: 34, background: '#CB6B28', borderRadius: 17, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B' }}>没有新设备事实时，合格结果可以是「资料已交接，设备仍未确认恢复」</Text></Box>
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>结果口径</Text></Box>
+        </Box>
+
+        <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>规定复核不算重复劳动</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不能因为交班员已查过就算重复；本案不自动修复，若研究状态变化，应另定触发与证据、重新设计对照。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

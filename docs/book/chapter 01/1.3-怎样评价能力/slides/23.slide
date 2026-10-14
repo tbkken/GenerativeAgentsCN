@@ -1,0 +1,70 @@
+<Slide notes={`用一个小算例把 Brier 分数看清楚。它是这么算的：对每一项，拿模型报出的成功概率减去实际结果，平方，然后把所有项平均起来。结果越接近零越好，按本书的约定范围是零到一。
+
+看第一个例子。助手对两项判断都报了零点九的把握，一项最终成功，一项失败。
+
+成功那一项，零点九减一，平方是零点零一。失败那一项，零点九减零，平方是零点八一。两项平均，零点四一。
+
+第二个例子，同样一项成功一项失败，但助手这次报的是零点五。成功那项平方零点二五，失败那项也是零点二五，平均零点二五。
+
+对比一下就明白：高置信的错误会受到很大的惩罚。报零点九说错了，比报零点五说错了要罚得重得多。不过两项样本太小，不能凭这个判断长期的校准水平。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.7　自信是否可信</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>报 0.9 却错一半：罚多少</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 30, padding: '0 20px' }}>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 14, color: '#546779' }}>预测与结果</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>逐项 ( p − y ) ²</Text></Box>
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 14, color: '#546779' }}>平均 = Brier 分数</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 120, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 300, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>两项都报 0.9</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>一项成功，一项失败</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>成功　( 0.9 − 1 )² = 0.01</Text>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>失败　( 0.9 − 0 )² = 0.81</Text>
+            </Box>
+            <Box style={{ width: 190, alignItems: 'flex-end' }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28' }}>0.41</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 120, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 300, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>两项都报 0.5</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>同样一项成功，一项失败</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>成功　( 0.5 − 1 )² = 0.25</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>失败　( 0.5 − 0 )² = 0.25</Text>
+            </Box>
+            <Box style={{ width: 190, alignItems: 'flex-end' }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B' }}>0.25</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>高置信的错误会被罚得更重</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>Brier 分数为各项 ( p − y )² 的平均，越小越好，按本书约定范围是 0 到 1；但两项样本太小，不能凭它判断长期校准水平。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 31</Text>
+    </Box>
+
+</Slide>

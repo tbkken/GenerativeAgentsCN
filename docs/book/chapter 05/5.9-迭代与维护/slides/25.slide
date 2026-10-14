@@ -1,0 +1,77 @@
+<Slide notes={`归档和删除都会被当成"整理材料"，但它们的后果完全不同。
+
+归档用于整理展示或者标记资料状态，它和实验封存不是一回事，也不会让 Run 自动完成。这里要提醒一句：当前各类资源页面的归档入口并不完全相同，所以我不能把它写成一个已经统一存在的按钮流程。
+
+删除要谨慎得多，它可能让材料无法再次读取。所以在删除之前，必须先明确保留需求，并确认已经有独立副本。
+
+还有一条很实际的建议：不要拿删除正式证据来演示资源隔离。演示的代价太大，一旦删掉，历史事实就真的没了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.7　环境变化以后怎样接手</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>归档与删除不是同一件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 348, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 520, height: 52, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>可逆的一侧</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>归档</Text>
+                </Box>
+                <Box style={{ width: 520, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>用于整理展示或资料状态</Text>
+                </Box>
+                <Box style={{ width: 520, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>与实验封存不是同一件事</Text>
+                </Box>
+                <Box style={{ width: 520, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>不会使 Run 自动完成</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>各类资源页面的归档入口并不完全相同，不写成已统一存在的按钮流程。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 348, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 520, height: 52, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>不可逆的一侧</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>删除</Text>
+                </Box>
+                <Box style={{ width: 520, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>可能使材料无法再次读取</Text>
+                </Box>
+                <Box style={{ width: 520, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>先明确保留需求</Text>
+                </Box>
+                <Box style={{ width: 520, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>确认已有独立副本</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>不拿删除正式证据来演示资源隔离。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>整理材料之前先问一句：删掉之后，这份历史事实还能不能被别人重新读到？</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 27</Text>
+    </Box>
+
+</Slide>

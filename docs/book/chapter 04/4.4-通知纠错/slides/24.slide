@@ -1,0 +1,62 @@
+<Slide notes={`最后把三个追问留下来。
+
+第一个，旧信念还在有效态吗？收到正式更正之后，到底只是追加了一条新信念，还是让原来那条退出了默认有效检索。这个问题决定了旧消息还会不会回来。
+
+第二个，谁真的收到了？要报覆盖率，没收到的人单独列出来，不能给他们填一个窗口长度。
+
+第三个，我数的是行动还是人？过期行动率的分母是相关动作，不是人数，所以 2/4 不能读成一半人还相信旧会址。零过期也不等于传播全面，必须同时看覆盖率。
+
+把这三个问题记住，你再看任何一个记忆类实验，都会先去找证据链，再去读结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4.4 通知纠错　·　结语</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三个追问</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ flexDirection: 'column', gap: 12, marginTop: 8 }}>
+
+            <Box style={{ width: 1000, height: 84, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+                <Box style={{ width: 38, height: 38, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>旧信念还在有效态吗</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>追加了一条新信念，旧的那条有没有退出默认有效检索。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1000, height: 84, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+                <Box style={{ width: 38, height: 38, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>谁真的收到了</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>覆盖率是多少，未接收者有没有单列、有没有被填窗口长度。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1000, height: 84, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+                <Box style={{ width: 38, height: 38, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>我数的是行动还是人</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>分母是相关动作；零过期不等于传播全面，要同时看覆盖率。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', marginTop: 6 }}>青禾读写交流为虚构教案，尚无实验或 Run；本节全部数值口径均为预登记设定。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错：让过期消息退出当前认识</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

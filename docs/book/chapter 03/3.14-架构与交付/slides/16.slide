@@ -1,0 +1,99 @@
+<Slide notes={`把这张图当成一句话来记：左边可以换，右边不能换，中间的入口只有一条。
+
+左边是方法。什么时候感知、什么时候咨询、什么时候去比较方案，怎样使用证据、怎样选择动作，什么时候等待或者结束本轮——本章的 Brain 就是这样决定的。
+
+其他实验完全可以采用不同做法：更谨慎地问询、更主动地探索，或者在任务简单的时候直接行动。ReAct、反思与排程都可以作为方法，但它们不需要成为所有角色必须走的系统流水线。
+
+右边是内核：身份与能力校验、世界提交与时间恢复、已提交事实可回放。
+
+中间的实线必须经过身份与能力校验。这意味着换掉 Brain 不会新增一条绕过入口的通道，也不会让谁凭空多出权限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.4　Brain 决定做法，内核守住事实边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>方法可变，内核守住事实边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 520, height: 356, background: '#EDF4FC', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>Brain / Skill 决定方法</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>何时感知、咨询、比较</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>怎样使用证据与选择动作</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>何时等待或结束本轮</Text>
+                </Box>
+                <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>ReAct / 反思 / 排程 都是可选方法，不是人人必走的内核流水线</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 112, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#546779', textAlign: 'center' }}>通过公开能力提出请求</Text>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                <Text style={{ fontSize: 12, color: '#CB6B28', textAlign: 'center' }}>必经此处</Text>
+            </Box>
+
+            <Box style={{ width: 520, height: 356, background: '#ECF7F2', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>内核守住公共边界</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 26, height: 26, background: '#26816B', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>身份与能力校验</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 26, height: 26, background: '#26816B', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>世界提交、时间与恢复</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 26, height: 26, background: '#26816B', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>已提交事实可回放</Text>
+                </Box>
+                <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>换 Brain 不新增绕过入口的通道；同一 Step 不能提交第二个动作</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>方法变化不绕过身份、权限或提交</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>也不把任何一种方法固化成全体角色必须执行的内核流水线。</Text>
+            </Box>
+            <Text style={{ fontSize: 13, color: '#546779', width: 300, lineHeight: 1.6 }}>作者再依据真实事实整理交付材料：精确输入、真实记录、评价规则与未验收边界。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 29</Text>
+    </Box>
+
+</Slide>

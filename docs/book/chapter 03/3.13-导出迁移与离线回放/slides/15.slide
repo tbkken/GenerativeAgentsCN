@@ -1,0 +1,70 @@
+<Slide notes={`导出完成之后不要只留一个文件，要同时留下一份记录。
+记录里应该写清楚文件名、实际大小、SHA256、生成时间，以及来源：源运行和源尝试、源状态、源提交步骤。
+有一种情况要特别小心：如果导出的时候运行还在执行，等你下载完成，界面可能已经推进到下一步了。这时候不能把归档的来源步骤改成页面上的最新值，因为包里保存的是取材那一刻的边界。
+同理，历史导出的来源如果不清楚，就应该写未知，不能按文件的修改时间来推断它是从哪一步切出来的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.4　原始导出怎样登记</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>原始导出要留下哪些字段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 10 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>一份导出记录应写明的字段</Text>
+
+            <Box style={{ width: 520, height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>文件名</Text>
+            </Box>
+            <Box style={{ width: 520, height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>实际大小</Text>
+            </Box>
+            <Box style={{ width: 520, height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>SHA256</Text>
+            </Box>
+            <Box style={{ width: 520, height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>生成时间</Text>
+            </Box>
+            <Box style={{ width: 520, height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>源 Run 与 Attempt</Text>
+            </Box>
+            <Box style={{ width: 520, height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>源状态</Text>
+            </Box>
+            <Box style={{ width: 520, height: 50, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', fontFamily: 'Consolas, monospace' }}>源提交 Step</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 600, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>保留原文件，另建记录</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>下载后不要只留一个压缩包。原文件照原样保存，再单独写一份记录，写清字段与来源，方便日后核对。</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 190, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不要把来源 Step 改成页面最新值</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>若导出时 Run 仍在执行，下载完成时界面可能已经推进到下一步。归档的来源步骤写的是取材那一刻的边界。历史导出来源不明时写「未知」，不按文件修改时间推断。</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 110, background: '#F7F3E8', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>核对包内内容</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>还要核对结果 ZIP 的状态边界、帧范围、内嵌实验及质量报告。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

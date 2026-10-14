@@ -1,0 +1,94 @@
+<Slide notes={`我把这六个问题按顺序排一下。
+
+先问「凭什么能找到相近内容」，答案是 Embedding：文本变成一组浮点数，语义相关的排得更近。紧接着要问「相似度到底说明了什么」，很多人会把它当成答案正确的概率，这是最常见的误解。
+
+然后回到材料本身：切分的时候要保留能解释证据的上下文，不然片段读得懂，结论却站不住。动手做一个小型检索器的时候，读取、切片、向量、排序、取前 k 每一步都要看得见。再往后是托管路线，用官方的 File Search 少写一些代码。最后是在产品里做同一件取证任务，并且把检索命中、引用支持、业务通过分开测量。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9　Embedding 与 RAG：先找依据，再组织答案</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的六件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>六个问题{'\n'}一层一层往下问</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>先弄清怎么找，再弄清怎么切，最后弄清怎么证明它真的起作用。</Text>
+        </Box>
+
+        <Box style={{ width: 812, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Embedding 为什么适合找相近内容（2.9.1）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>文本变成浮点数向量，语义相关的排得更近；相似度衡量方向，不等于答案正确。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>切分材料时保留能解释证据的上下文（2.9.2）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>切片单位跟着资料形态走，每个片段都要能追回原文件，权限在检索前就过滤。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>做一个看得见每一步的小型检索器（2.9.3）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>读取、切片、向量、排序、取前 k、交给模型，检索详情写成可读清单。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>托管 File Search 是另一条实现路线（2.9.4）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>上传、建向量存储、关联文件、确认处理完成，再在请求里带上向量存储 ID。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>用文件搜索完成相同的取证任务（2.9.5）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>引用工作空间与文件，逐项要文件位置与原文；文件缺失要记成输入变化。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#ECF7F2', borderRadius: 10, padding: '12px 18px' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#FFFFFF' }}>⑥</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>检索命中、引用支持、最终正确分别测量（2.9.6）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>三个环节对应三套指标，各自打分，谁也不能替谁下结论。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 25</Text>
+    </Box>
+
+</Slide>

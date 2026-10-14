@@ -1,0 +1,100 @@
+<Slide notes={`这一节一共六个问题，它们回答的是同一件事的不同侧面：我看到的这个百分比，到底能说明什么。
+
+第一个问题先把阅读方法立起来——谁、测什么、怎样运行、来源与时间，四格填齐，分数才可用。
+
+第二个问题看多模态。模型能读复杂科研图表，但要求它一次把一份长文档的全部细则都做对，仍然要分项检查。
+
+第三个问题看长任务。部分得分和严格通过率是两个不同的数，77.9% 绝不等于"八成的任务都做好了"。
+
+第四个问题看工程成绩背后的执行环境。题目版本、框架、档位和工具集合都影响可比性，条件未知就写未披露。
+
+第五个问题讲高分的系统仍会在具体事实处失手；第六个问题把这些翻译成我们选型时真正能用的判断。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六个问题，把百分比读成证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 320, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>这个数，是在什么条件下得到的？</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>六个问题从"怎么读一个数"走到"怎么用一批数"：先补齐条件，再看视觉、长任务与工程成绩各自的边界，最后落成选型时能直接问出口的判断。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 11 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一个分数，需要带着这些条件</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>谁、测什么、怎样运行、来源与时间，四格缺一不可</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>能读复杂材料，整份交付仍需验收</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>图表推理、PDF 全部通过率与视频帧数各看什么</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>长任务要看"全部完成"</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>部分得分与严格通过率的分母含义不同</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>高分背后包含执行环境</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>榜单版本、分母、预算与工具集合都影响可比性</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>高分系统仍会在具体事实处失手</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>把自述当成已发生的事实，是一种典型边界失守</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把发展水平翻译成可用的判断</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>四类工作各能用什么、必须额外核验什么</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

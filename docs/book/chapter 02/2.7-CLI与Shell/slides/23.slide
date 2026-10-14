@@ -1,0 +1,58 @@
+<Slide notes={`最后做三个候选，检验我是不是真的理解了规则。
+
+第一个恰好在 10:00 结束，第二个恰好在 10:30 开始。按半开区间，它们和手作室已有的预约都不重叠，在时间规则上都能通过。但通过时间规则不等于通过全部规则，它们仍然要分别满足时长、活动窗口和其他条件。
+
+第三个候选 JSON 格式合法、结构完整，但是漏掉了一项活动。时间规则看不出任何问题，它依然不合格——因为该做的事没有做。
+
+最后回答一个问题：为什么不能让模型修改校验器，直到自己的方案通过？因为校验器代表本轮已经确认的业务规则。改变规则，意味着改变评测问题。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.7　本节练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个候选，一次反问</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 14, color: '#546779' }}>候选</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 14, color: '#546779' }}>在时间重叠规则上</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>仍须满足什么</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>恰在 10:00 结束</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>与 10:00 开始的预约不重叠，通过</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>时长、活动窗口与其他规则仍要逐条满足</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>恰在 10:30 开始</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>与 10:30 结束的预约不重叠，通过</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>时长与覆盖完整性同样不能少</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 230 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>JSON 正确、活动遗漏</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>时间规则本身看不出异常</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.55 }}>每项活动恰好安排一次；该做的事没做，仍不合格</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不要让模型改校验器，直到自己的方案通过</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>校验器代表本轮已经确认的业务规则；改变规则，意味着改变评测问题。若组织者确实修改了规则，应单独记录新规则和原因，再生成对应的新报告。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

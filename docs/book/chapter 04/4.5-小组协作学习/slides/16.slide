@@ -1,0 +1,80 @@
+<Slide notes={`七条判据我一条条念。
+
+C1，恰好三项规定活动，各一次，没有遗漏也没有新增。C2，九点、十点、十一点各一次，每一项结束时间都是开始后五十分钟。C3，三间规定教室各用一次，不能出现别的教室。
+
+C4 到 C7 是四条私有限制落到方案上的样子。C4，阅读开始要早于手作，对应温乔那一条。C5，拼图十一点开始，对应任新那一条。C6，手作在操作室；C7，阅读在阅览室，这两条都来自白露。
+
+我把前三条放在一边、后四条放在另一边，是想说明它们的来源不一样：前三条人人都知道，后四条必须有人真的说出来，方案才可能对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.5　七项判据与不同分母</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>最终方案必须同时满足七条</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>来自共同题面　C1 — C3</Text>
+            <Box style={{ width: 560, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 68, height: 48, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>C1</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>恰三项规定活动，各一次，无遗漏／新增</Text>
+            </Box>
+            <Box style={{ width: 560, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 68, height: 48, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>C2</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>09、10、11 点各一次，结束均为开始后 50 分钟</Text>
+            </Box>
+            <Box style={{ width: 560, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 68, height: 48, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>C3</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>三间规定教室各一次，无其他教室</Text>
+            </Box>
+            <Box style={{ width: 560, height: 90, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>这三条人人可读，不依赖任何发言</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 16, color: '#26816B' }}>来自四条私有限制　C4 — C7</Text>
+            <Box style={{ width: 560, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 68, height: 48, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>C4</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>阅读开始早于手作　（F1 · 温乔）</Text>
+            </Box>
+            <Box style={{ width: 560, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 68, height: 48, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>C5</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>拼图 11 点开始　（F2 · 任新）</Text>
+            </Box>
+            <Box style={{ width: 560, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 68, height: 48, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>C6</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>手作在操作室　（F3 · 白露）</Text>
+            </Box>
+            <Box style={{ width: 560, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 68, height: 48, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>C7</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>阅读在阅览室　（F4 · 白露）</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 26</Text>
+    </Box>
+
+</Slide>

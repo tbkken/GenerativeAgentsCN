@@ -1,0 +1,71 @@
+<Slide notes={`学完三种方法，很容易走到另一个极端：什么都想做成循环。其实多数任务根本不需要。
+
+判断标准很朴素：下一步能不能提前写死。
+
+如果只有三项活动，步骤也是已知的——读取材料、生成候选、跑一次校验——那么固定的工作流就够用，快、好查、好复现。如果材料齐全、规则明确，一次生成加一次校验也能收工。
+
+真正需要循环的，是下一步依赖未知信息的时候：不查一下根本不知道房间在不在、时段空不空。或者下一步依赖工具返回的结果、依赖用户的决定，这种分支没法预先编排。
+
+所以顺序是：先问能不能写死，再问要不要循环。别一上手就上最复杂的结构。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.2　规划、ReAct 与反思分别增加什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>什么时候才值得用循环</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>先问「下一步能不能提前写死」，再问「要不要循环」。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0px 20px', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 17, color: '#20344B' }}>三项活动，步骤已知</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>读取—生成—校验，一遍就能走完</Text></Box>
+            <Box style={{ width: 236, height: 48, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>固定工作流够用</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0px 20px', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 17, color: '#20344B' }}>材料齐全，规则明确</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>一次生成加一次校验即可收工</Text></Box>
+            <Box style={{ width: 236, height: 48, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>固定工作流够用</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0px 20px', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 17, color: '#20344B' }}>下一步依赖未知信息</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>不查一下，就不知道房间与时段是否可用</Text></Box>
+            <Box style={{ width: 236, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>需要循环</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0px 20px', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 17, color: '#20344B' }}>下一步依赖工具结果或用户决定</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>分支无法预先编排，只能按结果走</Text></Box>
+            <Box style={{ width: 236, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>需要循环</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F7F3E8', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>对只有三项活动的问题，固定的「读取—生成—校验」工作流可能已经够用。结构越简单，越好验证。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

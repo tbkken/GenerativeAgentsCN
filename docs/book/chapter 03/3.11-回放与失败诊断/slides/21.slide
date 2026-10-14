@@ -1,0 +1,42 @@
+<Slide notes={`最后一块讲怎么写下来。回放里发现的问题，如果不写成可复核的记录，就没有办法传给下一个人，也没有办法在改动之后验证。
+
+一份可复核的异常记录至少要说清六件事：从哪个页面入口进入、做了哪个复现动作、预期是什么、实际是什么、这次观察属于哪一个实验、哪一个 Run、哪一次 Attempt、哪一步，以及对应的截图和原始事实。移动类的问题还要补感知范围、导航输入与输出、实际路径和最终坐标；对象类的问题还要补对象键、请求 ID、状态前后值和接收者。
+
+还有一条纪律最容易被忽略：没有证据就标「待复现」。不能为了叙事读起来连贯，先编一个步骤号填上去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>④　　3.11.6 — 3.11.7</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>写成可复核的记录</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>入口、动作、预期、实际、身份与原始记录；没有证据就标「待复现」，不为叙事连贯补一个步骤号。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>采集要素</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>描述异常</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>标出缺口</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 27</Text>
+    </Box>
+
+</Slide>

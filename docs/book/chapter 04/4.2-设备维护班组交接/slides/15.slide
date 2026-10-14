@@ -1,0 +1,79 @@
+<Slide notes={`两组真正的差别只有一句话，我把它摊成四行来比。
+
+整理方式上，基线用自然语言自由整理；对照组调用一次交接整理子技能。输入材料上，基线用个人观察和设备回复；对照组把这些事实和来源一并交给子技能。调用成本上，基线没有额外整理调用；对照组多出调用、长文本和阅读负担。
+
+修改触发也不一样。对照组不是每轮都重来，只有出现新证据、需要实质修改时才重新整理。除此之外，后面的保存、通知、回应问题三步，两组完全一样。
+
+所以这条实验线是干净的：两组都依赖同一个子技能，只有调用规则不同。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.3　共同流程，只改变整理段</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>基线：自由整理　对照：显式整理</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 60, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>基线　自由整理交接说明</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>整理方式</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>用自然语言自由整理一份说明</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>输入材料</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>个人观察与已取得的设备回复</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>调用成本</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>无额外整理调用</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>修改触发</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>自行判断，不受调用规则约束</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 60, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>对照　调用一次整理子 Skill</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>整理方式</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>调用一次五项整理子 Skill</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>输入材料</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>已有事实与来源一并交给它</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>调用成本</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>额外调用、长文本与阅读负担</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>修改触发</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>有新证据导致实质修改才重来</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 90, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>两组含相同子 Skill 依赖，仅调用规则不同</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>子 Skill 把输入整理为现象／证据来源／已做／待做／不能确认，缺内容标未知，只返回建议，不提交世界动作、不替人写记忆、不接触答案。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

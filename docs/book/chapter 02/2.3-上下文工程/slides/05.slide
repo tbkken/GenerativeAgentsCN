@@ -1,0 +1,68 @@
+<Slide notes={`这里要特别提醒一个容易犯的错：把不同状态压成同一句话。
+
+十点半开始也许合适，这是候选意见，是待验证的。预约工具返回十点至十点半不可用，这是查询结果，它带着来源和查询范围。方案通过校验，这不是一句结论能写完的，它必须有对应候选的实际报告。
+
+这三种东西一旦被压成「时间已确认」，来源没了，适用范围没了，出了问题也没有回查的入口。
+
+我的经验是，写工作记录时宁可啰嗦一点，也要把状态词留住：候选、已查、未校验、待确认。这些词看着不起眼，但它们决定了下一步该做什么，也决定了别人能不能复核你的结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.1　内容可以放在一起，来源不能混在一起</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种说法，不是同一种状态</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 110, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.55 }}>十点半开始也许合适</Text></Box>
+                <Box style={{ width: 150, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>候选意见</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 110, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.55 }}>预约工具返回十点至十点半不可用</Text></Box>
+                <Box style={{ width: 150, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>查询结果</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.55 }}>方案通过校验</Text></Box>
+                <Box style={{ width: 150, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>须有实际报告</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 30, color: '#CB6B28' }}>›</Text>
+        </Box>
+
+        <Box style={{ width: 400, height: 358, background: '#FFF4E6', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>常见写法是把它压成一句</Text>
+            <Box style={{ height: 92, background: '#FFFFFF', borderRadius: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#CB6B28' }}>时间已确认</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>只剩一句结论</Text>
+            </Box>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>候选、查询结果和校验报告被抹平成同一句话，来源、适用范围和回查入口一起丢掉。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 25</Text>
+    </Box>
+
+</Slide>

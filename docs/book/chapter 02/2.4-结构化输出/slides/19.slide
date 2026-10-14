@@ -1,0 +1,72 @@
+<Slide notes={`我们把这两个记号读清楚，业务判断就不会再靠感觉。
+
+[a, b) 表示包含 a、不包含 b。所以候选 A 从九点到十点，它的最后一个时刻是十点前的一瞬，十点整不属于它；预约从十点开始，十点整属于预约。两段正好接上，中间没有空档，也没有重叠。
+
+候选 C 的情况一样：预约在十点半结束，十点半属于候选 C。相接，不冲突。
+
+如果改成十点十五分开始，它就落进预约区间内部了。用公式判断：a 小于 d，并且 c 小于 b，两个条件同时成立就是冲突。
+
+最后提醒一句：这里只算出了「时间上不冲突」。时长对不对、人数够不够，还要另外查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.4　让独立程序裁定业务规则</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>端点相接不算重叠</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>记号的读法</Text>
+
+            <Box style={{ height: 130, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontFamily: 'Consolas, monospace', fontWeight: 'bold', color: '#26816B' }}>[a, b)</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>候选区间：包含起点 a，不包含终点 b。</Text>
+            </Box>
+
+            <Box style={{ height: 130, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontFamily: 'Consolas, monospace', fontWeight: 'bold', color: '#276FBF' }}>[c, d)</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>预约区间：包含起点 c，不包含终点 d。</Text>
+            </Box>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>两段都是左闭右开，端点相接的两段区间没有公共时刻。</Text>
+
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>什么情况才算冲突</Text>
+
+            <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', fontWeight: 'bold', color: '#CB6B28' }}>{'a < d 且 c < b'}</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>两个条件同时成立，两段区间才相交。</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#20344B', width: 110 }}>10:30</Text>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>可紧接预约，不重叠</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#20344B', width: 110 }}>10:15</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>落进预约区间，冲突</Text>
+            </Box>
+
+            <Box style={{ height: 106, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>「不重叠」只通过时间相交检查，时长、人数和其他规则仍需满足。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 23</Text>
+    </Box>
+
+</Slide>

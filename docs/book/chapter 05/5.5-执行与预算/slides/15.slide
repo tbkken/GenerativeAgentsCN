@@ -1,0 +1,76 @@
+<Slide notes={`一个 Run 是 5.13 美元，项目计划两组各一个 Run，所以两 Run 合计 10.26 美元。
+
+实际上还要留缓冲。增加 20% 预留后是 12.312 美元，向上取整到美分，登记为 12.32 美元。向上取整不是数学上的必要，而是记账习惯：写一个比计算值略大的数，避免后面出现零头对不上。
+
+更重要的是边界。现实里失败的请求怎么计费、有没有缓存命中、用量记录是否完整、服务条款怎么规定，都可能和我们的假设不同。所以 12.32 美元只是事前登记，真正核算必须用实际记录和账单。
+
+还有一条纪律：第一次实际观察之后可以修订下一批预算，但不要把新的估计倒写成原先就已经知道的数值。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.3　先列数量，再计算一份假设预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两个 Run 与 20% 预留</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>先登记一个数，{'\n'}再说清它管什么</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 420 }}>预算登记的是事前假设，不是账单结论。写清它建立在哪些前提上，比把数字写得更精确更重要。</Text>
+            <Box style={{ width: 420, height: 76, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>两组各一个完整窗口，是这一批的范围。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 200, height: 136, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF' }}>5.13</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>美元／每 Run</Text>
+                </Box>
+                <Box style={{ width: 44, height: 136, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 200, height: 136, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF' }}>10.26</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>美元／两 Run</Text>
+                </Box>
+                <Box style={{ width: 44, height: 136, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 200, height: 136, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#26816B' }}>12.32</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>美元／含 20% 预留</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 84, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>12.312 向上取整到美分得到 12.32：写一个略大的数，避免后续零头对不上。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 84, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>失败计费、缓存、用量缺失与服务条款都可能不同，实际核算须用实际记录与账单。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 84, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>首次实际观察后可以修订下一批预算，但不要把新的估计倒写成原先就已知道的数值。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 28</Text>
+    </Box>
+
+</Slide>

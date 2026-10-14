@@ -1,0 +1,80 @@
+<Slide notes={`现在用一个手工算的例子把口径跑一遍。请注意，这是人工判分的例子，没有实际请求、会话或运行。
+
+五项事实里，K1、K2、K5 交接正确传达了，宋青也正确复述，这三项都拿到分。K3 也传过去了，但被写成了「我刚完成全面检查」，含义被改变了，所以不给分。K4 干脆没进交接，是宋青后来自己独立查到的，同样不给分。
+
+绿色那一支同时要求三件事：交接来源可追、实际收到、正确复述。如果只数最后知道了几项，就会把独立查询的补救混进主指标。
+
+所以交接到达是三项，3/5，也就是 60%。另外两个诊断数字：缺依据的完成声明 1/4，也就是 25%；不必要重复检查 1/3。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.6　人工判分：记录流畅不能补信息分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>人工判分：3/5＝60%</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 212, height: 196, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>K1</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>交接正确传达</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>宋青实际收到并复述</Text>
+            </Box>
+            <Box style={{ width: 212, height: 196, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>K2</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>交接正确传达</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>宋青实际收到并复述</Text>
+            </Box>
+            <Box style={{ width: 212, height: 196, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>K3</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>前史写成刚完成全面检查</Text>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>含义错误，不给分</Text>
+            </Box>
+            <Box style={{ width: 212, height: 196, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>K4</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>交接遗漏，后来独立查询补齐</Text>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>未经交接，不给分</Text>
+            </Box>
+            <Box style={{ width: 212, height: 196, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>K5</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>交接正确传达</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>宋青实际收到并复述</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ flex: 1, height: 132, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 20, padding: '0 22px' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>60%</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>交接到达 3/5</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>K1、K2、K5</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, height: 132, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 20, padding: '0 22px' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>25%</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>缺依据声明 1/4</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>「已全面检查」缺证据</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, height: 132, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 20, padding: '0 22px' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>1/3</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>不必要重复检查</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>三次中的一次</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>人工例子，没有实际请求、会话或 Run；K3 是含义错误，K4 是根本没经交接传到，两者都不给交接到达分。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

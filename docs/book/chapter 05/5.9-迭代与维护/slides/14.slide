@@ -1,0 +1,60 @@
+<Slide notes={`要改对地方，先得看清一份内容被复制成了几份。
+
+公共作者资源在选入实验的时候，内容及其依赖被完整复制。也就是说，后来修改公共咨询台 Skill，不会自动更新已经存在的实验。
+
+实验封存以后，当前输入不可修改。Run 启动时又把当次实验完整嵌入，之后不再读取当前的公共资源或实验目录。
+
+这条复制隔离保证旧结果始终对应固定的输入，同时也要求维护者明确自己的编辑范围：我改的到底是公共资源、某个草稿，还是某一次运行的输入？
+
+这里没有 Revision，没有自动跟随，也没有运行期的外部活引用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.9　迭代与维护</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ③</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>③</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>选对副本，才能改对地方</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>同一份内容会被复制成多份。沿复制边界看哪些副本仍保留原内容，才知道这一次编辑落在哪一件材料上。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 254, height: 68, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>公共资源</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 254, height: 68, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>独立实验草稿</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 254, height: 68, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>封存实验</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 254, height: 68, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>Run 内嵌实验</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 27</Text>
+    </Box>
+
+</Slide>

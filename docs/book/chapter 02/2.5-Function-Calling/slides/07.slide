@@ -1,0 +1,80 @@
+<Slide notes={`一个工具能不能被放心调用，取决于它的定义写得够不够清楚。
+
+参数用稳定的编号，不用中文名称。reading、craft、discussion 直接写进枚举，模型不必去猜"手作教室"对应哪个值。
+
+用途和适用范围写在说明里：查什么、只读、数据来自青禾教学材料。
+
+strict 打开以后，调用参数的结构被约束住，不能临时多塞字段。
+
+但请注意：strict 只管参数结构。这个工具允不允许调用、参数值是否有效、当前身份有没有权限读取，仍然要由执行端检查。工具描述本身不会建立认证和授权机制。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.1　先定义一个清楚且有限的工具</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>工具定义写清用途与范围</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 484, height: 352, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>定义要让模型不用猜</Text>
+                <Box style={{ flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 4, height: 74, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>参数用稳定 ID</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>房间写成 reading、craft、discussion，展示名称另从房间表读取。</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 4, height: 74, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>说明写清用途与范围</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>查指定房间、指定日期的已有预约；只读。</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 4, height: 74, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>固定日期便于对照</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>本章练习固定一天；真实工具应由服务端校验日期范围。</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 636, height: 352, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'availability_tool = {'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'  "type": "function", "name": "get_room_availability",'}</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'  "description": "查询青禾教学数据中指定房间、'}</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'                 指定日期的已有预约；只读。",'}</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'  "strict": True,'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'  "parameters": {'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'    "type": "object", "properties": {'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'      "room_id": {"type": "string",'}</Text>
+                <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'                  "enum": ["reading","craft","discussion"]},'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'      "date":    {"type": "string", "enum": ["2026-10-17"]}},'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'    "required": ["room_id", "date"],'}</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', fontFamily: 'Consolas, monospace', lineHeight: 1.7 }}>{'    "additionalProperties": False}}'}</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', height: 96 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>strict 约束的是参数结构，不是权限</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>执行端仍需检查工具是否允许、参数是否有效、当前身份是否有权读取；工具描述本身不会建立认证和授权机制。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 26</Text>
+    </Box>
+
+</Slide>

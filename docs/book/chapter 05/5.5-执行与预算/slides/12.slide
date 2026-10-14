@@ -1,0 +1,49 @@
+<Slide notes={`接下来算钱，但先别急着写金额。
+
+正确的顺序是先列数量。八个参与者乘七十六步，得到 608 个参与者轮次；再按每轮平均 2.5 次逻辑调用，得到 1,520 次；物理尝试比逻辑调用多 25%，得到 1,900 次。
+
+为什么不能跳过数量直接写“大概几十美元”？因为一旦金额被写下来，它就变成别人对不上的东西。数量可以核，假设可以改，金额只跟着它们走。哪里多了哪里少了，回头一看就知道该改哪一个。
+
+整条推演只挂在三个假设上：有多少参与者轮次、每轮平均几次逻辑调用、额外尝试占多大比例。把这三个数写清楚，别人就能重算一遍，也能在第一次实际观察之后按事实修订。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ③</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 80, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>③</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从 608 轮次推到{'\n'}1,900 次物理尝试</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>先列数量，再按一组写明的假设算出金额。整条推演只挂在三个假设上。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 370, height: 148, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>第一层：轮次</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>五名人物加咨询台、A 窗口、B 窗口，共八个参与者；乘七十六步。</Text>
+            </Box>
+            <Box style={{ width: 370, height: 148, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>第二层：调用数</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>假设每个参与者轮次平均产生 2.5 次逻辑调用。</Text>
+            </Box>
+            <Box style={{ width: 372, height: 148, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>第三层：额外尝试</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>假设物理尝试比逻辑调用多 25%，这才是计费口径。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 28</Text>
+    </Box>
+
+</Slide>

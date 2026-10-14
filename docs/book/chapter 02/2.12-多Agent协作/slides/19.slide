@@ -1,0 +1,106 @@
+<Slide notes={`在产品里做一次对照，我建议按四步走。
+
+第一步，先在一个普通任务里提供完整材料和同一份候选，请单个助手做审阅，并把报告保存下来。这就是基线。
+
+第二步，进入专家入口，选择适合资料分析或方案审查的角色。如果有看起来合适的专家团，先把成员分工读完再用。
+
+第三步，把要求写死：只审阅指定文件，每条意见都要列出来源，并且引用本地校验器的报告。
+
+第四步，看完之后判断有没有出现真实的任务分工、阶段结果和汇总产物。如果界面没有展示独立任务，那就只记录产品可见的过程。
+
+现有专家团如果不支持我们设想的三种角色，可以在三个独立任务里人工传递材料，当作手工协作练习；但不要把它写成已经配置了自定义专家团。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.5　在 WorkBuddy 中使用专家与专家团</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四步做一次对照</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 660, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 8, padding: '12px 16px', alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>先做基线</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>普通任务中提供完整材料和同一份候选，请单个助手审阅并保存报告</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 8, padding: '12px 16px', alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>选角色或团队</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>在专家入口选择资料分析或方案审查角色；有专家团先读成员分工</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 8, padding: '12px 16px', alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>要求列出来源</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>只审阅指定文件，每条意见注明来源，并引用本地校验器报告</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>看有没有真实分工</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>检查是否出现任务分工、阶段结果与汇总产物</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#26816B' }}>只有看得见，才记录得下</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>界面没展示独立任务</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>只记录产品可见的过程，不推断内部结构</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>专家团不支持三种角色</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>用三个独立任务人工传递材料，作为手工协作练习</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#FFF4E6', borderRadius: 8, padding: '14px 16px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>别写成已配置自定义专家团</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>手工传递不等于配置好了团队</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#F4F7FA', borderRadius: 8, padding: '14px 16px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 44, background: '#B5C7D8' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>多任务共用同一目录</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>事先约定各自的输出文件，避免互相覆盖</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 25</Text>
+    </Box>
+
+</Slide>

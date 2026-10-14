@@ -1,0 +1,44 @@
+<Slide notes={`接收方拿到材料之后，第一件事是只读核验，而不是立刻开始跑。
+
+只读核验分三层，顺序不能颠倒。先证明「还是同一份材料」，再证明「包本身说得通」，最后才谈结论站不站得住。
+
+这三层都不需要模型凭据，只要程序、包和素材满足读取要求就能做。这也是为什么很多交付的第一次接收，可以在一台没有密钥的机器上完成。
+
+要注意的是，只读核验也有自己的失败结果：文件损坏、协议不支持、内容缺失、证据对应错误，这四类要分别记录，不能统一写成一句「复现失败」。因为每一种失败对应的下一步动作完全不同。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.7　交付与复现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ③</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>③</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>接收方先做只读核验</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>先证明「还是同一份材料」，再证明「包本身说得通」，最后才谈结论。三层都不需要模型凭据。</Text>
+
+        <Box style={{ width: 340, height: 52, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>第一层　字节与来源核验</Text>
+        </Box>
+        <Box style={{ width: 560, height: 52, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#26816B' }}>第二层　协议与事实核验</Text>
+        </Box>
+        <Box style={{ width: 780, height: 52, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#20344B' }}>第三层　交付结论核验</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

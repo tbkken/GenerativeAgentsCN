@@ -1,0 +1,92 @@
+<Slide notes={`把这一节要看清的东西摆出来，一共五块。
+
+第一块是创建的结果：它不是记下几条公共资源链接，而是把地图、人物、Brain 和模型配置连同依赖复制进来的独立材料。
+
+第二块是草稿的核对：DRAFT 只说明可以改，不说明已经达到目的。出生坐标属于这一次实验，保存之后要从同一个实验重开，核对服务器上的副本。
+
+第三块是预检：它检查材料与依赖，但不能证明角色真的穿过了门。
+
+第四块是封存边界：关闭对话框和确认执行是两件不同的事，只有确认执行才会封存并创建 Run。封存以后要改内容，就得复制成新实验。
+
+第五块是练习：归档、恢复和删除都只是展示管理，不改实验与 Run 的状态。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8　草稿、副本、预检与封存</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的五件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 18 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 300 }}>实验的生命周期只有两个状态：草稿可以改，封存不能再改。运行完成还是失败，说的是另一次运行。</Text>
+            <Box style={{ width: 300, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>先分清两件事</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>实验内容是否可改，与这次运行走到哪里，是两条信息。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 820, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>创建得到一份独立材料</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>复制的是选中资源及其依赖的完整闭包，不是几条链接。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>草稿能改，改完要重开核对</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>出生坐标与时间参数属于这一次实验，保存后要看副本。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>预检检查材料，不检查行为</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>空间、附件、装配与 Skill 闭包；穿门与交互留给运行验收。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>确认执行才跨过封存边界</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>仅查看不会创建 Run；封存后要改内容，就复制成新实验。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>归档、恢复与删除的边界</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>只是展示管理，不改实验状态，也不改任何 Run 的结果。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

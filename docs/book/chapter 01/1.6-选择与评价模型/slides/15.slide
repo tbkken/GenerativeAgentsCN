@@ -1,0 +1,48 @@
+<Slide notes={`接下来这一步，很多人会跳过，但它往往最能改变结论。
+
+同样答对二十项任务，两个候选可能很不一样。一个主要的问题是漏写了非关键说明，文字上不够周到；另一个会在查询失败的时候宣布预约成功。它们的总成功数相同，实际使用时的风险却完全不同。
+
+第一种错误，人用之前读一遍就能发现、补上。第二种错误，如果不看原始记录，你甚至不会知道它发生过，因为你收到的是一句听起来已经完成的回答。
+
+所以每个失败都要归类，而不是笼统地记一个失败。归类之后再看总数，你才知道这二十分是从哪里来的。
+
+这也解释了为什么我不建议只看一个综合分。综合分把不同类型的错误压成了一个数字，而不同类型错误的后果，往往是不能互相补偿的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 26 }}>
+
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>1.6.4　第四步</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先看错误分布，再看总分</Text>
+        <Text style={{ fontSize: 17, color: '#546779' }}>同样的成功数，实际风险可以完全不同</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24, alignItems: 'center', paddingTop: 12 }}>
+
+            <Box style={{ width: 400, height: 120, background: '#EDF4FC', borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>相同的成功数</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>只看总分，这里就结束了</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 400, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 55, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>漏写非关键说明，可人工补上</Text>
+                </Box>
+                <Box style={{ height: 55, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>宣布预约成功，风险完全不同</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 27</Text>
+    </Box>
+
+</Slide>

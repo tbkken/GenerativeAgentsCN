@@ -1,0 +1,64 @@
+<Slide notes={`把信息分好以后，还有一类东西特别容易混进来，那就是地图。
+
+地图在实验里承担的职责很清楚：它告诉人物「在哪里」。四个 Arena 的地址、Sector 的层级、A 服务区里有一个咨询窗口，这些都是公开的空间事实，谁来都能看见。
+
+但它不负责回答「该去哪个窗口」。这四个字才是任务答案，属于评分判据。如果为了让人物别走错，就把分工写进每个 Arena 的公共语义里，那实验测的就不是澄清策略，而是人物能不能读懂提示。
+
+所以这一节要划的线是：公开空间说明可以描述设施本身，不能描述「谁会来办哪一类事」。地图把舞台搭好，戏怎么演，还得靠人物自己去问。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.2　地图给出地点，不替咨询台回答问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ②</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>②</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>地图给出地点，不替咨询台回答问题</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 980 }}>公开空间说明可以写「A 服务区内设一个咨询窗口」，不能写「这里专门解决某两位来访者的问题」，也不能把分工答案写进每个 Arena 的公共语义。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 220, height: 64, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>World 青禾社区</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>Sector 便民服务站</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>入口</Text>
+            </Box>
+            <Box style={{ width: 12, height: 64 }} />
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>等候区</Text>
+            </Box>
+            <Box style={{ width: 12, height: 64 }} />
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>A 服务区</Text>
+            </Box>
+            <Box style={{ width: 12, height: 64 }} />
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>B 服务区</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 27</Text>
+    </Box>
+
+</Slide>

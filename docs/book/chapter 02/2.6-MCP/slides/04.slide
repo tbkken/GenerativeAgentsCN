@@ -1,0 +1,84 @@
+<Slide notes={`三个名字分别对应三个问题。
+
+宿主回答的是：用户看到什么、模型能拿到什么。客户端回答的是：这条连接由谁维护。服务端回答的是：能力从哪里来、参数由谁校验。
+
+客户端是宿主内部的组件，所以它在结构上属于宿主。一个宿主可以同时接多个服务，每个服务都由相应的客户端分别维护连接，彼此不共用状态。
+
+服务端要提供的不只是功能，还有合同：工具叫什么、需要哪些参数、参数是什么类型、失败时返回什么。这些描述会被宿主取走，放进模型能看到的内容里。模型据此提出请求，真正执行的是宿主和服务端。
+
+还有一点值得记住：模型并不需要知道数据库地址。它拿到的是宿主提供的工具描述和工具返回的结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.1　三个名字的职责</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>Host、Client、Server 各是什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 634, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 634, height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 78, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>Host　宿主应用</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>负责对话、模型、可用能力和用户交互</Text>
+                </Box>
+                <Box style={{ width: 150, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>WorkBuddy 就是</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 634, height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 78, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>Client　客户端</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>宿主内部连接某一个服务的组件，一个服务一条连接</Text>
+                </Box>
+                <Box style={{ width: 150, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>归宿主管理</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 634, height: 124, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 78, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>Server　服务端</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>校验参数、读取预约、返回业务结果，并给出能力合同</Text>
+                </Box>
+                <Box style={{ width: 150, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>指职责</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 470, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 470, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>「服务端」指职责，不是位置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>它不要求程序必须运行在远方的服务器上；由本机启动的 Python 进程同样承担服务端的职责。</Text>
+            </Box>
+
+            <Box style={{ width: 470, height: 168, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>一个宿主，多条连接</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>多个服务由相应的客户端分别维护连接。模型接收宿主提供的工具描述与结果，数据库地址不必写进模型。</Text>
+            </Box>
+
+            <Box style={{ width: 470, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>说出名称不等于已连接</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>模型能复述工具名称，只说明它读到了宿主给出的描述。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 27</Text>
+    </Box>
+
+</Slide>

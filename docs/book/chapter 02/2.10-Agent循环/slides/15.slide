@@ -1,0 +1,106 @@
+<Slide notes={`失败也需要分类处理，因为它们的结局根本不一样。
+
+如果模型给的参数错了，错误回传应该帮它修正输入：明确告诉它这是个未知房间，并附上允许的房间 ID 列表。这样下一轮它才有机会改对。
+
+如果模型拒绝回答，这是模型的判断，应该记录拒绝原因，交回用户来决定，而不是自动再试一次。
+
+如果输出中断或者网络失败，要记录错误的类型和发生的位置，但不要把服务器堆栈、凭据这些东西塞回上下文。
+
+如果是业务校验失败，就回传那条校验失败项，让模型知道具体哪一条不满足。不要把无限增长的旧错误反复堆进去，上下文会被撑满。
+
+模型拒绝、输出中断、网络失败、业务校验失败，这四种是不同结局，不能都用一句「再试一次」处理。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.3　OpenAI API：把停止条件写在程序里</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>不同结局要有不同的处理</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+                <Box style={{ width: 436, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', padding: '0px 18px' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>结局　与回传什么</Text>
+                </Box>
+                <Box style={{ width: 164, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>不要怎么做</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 436, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>参数错误</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>回传 UNKNOWN_ROOM 与允许的房间 ID</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 164, height: 104, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', padding: '0px 16px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>不要只说{'\n'}再试一次</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 436, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>模型拒绝</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>记录拒绝原因，交回用户决定</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 164, height: 104, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', padding: '0px 16px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>不要{'\n'}自动重试</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 436, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>输出中断或网络失败</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>记录错误类型与发生位置</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 164, height: 104, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', padding: '0px 16px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>不要塞回{'\n'}堆栈与凭据</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 436, height: 104, background: '#ECF7F2', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>业务校验失败</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>回传唯一的那条校验失败项</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 164, height: 104, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', padding: '0px 16px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>不要回传{'\n'}无限旧错误</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 508, height: 510, background: '#F7F3E8', borderRadius: 12, padding: '24px 24px', flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>四种结局，不是同一件事</Text>
+            <Box style={{ width: 64, height: 4, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.85 }}>模型拒绝、输出中断、网络失败、业务校验失败，原因和处置都不一样。</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.85 }}>回传的目的是帮模型修正输入，不是把服务器的内部细节倒进上下文。</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>不要用「再试一次」{'\n'}统一处理四种结局</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

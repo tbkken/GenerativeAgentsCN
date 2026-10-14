@@ -1,0 +1,60 @@
+<Slide notes={`现在换一个角度看这件事：假设某个宿主装了一百个 Skill。
+
+如果每次任务都把所有脚本、表格和说明全文送进模型，会占用大量上下文，而且让无关规则干扰当前任务。你可能遇到过这种情况：明明只是排个活动，模型却忽然引用了一条跟你无关的日志格式要求，那就是上下文被污染了。
+
+常见做法是先只提供名称和描述。模型判断某个 Skill 相关，再去读它的 SKILL.md；如果方法里引用了别的文件，再按需把那些文件读进来。
+
+这就是渐进读取，也常称为渐进披露。它的好处有两层：省上下文，也减少干扰。判断依据是描述写得准不准，所以描述本身就是一种接口。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.8.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>渐进读取怎样节省上下文</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>装了一百个 Skill，也不该把一百份说明全部送进模型。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>先判断适用性</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只看到 name 与 description</Text>
+            </Box>
+            <Box style={{ width: 44, height: 92, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>再读方法</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>读 SKILL.md 的操作说明</Text>
+            </Box>
+            <Box style={{ width: 44, height: 92, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>按需展开</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>references、scripts、assets</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 340, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>省上下文，也减少无关规则的干扰</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 27</Text>
+    </Box>
+
+</Slide>

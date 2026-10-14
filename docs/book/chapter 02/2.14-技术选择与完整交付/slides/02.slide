@@ -1,0 +1,78 @@
+<Slide notes={`收尾这件事，我把它拆成四块。
+
+第一块是选择。前面每节都讲了一种技术，但真实任务里不是全都要用。先分清任务缺的是输入、事实、执行、方法还是验证，再决定补哪一层。
+
+第二块是 API 主线。从 unittest 和规则校验器开始，先确认本地这一层是对的，再依次跑普通文本、受约束的候选、带工具反馈的完整循环，最后用独立命令复验。
+
+第三块是 WorkBuddy 主线。把任务写成一份合同，说清材料来源、产物路径、校验方式和修正上限，再看工作空间里到底生成了什么。
+
+第四块是边界。交付清单列的是文件，不是结论；哪些能带进第三章、哪些必须重新配置，都要先说清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14　技术选择与完整交付</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 320, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.85 }}>前面十三节各解决一类缺口。收尾时把它们摆在一张表上，按缺口取用，而不是按顺序堆齐。</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>编号 ①②③④ 与后面四张扉页一一对应。</Text>
+        </Box>
+
+        <Box style={{ width: 800, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>按问题选择技术</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>先分清输入、事实、执行、方法、验证五类缺口，再决定补哪一层。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>一次完整的 API 路线</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>本地检查、普通文本、受约束候选、工具闭环，最后独立校验。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>一次完整的 WorkBuddy 路线</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>用任务合同约束工作空间，再逐项回看文件、变更与产物。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>交付清单与后续判断</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>说清交付边界，再决定何时研究微调、蒸馏与部署。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 25</Text>
+    </Box>
+
+</Slide>

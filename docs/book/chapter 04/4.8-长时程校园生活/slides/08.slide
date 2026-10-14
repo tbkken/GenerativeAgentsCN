@@ -1,0 +1,64 @@
+<Slide notes={`窗口要跑多少步，是可以精确算出来的，而这里最容易差一步。
+
+十月十九日早上八点起步，十分钟一步，跑满二十四小时，最后一步是第一百四十五步，落在二十日早上八点整。很多人算成一百四十四步，那是把起点那一步漏掉了；一百四十四步只走到七点五十分，还差十分钟才满二十四小时。
+
+四十八小时同理：二百八十九步走到二十一日八点，二百八十八步只到七点五十分。
+
+主比较是二十四小时，四十八小时只是另行登记。我不会因为哪一组没成功就把窗口延长，那样比率就没有意义。末端提交算在窗口内，但端点之后才送达的回复不能倒填。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.2　两个窗口与常见误数</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>145 步，不是 144 步</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 512, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>窗口与所需步数</Text>
+
+            <Box style={{ width: 512, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>到 10-20 08:00 · 24 小时</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>145 步</Text>
+            </Box>
+
+            <Box style={{ width: 512, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>到 10-21 08:00 · 48 小时</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>289 步</Text>
+            </Box>
+
+            <Box style={{ width: 512, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>起点 2026-10-19T08:00:00+08:00</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 k 步 = 起点 +（k−1）× 10 分钟</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 608, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>常见误数：少算起点那一步</Text>
+
+            <Box style={{ width: 608, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#CB6B28', width: 70 }}>144</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55, flex: 1 }}>只走到次日 07:50，即 23 小时 50 分——还差 10 分钟，不是满 24 小时。</Text>
+            </Box>
+
+            <Box style={{ width: 608, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#CB6B28', width: 70 }}>288</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55, flex: 1 }}>只走到 07:50，即 47 小时 50 分——48 小时窗口少一步就落空。</Text>
+            </Box>
+
+            <Box style={{ width: 608, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>差一步就换了结论</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>步数算错，会让本该判逾期的样本变成合格，反之亦然。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 27</Text>
+    </Box>
+
+</Slide>

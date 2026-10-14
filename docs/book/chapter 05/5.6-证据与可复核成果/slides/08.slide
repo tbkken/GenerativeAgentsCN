@@ -1,0 +1,62 @@
+<Slide notes={`接下来讲这一节最核心的动作：让一句主张接受三次追问。
+
+报告的草稿里常常会出现「H3 完成咨询闭环」这样的句子。这句主张本身没有问题，问题在于它跳得太快。我们要把它按住，连续问三次。
+
+第一次问：判据是什么？也就是什么情况算「闭环」。第二次问：事实在哪里？请求、响应、人物发言，究竟哪一条记录支持它。第三次问：怎样定位到那次记录？Run、Step、记录身份是什么。
+
+如果某一个主张的判据是「建议正确」，那它就不成立。角色说「建议正确」不是独立判断，因为角色并不知道正确答案。判据必须来自冻结的作者材料。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.6　证据与可复核成果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ②</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>②</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>让一句主张接受三次追问</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 980 }}>主张要问判据，判据要问事实，事实要问定位。三次追问之后仍然站得住的，才可以写进报告。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 244, height: 92, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>主张</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>待核验的句子</Text>
+            </Box>
+            <Box style={{ width: 44, height: 92, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 244, height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>判据</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>什么才算正确</Text>
+            </Box>
+            <Box style={{ width: 44, height: 92, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 244, height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>实际发生了什么</Text>
+            </Box>
+            <Box style={{ width: 44, height: 92, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 244, height: 92, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>定位</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>回到那一次记录</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

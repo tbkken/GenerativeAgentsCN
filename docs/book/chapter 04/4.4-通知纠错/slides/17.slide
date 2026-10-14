@@ -1,0 +1,60 @@
+<Slide notes={`四个指标都要在开跑之前把口径写死。
+
+过期行动率是主指标：分子是接收正式更正之后的过期相关动作，分母是接收之后的全部相关动作，最后按三个人各自的边界再汇总。注意分母是动作，不是人。
+
+更正覆盖率是实际收到正确最终更正的人数除以三，而且只在已经正式更正的 Run 里报告。
+
+有效记忆纠正率，是已经证实旧信念退出默认有效检索的人数，除以已经接收并且曾经存过旧信念的人数。
+
+传播时延是个人首次实际接收的 Step 减去对象正式提交的 Step。没接收到的人单独列出来，不要给他们填一个窗口长度，那会假装他们也被观察到了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.5　按个人接收边界计数</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四项指标的预登记口径</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 250 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>指标</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>预登记口径</Text></Box>
+        </Box>
+
+        <Box style={{ height: 106, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 250 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>过期行动率</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>接收正式更正后的过期相关动作 ÷ 接收后的全部相关动作；按三人各自边界再汇总</Text></Box>
+        </Box>
+
+        <Box style={{ height: 106, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 250 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>更正覆盖率</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>实际收到正确最终更正的人数 ÷ 3；仅在已正式更正的 Run 报告</Text></Box>
+        </Box>
+
+        <Box style={{ height: 106, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 250 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>有效记忆纠正率</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>已证实旧信念退出默认有效检索的人数 ÷ 已接收且曾存旧信念的人数</Text></Box>
+        </Box>
+
+        <Box style={{ height: 106, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ width: 250 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>传播时延</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>个人首次实际接收 Step − 对象正式提交 Step；未接收者单列，不填窗口长度</Text></Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>指标口径为预登记设定，尚无实测数据；分母是动作，不是人数。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

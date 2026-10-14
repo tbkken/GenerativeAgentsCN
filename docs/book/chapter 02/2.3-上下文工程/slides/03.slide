@@ -1,0 +1,46 @@
+<Slide notes={`先说第一个知识块，它是后面所有讨论的地基。
+
+我们平时写提示，是把很多东西写在同一段文字里的：有对做事方法的要求，有这次任务用到的资料，有工具查回来的结果，还有当前做到哪一步的状态。它们写在一起读起来很顺，但来源其实是四件不同的事。
+
+来源分开，才能回答关键的问题。查回来的结果，要能说出是哪个工具、查的是哪一天、范围到哪里；工作状态只能说"已经提取约束、方案还没校验"，不能冒充成已经完成的事实。
+
+一旦这些来源被混成一句话，我们就失去了追问的入口。后面出现错误的时候，也分不清是资料本身不对、查询范围不对，还是方案根本没校验过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.3.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>内容可以放在一起，来源不能混在一起</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>一段文字里混着四种来源，读起来顺，不等于分得清。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 250, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>行为要求</Text>
+            </Box>
+            <Box style={{ width: 250, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>任务资料</Text>
+            </Box>
+            <Box style={{ width: 250, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>外部查询结果</Text>
+            </Box>
+            <Box style={{ width: 250, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>工作状态</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 25</Text>
+    </Box>
+
+</Slide>

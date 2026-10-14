@@ -1,0 +1,69 @@
+<Slide notes={`5.4 的原文已经允许"需要时"检索记忆。如果证据显示，咨询台曾经保存过"报告今天已有故障"这条信息，后续却没有检索，又一次猜成预约使用，那么一项候选修改就是把可选检索改成判断前必做。
+
+精确差异可以写成这样一句：每次为真实请求者判断窗口前，先检索自己此前为该请求者保存的明确目的；不存在就保持未知，再按原决策段处理。
+
+写这么细是有原因的。改动的作用范围必须收窄到这一项检索条件，不能顺手换地图、放宽视野，或者把私人目的泄漏给引导员。两项改动同时做，新结果就说不清是哪一项起的作用。
+
+也要承认成本：多一次检索就多一次调用，值不值得还得比较。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.3　从证据推导一项有限修改</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从证据推导一项有限修改</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>起点</Text>
+            <Text style={{ fontSize: 16, color: '#20344B' }}>5.4 原文已允许"需要时"检索记忆；假设的 H3 问题显示，保存过的事实没有被取用。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ width: 340, height: 196, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第一步</Text>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>证据</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55, width: 304 }}>咨询台曾保存"报告今天已有故障"，后续判断前却没有检索，又一次猜成预约使用。</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 196, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 340, height: 196, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第二步</Text>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#26816B' }}>精确差异</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55, width: 304 }}>每次为真实请求者判断窗口前，先检索自己此前为该请求者保存的明确目的；不存在就保持未知，再按原决策段处理。</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 196, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 340, height: 196, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第三步</Text>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>作用范围</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55, width: 304 }}>只作用于这一项检索条件，不同时更换地图、放宽视野或向引导员泄漏私人目的。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>只改这一处</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>它会增加调用成本，仍须比较；两项改动同时做，新结果就说不清是哪一项起的作用。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 27</Text>
+    </Box>
+
+</Slide>

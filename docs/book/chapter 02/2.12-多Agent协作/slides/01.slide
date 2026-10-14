@@ -1,0 +1,67 @@
+<Slide notes={`我们先说清楚一件事：把任务拆成多个角色，本身不是进步。只有当它换来减少遗漏、隔离上下文，或者缩短彼此独立任务的等待时间，这笔开销才值得。青禾的资料很少，一次调用加上本地校验，常常已经足够。
+
+所以这一节不是要说服你上多 Agent，而是把资料核对、表达审查、统一汇总这三个角色摆出来，让你看清协作机制究竟怎么运转。两个审阅相互独立，可以并行；汇总必须等两份都交回来。
+
+后面所有判断都回到同一份材料：同一个候选、同一份校验报告。角色再多，也不会改变原始事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体：技术、OpenAI API 与 WorkBuddy　·　2.12</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>多 Agent 协作与工作流</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 600 }}>增加角色，只有在减少遗漏、隔离上下文或缩短独立任务等待时才有价值。本节用资料核对、表达审查与汇总观察协作机制，不预设团队一定更好。</Text>
+            <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>值得拆吗</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>交接带什么</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>值得保留吗</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+            <Box style={{ width: 500, height: 58, background: '#EDF4FC', borderRadius: 8, padding: '10px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>输入包</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>同一候选 · 同一份材料 · 校验报告</Text>
+            </Box>
+            <Box style={{ width: 500, height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 242, height: 72, background: '#EDF4FC', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>资料核对员</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>约束 · 来源 · 缺口</Text>
+                </Box>
+                <Box style={{ width: 242, height: 72, background: '#EDF4FC', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>表达审查员</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>表述与证据是否相符</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 500, height: 30, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>独立调用，可并行 · 等待两份审阅</Text>
+            </Box>
+            <Box style={{ width: 500, height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text></Box>
+            <Box style={{ width: 500, height: 58, background: '#ECF7F2', borderRadius: 8, padding: '10px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>汇总员</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>生成 team-report.md</Text>
+            </Box>
+            <Box style={{ width: 500, height: 46, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>固定三次调用 · 不并写同一候选文件</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 25</Text>
+    </Box>
+
+</Slide>

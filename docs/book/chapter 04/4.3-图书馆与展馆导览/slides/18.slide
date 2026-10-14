@@ -1,0 +1,59 @@
+<Slide notes={`四个指标各自回答不同的问题，要一起看。
+
+合适区域使用率是主指标：窗口内、累计不超过 40 格、真实抵达匹配区域并提交至少一次对应活动的人数，除以 4，每人只算一次。导览发现率看的是首入主题区之前，真实感知中出现过导览牌、或者真实交互过的人数。成功访问路程成本是窗口内全体实际移动格数除以主要成功人数，失败路程也计在内，零成功就无法计算。首次匹配时延是从 Run 开始到第一个满足兴趣、位置和预算条件的活动，用虚拟分钟表示。
+
+要提醒自己：感知出现只支持「发现」，不支撑「使用」；一次活动也不证明读完了或者掌握了知识。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.5　指标把发现与使用分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个指标，各回答不同问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>主指标看使用，辅助指标看发现与时延；四者分母都含全部四人。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 273, height: 216, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>合适区域使用率</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.45 }}>W 内、累计 ≤40 格、真实抵达匹配区域并提交至少一次对应 ACT 的人数 ÷ 4</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>每人一次；活动语义与实际位置须同时成立</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 216, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>导览发现率</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.45 }}>首入主题区之前，真实感知出现导览牌或真实交互过的人数 ÷ 4</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>原始感知缺失时，交互证据只能给下界，未知单列</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 216, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>成功访问路程成本</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.45 }}>W 内全体访客实际移动格数 ÷ 主要成功人数，单位格／成功访问</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>失败路程也计；零成功不可计算</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 216, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>首次匹配时延</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.45 }}>Run 开始 → 首个满足兴趣、位置、预算条件的 ACT，用虚拟分钟</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>列四人各自结果与未匹配数</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>感知出现只支持「发现」；满意宣言不够，一次 ACT 不证明读完或掌握。主指标不评价满意度、长期学习与真实群体公平。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

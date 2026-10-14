@@ -1,0 +1,74 @@
+<Slide notes={`把所有假设代进去，就得到一张可以逐行核对的表。
+
+逻辑调用是 608 乘 2.5，等于 1,520 次。含重试的物理尝试是 1,520 乘 1.25，等于 1,900 次。输入量是 1,900 乘 1,500，等于 285 万 Token；输出量是 1,900 乘 300，等于 57 万 Token。
+
+假设计价用两个数：输入每百万一美元，输出每百万四美元。于是 2.85 乘 1 等于 2.85 美元，0.57 乘 4 等于 2.28 美元，合计 5.13 美元。
+
+这两个单价是教学假设，不是服务商现价。这份演算的价值不在金额，而在于每一行都能被重算：换掉任何一个假设，结果都跟着变。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.3　先列数量，再计算一份假设预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个 Run 的逐项演算</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>纯假设的{'\n'}预算演算</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 500 }}>先计划两组各一个 Run，再把每个参与者轮次折算成 Token 与费用。单价不是任何服务商的现价。</Text>
+            <Box style={{ width: 500, height: 96, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>每次物理尝试的用量假设</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>平均 1,500 输入 Token、300 输出 Token</Text>
+            </Box>
+            <Box style={{ width: 500, height: 96, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>每次逻辑调用的往返假设</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>平均 2.5 次逻辑调用／轮；额外尝试加 25%</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ width: 620, height: 76, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 188 }}>逻辑调用</Text>
+                <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.4 }}>608 × 2.5 = 1,520 次</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 188 }}>含重试的物理尝试</Text>
+                <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.4 }}>1,520 × 1.25 = 1,900 次</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 188 }}>输入量</Text>
+                <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.4 }}>1,900 × 1,500 = 2,850,000 Token</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 188 }}>输出量</Text>
+                <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.4 }}>1,900 × 300 = 570,000 Token</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#F7F3E8', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 188 }}>假设计价</Text>
+                <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.4 }}>输入每百万 1 美元，输出每百万 4 美元</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B', width: 188 }}>假设费用</Text>
+                <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.4 }}>2.85 × 1 + 0.57 × 4 = 5.13 美元</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 28</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,82 @@
+<Slide notes={`四项职责其实对应一次交接的四个方向。
+
+需求负责人先交出范围和判据，包括唯一的那一处策略差异，以及本次明确不做的事项。作者与操作人员交出可核对的材料、已保存的配置、实际使用的身份，以及操作与问题记录。证据评阅者交出每一项判断背后的请求、回复、位置与确认记录，还要一并交出缺失项。接收负责人交出的是所需交付级别、可用环境、未完成工作和接手确认。
+
+强调两点。第一，一个人可以同时承担多项职责，但写记录时要注明这次是以哪个身份作出的决定。第二，完整目的表只供作者和评阅者使用，人物、咨询台与引导员按各自的信息边界获取内容。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.1　项目角色与仿真角色分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四项职责各交出什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 690, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 690, height: 112, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 160, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>需求负责人</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>定范围与判据</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>四项咨询的范围、唯一策略差异、闭环判据，以及本次不做的事项</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 112, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 160, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>作者与操作人员</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>产出并执行</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>精确材料、已保存配置、实际身份，以及操作与问题记录</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 112, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ width: 160, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>证据评阅者</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>判断证据够不够</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>每项判断对应的请求、回复、位置与确认记录，以及缺失项</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 112, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ width: 160, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>接收负责人</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>决定能否接手</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>所需交付级别、可用环境、未完成工作与接手确认</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 430, flexDirection: 'column', gap: 16 }}>
+            <Box style={{ width: 430, height: 40, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>交接时的两条记录要求</Text>
+            </Box>
+            <Box style={{ width: 430, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>写明身份</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>一个人可以承担多项职责，但记录时要注明这次以什么身份作出决定。</Text>
+            </Box>
+            <Box style={{ width: 430, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>目的表的边界</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>完整目的表只供作者和评阅者；人物、咨询台与引导员按各自信息边界获取内容。</Text>
+            </Box>
+            <Box style={{ width: 430, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>覆盖四个方向</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>定范围、做材料、审证据、接交付，缺一项接手者就要回头问。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 28</Text>
+    </Box>
+
+</Slide>

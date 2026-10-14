@@ -1,0 +1,84 @@
+<Slide notes={`讲一下标注应该放在哪里。标注要贴近它说明的材料，图片旁边、表格旁边、片段旁边，读者在同一处就能看到来源，不必自己去猜。
+
+最容易出问题的是把来源说明挪到讲义最后一页，或者干脆放进附录。不了解材料的读者会默认前面看到的东西都是本案结果，于是把人工练习里算出来的三分之四当成模型能力。
+
+特别提醒课堂上出现的数字：第四章的人工判分练习给出三项闭环、四项任务，如果屏幕上出现四分之三等于百分之七十五，旁边就要写明它是人工判分练习、没有对应的运行记录。
+
+先说明项目处在设计、运行还是交付阶段，听众才知道哪些是承诺、哪些是事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.1　先告诉听众，他们正在看哪一种材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>标注要贴在材料旁边</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ height: 350, flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 700, height: 350, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>教学研讨讲义 · 第 7 页</Text>
+                <Box style={{ height: 170, flexDirection: 'row', gap: 16 }}>
+                    <Box style={{ width: 300, height: 170, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>作者空间图</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>待制作草图</Text>
+                    </Box>
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>入口咨询的两轮询问路径</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>第一轮确认目的，第二轮给出适配窗口建议。</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>本页数字 3/4 = 75% 来自人工判分练习。</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 34, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>3/4 = 75%　人工判分练习，无对应 Run</Text>
+                </Box>
+                <Box style={{ height: 46, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>标注</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>待制作草图，未验证系统寻路</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 428, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 108, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>标注贴近材料</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>标注跟着图片或片段走，读者在同一处就能看到来源。</Text>
+                </Box>
+                <Box style={{ height: 108, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能只藏在最后一页</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>移到附录，读者会误以为模型已经达到那个表现。</Text>
+                </Box>
+                <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>先说明阶段</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>设计、运行还是交付，决定听众对每句话的期待。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 130, flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>每份材料有自己的身份</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>需求表、草图、截图、已提交事件、人工算例与作者解释的证据作用并不相同。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 566, height: 130, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>标注要能被单独读到</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>听众不需要翻到附录，就能判断眼前这一页的数字与画面从哪里来。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 26</Text>
+    </Box>
+
+</Slide>

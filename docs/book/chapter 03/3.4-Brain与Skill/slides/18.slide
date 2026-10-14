@@ -1,0 +1,64 @@
+<Slide notes={`把资源选入实验的时候，系统会递归复制完整依赖内容，实验得到自己的副本。从这一刻起，修改公共 Brain 不会自动改变这个实验；草稿要调整，就在明确的实验范围内编辑或重新导入，保存后再次核对内容与依赖。
+
+已封存的实验更不能指望靠修改公共文档"跟随更新"，封存的处理后面章节再讲。
+
+最后强调记录：这里的文件属于资料准备，尚未证明已在页面保存、导入或由模型成功执行。完成操作时应记录保存后的实际内容摘要和实验预检结果。普通叶子 Skill 可以按需要试运行；依赖仿真 MCP 的 Brain 或对象 Skill，要在具备世界上下文的实验中核验，不能把孤立聊天输出当作世界行为证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.4　在页面中建立和核对依赖</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>选入实验：递归复制与记录证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 300, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>把资源选入实验</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>Brain、子 Skill、对象技能与地图</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 110, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>递归复制完整依赖内容</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>整棵依赖树一起复制</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 110, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>实验得到自己的副本</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>从这一刻起两边各改各的</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>修改公共 Brain 不会自动改变实验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>草稿需要调整时，在明确的实验范围内编辑或重新导入，保存后再次核对内容与依赖。</Text>
+            </Box>
+            <Box style={{ width: 560, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>封存实验不能"跟随更新"</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不能靠修改公共文档让已封存内容跟随更新；封存的处理见后文。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '16px 20px', gap: 14 }}>
+            <Box style={{ width: 4, height: 56, background: '#20344B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>资料准备 ≠ 已发生的行为证据</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>完成操作时记录保存后的实际内容摘要与实验预检结果；普通叶子 Skill 可按需试运行，依赖仿真 MCP 的 Brain 或对象 Skill 应在具备世界上下文的实验中核验。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 22</Text>
+    </Box>
+
+</Slide>

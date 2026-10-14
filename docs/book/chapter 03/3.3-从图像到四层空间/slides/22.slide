@@ -1,0 +1,91 @@
+<Slide notes={`四个人分置四个场所：林岚在公共大厅，已抵达、核对公开安排；周宁在手作室检查物料，随后去大厅协助；陈晨在交流室整理随身物品，随后前往阅读区；许安在阅读室浏览等候，随后核实手作安排。
+
+分置四个场所，是为了避免本次设计中所有人选择同一中心点造成遮挡。
+
+落点不同，保存的地址层级也不同：落在 Arena 空地时保存三层地址，落在对象范围内时保留第四层。检查「可用空间」时，只包含设计允许的公开地点与对象，不把对象私有状态作为人物的初始知识。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.5　人物图片与出生装配一起检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四人分置四个场所</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>初始装配，{'\n'}不是已完成的移动</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 340 }}>四个人名后的房间是初始装配选择；分置四个场所，避免所有人选择同一中心点造成遮挡。</Text>
+            <Box style={{ height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 68, background: '#276FBF' }} />
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.6 }}>实际保存坐标以选择器结果为准，并记录真实层级地址。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 780, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 80, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 96, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>林岚</Text>
+                </Box>
+                <Box style={{ width: 150, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>公共大厅</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>已抵达，核对公开安排</Text>
+            </Box>
+
+            <Box style={{ height: 80, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 96, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>周宁</Text>
+                </Box>
+                <Box style={{ width: 150, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>手作室</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>检查物料，随后去大厅协助</Text>
+            </Box>
+
+            <Box style={{ height: 80, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 96, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>陈晨</Text>
+                </Box>
+                <Box style={{ width: 150, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>交流室</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>整理随身物品，随后前往阅读区</Text>
+            </Box>
+
+            <Box style={{ height: 80, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 96, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>许安</Text>
+                </Box>
+                <Box style={{ width: 150, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>阅读室</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>浏览等候，随后核实手作安排</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 384, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>落在 Arena 空地 → 保存三层地址</Text>
+                </Box>
+                <Box style={{ width: 384, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>落在对象范围内 → 保留第四层</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 52, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>「可用空间」只包含设计允许的公开地点与对象。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 25</Text>
+    </Box>
+
+</Slide>

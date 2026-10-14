@@ -1,0 +1,69 @@
+<Slide notes={`从实验概览点执行实验开始，程序先等草稿保存，然后打开执行对话框。对话框里能看到预检结果和规模估算。
+
+在本次操作这一步分成两路。第一路是只看一眼就把对话框关掉，这条路不会因此创建运行，但之前的草稿修改可能已保存。第二路是确认执行，它会再次等待保存，按需要把实验封存，然后创建新的运行。
+
+要特别说明的是：当前界面上封存和启动连在一起，本次并未核验独立的前端「只封存」按钮，所以不能写成已完成的只封存流程。
+
+另外，预检这一路的结论只覆盖材料与依赖，它不证明人物已经穿过门、完成交互或者恢复了。
+
+看到已创建仿真、但状态刷新失败的反馈，应该重新进入该仿真核对，不要连续再点执行。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.4　确认执行跨过封存边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>封存边界在哪里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6, width: 1152 }}>封存与启动在当前入口上连在一起；本次操作这一步是唯一的分岔。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 354, height: 96, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 3, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>实验概览：执行实验</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>入口动作</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 96, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column', gap: 3, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>等待草稿保存</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>先落盘，再继续</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 96, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 3, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>执行对话框</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>预检 + 规模估算</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>本次操作　分两路</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 118, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>仅查看后关闭</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>未因此创建 Run；此前的草稿修改可能已经保存，不能当作没有发生。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>确认执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>再次等待保存，按需要封存实验，再创建新 Run。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>预检核对的是材料与依赖，不证明穿门、交互或恢复已经通过；当前入口没有独立的「只封存」按钮。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

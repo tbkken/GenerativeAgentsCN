@@ -1,0 +1,78 @@
+<Slide notes={`空间这一步只要回答一件事：走错窗口的代价，怎么变成看得见的东西。
+
+整个场景是青禾社区的便民服务站，20 列 16 行。入口在最上面三行，往下四行是等候区，再往下左半边是 A 服务区，右半边是 B 服务区，两个区一样大。
+
+四位来访者从入口出发，引导员余真从等候区出发。他们预先知道四个区域的地址，但不知道窗口分工——分工要走到服务区、通过感知拿到窗口对象才知道。
+
+格子里写的分区名称是我作为作者标的，不能提前塞给来访者；网格只用来说明范围，不提供任何步行耗时。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.2　空间与窗口：让往返成为可观察的代价</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四区、两个窗口、一条可观察的代价</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 392, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 600, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 600, height: 64, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>入口</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>1–3 行，18 格宽</Text>
+                </Box>
+                <Box style={{ width: 600, height: 76, background: '#F7F3E8', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>等候区</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>4–7 行，18 格宽</Text>
+                </Box>
+                <Box style={{ width: 600, flexDirection: 'row', gap: 4 }}>
+                    <Box style={{ width: 298, height: 160, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>A 服务区</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>8–14 行 · 左半 9 格</Text>
+                    </Box>
+                    <Box style={{ width: 298, height: 160, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>B 服务区</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>8–14 行 · 右半 9 格</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Box style={{ width: 84, height: 30, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+                </Box>
+                <Box style={{ width: 468, height: 64, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>入口</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>四位来访者的出生点</Text>
+                </Box>
+                <Box style={{ width: 468, height: 64, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>等候区</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>引导员余真的出生点</Text>
+                </Box>
+                <Box style={{ width: 468, height: 64, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>A 服务区</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>未来场地使用（作者标注）</Text>
+                </Box>
+                <Box style={{ width: 468, height: 64, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>B 服务区</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>现有设施问题（作者标注）</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>来访者预知四区真实地址，却不预知窗口分工；到达服务区后，从感知取得窗口对象。口头地址不会自动进入系统已知空间。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

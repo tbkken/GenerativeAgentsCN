@@ -1,0 +1,43 @@
+<Slide notes={`第二个知识块换一类材料。
+
+理解图片不只有"说出图中有什么"这一种要求。活动筹备要读懂平面图，财务工作要读图表，整理政策材料要跨页读取 PDF。这三个例子的输入都带有视觉信息，但难度和评分方法完全不同。
+
+所以看视觉成绩的时候，第一件事是问清楚：这份报告测的是哪一种？是让你综合图表里的信息回答问题，还是要求你把一份长文档里的所有细则一次性都做对？前者可以只看回答对不对，后者必须每一项都通过才算数。
+
+同一个模型在这两类任务上的数字会差得很远，这不是矛盾，而是它们本来就在回答两个不同的问题。接下来的两组数字就来自同一份报告，正好可以对照着看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.5.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>能读复杂材料，整份交付仍需验收</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>输入都带有视觉信息，任务难度和评分方法却不一样。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ flex: 1, height: 58, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>平面图 · 读懂位置与容量</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 58, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>图表 · 综合信息回答问题</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 58, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>长文档 · 全部细则同时通过</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

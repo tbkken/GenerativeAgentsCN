@@ -1,0 +1,77 @@
+<Slide notes={`三项来源进来以后，不能直接倒给模型，中间要过一道筛选与压缩。
+
+顺序是先筛，再压。拿三项活动这件事说，不需要每一轮都带着十年的宣传稿；整月的预约记录，可以由程序按日期、房间和时段筛一遍，只把命中的部分带进来，同时把来源和筛选条件保留下来。
+
+筛完压缩过的结果，才构成本轮输入：事实、来源、状态，关键约束要完整保留，不能为了短而把约束删掉。
+
+还有一处必须留出余地，就是输出。窗口不是全部给输入的，模型还要生成回答。所以各个色块占多大面积只是示意，它并不对应真实的 Token 比例。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.2　长上下文不是无限记忆</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>筛选、压缩与本轮上下文</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ flex: 1, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>任务要求</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>指令与硬约束</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 130, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>资料与工具结果</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>来源、日期、适用范围</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>当前工作状态</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>候选、错误与待确认项</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, height: 36 }}>
+            <Box style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Box style={{ width: 44, alignItems: 'center' }}><Text style={{ fontSize: 24, color: '#276FBF' }}>↓</Text></Box>
+            </Box>
+            <Box style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Box style={{ width: 44, alignItems: 'center' }}><Text style={{ fontSize: 24, color: '#276FBF' }}>↓</Text></Box>
+            </Box>
+            <Box style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Box style={{ width: 44, alignItems: 'center' }}><Text style={{ fontSize: 24, color: '#276FBF' }}>↓</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 72, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>筛选与压缩</Text>
+            <Box style={{ width: 1, height: 30, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 17, color: '#20344B' }}>先去无关，再保留证据</Text>
+        </Box>
+
+        <Box style={{ height: 36, justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 44, alignItems: 'center' }}><Text style={{ fontSize: 24, color: '#276FBF' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>本轮输入</Text>
+            <Box style={{ width: 1, height: 40, background: '#B5C7D8' }} />
+            <Box style={{ flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>事实、来源、状态</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>完整保留关键约束</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 3, height: 30, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>另为输出预留空间；各块面积只是示意，不对应 Token 比例。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 25</Text>
+    </Box>
+
+</Slide>

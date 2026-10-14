@@ -1,0 +1,58 @@
+<Slide notes={`Function Calling 把一件事拆给两个角色做，这一点必须先分清。
+
+模型服务这一侧做的是提出请求。它给出工具的名字、JSON 编码的参数，还带上一个 call_id。请注意，它给出的是"我想调用什么"，不是"我已经调用了什么"。
+
+应用宿主这一侧做的是检查和执行。检查这个工具在不在允许列表里、参数合不合法、这次调用有没有超出预算；通过之后，才真的去调用本地那个只读函数。
+
+本地工具这一侧做的是执行，返回真实结果或者受控的错误。
+
+有条界线要反复强调：报告里不能把"模型说要查"当成"已经查过"。中间隔着一道检查，也隔着一次真实的执行。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.1　先定义一个清楚且有限的工具</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>模型提请求，宿主做执行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>Function Calling 连接两种职责：模型提出结构化请求，宿主检查并执行函数，再交回结果。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 230, background: '#EDF4FC', borderRadius: 8, padding: '18px 16px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>模型服务</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>提出结构化请求{'\n'}给出工具名与 JSON 参数{'\n'}附上 call_id</Text>
+            </Box>
+            <Box style={{ width: 44, height: 230, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 255, height: 230, background: '#EDF4FC', borderRadius: 8, padding: '18px 16px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>应用宿主</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>检查能否执行{'\n'}允许范围、参数与预算{'\n'}决定执行、回传错误或停止</Text>
+            </Box>
+            <Box style={{ width: 44, height: 230, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 255, height: 230, background: '#ECF7F2', borderRadius: 8, padding: '18px 16px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>本地只读工具</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>真的去查记录{'\n'}只读本章教学数据{'\n'}不修改任何预约</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>只生成调用意图，不会查到记录</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>报告里不能把"模型说要查"当成"已经查过"：中间隔着一次检查、一次真实执行。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 26</Text>
+    </Box>
+
+</Slide>

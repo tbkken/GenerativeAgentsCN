@@ -1,0 +1,97 @@
+<Slide notes={`我们从一句看起来很简单的话开始：走到公告栏前查看通知。这句话在仿真里其实是三个问题：角色是否知道公告栏在哪里；能否沿着可走路线接近它；到达之后究竟做了什么。
+
+这一节就把三个问题拆开讲。这块示意平面图就是青禾学习中心的场地：阅读区、公告栏、服务台由通道连着，人物各有各的位置，谁站在哪一格是明确的。
+
+要提醒的是，图上的房间块和坐标都是教学示意，用来保留空间关系，不是系统截图。
+
+学完这一节，判断人物有没有抵达，就不能只看台词，要看感知、导航和提交记录这三类事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.5</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>感知、导航与动作</Text>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>让语言落在真实空间里</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>“走到公告栏前查看通知”是一句话，在仿真中是三个问题：知道在哪里、走得通、做了什么。本节把感知、导航与动作拆开，避免人物在文字里已经抵达、画面上仍停在原地。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 116, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>感知范围</Text>
+                </Box>
+                <Box style={{ width: 116, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>导航查询</Text>
+                </Box>
+                <Box style={{ width: 116, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>动作提交</Text>
+                </Box>
+                <Box style={{ width: 116, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>事实取证</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 560, height: 340, background: '#F7F3E8', borderRadius: 12, padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>青禾社区学习中心 · 32×24 格空间（示意）</Text>
+                <Box style={{ height: 122, flexDirection: 'row', justifyContent: 'space-between' }}>
+                    <Box style={{ width: 170, height: 122, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>阅读区</Text>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>坐标 (6, 5)</Text>
+                    </Box>
+                    <Box style={{ width: 110, height: 122, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>公告栏</Text>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>绑定 Skill</Text>
+                    </Box>
+                    <Box style={{ width: 170, height: 122, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>服务台</Text>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>坐标 (16, 5)</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 44, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ flex: 1, height: 1, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 12, color: '#546779' }}>通道 · 可走格</Text>
+                    <Box style={{ flex: 1, height: 1, background: '#B5C7D8' }} />
+                </Box>
+                <Box style={{ height: 60, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <Box style={{ width: 14, height: 14, background: '#276FBF', borderRadius: 3 }} />
+                        <Text style={{ fontSize: 13, color: '#20344B' }}>陈晨 (6, 8)</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                        <Box style={{ width: 14, height: 14, background: '#26816B', borderRadius: 3 }} />
+                        <Text style={{ fontSize: 13, color: '#20344B' }}>周宁 (10, 12)</Text>
+                    </Box>
+                    <Box style={{ flex: 1 }} />
+                    <Box style={{ width: 52, height: 26, background: '#CB6B28', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>示意</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 64, flexDirection: 'row', gap: 10 }}>
+                <Box style={{ flex: 1, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>知道在哪里吗</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>走得通吗</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>真的做了吗</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 23</Text>
+    </Box>
+
+</Slide>

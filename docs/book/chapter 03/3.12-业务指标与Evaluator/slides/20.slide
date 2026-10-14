@@ -1,0 +1,50 @@
+<Slide notes={`这里说的是统计单位，很容易被含糊过去。
+一次重复读取产生的告警、一次物理模型的重试、一个失败的业务结果，这三样东西分属不同层次：第一条属于行为质量，第二条属于执行过程，第三条属于业务评价。
+它们可能互相关联，比如重试多了，读取告警可能就多。但它们不能相加，不能合成一个所谓的「总错误率」。把三个不同单位的东西加起来，得到的数字没有含义。
+如果确实要比较两个方案，先规定每种事件怎么计数：是按事实身份，还是按 Attempt，还是按一次业务结果。然后再报告数量、分母和样本范围。
+先说清单位，再说数字。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.6　核对页面、报告和导出</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种统计单位，不能加成总错误率</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 373, height: 220, background: '#EDF4FC', borderRadius: 10, padding: '18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>统计单位 一　行为质量层</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>重复读取告警</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>同一条事实被重复读取所产生的告警；按事实身份计数，跨 Attempt 汇总</Text>
+            </Box>
+            <Box style={{ width: 373, height: 220, background: '#ECF7F2', borderRadius: 10, padding: '18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>统计单位 二　执行过程层</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>物理模型重试</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>一次 Attempt 内部对模型发起的重试，和设备、网络或服务返回有关</Text>
+            </Box>
+            <Box style={{ width: 373, height: 220, background: '#FFF4E6', borderRadius: 10, padding: '18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>统计单位 三　业务评价层</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>失败业务结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>对象变化、会话或行动层面没有达成的结果，按业务口径判定</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>三种单位可以相关，但不能相加</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>要比较方案，先规定每种事件的计数单位，再报告数量、分母与样本范围；不要合成一个没有含义的「总错误率」。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

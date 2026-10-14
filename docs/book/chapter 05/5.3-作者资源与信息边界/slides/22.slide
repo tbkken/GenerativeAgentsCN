@@ -1,0 +1,54 @@
+<Slide notes={`实验一旦封存，就不是随便改的地方了。要对已经封存的内容做调整，先创建一个新的独立草稿，在草稿上改，改完再走一次保存和核对。
+
+这里有三条容易被忽略的对应关系。第一，公共模型或 Skill 改了，不等于实验已经换用了新材料——实验副本是复制过去的，两边从此分开。第二，更换地图之后，坐标和地址也要重新核对，不能沿用旧场景的含义，同名物件在新场景里可能完全不是一回事。第三，保存入口与封存边界按第三章的实验生命周期走，不要用直接修改包文件的方式替代页面操作，那样做出来的东西没有对应的证据。
+
+把这三条记住，就不会出现「我明明改了，为什么结果没变」这种困惑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.5　按内容关系安排作者操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>封存之后要改，先建新草稿</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.5　封存边界</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>先建新的{'\n'}独立草稿</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 460 }}>对已经封存的内容需要调整时，先创建新的独立草稿，改完再重新保存并核对一次。</Text>
+            <Box style={{ width: 460, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>保存入口与封存边界</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>参照第三章实验生命周期</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ width: 620, height: 160, background: '#F4F7FA', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>改了公共内容，实验不会跟着变</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 564 }}>公共模型或 Skill 改了，不等于实验已经换用新材料。</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 160, background: '#F4F7FA', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>换了地图，地址要重新核对</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 564 }}>坐标与地址不能沿用旧场景的含义，同名物件未必是同一回事。</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 160, background: '#FFF4E6', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不用改包文件替代页面操作</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 564 }}>直接修改包文件绕过了页面入口，也就失去了对应的保存与核对记录。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 27</Text>
+    </Box>
+
+</Slide>

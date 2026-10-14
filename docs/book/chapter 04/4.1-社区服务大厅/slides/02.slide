@@ -1,0 +1,80 @@
+<Slide notes={`这一节我打算按四步走。
+
+第一步先分人：四个人各自心里要什么，谁说得出答案。最容易出的错是把作者才知道的答案提前塞给来访者，那观察就废了。
+
+第二步看空间：入口、等候区和两个服务区怎么划，窗口分工为什么不能预先告诉来访者。要走错一次，才看得见往返的代价。
+
+第三步是唯一改动的那段判断方法：目的不明的时候，是先给一次最可能的建议并说明这只是推测，还是先只追问缺的那一个字段。
+
+第四步看分数：闭环、无效访问、重复说明和时延四个指标怎么算，以及相同的比率为什么不能直接判优劣。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1　社区服务大厅：先问清楚，会不会少走一次？</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 18 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 300 }}>先立好信息边界与空间，再只改一处判断方法，最后核对分数是怎么被算出来的。</Text>
+            <Box style={{ width: 300, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>唯一变量是什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>地图、人物、模型、依赖、窗口规则与留存都不动</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>四项需求与信息边界</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>谁能知道答案；答案不能提前进入来访者手里。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>四区空间与可观察的往返</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>来访者预知四区地址，却不预知窗口分工。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>唯一变化：咨询台的一段判断方法</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>目的不明时先给建议，还是先只追问缺的那一个字段。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>四个指标的分子、分母与人工判分</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>闭环率不能独自定位失败；相同比率不等于相同结论。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

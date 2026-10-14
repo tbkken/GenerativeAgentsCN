@@ -1,0 +1,80 @@
+<Slide notes={`服务端对外能表达三类东西。
+
+工具回答的是能执行什么操作，在青禾里就是查询预约、校验候选方案。资源回答的是有什么内容可以读取，比如房间表、活动规则。提示模板回答的是一次交互可以怎样组织，例如按材料核对活动约束的那份模板。
+
+要强调一点：这是协议能够表达的能力，不等于每个宿主都以同样的界面支持全部类型。有的宿主只导入工具，不提供资源浏览的入口。
+
+这一节我们只围绕两项查询工具做练习，配套服务另外声明了一个 open-day://rules 资源。工具接通只能证明这条工具链路可用；资源浏览、提示模板，以及协议的其他扩展，都要分别验收，不能因为工具通了就一并算通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.1　服务端能表达的三类能力</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三类能力，三种用途</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, height: 42, background: '#20344B', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Text style={{ width: 200, fontSize: 14, color: '#FFFFFF' }}>能力类型</Text>
+            <Text style={{ width: 280, fontSize: 14, color: '#FFFFFF' }}>回答的问题</Text>
+            <Text style={{ flex: 1, fontSize: 14, color: '#FFFFFF' }}>青禾中可以怎样使用</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ width: 200, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>Tools</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>工具</Text>
+            </Box>
+            <Box style={{ width: 280 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>能执行什么操作</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>查询预约、校验候选方案是否满足活动规则</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+            <Box style={{ width: 200, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>Resources</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>资源</Text>
+            </Box>
+            <Box style={{ width: 280 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>有什么内容可以读取</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>房间表、活动规则，按需读取并标明来源</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+            <Box style={{ width: 200, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>Prompts</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>提示模板</Text>
+            </Box>
+            <Box style={{ width: 280 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>可以怎样组织一次交互</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>根据材料核对活动约束的模板</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 8, padding: '16px 20px', flexDirection: 'column', gap: 4, marginTop: 4 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>协议能表达三类能力，不等于每个宿主都支持全部类型</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>本节只围绕两项只读工具做练习；配套服务还声明了 open-day://rules 资源，仍需分别验收。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 27</Text>
+    </Box>
+
+</Slide>

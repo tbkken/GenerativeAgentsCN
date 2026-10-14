@@ -1,0 +1,74 @@
+<Slide notes={`两个常见错误都出在 next_coord 上。
+
+第一个错误，把它当成最终目的地。周宁查询到通往服务台的路径，返回的 next_coord 只是路径第一格。如果每次 MOVE 都只冲着这一格去，每次请求都只打算移动到相邻一格，路线永远走不完。正确做法是后续 MOVE 保留原来的完整目标。
+
+第二个错误更直接：把路线终点写进当前坐标，以为这样人物就到了。不会的，坐标不会被文字改写，角色不会瞬移。
+
+还有一个实现细节要记住：地址合法性检查用的是已知空间树、当前位置和实际感知。一条自然语言便签写着某个地址，不等于这个地址进入了可导航范围。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.2　导航是查询，不是移动</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>next_coord 不是目的地</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>两个常见错误</Text>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>路线是分段走完的，不是一步写完的</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>周宁查询到通往服务台的路径后，后续 MOVE 应保留原来的完整目标。</Text>
+        </Box>
+
+        <Box style={{ width: 768, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>把 next_coord 当最终目的地</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>每次请求都只打算移动到相邻一格，路线走不完</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>把路线终点直接写进当前坐标</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>不会使角色瞬移，坐标不被文字改写</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>后续 MOVE 保留原来的完整目标</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>由内核沿路径逐轮消耗移动预算</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>已知空间树只能来自三种途径</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ flex: 1, height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>初始装配 · 探索 · 实际感知</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#CB6B28' }}>自然语言便签不能加入地址</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>普通记忆流里写着某个地址，不等于已知空间树已经增加了该地址。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 23</Text>
+    </Box>
+
+</Slide>

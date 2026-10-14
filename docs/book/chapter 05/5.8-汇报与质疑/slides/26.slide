@@ -1,0 +1,48 @@
+<Slide notes={`最后留一个练习，也是这一节想达到的效果。请把这句话改写一遍：「我们已验证咨询台显著提高社区服务效率，可直接推广。」
+
+这句话的问题不在语气，而在于它同时承诺了三件我没有的东西：真实验证、真实提升和可推广性。
+
+与当前书稿相符的开场是这样的：我们设计了一项虚构咨询实验，用于比较立即建议与先澄清的取舍；当前交付是教案和验收方法，尚无运行结果。今天先讨论信息分配和判分规则是否足以回答这个问题。
+
+它把材料性质、交付状态和讨论目标都交代了，也把判断的依据交到听众手上。将来取得证据，再据其强度更新这段话。让别人听懂，也让别人能够质疑，这两件事其实是同一件事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.8　演示与评审　·　本节练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把开场改成站得住的说法</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 12, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>原来的说法</Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>我们已验证咨询台显著提高社区服务效率，可直接推广。</Text>
+        </Box>
+
+        <Box style={{ height: 32, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 24, color: '#26816B' }}>↓</Text>
+        </Box>
+
+        <Box style={{ height: 220, background: '#ECF7F2', borderRadius: 12, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>与当前书稿相符的开场</Text>
+            <Text style={{ fontSize: 18, color: '#20344B', lineHeight: 1.7 }}>我们设计了一项虚构咨询实验，用于比较立即建议与先澄清的取舍；当前交付是教案和验收方法，尚无运行结果。今天先讨论信息分配和判分规则是否足以回答这个问题。</Text>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>将来取得证据，再据其强度更新这段话</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑　·　让别人听懂，也让别人能够质疑</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 26</Text>
+    </Box>
+
+</Slide>

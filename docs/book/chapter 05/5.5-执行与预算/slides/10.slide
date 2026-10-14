@@ -1,0 +1,68 @@
+<Slide notes={`配置和执行这两件事，仍然走第三章讲过的浏览器流程，本节不另开一条捷径。
+
+有三条约束要记住。第一，不通过脚本去补齐界面上还没有保存的内容。界面上没保存，说明这份配置在系统里并不存在，用脚本补上只会让记录和实际不一致。第二，不把本地 Skill 文档解析通过当作正式运行通过；解析器读得懂文字，不等于实验里真的按这段文字行为。
+
+第三，如果执行前复制了草稿，要重新确认当前实验身份。旧的预检截图属于旧副本，不能拿来当新副本的证明。
+
+这些约束看起来严格，其实是在保护一件事：报告里的每一个结论，都能追到当时真正运行的那份输入。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.2　按证据推进项目，而不是按日历宣布完成</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>配置与执行仍走第三章的浏览器流程</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>不另开一处{'\n'}更省事的入口</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 420 }}>界面里保存了什么、运行时就用了什么。绕过界面图省事，省下的是几分钟，赔上的是整份记录能不能被别人核对。</Text>
+            <Box style={{ width: 420, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>配置与执行　→　第三章的流程</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 700, height: 112, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不通过脚本补齐未保存的内容</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>界面上没有保存，就说明这份配置在系统里并不存在。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 112, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不把解析通过当作运行通过</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>本地 Skill 文档能被解析，不等于实验里真的按这段文字行为。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 112, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>复制草稿后重新确认身份</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>旧预检截图属于旧副本，不能当作新副本的证明。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 96, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>守住这条线，报告里的每个结论才能追到当时真正运行的那份输入。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 28</Text>
+    </Box>
+
+</Slide>

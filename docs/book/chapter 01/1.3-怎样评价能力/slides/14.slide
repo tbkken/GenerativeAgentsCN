@@ -1,0 +1,103 @@
+<Slide notes={`资料越来越多以后，助手会先去检索。检索这一步有它自己的分母。
+
+要回答“阅读活动是否需要改期”，必须查到两项证据：原安排，以及最新的房间占用通知，缺一不可。
+
+假设检索返回的前五条结果里只有原安排，另一项没有进来。按证据项目算，Recall@5 就是二分之一，百分之五十。它测量的是“需要的材料有没有进入候选范围”。
+
+同一份证据在结果里出现两次，不能算找到两项。评价单位要事先说清是文档还是去重后的证据片段，不能混着算。
+
+有些基准把“至少命中一条答案证据”也起名叫 recall，遇到这类分数要查具体定义。若本来就不需要检索，召回率分母为零，应另设“无需检索”样本规则；也不能仅提高 k，把大量无关内容塞给模型。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.5　找到证据，还要用对证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>所需证据有没有进入候选</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>必须查到的两项证据</Text>
+
+            <Box style={{ height: 120, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>证据一　原安排（改期前）</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>出现在检索前五条结果中</Text>
+                <Box style={{ flexDirection: 'row', gap: 6, marginTop: 4 }}>
+                    <Box style={{ width: 68, height: 26, background: '#26816B', borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>命中</Text>
+                    </Box>
+                    <Box style={{ width: 68, height: 26, background: '#FFFFFF', borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#B5C7D8' }}>结果 2</Text>
+                    </Box>
+                    <Box style={{ width: 68, height: 26, background: '#FFFFFF', borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#B5C7D8' }}>结果 3</Text>
+                    </Box>
+                    <Box style={{ width: 68, height: 26, background: '#FFFFFF', borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#B5C7D8' }}>结果 4</Text>
+                    </Box>
+                    <Box style={{ width: 68, height: 26, background: '#FFFFFF', borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#B5C7D8' }}>结果 5</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 120, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>证据二　最新房间占用通知</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>没有进入前五条结果</Text>
+                <Box style={{ flexDirection: 'row', gap: 6, marginTop: 4 }}>
+                    <Box style={{ width: 68, height: 26, background: '#CB6B28', borderRadius: 5, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>未命中</Text>
+                    </Box>
+                    <Box style={{ flex: 1, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>需要扩大范围或改写查询</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 90, background: '#EDF4FC', borderRadius: 10, gap: 16 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>Recall@5</Text>
+                <Text style={{ fontSize: 20, color: '#546779' }}>=</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>命中证据数 1 / 所需证据数 2</Text>
+                <Text style={{ fontSize: 20, color: '#546779' }}>=</Text>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF' }}>50%</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 120, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>重复命中不算两项</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>同一份证据在结果里出现多次，仍然只是一项。</Text>
+            </Box>
+
+            <Box style={{ height: 120, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>评价单位要事先定</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>“相关”应提前标注；按文档算，还是按去重后的证据片段算，不能在算分中混用。</Text>
+            </Box>
+
+            <Box style={{ height: 120, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同名不同义</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>有些基准把“至少命中一个答案证据”也叫 recall，遇到这类分数要查看具体定义。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 120, background: '#FFF4E6', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>两个要提前约定的情形</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>没有应找证据时，召回率分母为零，应另设“无需检索”样本规则；也不能仅提高 k，把大量无关内容一并塞给模型。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 31</Text>
+    </Box>
+
+</Slide>

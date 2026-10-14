@@ -1,0 +1,65 @@
+<Slide notes={`如果要做下一轮，我建议把牌子位置固定下来，只改工具实际返回的某一项语义文本，然后核对人物是不是真的收到了这个变化。
+
+为什么要这么改？因为当前人物读取的是语义、公开的状态和地址，他不消费地图或者牌子上的图片像素。换句话说，把牌子换个颜色、改个字号、换张图片，这些变化主要影响的是人类回放时看到的外观。
+
+它们可以作为「预期没有直接行为通道」的对照组，但不能保证随机运行的每一步都相同。
+
+这条区分很重要：它决定了哪些改动值得投入，哪些改动只是在给回看的人看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.7　失败解释与下一轮练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>下一轮：固定位置，只改一项</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>建议的下一轮设计</Text>
+            <Box style={{ width: 420, background: '#EDF4FC', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把牌子位置固定</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>只改工具实际返回的{'\n'}某一项语义文本</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>改完要核对接收：人物是否真的读到了这条新语义。</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.6 }}>一次只改一项，行为变化才能归到那一项上。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>为什么外观改动不算干预</Text>
+
+            <Box style={{ width: 700, height: 88, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 2, flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>人物实际读取</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>语义、公开 state 与地址；这三类才是行为通道</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 88, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 48, background: '#546779' }} />
+                <Box style={{ flexDirection: 'column', gap: 2, flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>人物不消费</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>地图或牌子上的图片像素；纯美术修改不等于模型视觉刺激</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 2, flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>纯配色、字号、图片变化</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>主要影响人类回放外观；可作预期无直接行为通道的对照，但不保证随机运行逐步相同</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

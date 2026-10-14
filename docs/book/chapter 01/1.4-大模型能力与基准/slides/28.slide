@@ -1,0 +1,84 @@
+<Slide notes={`FrontierMath 第四层的分数，最该看的是误差范围。
+
+排第一的是 GPT-6 Astra，97.6%，它解掉了最后一道此前无人攻克的第四层题。其后是 Fable 5 的 87.8%、Sol 的 83%、Opus 5 的 73.2%。
+
+注意 Fable 5 的 87.8% 带正负五点二的标准误，Sol 的 83% 带正负五点九，两者区间重叠，把中间几点差距当成实力差距，在统计上站不住。而且第四层只有四十三道题，一道题就值两点三个百分点。
+
+另外，Epoch 不审自家基准，所以 FrontierMath 没经过独立审计；反倒是它自己审第一版时发现四成以上的题有错，才有了现在的第二版。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑤　1.4.5　领先模型：43 道题的分数必须带误差读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>FrontierMath Tier 4（v2）</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 300, fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>GPT-6 Astra</Text>
+            <Box style={{ width: 672, height: 28, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 656, height: 28, background: '#276FBF', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 96, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>97.6</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 300, fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>Claude Fable 5</Text>
+            <Box style={{ width: 672, height: 28, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 555, height: 28, background: '#276FBF', borderRadius: 6 }} />
+                <Box style={{ width: 70, height: 28, background: '#B5C7D8' }} />
+            </Box>
+            <Text style={{ width: 96, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>87.8</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 300, fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>GPT-5.6 Sol</Text>
+            <Box style={{ width: 672, height: 28, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 518, height: 28, background: '#276FBF', borderRadius: 6 }} />
+                <Box style={{ width: 79, height: 28, background: '#B5C7D8' }} />
+            </Box>
+            <Text style={{ width: 96, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>83.0</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 300, fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>GPT-5.5 Pro</Text>
+            <Box style={{ width: 672, height: 28, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 524, height: 28, background: '#276FBF', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 96, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>78.0</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 300, fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>Claude Opus 5</Text>
+            <Box style={{ width: 672, height: 28, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 492, height: 28, background: '#276FBF', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 96, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>73.2</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center', padding: '0 4px' }}>
+            <Box style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+                <Box style={{ width: 26, height: 12, background: '#276FBF', borderRadius: 6 }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>得分点估计</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+                <Box style={{ width: 26, height: 12, background: '#B5C7D8', borderRadius: 6 }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>±1 标准误（Fable 5 为 ±5.2，Sol 为 ±5.9，两者区间重叠）</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.45 }}>FrontierMath 是 Epoch 自家基准，按避嫌原则未进入独立审计名单；而它第一版恰恰被查出四成以上的题有错</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>28 / 36</Text>
+    </Box>
+
+</Slide>

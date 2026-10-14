@@ -1,0 +1,57 @@
+<Slide notes={`整理材料时最容易出问题的地方，是把原意改掉，而且改得还很有道理。
+
+孟川的原文是：“今天发现活动室东侧一盏灯不亮，想了解如何报告。”这句话可以拆成三个字段：人物初始经历，东侧一盏灯不亮；咨询目的，想了解如何报告；规定的首次话语，保留原句。
+
+但很多人会顺手改成另外三句：设施已确认损坏、需要更换灯具、已经提交报修。这三句听起来更专业，其实是往里补了东西。第一句补了诊断，第二句补了方案，第三句补了执行结果。原材料都不支持。
+
+所以我建议每条整理内容都附一列变化说明：只是分段、改为同义表达、补充了作者假设，还是仍待确认。这一列不好看，但它是接收者判断可靠性的依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.5　整理信息时保留原意与空白</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>那段原文，能拆成什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>孟川材料里的原文</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>“今天发现活动室东侧一盏灯不亮，想了解如何报告。”</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24, marginTop: 16 }}>
+
+            <Box style={{ width: 564, height: 300, background: '#ECF7F2', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>可以拆成三个字段</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>人物初始经历：活动室东侧一盏灯不亮</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>咨询目的：想了解如何报告</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>规定的首次话语：保留原句，不改写</Text>
+                <Box style={{ width: 516, height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>三个字段都是原文里读得出来的，没有新增任何推断。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 300, background: '#FFF4E6', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>不能改写成这三句</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>“设施已确认损坏”——补入了诊断</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>“需要更换灯具”——补入了方案</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>“已经提交报修”——补入了执行结果</Text>
+                <Box style={{ width: 516, height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>后三句在原材料里都找不到支持。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>每条整理内容附一列变化说明：只是分段、改为同义表达、补充了作者假设，还是仍待确认。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 23</Text>
+    </Box>
+
+</Slide>

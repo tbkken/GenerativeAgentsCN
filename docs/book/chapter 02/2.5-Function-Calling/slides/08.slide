@@ -1,0 +1,55 @@
+<Slide notes={`工具定义好了，接下来要看的是：一次调用结束以后，我们手上留下了什么。
+
+模型提出查询手作室预约的请求，回来的条目类型是 function_call。这个条目里带着工具名、JSON 编码的参数，还有一个 call_id。
+
+这三样东西各有用处。工具名说明要调哪个函数；参数说明这次查询的条件；call_id 则是这次调用的身份凭证。
+
+为什么凭证这么重要？因为一次响应里可能包含多个调用。如果同时查三个房间，就会回来三条 function_call。结果回填的时候，必须让每条结果都能认回它原来那一次调用，否则数据就会串位。
+
+判断一条工具结果值不值得信，先看它能不能被关联回原来那次调用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.5.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一轮调用包含哪些证据</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>工具结果值不值得信，先看它能不能被关联回原来那次调用。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 280, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', fontFamily: 'Consolas, monospace' }}>name</Text>
+            </Box>
+            <Box style={{ width: 280, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', fontFamily: 'Consolas, monospace' }}>arguments</Text>
+            </Box>
+            <Box style={{ width: 280, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B', fontFamily: 'Consolas, monospace' }}>call_id</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 300, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一次响应可能含多个调用，必须逐条关联</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 26</Text>
+    </Box>
+
+</Slide>

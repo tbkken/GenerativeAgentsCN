@@ -1,0 +1,70 @@
+<Slide notes={`这两种装载方式很容易被混在一起。
+
+本地 Shell 模式用的是本地真实存在的 Skill 目录路径。你不能把托管模式那个 skill_reference 原样搬过来，两者格式不一样。而且这段配置只是工具声明，本身不执行任何命令——应用仍要实现 2.7 讲过的本地 Shell 执行回路，处理命令、输出、超时和取消。声明一条本地路径，并不会把执行工作自动交给云端。
+
+应用层 SOP 加载是另一回事：应用自己读 SOP，按需把内容加入提示，只开放两个受控函数。它复用了方法，但没有实现自动发现，也没有渐进读取，更没有原生挂载。
+
+两条路都能跑出看起来差不多的产物，但产物相似不能证明接口机制相同。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.5　本地 Shell 与应用层 SOP</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本地 Shell 与应用层 SOP 不是一回事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 556, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 556, height: 60, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>本地 Shell 模式</Text>
+                </Box>
+                <Box style={{ width: 556, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>用本地真实存在的 Skill 目录路径，不能把托管模式的 skill_reference 原样放进去。</Text>
+                </Box>
+                <Box style={{ width: 556, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>这只是工具声明：声明 local 环境与 skills 列表，本身不执行任何命令。</Text>
+                </Box>
+                <Box style={{ width: 556, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>应用仍须实现 2.7 的本地 Shell 执行回路，处理命令、输出、超时与取消。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 556, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 556, height: 60, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 26, background: '#26816B' }} />
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>应用层 SOP 加载</Text>
+                </Box>
+                <Box style={{ width: 556, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>应用自己读 SOP，按需把内容加入提示，而不是交给宿主去发现。</Text>
+                </Box>
+                <Box style={{ width: 556, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>只开放两个受控函数，其余能力不暴露给模型。</Text>
+                </Box>
+                <Box style={{ width: 556, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>复用了方法，但没有自动发现、渐进读取或原生挂载。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>相似产物不能证明接口机制相同</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>复用同一份材料，不等于用了同一种装载机制。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 27</Text>
+    </Box>
+
+</Slide>

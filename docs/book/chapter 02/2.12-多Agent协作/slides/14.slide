@@ -1,0 +1,63 @@
+<Slide notes={`给角色分配输入的时候，有一个直觉是对的：上下文越小，无关信息越少，角色越容易聚焦。
+
+但这件事有个边界。如果为了让上下文更小而裁掉关键规则，角色就会在残缺的局部材料上做判断，得出一个看起来合理、其实错误的结论。比如不告诉表达审查员容量上限，它就无法判断某句表述是否已经越过容量。
+
+所以拆分的关键不是把文字平均分给每个角色，而是保留每个判断所需要的最小完整证据。角色该看的规则、来源和约束，一样都不能少。
+
+再往前一步：汇总的时候，仍然要保留可以回查的来源，这样任何一条结论都能被追到原始文件，而不是停在某个角色的转述上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.3　交接的是证据，不只是摘要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>裁输入范围，不裁关键证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 616, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>给各角色缩小输入范围</Text>
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>上下文越小，不相关信息越少</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>角色更容易聚焦在自己要判断的那一点上</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>每个角色只看自己需要的部分</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>它不用承担别的角色的判断任务</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>汇总时保留可回查的来源</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>每条结论都能追回原始文件</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 504, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>但别裁掉关键规则</Text>
+            <Box style={{ flexDirection: 'column', gap: 6, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>裁掉规则，结论就错</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>角色会在局部材料上得出一个看起来合理的错误结论</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 6, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>拆分不是平均分配文字</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>而是保留每个判断所需要的最小完整证据</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 25</Text>
+    </Box>
+
+</Slide>

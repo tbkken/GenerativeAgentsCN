@@ -1,0 +1,109 @@
+<Slide notes={`有一次模型尝试失败了，没有提交世界动作，但它可能已经产生了费用。这就带出两本账。
+
+事实账回答的是「实际提交了什么」，采用范围是完整的已提交边界。失败且未提交的调用不会变成世界动作，恢复之后同一个事实也不重复计数。
+
+成本账回答的是「实际尝试了什么」，采用范围是全部相关 Attempt。失败未提交的调用仍然可能消耗调用次数，恢复之后各次的真实消耗要各自保留。
+
+两本账的记录范围不同，它们都不是实测账单，只是记账口径。最后一条底线：费用不靠人数乘步数伪造，缺少用量时明确写「未记录／无法核验」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.5　失败的成本不能随未提交事实一起消失</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>事实账与成本账</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>同一次失败，两本账的回答不同 —— 横向比较，不表示前后顺序</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>事实账</Text>
+
+                <Box style={{ width: 564, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '8px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                    <Box style={{ width: 520, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>回答问题</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>实际提交了什么</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 564, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '8px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                    <Box style={{ width: 520, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>采用范围</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>完整已提交边界</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 564, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '8px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                    <Box style={{ width: 520, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>失败未提交</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>不变成世界动作</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 564, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '8px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                    <Box style={{ width: 520, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>恢复后</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>同事实不重复计数</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>成本账</Text>
+
+                <Box style={{ width: 564, height: 74, background: '#FFF4E6', borderRadius: 10, padding: '8px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+                    <Box style={{ width: 520, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>回答问题</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>实际尝试了什么</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 564, height: 74, background: '#FFF4E6', borderRadius: 10, padding: '8px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+                    <Box style={{ width: 520, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>采用范围</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>全部相关 Attempt</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 564, height: 74, background: '#FFF4E6', borderRadius: 10, padding: '8px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+                    <Box style={{ width: 520, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>失败未提交</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>仍可能消耗调用</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 564, height: 74, background: '#FFF4E6', borderRadius: 10, padding: '8px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+                    <Box style={{ width: 520, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>恢复后</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>各次真实消耗保留</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两者记录范围不同，都不是实测账单</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 1112 }}>费用不靠人数乘步数伪造；缺少用量时明确记录「未记录／无法核验」。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

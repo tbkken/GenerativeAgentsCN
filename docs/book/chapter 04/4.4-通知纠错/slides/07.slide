@@ -1,0 +1,86 @@
+<Slide notes={`沈禾要申请更正，先要有依据，这个依据就是三份真实确认。
+
+叶青、吴悠、江辰各自用 INTERACT 真实查询公告，保存当前信念，内容是「本次当前正式会址为杏厅，来源原公告回复」。这条信念只用自然语言写，不附旧地点的结构化标记——一旦附上，后面替代时很可能被继承，两边就不干净了。
+
+接着三人分别真实 SPEAK 告诉沈禾已经查过。SPEAK 一次只对一名其他 Agent，所以是三次单独发言。沈禾收齐三份实际确认才去申请，缺人只能追问，不能代确认。
+
+还有一种情况要提前写好：窗口结束而更正还没正式发生，就标「未形成纠错观察条件」，只报数量，不造更正时点，也不单独给哪一组延长窗口。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.2　先完成原通知链，再触发更正</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三份确认收齐，才有申请条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 674, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>三人真实查询原公告</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>保存「本次当前正式会址为杏厅，来源原公告回复」</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>原信念只用自然语言</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>不附可能在替代时被继承的旧地点结构化标记</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>三人分别真实 SPEAK 报备</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>SPEAK 一次只向一名其他 Agent，因此是三次发言</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>收齐三份实际确认才申请</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>缺人则追问，不替任何人补一份确认</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 446, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 446, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>缺口不能代确认</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>收齐三份实际确认，才有申请更正的条件。这份依据不是流程礼貌，而是事件真的发生过的证据。</Text>
+            </Box>
+
+            <Box style={{ width: 446, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>窗口末还没正式更正</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>标「未形成纠错观察条件」，只报告数量；不造更正时点，也不单独延长某一组。</Text>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779' }}>流程条为条件关系示意，非系统界面截图</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

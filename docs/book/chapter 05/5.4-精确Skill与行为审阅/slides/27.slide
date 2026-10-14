@@ -1,0 +1,54 @@
+<Slide notes={`这一节要带走的是三句话。
+
+第一句，只改一段。两组全文只有决策段不同，其余字节保持一致。只要还有第二处差别，后面的比较就无法归因，写得再漂亮也没有用。
+
+第二句，全文可审阅。保存两份完整文本、精确差异和内容摘要，让接手者能指出哪一段被替换、其余条件在哪里核对。哈希不同只说明文件不同，不说明只差澄清策略。
+
+第三句，解析不等于遵守。纯文档检查能查出名称、类型、依赖和闭包的问题，但材料能被解析，不等于模型会照着做。系统配置、绑定、封存和实际运行仍然要在浏览器里完成，记录里要把已检查与未验证分开写。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.4　精确 Skill 与行为审阅</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节小结</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>记住三句话</Text>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF', width: 56 }}>一</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>只改一段</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>两组全文只有决策段不同，其余字节保持一致；多一处差别就无法归因。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B', width: 56 }}>二</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>全文可审阅</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>保存两份完整文本、精确差异与内容摘要；哈希不同不等于只差澄清策略。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28', width: 56 }}>三</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>解析不等于遵守</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>纸面检查只能说明材料能被解析；配置、绑定、封存与运行仍需在浏览器完成。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 4 }}>第五章　5.4　精确 Skill 与行为审阅</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 27</Text>
+    </Box>
+
+</Slide>

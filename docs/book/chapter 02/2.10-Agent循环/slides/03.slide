@@ -1,0 +1,55 @@
+<Slide notes={`先看最基础的一轮闭环。一次回答，是模型生成一段文字就结束了；一段闭环不一样，它要按真实结果决定下一步做什么。
+
+按顺序走一遍：观察用户的任务、材料和上一次工具的真实结果；决定下一轮查什么、生成什么候选；由应用去执行被允许的工具；最后核验目标有没有满足，是继续，还是有原因地停下。
+
+这里我要强调两点。第一，执行这一步是应用在做，不是模型在做，模型只能提出请求。第二，核验不是走过场。「我已安排好全部活动」是一句模型输出；只有校验器返回通过，才说明我们编码的排期约束得到了满足。
+
+至于现实中的房间有没有真的被预订，本节这些工具还没有那个能力，也不应该拿它当成功证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.10.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从一次回答到一个闭环</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>助手按真实结果决定下一步，程序守住执行边界。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 224, height: 60, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>观察</Text>
+            </Box>
+            <Box style={{ width: 44, height: 60, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 224, height: 60, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>决定</Text>
+            </Box>
+            <Box style={{ width: 44, height: 60, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 224, height: 60, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>应用执行</Text>
+            </Box>
+            <Box style={{ width: 44, height: 60, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 224, height: 60, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>核验</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 960, height: 48, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>核验决定继续还是有原因地停止，它不属于模型，属于程序</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

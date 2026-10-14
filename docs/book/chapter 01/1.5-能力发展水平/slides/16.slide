@@ -1,0 +1,61 @@
+<Slide notes={`左边是 SWE-bench 官方 Bash Only 榜单上 2026 年 2 月 17 日的两行：mini-SWE-agent 2.0.0、一次尝试、500 项 SWE-bench Verified。Claude 4.5 Opus 与 Gemini 3 Flash 在 high 档位的解决率是 76.8% 和 75.8%，相差 1 个百分点相当于五题；两家的 high 也不代表相等计算预算。
+
+右边是 ProgramBench 的改动设置：200 项任务中排除 34 项参考程序测试不稳定的，并使用 mini-swe-agent、去掉原先六小时上限；Fable 5.1 在 166 项任务上的隐藏测试通过率是 87.6%，这是测试通过率，不等于重建了整个程序。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.4　工程与长上下文：高分背后包含执行环境</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>有日期的对照，与改动过的题集</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24, height: 372 }}>
+
+            <Box style={{ flex: 1, height: 372, background: '#EDF4FC', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>SWE-bench Verified（Bash Only）　官方榜单</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>日期 2026-02-17　·　500 题　·　mini-SWE-agent 2.0.0　·　一次尝试</Text>
+                <Box style={{ height: 76, background: '#FFFFFF', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Claude 4.5 Opus（high）</Text></Box>
+                    <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>76.8%</Text>
+                </Box>
+                <Box style={{ height: 76, background: '#FFFFFF', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Gemini 3 Flash（high）</Text></Box>
+                    <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>75.8%</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>相差 1 个百分点相当于五题的计数差；两个厂商的 high 不代表相等计算预算。</Text>
+            </Box>
+
+            <Box style={{ flex: 1, height: 372, background: '#ECF7F2', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>ProgramBench　·　Anthropic 改动设置</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>166 项任务（原 200 项中排除 34 项）·　mini-swe-agent，去掉原先六小时上限</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10, height: 84 }}>
+                    <Text style={{ fontSize: 64, fontWeight: 'bold', color: '#26816B', lineHeight: 1.05 }}>87.6%</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 2.2 }}>隐藏测试通过率</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>从可执行文件与文档重建行为；只保留参考程序能通过的测试，且按参考程序通过的测试评分。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>运行上下文可延伸到 100 万 Token。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>87.6% 是测试通过率，不能写成"完整重建了 87.6% 的软件"</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>它也不与原题集、原时间限制的榜单直接比高低。所需时间、预算与测试条件，仍属于能力描述的一部分。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

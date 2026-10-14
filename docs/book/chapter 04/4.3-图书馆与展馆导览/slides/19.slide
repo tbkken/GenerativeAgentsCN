@@ -1,0 +1,81 @@
+<Slide notes={`这四个人走到了哪里，结果并不一样。
+
+G1 在甲厅读图册，活动发生时累计 20 格，成功。G2 在甲厅读记录，活动发生时累计 32 格，也成功。G3 到了乙厅，但只做了「寻找展品」，活动缺失，不进入主要分子。G4 在乙厅查看制作步骤时累计 43 格，超过 40 格的软预算，同样不进主要分子。
+
+要注意两点。第一，20、32、43 这三个数是各次对应活动发生时的累计路程，时间点不同，不能直接相加。第二，G3 和 G4 虽然判定为不成功，但仍然留在四人的分母里，失败的路程也照样计入成本。
+
+还有一点，G3 的路程根本没有给定，不能替他补造一个数字。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.6　人工判分：走到正确房间仍可能不成功</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个人四种结局（人工材料，非 Run 结果）</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 634, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 78 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>访客</Text></Box>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>活动时累计</Text></Box>
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>对应活动</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>判分</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ width: 78 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>G1</Text></Box>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 16, color: '#20344B' }}>20 格</Text></Box>
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 15, color: '#546779' }}>甲厅阅读图册</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>成功</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ width: 78 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>G2</Text></Box>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 16, color: '#20344B' }}>32 格</Text></Box>
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 15, color: '#546779' }}>甲厅阅读记录</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>成功</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 78 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>G3</Text></Box>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>未给定</Text></Box>
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 15, color: '#546779' }}>只有寻找展品</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>否：活动缺失</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 78 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>G4</Text></Box>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>43 格 &gt; 40</Text></Box>
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 15, color: '#546779' }}>乙厅查看步骤</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>否：超预算</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 486, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>两人成功，两人仍留在分母</Text>
+            <Box style={{ width: 486, background: '#EDF4FC', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>主要成功</Text>
+                <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1 }}>2/4</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>＝ 50%</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>G3 与 G4 不进主要分子，但两人仍在四人分母里；失败路程也留在成本中。</Text>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>G3 的路程未给定，不能补造；也不能事后把阈值改成 45。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

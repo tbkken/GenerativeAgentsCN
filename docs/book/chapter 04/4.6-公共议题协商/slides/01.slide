@@ -1,0 +1,82 @@
+<Slide notes={`这场协商的题目是：定稿之前，逐个人确认他的理由有没有被准确表达，能不能减少重要理由和反对意见的丢失。
+先说清三件事。第一，场地、人物和材料都是虚构教案，目前还没有任何 Run，不能拿来代表现实人群的支持率、政治倾向或政策效果。
+第二，四个人共享的只有场地规则和四个候选；每个人自己的理由只发给本人，别人初始不知道。
+第三，这一题不以「大家同意」判成功。最后可能根本没有形成一致意见，那也不算实验失败——只要分歧被准确记下来，记录质量依然可以很高。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.6　公共议题协商</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>把理由与分歧{'\n'}准确留下来</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>青禾社区活动室的协商场景是虚构教案，尚无 Run。共享的是场地规则与四个候选，要看的不是谁说服了谁，而是每个人的理由有没有被准确留下来。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>共同事实</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>理由私有</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>只改一处</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>分歧记账</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: 520 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>共同窗口 18:00 — 21:00</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+            </Box>
+
+            <Box style={{ width: 520, height: 40, flexDirection: 'row' }}>
+                <Box style={{ width: 490, height: 40, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#FFFFFF' }}>可用时段　18:00 — 20:50</Text>
+                </Box>
+                <Box style={{ width: 30, height: 40, background: '#CB6B28' }} />
+            </Box>
+            <Text style={{ fontSize: 13, color: '#CB6B28' }}>橙色 10 分钟＝收整，活动最晚 20:50 结束</Text>
+
+            <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', width: 30 }}>A</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 190 }}>18:00 — 19:00</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>正常交谈</Text>
+            </Box>
+            <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', width: 30 }}>B</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 190 }}>19:00 — 20:00</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>正常交谈</Text>
+            </Box>
+            <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', width: 30 }}>C</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 190 }}>19:50 — 20:50</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>正常交谈　余 10 分钟收整</Text>
+            </Box>
+            <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                <Box style={{ width: 4, height: 26, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 30 }}>D</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 190 }}>19:00 — 20:00</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>静默共读</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商　·　候选与窗口均为示意：非系统截图、尚无 Run</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,60 @@
+<Slide notes={`在评价模型之前，先确认本地这一层。按 2.1 把独立的 Python 环境准备好，然后到 examples 目录里按顺序执行。
+
+第一条命令跑单元测试，检查脚本本身有没有写对。第二条用 fixtures 里准备好的样板排期，走一遍规则校验器，并把检查结果写到 output 目录里。
+
+这两条都不访问模型，所以它们给出的结论只说明一件事：材料读得到，本地逻辑是对的。
+
+这一点很关键。如果一上来就跑模型，最后发现结果不对，你其实分不清是材料错了、规则写错了，还是模型没做好。先把本地这一层固定下来，后面出问题就只剩模型和服务这一段。
+
+反过来说，这两条通过也不代表模型会通过。它只是把变量减少了一个。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.2　一次完整的 API 路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两条不访问模型的命令</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.8 }}>按 2.1 准备好独立 Python 环境，从 examples 目录按顺序执行。</Text>
+
+            <Box style={{ height: 170, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>这一步确认什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>资料读得到，本地逻辑是对的。此时还没有评价模型。</Text>
+            </Box>
+
+            <Box style={{ height: 170, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>还不能说什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>不能说模型就不会出问题。缺事实、违反约束这些失败，要跑完后面几步才会暴露。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 748, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 64, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>本地检查：两条命令，都不访问模型</Text>
+            </Box>
+
+            <Box style={{ height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}># 检查脚本本身，再用样板排期走一遍规则校验器</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>python -m unittest discover -s tests -v</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>python validate_schedule.py fixtures/valid-schedule.json</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>    --output output/reference-check.json</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 25</Text>
+    </Box>
+
+</Slide>

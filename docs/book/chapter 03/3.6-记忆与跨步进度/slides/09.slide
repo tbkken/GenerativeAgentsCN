@@ -1,0 +1,94 @@
+<Slide notes={`沿 supersede 这条分叉看：新认识与来源成为有效记忆，进入正常检索；旧节点并没有被删除，而是标成 SUPERSEDED 保留历史。
+
+这里说的“正式更正证据”，指青禾通知的更新条件——是模型真的收到了证据，不是工具替模型判断消息真伪。
+
+两条边界要记住。第一条：当前认识可以更正，但过去看过旧公告的真实观察不因此消失——历史就是历史。第二条：自然语言记忆不会自动新增导航知识，路线仍然要靠空间记忆与路径查询。
+
+追加、检索、更正、失效，四个动作都不删历史，这是整条生命周期的底色。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.2　四个工具组成记忆的生命周期</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>记忆的生命周期：更正不删历史</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>从 ACTIVE 出发的三条出路，只有一条改变“当前有效”，三条都不删除历史。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 122 }} />
+            <Box style={{ width: 220, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>append　追加事实或认识</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 260, height: 64, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>ACTIVE　有效记忆</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>search　检索有效内容</Text>
+            </Box>
+            <Box style={{ width: 122 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 36, alignItems: 'center' }}>
+            <Box style={{ width: 178 }} />
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 332 }} />
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 332 }} />
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 178 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 36 }}>
+
+            <Box style={{ width: 340, height: 176, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>search 的去处</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>检索仍为有效的记忆；返回值标注 retrieval_method 为 file_lexical，最多 limit 条。</Text>
+            </Box>
+
+            <Box style={{ width: 340, height: 176, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>supersede 的分叉</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>获正式更正证据后，传入真实 memory_id 与新内容：新认识与来源成为有效记忆。</Text>
+                <Box style={{ height: 44, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>旧节点标 SUPERSEDED，保留历史</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 340, height: 176, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>invalidate 的去处</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>失效但保留历史：必须写明理由，说明这条有效记忆为何不能继续使用。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 4, height: 68, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>边界一：当前认识可以更正，过去看过旧公告的真实观察不因此消失。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>边界二：自然语言记忆不会自动新增导航知识。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

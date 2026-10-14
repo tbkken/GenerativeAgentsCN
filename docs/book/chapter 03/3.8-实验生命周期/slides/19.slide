@@ -1,0 +1,64 @@
+<Slide notes={`封存之后如果需要修改，比如要改周宁的 SOP 或者公告内容，做法不是给原实验打补丁，而是用复制实验产生一份新的独立草稿，再在这份副本上改。
+
+复制会生成一个新的实验 UUID，它不是给原实验增加一个 Revision。原实验和它已经产生的运行，继续用来说明原来的条件；新副本用来说明新的条件。
+
+还有一种情况要分清：对一个已经封存的实验再次执行，是在相同的实验内容下创建另一个运行，这不等于复制并修改实验。前者是同一份材料多跑几次，后者是换了一份材料。
+
+操作过程中如果出现已创建仿真、但状态刷新失败的反馈，应该重新进入那个仿真核对，不要连续再点执行。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.4　确认执行跨过封存边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>已封存要改，就复制成新实验</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+
+        <Box style={{ width: 630, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>复制实验　产生新副本</Text>
+
+            <Box style={{ width: 630, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>生成新的实验 UUID</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>副本是一份新身份，与原实验各自独立。</Text>
+            </Box>
+
+            <Box style={{ width: 630, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不是给原实验加 Revision</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不建立业务 Revision，两条记录各自成立。</Text>
+            </Box>
+
+            <Box style={{ width: 630, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>两份材料各说明一件事</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>原实验与原 Run 说明原来的条件，新副本说明新的条件。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 506, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>再次执行　同一份内容</Text>
+
+            <Box style={{ width: 506, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>创建另一个 Run</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>在相同的实验内容下再跑一次。</Text>
+            </Box>
+
+            <Box style={{ width: 506, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不等于复制并修改实验</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>材料没有换，只是执行次数增加。</Text>
+            </Box>
+
+            <Box style={{ width: 506, height: 116, background: '#FFFFFF', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>反馈与状态要分开读</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>操作提示说明一次请求的结果，Run 状态说明执行走到哪里。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

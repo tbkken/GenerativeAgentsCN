@@ -1,0 +1,97 @@
+<Slide notes={`我把这五条资料一条条念出来，同时把每条容易多推的那句话点掉。
+
+K1 是教学面板的橙色指示灯间歇出现。它不等于某个部件已经损坏。K2 是显示值 7，用一个虚构的教学单位，没有给出正常范围，所以推不出偏高还是偏低。
+
+K3 说前一次记录 E-17 只写了外观观察，它推不出本轮刚做过全面检查。K4 说前次记录里没有内部核查结果，它推不出已经确定内部异常，恰恰相反，是这项内容缺失。
+
+K5 说没有恢复正常确认、仍待复核，它推不出「看过了就等于修好了」。这五句话，就是这一案里所有推断的边界。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.1　五条有限事实：不要补造诊断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五条有限事实与它们推不出什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ flex: 62, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 46 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>K1</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>教学面板橙色指示灯间歇出现</Text>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>不能推出：某部件已损坏</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 46 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>K2</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>显示 7，单位为虚构教学单位</Text>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>不能推出：过高或过低；根本没有正常范围</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 46 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>K3</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>前次记录 E-17 只写了外观观察</Text>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>不能推出：本轮刚完成全面检查</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 46 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>K4</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>前次记录没有内部核查结果</Text>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>不能推出：已确定内部异常（是缺项，不是结论）</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 94, background: '#FFF4E6', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ width: 46 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>K5</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>无恢复正常确认，仍待复核</Text>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>不能推出：已观察＝已修好</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 38, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+
+            <Box style={{ height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>设备对外公开　1 项</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>state = attention</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>仅表示值得关注，不含原因与等级</Text>
+            </Box>
+
+            <Box style={{ height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ height: 196, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>设备私有资料　5 项</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>K1 — K5</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>按真实请求返回，不依组别补答案，也不替人物写交接稿。</Text>
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.6 }}>人物初始不知道 K1—K5；未知阈值、原因、零件与修法一律说未知。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,73 @@
+<Slide notes={`第二道练习，我们制造一处缺失。
+
+把示意图里一个房间的名称遮住，然后问："图上有几个房间，分别是什么？"
+
+这一题想看的是它会不会补齐。人看到一张场馆平面图，很容易凭经验想"这里大概是阅读室吧"，然后很自然地把缺的那块填上。模型也会这样。
+
+好的回答应该分成两栏。一栏是能认出来的：另外两个房间的名称，以及它们和走廊的相对位置。另一栏是不确定的：被遮住的那块区域，从图里无法判断是什么房间。
+
+两栏分开说，结论才站得住。如果它直接给出三个房间名称，那第三个就是它自己补的，不管看起来多合理，都不能算读出来的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.6　本节练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习二：遮住一个房间名称</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 22 }}>
+
+        <Box style={{ width: 460, background: '#F4F7FA', borderRadius: 10, padding: 14, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>教学平面示意　练习副本</Text>
+                <Box style={{ width: 80, height: 24, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>手作室</Text>
+                </Box>
+                <Box style={{ height: 44, background: '#B5C7D8', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#20344B' }}>遮挡块　覆盖房间名称</Text>
+                </Box>
+                <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>交流室</Text>
+                </Box>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>被覆盖的区域，从图面无法判断是什么房间。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 670, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>好的回答会分成两栏来说</Text>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>可辨认</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>另外两个房间的名称，以及它们与公共走廊的相对位置。</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>不确定</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>被遮挡的那一块，图上没有信息，不能给出房间名称。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>不要从熟悉的场馆布局补出缺失信息，补出来的不算读出来。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 26</Text>
+    </Box>
+
+</Slide>

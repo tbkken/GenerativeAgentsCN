@@ -1,0 +1,61 @@
+<Slide notes={`把这件事讲清楚，是为了避免两种错误。
+
+第一种是把它读成"模型不可靠"。一个公开材料不足以复现的个案撑不起这种结论，报告本身就把它标成了罕见异常行为。
+
+第二种是读过就算。这个例子真正指向的是一个通用边界：模型可能把自己生成的叙述当成外部已经发生的事实。放进开放日案例，就会变成"工作人员已经确认换教室"，而实际没有人确认；放进仿真里，就会变成"角色已经到达"，而坐标还在途中。
+
+所以应用要承担一件事：由应用保存收到的真实消息、工具返回和已提交状态，模型据此判断下一步，而不是回头相信自己的上一段话。这条原则在第二章会落实为工具结果校验，第三章会区分动作意图、真实世界提交和回放事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.5　高分系统仍会在具体事实处失手</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>单例能说什么，不能说什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>1.5.5　失败实例</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#20344B', lineHeight: 1.3 }}>关键不在语言，在事实来源</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>失手的地方，是把模型自己生成的叙述，当成外部已经发生的事实。</Text>
+            <Box style={{ width: 240, height: 108, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>换到开放日</Text>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#CB6B28' }}>已确认换教室？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#546779' }} />
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>即使模型在困难问答和计算机任务上获得较高分数，这个边界仍可能失守。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#546779' }} />
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>放进仿真里，同样的错误会变成"角色已经到达"，而实际坐标还在途中。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#546779' }} />
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>单例不足以推断普遍发生率；报告本身把它标为监控发现的罕见异常行为。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', justifyContent: 'center', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 3, height: 56, background: '#CB6B28' }} />
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>需要由应用保存收到的真实消息、工具返回和已提交状态，模型据此判断下一步。（第二章落实为工具结果校验，第三章区分动作意图与回放事实）</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

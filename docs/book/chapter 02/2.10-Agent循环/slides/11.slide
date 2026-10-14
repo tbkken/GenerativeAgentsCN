@@ -1,0 +1,50 @@
+<Slide notes={`循环转起来之后，最难的不是让它转，而是让它停。
+
+我先把这个判断交给程序：什么时候算成功、什么时候可以继续、什么时候必须停，这三件事都不能留给模型临场决定。
+
+一条底线要记住：模型结束、候选校验通过、交付文件齐全，这三件事必须同时核对。只拿到一次通过的工具结果，还不能替代整段工具循环的结束和文件保存。
+
+还有一组很容易混的单位，我提前说一下：模型的轮数、工具请求数、实际执行数，是三个数，不是一个数。一次响应里可能包含多个工具请求，报错或阻断的请求也可能已经消耗了预算。
+
+单次超时也不限制任务总时长。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.10.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把停止条件写在程序里</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>结束不是模型说了算，是程序核对条件之后说了算。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 300, height: 108, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>成功交付</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>条件同时满足才收工</Text>
+            </Box>
+            <Box style={{ width: 44, height: 108, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 300, height: 108, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>继续修正</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>有新信息且仍有预算</Text>
+            </Box>
+            <Box style={{ width: 44, height: 108, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text></Box>
+            <Box style={{ width: 300, height: 108, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>有原因地停止</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>无进展、到上限、无有效候选</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

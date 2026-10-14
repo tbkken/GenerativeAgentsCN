@@ -1,0 +1,68 @@
+<Slide notes={`这条链路里有两个词，现在先点一下名字，后面章节会展开。
+
+第一个词叫上下文工程。选择哪些材料进来、把工具返回的结果保留下来、把旧消息整理成摘要，这些动作合起来，就是上下文工程。它决定了这一轮模型能看到什么。第二章会具体讲怎么操作。
+
+第二个要分清的是权限。模型提出了一个查询请求，这并不等于它拿到了预约服务的访问权限。请求是一回事，能不能真的访问、访问到什么范围，是另一回事，那由应用和权限设置决定。
+
+第三个词叫 Agent。围绕一个目标，多次选择并调用工具，这样的组织方式通常称为 Agent。这里要提醒的是：自主到什么程度，是由环境决定的，不是由名字决定的。它不要求固定采用"感知、计划、反思"这一套流程。
+
+所以听到"这是个 Agent"，别急着想象它有多自主，先看它被允许做什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.2　一次任务背后的结构</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个容易混为一谈的边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>名字先记住，界线先划清</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>这三个词在后面的章节都会再用到。现在只需要知道它们各自指的是哪一件事。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>上下文工程</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>选择材料、保留工具结果、整理旧消息，都属于上下文工程。</Text>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>第二章展开</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>请求与权限</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>模型提出查询请求，并不会因此自动获得预约服务的访问权限。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>Agent</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>围绕目标多次选择并调用工具的组织方式。自主程度由环境决定，不要求固定采用"感知—计划—反思"流程。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 22, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>交付时分别核验：文件存在／检查通过／真实预约成功。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 22</Text>
+    </Box>
+
+</Slide>

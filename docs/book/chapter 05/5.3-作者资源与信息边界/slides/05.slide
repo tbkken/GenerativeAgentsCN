@@ -1,0 +1,75 @@
+<Slide notes={`资源分配表至少要写清四件事：内容是什么、交给谁、通过什么方式进去、以及绝对不能顺带包含什么。
+
+比如四个 Arena 的名称、范围与一般空间用途，放进地图语义里，谁都可以按感知取得；但四人的私人任务和正确分流答案不能跟着进去。窗口分工属于咨询台、两个窗口和余真的资料，但不能写成「某位来访者一定属于哪类」的完整映射。
+
+H1 到 H4 的完整私人目的只进对应的初态资料。感知、询问、移动、确认和停止这些通用能力进共用 Brain，但完整任务表和预定好的成功剧情不进。
+
+角色资料、对象知识、空间语义和评分答案用途完全不同，不能按文件大小平均切分。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.1　同一张作者表，不等于同一份角色输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一份材料要写清四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>内容</Text></Box>
+            <Box style={{ width: 368 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>放置位置与接收者</Text></Box>
+            <Box style={{ width: 426 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>不应顺便加入的内容</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.45 }}>四 Arena 名称、范围与一般空间用途</Text></Box>
+            <Box style={{ width: 368 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>地图语义；按感知与初始已知空间取得</Text></Box>
+            <Box style={{ width: 426 }}><Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>四人的私人任务和正确分流答案</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.45 }}>A、B 窗口分工与咨询范围</Text></Box>
+            <Box style={{ width: 368 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>咨询台、两个窗口的根 Skill；余真资料</Text></Box>
+            <Box style={{ width: 426 }}><Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>「某位来访者一定属于哪类」的完整映射</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.45 }}>H1—H4 的完整私人目的</Text></Box>
+            <Box style={{ width: 368 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>对应来访者的初态资料</Text></Box>
+            <Box style={{ width: 426 }}><Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>其他三人的目的、评分答案列</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.45 }}>每人规定的首次话语与补充条件</Text></Box>
+            <Box style={{ width: 368 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>对应人物资料及共同执行规则</Text></Box>
+            <Box style={{ width: 426 }}><Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>提前把预约／报修补进首次话语</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.45 }}>如何感知、询问、移动、确认和停止</Text></Box>
+            <Box style={{ width: 368 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>共用 Brain</Text></Box>
+            <Box style={{ width: 426 }}><Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>完整任务表、预定成功剧情</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 270 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.45 }}>正确窗口映射和闭环判据</Text></Box>
+            <Box style={{ width: 368 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>作者与评分者材料</Text></Box>
+            <Box style={{ width: 426 }}><Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>不因方便调试而注入所有角色</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 27</Text>
+    </Box>
+
+</Slide>

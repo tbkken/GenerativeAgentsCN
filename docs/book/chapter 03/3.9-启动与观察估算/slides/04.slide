@@ -1,0 +1,106 @@
+<Slide notes={`确认窗口里的三组信息要分开看。
+
+预检结果是关于输入的：草稿、资源与模型是否齐备。执行参数是关于这次运行的：起始虚拟时间、步长和请求步数。预计消耗是关于量级的：模型调用、Token 和墙钟时间大致落在哪个区间。
+
+预检通过只说明这些输入可以用，不等于运行已经开始。所以确认以后要回到 Run 的列表，看它真正的状态。
+
+另外这些数值都是推算范围，不是承诺。等真正跑完，还要拿实际耗时和用量回来校准，不然下一次预算还是拍脑袋。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.1　启动时固定了哪些输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>点击执行实验以后会发生什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 640, background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>确认执行 · 检查窗口</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 604, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ width: 92, fontSize: 14, color: '#546779' }}>预检结果</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>草稿已封存　·　资源与模型齐备</Text>
+            </Box>
+
+            <Box style={{ width: 604, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ width: 92, fontSize: 14, color: '#546779' }}>执行参数</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>起始 2026-10-17 09:50　·　步长 60 秒　·　请求 48 步</Text>
+            </Box>
+
+            <Box style={{ width: 604, height: 86, background: '#EDF4FC', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>预计消耗（推算范围，不是承诺）</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 180, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>调用 288–864 次</Text>
+                    </Box>
+                    <Box style={{ width: 180, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>Token 144k–864k</Text>
+                    </Box>
+                    <Box style={{ width: 180, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>墙钟 9.6–144 分钟</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 10, marginTop: 2 }}>
+                <Box style={{ width: 120, height: 38, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>确认执行</Text>
+                </Box>
+                <Box style={{ width: 96, height: 38, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>取消</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 480, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>确认之后，还有三件事</Text>
+
+            <Box style={{ width: 480, height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3, flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>需要时先封存草稿</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>封存完成，再创建新的 Run</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 480, height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3, flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>重新读取 Run 的状态</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>确认实验与 Run 的身份对得上</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 480, height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3, flex: 1 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>提示不能代替状态</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>「已创建」只说明提交成功</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 480, height: 78, background: '#FFF4E6', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>预检通过只说明输入可用，不等于运行已经开始。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 23</Text>
+    </Box>
+
+</Slide>

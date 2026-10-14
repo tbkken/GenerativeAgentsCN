@@ -1,0 +1,81 @@
+<Slide notes={`引导员和公告对象这两个角色，边界要划清楚，否则很容易变成作者在暗中帮忙。
+引导员只帮助他当前感知到的人。他要向对方说明自己已知的目标，并且做一次真实的查询，而不是凭印象指路。如果他自己也不知道通路，就请对方重新查。他不能穿墙，也不能替人移动。
+公告对象按真实的请求 ID 回复，目标在下一轮才会接收到这条信息。「恢复通行」这类文字不会改变碰撞状态，改写几个字并不能把封住的缺口打开。
+两组公告用的是同一段文字，不透露任何组别信息。这样设计之后，角色能拿到什么，完全取决于他自己有没有去发起一次真实的查询。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.3　引导员与公告对象的边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁能帮，帮到什么程度</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 450, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, height: 26 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>引导员能做</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>不能做</Text></Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', lineHeight: 1.4 }}>只帮当前感知到的人</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>不主动替任何人移动</Text></Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', lineHeight: 1.4 }}>说明已知目标与真实查询</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>不穿墙，不编造一条路线</Text></Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>不知道通路就请对方重查</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>不假设对方已掌握信息</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 674, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>公告对象按真实请求回复，目标下一轮接收</Text>
+
+            <Box style={{ width: 674, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>按真实请求 ID 回复</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>只有发起过真实查询的角色才会收到回复，回复在下一轮生效。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 674, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>「恢复通行」的文字不改碰撞</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>公告里写什么，都不会把已经封闭的格子重新变成可走。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 674, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>两组公告同文</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>不透露额外组别信息，也不暗示这次关闭只影响其中一组。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 26</Text>
+    </Box>
+
+</Slide>

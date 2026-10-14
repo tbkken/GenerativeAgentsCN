@@ -1,0 +1,84 @@
+<Slide notes={`判断要不要拆，先看这笔开销换来了什么。我在左边放了三条理由，只要对上其中一条，拆分才可能划算：两个角色各自盯不同的风险，能把遗漏补上；把材料按角色分开，能避免无关信息互相干扰；两个审阅互不依赖，能真正并行、把等待时间压短。
+
+右边是每个角色的合同。请注意，光说一句"请三位专家讨论"，并不会自动产生这些边界。任务是什么、输入是哪几个文件、允许调用什么工具、输出长什么样、什么条件下算结束，这五件事必须写下来。写得含糊，角色就会各自猜，汇总时才发现口径不一致。
+
+有了合同，才谈得上分工。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.1　先判断是否值得拆分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先问拆分换来了什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>一句「请三位专家讨论」，不自动建立任何边界</Text>
+            <Box style={{ flex: 1 }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>多 Agent 可以复用同一个模型</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 500, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>什么时候才算值得</Text>
+                <Box style={{ flexDirection: 'row', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>减少遗漏</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>两个角色盯不同风险，互相补位</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>隔离上下文</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>各看各的材料，不被无关信息干扰</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>缩短独立等待</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>两个审阅互不依赖，可以并行</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#26816B' }}>每个角色须签订的五件事</Text>
+                <Box style={{ flexDirection: 'row', gap: 12, background: '#F4F7FA', borderRadius: 8, padding: '9px 16px', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 96 }}>任务</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>要检查的是什么，交付给谁</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, background: '#F4F7FA', borderRadius: 8, padding: '9px 16px', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 96 }}>输入</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>看得见哪几个文件，看不到什么</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, background: '#F4F7FA', borderRadius: 8, padding: '9px 16px', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 96 }}>工具</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>允许调用什么，只读还是可写</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, background: '#F4F7FA', borderRadius: 8, padding: '9px 16px', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 96 }}>输出合同</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>交付物写成什么、放在哪个文件</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, background: '#F4F7FA', borderRadius: 8, padding: '9px 16px', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 96 }}>结束条件</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>什么算完成，什么情况必须停</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 25</Text>
+    </Box>
+
+</Slide>

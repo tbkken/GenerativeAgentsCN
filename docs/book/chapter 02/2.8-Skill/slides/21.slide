@@ -1,0 +1,62 @@
+<Slide notes={`挂载完成不等于万事大吉，还有三件事要逐项核对。
+
+第一是版本。请求里不写 version 就用默认版本；如果你需要固定复现，就要填写上传后实际记录的那个整数版本，不能照抄文档里的占位数字。
+
+第二是调用。要在任务里明确要求使用这个 Skill，并且检查它是不是真的被读取、真的被执行了。能被发现，不等于被调用。
+
+第三是取回产物。容器里生成的 schedule.json 需要通过 API 的文件获取方式拿回来。只在本地打印 output_text，不会把那个文件保存到你的机器上——这一点很多人第一次都会踩。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.4　OpenAI 原生 Skills：上传并挂载到托管 Shell</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>挂载之后分三步核对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>版本、调用、产物，这三项各自都要有证据，不能互相替代。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 124, background: '#EDF4FC', borderRadius: 10, padding: '0 22px' }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>核对版本</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>不写 version 时使用默认版本；需要固定复现时，填写上传后实际记录的整数版本，不照抄占位数字。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 124, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>核对调用</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>明确要求使用 Skill，并检查它是否真的被读取、被执行。可发现不等于已调用。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 124, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>取回容器产物</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>按 API 的文件获取方式取回产物；打印 output_text 不会把 schedule.json 保存到本机。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 27</Text>
+    </Box>
+
+</Slide>

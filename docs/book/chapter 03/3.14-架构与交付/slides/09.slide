@@ -1,0 +1,86 @@
+<Slide notes={`如果陈晨只走了前 4 格，活动描述就要和实际进度分开读，这是本节一个很实用的判断。
+
+路径其实有三条。计划路径表示想走哪里，它来自导航给出的可走终点与路径信息；实际路径表示已经走过哪里，只认已提交的坐标与轨迹；剩余路径表示尚未完成的部分，还留在移动预算里，等下一步继续消费。
+
+所以途中他可以正在「前往阅读室」——这是一个进行中的状态，是合理的。但在他真正抵达之前，不能把一次阅读活动记成已经发生。
+
+判断的依据不是描述写得多肯定，而是这三条路径各自对应了哪些已提交的事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.2　从一条 MOVE 看完整链条</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>计划、实际、剩余：三条路径</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>假设这一段只走完前 4 格：已提交的事实到第 4 格为止，后面的还没发生。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 10 }}>
+            <Box style={{ width: 156, height: 46, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ width: 156, height: 46, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ width: 156, height: 46, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ width: 156, height: 46, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ width: 156, height: 46, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>5</Text>
+            </Box>
+            <Box style={{ width: 156, height: 46, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>6</Text>
+            </Box>
+            <Box style={{ width: 156, height: 46, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>7</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 10 }}>
+            <Box style={{ width: 654 }}><Text style={{ fontSize: 14, color: '#276FBF' }}>前 4 格：已提交的事实</Text></Box>
+            <Box style={{ width: 488, alignItems: 'flex-end' }}><Text style={{ fontSize: 14, color: '#546779' }}>后 3 格：还没发生</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>计划路径</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 15, color: '#546779' }}>想走哪里</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>来自导航给出的可走终点与路径信息</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>实际路径</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 15, color: '#546779' }}>已经走过哪里</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>只认已提交的坐标与轨迹，不认自述</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#546779' }} />
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>剩余路径</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 15, color: '#546779' }}>尚未完成的部分</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>保留在移动预算内，等下一步继续消费</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>正在「前往阅读室」可以成立</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>但未抵达时，不能把一次阅读活动当作已经发生。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 29</Text>
+    </Box>
+
+</Slide>

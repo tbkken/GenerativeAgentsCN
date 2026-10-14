@@ -1,0 +1,49 @@
+<Slide notes={`收个尾，回到开场那三个问题。
+
+知道在哪里吗——感知有范围有带宽，站得近也未必知道改了什么。走得通吗——导航是查询，reachable 只说明路线存在，坐标要靠 MOVE 提交才变。真的做了吗——提交记录里的起终点、执行路径和剩余路径才是证据，台词不算。
+
+留一个取证练习：任选一段实际轨迹，对照目标地址、查询距离、移动预算、执行路径和最终坐标，说明人物是否抵达；再把动作文字遮住，只用结构化事实作判断。仍能得出同样结论，说明证据足够；只能靠“正在前往”四个字判断完成，就需要重新取证。
+
+下一节讲记忆与跨步进度，打算、待确认和完成将在那里分清。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3.5　收束</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ flex: 1, height: 158, background: '#EDF4FC', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>知道在哪里吗</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>感知有范围与带宽，站得近也未必知道改了什么</Text>
+            </Box>
+
+            <Box style={{ flex: 1, height: 158, background: '#ECF7F2', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B' }}>走得通吗</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>导航是查询，不是移动；路线存在不等于人已动身</Text>
+            </Box>
+
+            <Box style={{ flex: 1, height: 158, background: '#FFF4E6', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28' }}>真的做了吗</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>提交记录才是证据，台词不构成抵达</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 128, background: '#F7F3E8', borderRadius: 12, padding: '18px 24px', flexDirection: 'column', gap: 8 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>取证练习</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>任选一段实际轨迹，对照目标地址、查询距离、移动预算、执行路径和最终坐标；遮住动作文字，只用结构化事实判断是否抵达。若只能依据“正在前往”四个字，就需要重新取证。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作 · 完　　下一节：3.6 记忆与跨步进度</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 23</Text>
+    </Box>
+
+</Slide>

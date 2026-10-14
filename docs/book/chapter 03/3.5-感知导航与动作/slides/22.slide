@@ -1,0 +1,66 @@
+<Slide notes={`本案例要求保留失败信息，因为失败本身就是证据。
+
+第一类：目标不可达，工具返回 reachable 为 false 和 BLOCKED_OR_DISCONNECTED。这说明的是路线条件——路断了或者不连通。
+
+第二类：地址从未被感知、或不在已知空间中，请求可能直接被拒绝。这说明的是知识或参数边界——人物根本没资格发起这个查询。
+
+两类失败不能一律归为系统故障。Brain 应该利用错误缩小问题范围，选择有依据的下一步，而不是扩大视野数字，或者猜一个门洞绕过限制。
+
+错误信息读对了，排查就少走一半弯路。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.5　从页面一路检查到事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>失败信息要分两类读</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>两类失败说明的是不同层面的问题，处理方式也不同。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ height: 96, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 330, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>reachable: false</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>BLOCKED_OR_DISCONNECTED</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>路线条件问题</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>路不通或不连通，说明的是世界里的路线</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 330, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>地址未被感知 / 不在已知空间</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>直接拒绝请求</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>知识或参数边界</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>人物没有资格发起这个查询</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不能一律归为系统故障</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>Brain 应利用错误缩小问题范围：不扩大视野数字，不猜门洞绕过限制</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 23</Text>
+    </Box>
+
+</Slide>

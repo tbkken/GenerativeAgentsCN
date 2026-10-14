@@ -1,0 +1,62 @@
+<Slide notes={`前四块都在解决「谁看到什么」，接下来要回答一个更实在的问题：装进实验的到底是什么。
+
+可以这样理解：把一个独立实验当作一个包裹，它需要的内容有地图与三个对象、五名 Agent 与 Crowd、Brain 与对象 Skill、模型配置，再加上实验装配本身。少一样，实验就跑不起来，或者跑起来也不是你要的那个。
+
+「完整内容与装配」这几个字是重点。资源不是只写一段描述就够了，地图要有真实图片和节点资料，人物要有头像和行走图，Brain 要有完整正文。
+
+当前这些资源还都在待制作、待导入的状态。宁可少一类组件，也不要在没有引用的情况下硬凑数量。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.4　完整资源闭包需要逐项点清</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ④</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>④</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>完整资源闭包需要逐项点清</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 980 }}>作者交付的不只是几份自然语言段落：地图要有实际图片与节点资料，人物要有头像与行走图，唯一 Brain 要有完整正文，三个对象要绑定各自根 Skill。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>地图与对象</Text>
+            </Box>
+            <Box style={{ width: 12, height: 64 }} />
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>Agent 与 Crowd</Text>
+            </Box>
+            <Box style={{ width: 12, height: 64 }} />
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>Brain 与 Skill</Text>
+            </Box>
+            <Box style={{ width: 12, height: 64 }} />
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>模型配置</Text>
+            </Box>
+            <Box style={{ width: 12, height: 64 }} />
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>实验装配</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 220, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>独立实验</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 27</Text>
+    </Box>
+
+</Slide>

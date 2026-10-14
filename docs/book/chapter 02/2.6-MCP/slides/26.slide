@@ -1,0 +1,83 @@
+<Slide notes={`这个练习测的是能力不可用时的表现。
+
+把 MCP 服务器停用，再提出同一个查询任务。合格的表现是：说清楚现在这项能力不可用，把待查询的项保留下来，而不是给一个编出来的答案。
+
+有一种不合格的做法：凭上一轮记录，声称自己已经重新查询过了。前后两轮数字可能一样，但性质不同，一个是拿到数据，一个是复述记忆。
+
+恢复服务后再核对一次：把原始返回和最终答案里的房间、日期、时间区间逐项比对。
+
+关于只读服务还有一个常见的问题：既然从不写数据，是不是就不用管读取范围了？答案仍然需要。只读服务也可能返回不该暴露的资料。接入真实业务时，身份与读取权限由服务和宿主实现，不能指望提示词自己保证。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.7　本节练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>停用服务，再问同一个问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 622, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>练习步骤</Text>
+
+            <Box style={{ width: 622, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>停用 MCP 服务器</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>在宿主里把这项服务停掉</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 622, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>提出同一个查询任务</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>与上一轮完全相同的任务描述</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 622, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>恢复服务后再比对</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>房间、日期、时间区间与原始返回是否一致</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 482, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 482, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>合格的表现</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>说明能力不可用，保留待查询项，不编造答案。</Text>
+            </Box>
+
+            <Box style={{ width: 482, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不合格的表现</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>凭上一轮记录声称已重新查询；数字一样也不等于查过。</Text>
+            </Box>
+
+            <Box style={{ width: 482, height: 152, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>只读服务也要控制读取范围</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>身份与读取权限由服务和宿主实现，不能交给提示词保证。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 27</Text>
+    </Box>
+
+</Slide>

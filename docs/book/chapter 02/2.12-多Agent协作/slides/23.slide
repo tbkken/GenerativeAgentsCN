@@ -1,0 +1,85 @@
+<Slide notes={`有三类结果，看上去像证据，其实站不住。
+
+第一类是只挑多 Agent 成功、单 Agent 失败的那一次展示。这类比较无法代表整体表现，因为没有在多批任务上重复。要判断，就得在同一任务集上系统比较。
+
+第二类是"一致但错误"。两个角色可能共享同一个模型的偏差，于是它们都错，还错得一样。这种情况最有欺骗性，因为它看起来像共识。更值得检验的，是这些角色有没有带来真正独立的视角。
+
+第三类是把本地校验器已经可靠的规则，交给两个模型重复判断。容量和时间本来就能用程序查清楚，未必需要两个模型再说一遍。更值得让角色去找的，是材料缺失、解释误导，以及没有说出口的假设。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.6　如何判断协作值得保留</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三类要警惕的结果</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 240 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>现象</Text></Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 416 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>为什么危险</Text></Box>
+            <Box style={{ width: 32 }} />
+            <Box style={{ width: 448 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>更值得检验什么</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 240, height: 140, background: '#FFF4E6', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>只挑一次成功展示</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>多 Agent 成功、单 Agent 失败的那一次</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 416, height: 140, background: '#F4F7FA', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>无法代表整体表现</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>单次结果里可能只是运气，没有重复也就没有比较</Text>
+            </Box>
+            <Box style={{ width: 32 }} />
+            <Box style={{ width: 448, height: 140, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>在同一任务集上系统比较</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>跑一批任务，看正确率、漏检与误报的差别</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 240, height: 140, background: '#FFF4E6', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>一致但错误</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>两个角色共享同一模型的偏差</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 416, height: 140, background: '#F4F7FA', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>看起来像共识，其实同源</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>两个角色都错、且错得一样，最容易让人放心</Text>
+            </Box>
+            <Box style={{ width: 32 }} />
+            <Box style={{ width: 448, height: 140, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>是否带来真正独立的视角</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>检验不同角色能不能各看一面，而不是重复同一判断</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 240, height: 140, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>重复判断已验证规则</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本地校验器已经可靠地检查容量和时间</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 416, height: 140, background: '#F4F7FA', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>未必是最有价值的分工</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>把明示规则交给两个模型再说一遍，收益有限</Text>
+            </Box>
+            <Box style={{ width: 32 }} />
+            <Box style={{ width: 448, height: 140, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>材料缺失与未声明的假设</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>更值得查的是解释误导、未声明假设这类模型能提意见的地方</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 25</Text>
+    </Box>
+
+</Slide>

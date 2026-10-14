@@ -1,0 +1,88 @@
+<Slide notes={`提交不是把结果写下去就完事，它有固定的顺序。
+
+系统先提交一帧，同时留下这一帧的独立校验记录，然后保存检查点或者恢复快照，最后才推进界面上的可见状态。这个顺序不能颠倒，颠倒了画面就会先于事实出现。
+
+仓库里有两个目录承担不同的职责：检查点目录按配置保留检查点，恢复目录支持精确边界恢复。它们保留的东西不一样，用途也不一样。
+
+恢复程序会把 Run、Attempt、Step、虚拟时间、成员文件和帧哈希逐项核验，全部相符才认为这个边界可以用来恢复。
+
+这六项也解释了为什么恢复不能靠“看起来差不多”——它们每一项都对应一个可以被检查到的值。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.2　已提交边界比画面进度更重要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次提交要留下什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column' }}>
+
+            <Box style={{ width: 620, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>提交一帧</Text>
+            </Box>
+            <Box style={{ width: 620, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>保存这一帧的独立校验记录</Text>
+            </Box>
+            <Box style={{ width: 620, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>保存检查点或恢复快照</Text>
+            </Box>
+            <Box style={{ width: 620, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#546779', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>推进界面上的可见状态</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 500, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>checkpoints/</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>按配置保留检查点，供核对与诊断时查看。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 112, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>recovery/</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>支持精确边界恢复，供新 Attempt 从已提交边界接上。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 152, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>恢复程序核验六项</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>Run　·　Attempt　·　Step　·　虚拟时间　·　成员文件　·　帧哈希</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

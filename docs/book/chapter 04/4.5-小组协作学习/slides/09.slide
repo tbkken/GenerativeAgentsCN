@@ -1,0 +1,80 @@
+<Slide notes={`我拿一次具体的交流来说明「只送一个人」是什么意思。
+
+温乔被问到时，必须真实说出自己的条件：编号 F1，完整限制是读图阅读要早于纸艺手作，来源是她的条件卡。主持人接着把「F1 已收到，来源是温乔」记下来。
+
+与此同时，任新并不知道 F1。在他的上下文里，这条信息从来没有出现过，所以他不能拿它来检查候选。
+
+这就带出两个容易混淆的点。第一，公开表达的门槛是至少真实传给一名组内接收者，它是可审查的，但不等于全员接收。第二，遇到含糊或者冲突，要向实际来源追问，而不是去翻教师资料补齐——那样补出来的不是共享，是作弊。
+
+另外，发言内容本身也要能核对：编号、完整限制、来源，三样都要说。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.3　双人交谈与最终版本</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次 SPEAK 只对一名接收者</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 660, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 12 }}>
+            <Box style={{ width: 628, height: 40, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>讨论区　示意界面（色块示意，非实际界面）</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <Box style={{ width: 430, height: 76, background: '#EDF4FC', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#276FBF' }}>温乔 → 陶明　真实 SPEAK</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>F1：读图阅读必须早于纸艺手作{'\n'}来源＝我的条件卡</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row' }}>
+                <Box style={{ width: 430, height: 64, background: '#ECF7F2', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#26816B' }}>陶明记下</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>F1 已收到，来源＝温乔；据此提出候选</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row' }}>
+                <Box style={{ width: 430, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '10px 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>任新、白露：F1 是什么？我们不知道</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>发言要能核对{'\n'}编号、限制、来源</Text>
+
+            <Box style={{ width: 460, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>真实 SPEAK 只说自己的条件，不替别人补造限制</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>可审查 ≠ 全员接收；接收者是谁要单独登记</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 72, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>遇含糊或冲突向实际来源追问</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>从教师资料补齐 = 不算真实传递，条件仍未共享</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 26</Text>
+    </Box>
+
+</Slide>

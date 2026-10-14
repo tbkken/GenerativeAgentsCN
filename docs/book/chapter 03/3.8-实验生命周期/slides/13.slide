@@ -1,0 +1,65 @@
+<Slide notes={`预检在材料这个边界上要查四类东西。
+
+第一类是空间：四层的层级、节点的范围、坐标和地址之间能不能对得上。第二类是附件：地图、人物图片、状态图、Skill 脚本和模板是不是齐全。第三类是装配：人物的出生位置、对象的交互配置、唯一的 Brain、所需的模型配置有没有完整。
+
+第四类是 Skill 闭包：依赖齐不齐、包内的 skill_key 有没有冲突、有没有非法的依赖环。冲突这一项要单独说一句：同一个 key 且内容相同可以合并，同一个 key 但内容不同必须处理冲突，不能按显示名称悄悄覆盖过去。
+
+发现阻断就记录完整的错误，回到对应的草稿资源去修正、保存，再重新检查一次。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.3　预检检查材料，观察检查行为</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>边界上要检查的四类材料</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6, width: 1152 }}>在执行之前，这四类材料各自要能对上号，缺一项就不是一份可运行的实验。</Text>
+
+        <Box style={{ width: 1152, height: 82, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>空</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 132 }}>空间</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>四层层级、节点范围、坐标与地址能否互相对应</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 82, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>件</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 132 }}>附件</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>地图、人物图片、状态图、Skill 脚本和模板是否齐全</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 82, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>装</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 132 }}>装配</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>人物出生位置、对象交互配置、唯一 Brain、所需模型配置是否完整</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 82, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 36, height: 36, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>闭</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 132 }}>Skill 闭包</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>依赖是否齐全、包内 skill_key 是否冲突、是否存在非法依赖环</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>同 key 同内容可以合并；同 key 异内容必须处理冲突，不能按显示名称悄悄覆盖。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

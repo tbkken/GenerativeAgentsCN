@@ -1,0 +1,57 @@
+<Slide notes={`评阅意见很少会告诉你它改的是哪一层。它可能只是一句"这里的说法不够清楚"，也可能要求改评分口径，甚至可能提到某个操作会让系统重复回复。
+
+这些意见落在不同的层：说明材料、评分口径、行为输入、空间与人物、模型与环境，还有真实的系统问题。
+
+先选修改层，再按层确定复查范围，这是维护里最重要的一次判断。改说明可以只复查文档；改行为输入就一定要做新的独立实验；碰到系统问题，要停止相应验收并留证。
+
+跳过这一步，后面的复查范围就只能靠感觉，做多做少都没有依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.9　迭代与维护</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ②</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>②</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>不同变更，需要不同的验证</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>维护不只有重跑。先判断修改对象，才能选择验证范围；改说明可以只复查文档，改行为输入必须拿出新的对应证据。</Text>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>评阅意见可能改的是——</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 12, marginTop: 2 }}>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>说明材料</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>评分口径</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>行为输入</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>空间与人物</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>模型与环境</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>实际系统问题</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 27</Text>
+    </Box>
+
+</Slide>

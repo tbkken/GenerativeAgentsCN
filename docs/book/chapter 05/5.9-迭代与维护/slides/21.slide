@@ -1,0 +1,46 @@
+<Slide notes={`维护到最后，要保证项目入口始终能回答三个问题：当前建议使用哪一份设计，历史结论对应哪一批输入，还有哪些事项没有验证。
+
+这三句话听起来简单，做起来要求材料分层保存：当前项目说明一类，变更与验证记录一类，精确输入与原始导出又是一类，解释与出版材料是第四类。
+
+人工文档可以用变更日期和问题单号来组织，但要记住，这些只是资料管理的标签，不是系统新增的 Revision，也不是一个新的包身份。
+
+分层的意义在于，改一层不会牵动另一层。更新当前说明，不会让历史结论跟着变；补一段解释，也不会让原始输入发生变化。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.9　迭代与维护</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ④</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>④</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>维护说明与历史事实分别保存</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 980 }}>项目入口要始终能回答三件事：当前建议使用哪一份设计，历史结论对应哪批输入，还有哪些事项没有验证。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20, marginTop: 10 }}>
+            <Box style={{ width: 340, height: 82, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>当前建议用哪一份设计</Text>
+            </Box>
+            <Box style={{ width: 340, height: 82, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>历史结论对应哪批输入</Text>
+            </Box>
+            <Box style={{ width: 340, height: 82, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>还有哪些事项没有验证</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 27</Text>
+    </Box>
+
+</Slide>

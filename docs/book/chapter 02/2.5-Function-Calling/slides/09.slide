@@ -1,0 +1,87 @@
+<Slide notes={`假设模型提出查询手作室的请求，返回的条目类型是 function_call，里面有三样东西。
+
+name 是工具名，这里是 get_room_availability。程序拿到以后不会随便调用，而是先对照允许列表。
+
+arguments 是 JSON 编码的参数：房间是 craft，日期是 2026 年 10 月 17 日。程序要先把这段文本解析成对象，再检查字段和取值。
+
+call_id 是这次调用的编号。查询执行完以后，结果要用同一个 call_id 包成 function_call_output 送回去，模型才知道这是它刚才那次请求的答案。
+
+顺序不能乱：先解析参数，再调用函数，最后回填结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.2　一轮调用包含哪些证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>返回条目里的三个字段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>返回条目的类型是 function_call，其中包含工具名、JSON 编码的参数和 call_id。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, alignItems: 'stretch' }}>
+
+            <Box style={{ width: 380, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>程序要做三步</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>拿到的是一段文本，不是可以直接用的对象。</Text>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 30, height: 30, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>解析 arguments，得到参数对象</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 30, height: 30, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>按 name 调用对应的查询函数</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 30, height: 30, borderRadius: 6, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>用同一个 call_id 返回输出</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 740, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+                <Box style={{ height: 124, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                    <Text style={{ width: 150, fontSize: 18, fontWeight: 'bold', color: '#276FBF', fontFamily: 'Consolas, monospace' }}>name</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                        <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>要调用哪个工具</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace' }}>get_room_availability</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 124, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                    <Text style={{ width: 150, fontSize: 18, fontWeight: 'bold', color: '#276FBF', fontFamily: 'Consolas, monospace' }}>arguments</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                        <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>这次查询的条件，JSON 编码</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace' }}>{'"room_id": "craft", "date": "2026-10-17"'}</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 124, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 76, background: '#26816B' }} />
+                    <Text style={{ width: 150, fontSize: 18, fontWeight: 'bold', color: '#26816B', fontFamily: 'Consolas, monospace' }}>call_id</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                        <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>把结果认回原来那次调用</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace' }}>回填时原样带回，不能替换</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,56 @@
+<Slide notes={`前面都是条件，接下来讲两组怎么跑。
+
+我把共同前置拆成五步：先取到设备的真实回复，再区分哪些是资料描述、哪些是本轮实际活动；然后形成说明、提交给记录台并收到保存确认；接着真实开口通知宋青；最后回应他提出的问题。这五步两组都要做，一步都不能少。
+
+唯一的差别在第二步，也就是怎么整理那份说明。基线组用自然语言自由整理，不调用交接整理子技能；对照组调用一次，把已有事实和来源交给它，再依据建议检查自己的说明。
+
+有新证据导致实质修改时才重新整理，不每轮重复调用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　　4.2.3</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>共同流程，只改变整理段</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>两个组的前置步骤完全相同，唯一差别是用什么方式整理那份交接说明。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 194, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>取真实回复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 72, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>形成说明</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>提交并确认</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>真实通知</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>回应问题</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,71 @@
+<Slide notes={`这四类材料我用同一句话来对照，方便大家记住差别。
+
+第一类是场景设定，比如 A 窗口负责场地使用咨询。这是本案约定的业务范围，是作者定的，不是现实社区的规章，它约束的是这次实验。
+
+第二类是作者假设，比如本案不研究排队。这类话决定了结论能用在哪里、不能用在哪里。
+
+第三类是待核实，比如图片和路径还没有验收。它绝不能写成系统中可达，那是两回事。
+
+第四类是实际观察，比如孟川是否已经在 B 窗口得到回复。这一栏必须有真实 Run 和记录。
+
+服务大厅还没有新 Run，所以这一栏应当保持空白，等运行事实来填。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.1　先给每句话标明性质</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一句话先标性质，再决定如何使用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 14, color: '#546779', width: 150 }}>拿到一句话</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>先问：它是约定的业务范围、作者的假设、还没核实的项，还是运行里真正发生的事？</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 270, height: 250, background: '#EDF4FC', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>场景设定</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>“A 窗口负责使用咨询”</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本案约定的业务范围。作者定义，不是现实规章。</Text>
+            </Box>
+
+            <Box style={{ width: 270, height: 250, background: '#ECF7F2', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>作者假设</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>“本案不研究排队”</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>限制结论的用途：结果不能回答排队问题。</Text>
+            </Box>
+
+            <Box style={{ width: 270, height: 250, background: '#FFF4E6', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>待核实</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>“图片与路径尚未验收”</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不能写成“系统中可达”，验收之前只算候选。</Text>
+            </Box>
+
+            <Box style={{ width: 270, height: 250, background: '#F7F3E8', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#546779' }}>实际观察</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>“孟川已在 B 窗口得到回复”</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>需要真实 Run 与记录。当前服务大厅尚无，保持空白。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 60, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', marginTop: 16 }}>
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>前三类都不能替代真实 Run 中的行为记录；实际观察栏等运行事实，不靠推断填满。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 23</Text>
+    </Box>
+
+</Slide>

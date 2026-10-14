@@ -1,0 +1,64 @@
+<Slide notes={`如果对照组还是漏掉了理由，可以从这几个方向去查。
+第一，方法有没有真的执行：有没有等到本人的回复？复述的时候是不是已经把自己的理解带偏了？定稿那一遍是不是又把硬条件删掉了？
+第二，宋遥没有回应怎么办：如实登记在哪个阶段、缺口是什么，绝不能推断他默认接受。
+第三，如果记录里写着收到了对 B 的同意，定稿却成了 D，那说明中间改了候选却没有重新征询，态度被移用了。
+第四，Run 的状态显示 COMPLETED，只说明执行结束。它不代表大家达成了共识，也不代表这个决定在现实中有效。
+查这些问题的方向是方法有没有做到，而不是结果好不好看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.7　失败解释与练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>失败解释四问</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 380, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+
+            <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>问题</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>解释要点</Text></Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>对照仍遗漏</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>是否等到回复？复述是否已带偏？定稿是否又删硬条件？</Text></Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>宋遥未回应</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>登记阶段与缺口，不推断默认接受</Text></Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>收到 B 同意，定稿成 D</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>应重新征询，不能移用对旧候选的态度</Text></Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>Run 为 COMPLETED</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>仅执行结束，不代表共识或现实决策有效</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>四个问题指向的都是方法有没有做到，而不是结果好不好看；执行完成、达成共识、决策在现实中有效，是三件不同的事。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

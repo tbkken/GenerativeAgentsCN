@@ -1,0 +1,52 @@
+<Slide notes={`材料写完只是第一步，真正决定交付质量的是审阅。
+
+审读两组 SOP 时，我用四类反例分别检查四件事。第一类是决策时机：边问边猜，问题发出去了，却在拿到关键回答之前就给了建议。第二类是完成证据：提前写完成，只发出一个请求，就在记忆里记成「已确认」。
+
+第三类是对照条件：额外加能力，只给其中一组加一个强模型的审阅子 Skill，即使效果更好，比较已经不再是唯一变量。第四类是停止条件：同一目的已经明确，咨询台仍然不断追问，属于行为偏离。
+
+这些是待排除的教学反例，不是本案已经发生的失败记录。它们的用处是让审阅有具体的撞点，而不是笼统地说「看起来没问题」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.4　精确 Skill 与行为审阅</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ⑤</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>⑤</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>作者与观察者分别审什么</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>用四类反例分别检查决策时机、完成证据、对照条件与停止条件。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 300, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>四类反例</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>两种闭包</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>一份交付记录</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,51 @@
+<Slide notes={`这一节讲完了，我把要带走的东西收成三句话。
+
+第一句，谁决定下一步。观察和决定可以由模型参与，但执行和核验必须由程序把关。模型提出的工具请求，不等于工具已经执行。
+
+第二句，什么时候停。模型结束、候选通过业务校验、交付文件齐全，这三件事要同时核对。只凭一次工具结果或者一段总结，都不能算任务完成。
+
+第三句，哪些事实要重新确认。会话上下文、应用任务状态、长期记忆，是三种不同的「记住」；记忆可以跨任务，但事实必须带日期和来源。
+
+这三句话不只适用于这一节，后面做更复杂的系统时同样用得上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.10　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25, textAlign: 'center' }}>带走三句话</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
+            <Box style={{ width: 340, height: 170, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>谁决定下一步</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>观察与决定可以由模型参与，执行与核验必须由程序把关。</Text>
+            </Box>
+            <Box style={{ width: 340, height: 170, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>什么时候停</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>模型结束、候选通过、文件齐全，这三件事要同时核对。</Text>
+            </Box>
+            <Box style={{ width: 340, height: 170, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>哪些事实要重新确认</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>记忆可以跨任务；事实必须带日期与来源，用前先核对。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#ECF7F2', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B', flex: 1 }}>说得对不等于做对了：执行状态、文本总结与业务完成度要分别记录。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.11　多模态与计算机交互</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

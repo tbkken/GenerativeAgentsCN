@@ -1,0 +1,85 @@
+<Slide notes={`这一章分两半推进，两半的工作方式不太一样。
+
+前半段的目标是建立一个可以行动的世界：先认识有哪些资源，再把空间录进去，然后编写 Brain 和对象 Skill，接着去观察感知、记忆、交流和反馈。这一段更关注结构对不对。
+
+后半段处理的是可恢复、可解释的实验：草稿、封存、运行控制、回放、质量、导出和复现。这一段更关注过程能不能重来、结论能不能讲清。
+
+两半的目标不同，所以每一步要留下的东西也不一样。前半段常看的是装配是否成立，后半段常看的是运行留下的记录是否完整。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.6　本章怎样组织实践</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两半章，两种工作方式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>前半章 · 建立可行动的世界</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 279, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>3.2 认识资源</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>公共资源与实验副本</Text>
+            </Box>
+            <Box style={{ width: 279, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>3.3 录入空间</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>语义、碰撞与门洞</Text>
+            </Box>
+            <Box style={{ width: 279, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>3.4 Brain 与 Skill</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>条件与真实反馈</Text>
+            </Box>
+            <Box style={{ width: 279, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>3.5 — 3.7 观察</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>感知 · 记忆 · 对话</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 6 }}>
+            <Box style={{ width: 4, height: 20, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>后半章 · 可恢复与可解释的实验</Text>
+        </Box>
+        <Box style={{ flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 182, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>3.8 草稿</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>预检与封存</Text>
+            </Box>
+            <Box style={{ width: 182, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>3.9 运行</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>状态与估算</Text>
+            </Box>
+            <Box style={{ width: 182, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>3.10 恢复</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>暂停与续跑</Text>
+            </Box>
+            <Box style={{ width: 182, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>3.11 回放</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>事实与诊断</Text>
+            </Box>
+            <Box style={{ width: 182, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>3.12 质量</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>口径与 Evaluator</Text>
+            </Box>
+            <Box style={{ width: 182, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>3.13 导出</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>迁移与复现</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>前半段看装配是否成立，后半段看运行留下的记录是否完整——两半要留下的证据不一样。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

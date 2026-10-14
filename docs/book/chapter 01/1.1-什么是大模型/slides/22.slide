@@ -1,0 +1,55 @@
+<Slide notes={`最后一个知识块，我们处理两个经常被混成一句话的问题。
+
+第一个问题：为什么同一个问题问两遍，回答会不一样？
+
+第二个问题：为什么它会说错？
+
+很多人把这两个问题合成一个判断——"稳定就可靠，不稳定就不可靠"。这个判断是错的。
+
+因为这里其实是两个独立的维度。一个维度是措辞是否稳定，也就是两次回答像不像。另一个维度是事实是否正确，也就是它说的和实际情况符不符。这两个维度可以自由组合，四个格子都可能出现。
+
+接下来的两页，我们先把这两个维度分开，再看几个具体的错误该怎么查。
+
+先说一个前提：不管是哪个维度，都需要一个判断的依据。在青禾这件事里，依据就是房间容量表上写着十二个名额，以及本次并没有执行预约。没有这份依据，两个维度都无从谈起。`} style={{ width: 1280, height: 720, background: '#F4F7FA', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 240, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>知识块 06</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>为什么回答会变化，为什么会有"幻觉"</Text>
+        <Box style={{ width: 72, height: 3, background: '#276FBF' }} />
+        <Text style={{ fontSize: 20, color: '#546779' }}>先核对事实，再比较两次回答是否相同</Text>
+    </Box>
+
+    <Box style={{ height: 400, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 18, color: '#546779' }}>横轴：措辞是否稳定　　纵轴：事实是否正确</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+            <Box style={{ flexDirection: 'column', gap: 20 }}>
+                <Box style={{ width: 260, height: 118, background: '#FFFFFF', borderRadius: 10, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#26816B', fontWeight: 'bold' }}>稳定，且正确</Text>
+                </Box>
+                <Box style={{ width: 260, height: 118, background: '#FFFFFF', borderRadius: 10, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#276FBF', fontWeight: 'bold' }}>变化，但事实一致</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 20 }}>
+                <Box style={{ width: 260, height: 118, background: '#FFF4E6', borderRadius: 10, border: '1px solid #E5C9A8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#CB6B28', fontWeight: 'bold' }}>稳定，但错误</Text>
+                </Box>
+                <Box style={{ width: 260, height: 118, background: '#FFF4E6', borderRadius: 10, border: '1px solid #E5C9A8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#CB6B28', fontWeight: 'bold' }}>变化，且含有错误</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 26</Text>
+    </Box>
+
+</Slide>

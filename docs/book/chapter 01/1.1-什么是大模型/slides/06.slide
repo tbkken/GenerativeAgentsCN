@@ -1,0 +1,45 @@
+<Slide notes={`把这个知识块收在一句话上，但这句话很重要。
+
+参数规模里的 1B，说的是十亿个可训练数值。它不是说这份模型认识十亿个汉字，不是说它能一次读进十亿字的内容，也不是在描述它的上下文长度。这三个说法听起来像一回事，其实是三个不同的量。
+
+为什么这件事值得单独强调？因为当我们不知道一个数字到底在描述什么，后面的比较就会失去意义。你说这个模型比那个大，我得先问你，你说的是参数、数据，还是计算量。
+
+还有一个判断要带回去：在同一个训练预算下，模型规模和数据量是一起权衡的，不是参数越多就一定越好。
+
+下一次再听到"这个模型有一千亿参数"，你脑子里应该跳出两个问题：这一千亿指的是什么量，以及它在当前这个任务上，是不是真的更合适。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <Text style={{ fontSize: 14, color: '#26816B' }}>知识块 01 小结</Text>
+            <Text style={{ fontSize: 120, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.05 }}>1B</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 10, marginTop: 16 }}>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#20344B' }}>是十亿个可训练数值</Text>
+            <Text style={{ fontSize: 18, color: '#546779' }}>不是十亿个字，也不是上下文长度</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 20, marginTop: 36 }}>
+            <Box style={{ width: 220, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>不是十亿个字</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>与文字数量无关</Text>
+            </Box>
+            <Box style={{ width: 220, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>不是上下文长度</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>是另一个独立指标</Text>
+            </Box>
+            <Box style={{ width: 220, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>是训练中调整的数值</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>规模、数据、计算要一起权衡</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 26</Text>
+    </Box>
+
+</Slide>

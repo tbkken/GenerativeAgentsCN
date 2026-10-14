@@ -1,0 +1,84 @@
+<Slide notes={`先把路线图立起来，五件事按顺序讲，编号和后面的扉页一一对应。
+
+第一件事，分清 Skill"是什么类型"和"在哪里使用"，避免把对象技能接在 Brain 依赖后面当成必经步骤。第二件事，把 SOP 写成条件与证据，让角色在分支处自己判断，而不是照台词表演。第三件事，看系统当前怎样读取 SKILL.md：哪些字段能写，哪些字段写了会出错，子 Skill 缺什么工具。第四件事，到页面上建立和核对依赖，包括对象绑定和选入实验后的复制关系。第五件事解决评价问题：Brain 说"我已经通知了大家"，凭什么信。
+
+五件事连成一条线：先写对材料，再核对装配，最后用事实验收。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4　Brain 与 Skill</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的五件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>不替角色写结局，{'\n'}只写它做决定的条件</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>从五份 Skill 的类型与位置开始，到用真实提交的事实判断 Brain 做对了没有。每件事都落回青禾开放日的角色与对象。</Text>
+        </Box>
+
+        <Box style={{ width: 752, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 752, height: 88, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>分清"是什么类型"和"在哪里使用"</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>固有类型 atomic／pack／brain，与装配后的子 Skill、对象根 Skill 是两个维度。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 752, height: 88, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>把 SOP 写成条件与证据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>读取、检索、按需调用子 Skill、一次 world-act；成功即结束，受调用上限约束。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 752, height: 88, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>当前系统怎样读取 SKILL.md</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>开头只认 name、description、example_input；依赖靠 call_skill 调用；子 Skill 没有 world-act。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 752, height: 88, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>在页面中建立和核对依赖</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>技能与大脑两个入口创建；Scripts 与 MCP 页核对；对象在地图编辑器绑定；选入实验即递归复制。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 752, height: 88, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>怎样判断 Brain 做对了</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>把输入、工具证据、提交动作三个层次连起来看；文本不等于世界发生了事实。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 22</Text>
+    </Box>
+
+</Slide>

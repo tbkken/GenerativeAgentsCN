@@ -1,0 +1,74 @@
+<Slide notes={`五项需求各有自己的验收问题和支持材料，我把它们列成一张可核对的清单。
+
+R1 可理解，问的是接收者能不能解释研究问题和范围，支持它的是委托书和方法说明；一张漂亮的回放截图替代不了。
+
+R2 可比较，问两组除决策段之外条件是否一致，靠的是精确差异和包内资源核对；作者口头说「都一样」不算证据。
+
+R3 可追溯，问任一任务得分能不能回到事实，靠判分行与 Run、Attempt、Step 的事件定位；模型最后的自我总结不算。
+
+R4 可盘点，问失败、中断和成本有没有保留。
+
+R5 可接手，问接收者完成了约定层次的检查没有——发送成功不等于接收完成。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.3　把需求连到证据，而不只连到文件名</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五项需求各自的验收问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 1152 }}>需求—证据矩阵把需求、验收问题、支持材料与无法替代的证据逐项对应。</Text>
+
+        <Box style={{ flexDirection: 'row', padding: '0 16px', gap: 16 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 14, color: '#546779' }}>需求</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 14, color: '#546779' }}>验收问题</Text></Box>
+            <Box style={{ width: 322 }}><Text style={{ fontSize: 14, color: '#546779' }}>支持它的材料</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 14, color: '#546779' }}>无法替代的证据</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>R1 可理解</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>接收者能解释研究问题和范围吗</Text></Box>
+            <Box style={{ width: 322 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>委托书、方法说明</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>仅有漂亮的回放截图</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>R2 可比较</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>两组除决策段外条件一致吗</Text></Box>
+            <Box style={{ width: 322 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>精确差异、包内资源核对</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>作者口头说「都一样」</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>R3 可追溯</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>任一任务得分能回到事实吗</Text></Box>
+            <Box style={{ width: 322 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>判分行、Run 与事件定位</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>模型最后的自我总结</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>R4 可盘点</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>失败、中断和成本是否保留</Text></Box>
+            <Box style={{ width: 322 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>全部运行索引、调用统计</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>只展示完成最快的 Run</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>R5 可接手</Text></Box>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>接收者完成了约定层次的检查吗</Text></Box>
+            <Box style={{ width: 322 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>实际文件、环境说明、接收记录</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>发送成功或下载成功</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

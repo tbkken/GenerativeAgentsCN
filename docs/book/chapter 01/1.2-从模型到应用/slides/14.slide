@@ -1,0 +1,38 @@
+<Slide notes={`下一件事，是把名字理清楚。
+
+我们平时会说"我用的那个模型"，但这句话其实混了好几层东西。同一款模型，可以被包在好几个产品里；同一个产品，也可能在不同时间换用不同的模型。所以当我们记录一次测试的结果时，必须说清楚测的是哪一层。
+
+在这段里，我们要分清四个名字：模型本身、模型服务、产品，还有模型快照。分清以后你会发现，很多"同一个模型怎么表现不一样"的争论，其实是名字没对齐造成的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.2.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>模型名称、服务与产品不是同一个东西</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>同一模型可以出现在多个产品；同一产品也可以采用多个模型。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'column', gap: 8 }}>
+            <Box style={{ width: 420, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', paddingLeft: 18 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>模型　·　模型服务</Text>
+            </Box>
+            <Box style={{ marginLeft: 40, width: 420, height: 46, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', paddingLeft: 18 }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>产品　·　模型快照</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 22</Text>
+    </Box>
+
+</Slide>

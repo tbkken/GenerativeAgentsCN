@@ -1,0 +1,61 @@
+<Slide notes={`最后留一个练习：解释「关闭之后，导航直接返回可达路线」为什么是正确的行为。
+答案的关键在于，环境里确实存在一条绕行路线，而且角色的目标没有变化。这时候返回可达并直接开始移动，是符合事实的选择；如果硬要让它先失败一次，反而往系统里塞了一个现实中不存在的障碍。
+如果你要研究「提前通知」会不会改变结果，那应该另外建一份同样的关闭图，只改通知策略，别把两个因素混在一组里。
+如果你把目标改成确实不可达，那就是另一个问题，正确拒绝要作为预期结果写进计划，而不是当成错误来修。把问题定义清楚，后面的判分才站得住。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.6　练习与延伸问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习：为什么「直接返回可达」是对的</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>问题的关键</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 360 }}>环境里确实存在绕行路线，角色的目标也没有改变。</Text>
+            <Box style={{ width: 360, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>返回可达并直接开始移动</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>这符合事实；硬要它先失败一次，等于往系统里塞进一个现实中不存在的障碍。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 760, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>研究提前通知，就另建一份实验</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>保持同一张关闭图，只改通知策略。不要把「关闭」和「通知」两个因素放进同一组。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>改成确实不可达，就另定问题</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>把正确拒绝写成预期结果，而不是把它当成一个需要修掉的错误。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#546779' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>本教案是虚构的</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>尚未创建地图、实验或 Run；这里给出的是设计方法，不是任何实测结论。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 26</Text>
+    </Box>
+
+</Slide>

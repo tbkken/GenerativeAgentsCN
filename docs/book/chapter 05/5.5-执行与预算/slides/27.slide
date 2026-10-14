@@ -1,0 +1,86 @@
+<Slide notes={`实际消耗的汇总有一条固定路径：按 Run 汇总它的全部 Attempt。
+
+汇总时要分别保留六项：人物、对象、逻辑调用、物理尝试、Token 和费用来源。费用来源这一项常常被省掉，但它决定了这个数字能不能被复核，比如用的是账单、控制台用量还是估算。
+
+有三条保留规则要一起写清楚。第一，失败步骤里的模型尝试仍然有成本，不能因为没成功就不计。第二，业务证据限定在已提交的边界，但这不代表可以把未提交尝试的消耗删掉；证据边界和成本边界是两件事。第三，四项任务未闭环的数量同样要保留下来，不能只统计走完的那几项。
+
+这样记下来，下一位负责人看到的才是完整的账，而不是一份挑过的账。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.6　执行日志最后要留下什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>消耗按 Run 汇总，证据只认已提交</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 550, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ width: 550, height: 40, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>按 Run 汇总全部 Attempt</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 14 }}>
+                <Box style={{ width: 174, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>人物</Text>
+                </Box>
+                <Box style={{ width: 174, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>对象</Text>
+                </Box>
+                <Box style={{ width: 174, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>逻辑调用</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 14 }}>
+                <Box style={{ width: 174, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>物理尝试</Text>
+                </Box>
+                <Box style={{ width: 174, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>Token</Text>
+                </Box>
+                <Box style={{ width: 174, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#CB6B28' }}>费用来源</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 550, height: 116, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>费用来源要写出来</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>是账单、控制台用量还是估算——它决定了这个数字能不能被别人复核。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 570, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 570, height: 140, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>失败步骤仍有成本</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>没有成功不代表没有消耗，失败步骤里的模型尝试同样要计入。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 570, height: 140, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>证据边界不等于成本边界</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>业务证据限定在已提交边界，但不能因此删除未提交尝试的消耗。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 570, height: 140, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>未闭环数量同样保留</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>四项任务里还有几项没有闭环，这个数字要如实写下来。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 28</Text>
+    </Box>
+
+</Slide>

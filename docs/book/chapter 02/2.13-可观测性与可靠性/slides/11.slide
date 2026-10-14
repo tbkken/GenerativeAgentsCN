@@ -1,0 +1,53 @@
+<Slide notes={`接下来这一块讲的是一件很基础、但几乎所有人都会做错的事：分数必须带着分母。
+
+「通过率百分之九十」这句话本身没有信息。要通过的是哪些任务？一共尝试了多少次？超时、被拒绝、工具失败的这一次，算不算进分母？这些不定下来，你可以让同一个系统看起来很好，也可以让它看起来很差。
+
+所以对青禾这份排期，我们首先用任务成功率：通过全部硬约束、并且交付了所需文件的任务数，除以全部尝试任务数。
+
+还有一条纪律要提前说清楚：哪些失败算进哪个指标的分母，必须在跑之前定好。不能等跑完了，发现某几次失败难看，就临时把它们从分母里删掉。那样得到的分数不是测量结果，是修饰结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.13.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>指标与分母要对应</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>分数离开分母就没有意义，完成定义也要一起写下来。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 420, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>通过全部硬约束且交付所需文件</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 420, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 420, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>全部尝试任务数</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 900, height: 54, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>指标必须保留自己的分母和完成条件</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 34</Text>
+    </Box>
+
+</Slide>

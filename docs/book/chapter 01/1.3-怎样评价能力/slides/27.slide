@@ -1,0 +1,84 @@
+<Slide notes={`延迟不能只看平均数，因为用户最难受的往往不是平均那一次。
+
+把一批任务的延迟排序，P50 是中位数，代表“一半人比这快、一半人比这慢”的体验。P95 描述接近最慢那一端的等待，也就是最容易被投诉的那批请求。
+
+样本很小的时候，还要说明分位数怎么算。本书的做法是排序后取第 ceil（0.95 乘 N）项作为 P95；不同算法的结果不能直接比较。
+
+还要记录失败率和超时门槛。只统计成功任务的延迟，很可能把最差的体验排除在外。
+
+成本同理。十项任务连同所有重试共花十元，八项通过验收，每次成功任务成本就是十除以八，一块两毛五；只把八项成功调用的费用相加会低估开销。成功数为零时这个比值没有有限值，应报告总支出。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.8　能用，还要等得起、付得起</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>分位数与每次成功成本</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 110, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>P50　中位数</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>一半任务比它快，一半比它慢。</Text>
+            </Box>
+
+            <Box style={{ height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>P95　接近最慢一端</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>描述最容易被投诉的那批等待。</Text>
+            </Box>
+
+            <Box style={{ height: 140, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>小样本要说明算法</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>例如本书可用排序后第 ceil(0.95 × N) 项作 P95；不同算法的结果不能直接比较。</Text>
+            </Box>
+
+            <Box style={{ height: 90, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>别把最差体验排除</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>要记录失败率与超时门槛，只统计成功任务会偏乐观。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 230, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>每次成功任务成本</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>十项任务连同所有重试共花费 10 元，其中八项通过验收。</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 4 }}>
+                    <Box style={{ width: 130, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 19, color: '#20344B' }}>10 / 8</Text>
+                    </Box>
+                    <Text style={{ fontSize: 24, color: '#546779' }}>=</Text>
+                    <Box style={{ width: 160, height: 46, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1.25 元</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>不是只把八项成功调用的费用相加</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 160, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>成本范围要写清，边界要交代</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>说明是否含工具、计算资源和人工复核；成功数为零时该比值没有有限值，应报告“无成功任务”及总支出。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 70, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>比较效率前，先固定条件</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>输入规模、输出要求、并发、缓存与质量门槛；便宜而频繁失败，未必节省预算。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 31</Text>
+    </Box>
+
+</Slide>

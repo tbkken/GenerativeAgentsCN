@@ -1,0 +1,83 @@
+<Slide notes={`这五项是人工片段，用来核对口径，不是 Run 结果。
+
+先在上面检查「已收到正式更正」。甲和乙都收到了，丙没有。再数下面的相关动作。甲说了「原先杏厅，现在改杉厅」，然后真的移往杉厅，两项动作，过期零项。乙收到之后仍然移往杏厅，还向别人断言杏厅，两项动作，两项都过期。丙只问了一句「候选还是正式？」，普通问句不进入分母。
+
+汇总起来是过期两项除以相关四项，等于 50%。
+
+这里一定要说清楚：数的是行动，不是人。所以 2/4 不能读成「一半的人还相信旧会址」。另外丙没有行动，也不能说成他采用了正确通知——只收到候选建议的人，个人纠错窗口根本还没开始。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.6　人工判分与失败解释</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五项人工片段：2/4 是怎样来的</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 634, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>先检查接收，再数下方的相关动作　·　人工材料，非 Run 结果</Text>
+
+            <Box style={{ height: 112, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+                <Box style={{ width: 48 }}><Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>甲</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>已收到正式更正</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>说明现已改杉厅 ＋ 移动去杉厅</Text>
+                </Box>
+                <Box style={{ width: 132, alignItems: 'flex-end' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>过期 0 ／ 相关 2</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 112, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 64, background: '#CB6B28' }} />
+                <Box style={{ width: 48 }}><Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>乙</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>已收到正式更正</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>仍去杏厅 ＋ 断言仍在杏厅</Text>
+                </Box>
+                <Box style={{ width: 132, alignItems: 'flex-end' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>过期 2 ／ 相关 2</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 112, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 64, background: '#546779' }} />
+                <Box style={{ width: 48 }}><Text style={{ fontSize: 22, fontWeight: 'bold', color: '#546779' }}>丙</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>只问「候选还是正式？」</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>普通问句，不进入分母</Text>
+                </Box>
+                <Box style={{ width: 132, alignItems: 'flex-end' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>不计入</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 486, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>甲乙各两项，共四项；其中两项过期</Text>
+
+            <Box style={{ width: 486, background: '#FFF4E6', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>汇总过期行动率</Text>
+                <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1 }}>2/4</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>＝ 50%</Text>
+            </Box>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>数的是行动，不是人。2/4 不能读成「一半的人仍相信旧会址」。</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.6 }}>丙没有行动，也不等于他采用了正确通知：只收到候选建议者，纠错窗口尚未开始。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>人工五项片段，不对应 Run</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

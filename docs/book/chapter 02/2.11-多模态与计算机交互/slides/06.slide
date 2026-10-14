@@ -1,0 +1,70 @@
+<Slide notes={`读图这件事，最容易出错的地方不在识别，而在越界。
+
+第一条结论：这张图能支持的，是房间名称和相对位置。它支持的结论就到这里为止。
+
+第二条结论：容量和预约这两类业务事实，必须去别的地方取。容量查 rooms.csv，预约查 availability.json。图里没有这两样东西，看一眼图是推不出来的。
+
+第三条结论：版面相邻不等于可以通行。两个方框贴在一起，只说明在图上画得挨着，不说明中间真有门。
+
+所以正确的用法是：先让模型描述它看到什么，再拿数据文件去回答业务问题。把这两步混在一起，就会得到一段听起来很顺、但没有任何依据的场馆介绍。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.1　从图片读出什么，不能读出什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>图能支持什么，不能支持什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 320, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>先描述，再查证</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>让模型先说出它在图上看到了什么，再让数据文件去回答业务问题。顺序一旦颠倒，流畅的描述就会盖住空白的依据。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>图支持　房间标注与相对位置</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>图上写着名称，也看得出谁挨着走廊；结论到此为止。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>图不支持　容量与预约状态</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>容量依据 rooms.csv，预约依据 availability.json，都不在图里。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>图不支持　门口与可通行路线</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>它是概念图，不是施工图，画得挨着不代表走得通。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '15px 20px' }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>矩形相邻不能证明门可通行</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>同理，图上空白也不能反推出容量不限、随时可约。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 26</Text>
+    </Box>
+
+</Slide>

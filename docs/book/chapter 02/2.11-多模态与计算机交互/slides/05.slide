@@ -1,0 +1,73 @@
+<Slide notes={`同样是处理图片，其实是三类不同的工作，验收对象也各不相同。
+
+第一类是 OCR，目标是读出图中的字符。它的产物就是文字，典型错误是把房间名称认错，比如把"手作室"读成"手工作"。
+
+第二类是视觉理解，目标是弄懂布局、对象和它们之间的关系。它不产出文字清单，而是产出一段描述。它的典型错误是想多了——从版面相邻推断出门口在哪，或者推断出一条实际并不存在的路线。
+
+第三类是图像生成，目标是创作一张新的图。它的典型错误反过来，是凭空增加原本没有的设施。
+
+三类工作的产物完全不同，所以验收时不能都用一句"看得准"来概括。要看的是：它答的这道题，是不是我问的那道题。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.1　从图片读出什么，不能读出什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三类视觉工作，三种验收对象</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>OCR　把字读出来</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>产物：图中的字符</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>典型错误：房间名称识别错</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>视觉理解　把关系看明白</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>产物：布局、对象与关系</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>典型错误：门口或路线推断错</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>图像生成　造一张新的图</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>产物：创作的新图</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>典型错误：凭空增加设施</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 432, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>产物不同，问法就不同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>读字符要核对逐字对不对；看关系要核对结论有没有超出图面；作图要看有没有多出东西。三类工作共用一个模型，却不能共用一份验收清单。</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>一句"看得挺准"概括不了三类工作，验收要落到具体产物上。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 26</Text>
+    </Box>
+
+</Slide>

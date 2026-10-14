@@ -1,0 +1,61 @@
+<Slide notes={`工具、MCP 和 Skill 经常被混着说，但它们在处理不同层次的问题。
+
+工具定义告诉模型它有哪些能力可以用、参数长什么样。MCP 组织的是连接，把外部能力按约定接进宿主。Skill 说的是方法：已经具备的能力，应该按什么步骤去用、怎样算通过、什么时候停下。
+
+分清这三层，就能看懂两句很容易被误读的话。一句是 Skill 里写着「查询预约」，这不表示宿主就自动装好了预约服务；另一句是写着「运行 Python」，也不表示运行环境里已经有 Python。
+
+它们其实是同一件任务的不同侧面：能做什么、怎么连上、怎么做。混在一起讲，出了错就不知道该查哪一层。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.2　渐进读取怎样节省上下文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>工具、MCP、Skill 各管一层</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>能做什么、怎么连上、怎么做——三个问题不能混成一个。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Text style={{ width: 140, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>工具</Text>
+                <Text style={{ flex: 1, fontSize: 16, color: '#546779', lineHeight: 1.6 }}>告诉模型能做什么：有哪些能力可用、参数长什么样。</Text>
+                <Text style={{ width: 400, fontSize: 14, color: '#276FBF', lineHeight: 1.5 }}>管能力声明，不描述执行流程。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Text style={{ width: 140, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>MCP</Text>
+                <Text style={{ flex: 1, fontSize: 16, color: '#546779', lineHeight: 1.6 }}>组织能力连接：把外部能力按约定接进不同的宿主。</Text>
+                <Text style={{ width: 400, fontSize: 14, color: '#276FBF', lineHeight: 1.5 }}>管连接，不管方法写得多细。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 54, background: '#26816B' }} />
+                <Text style={{ width: 140, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>Skill</Text>
+                <Text style={{ flex: 1, fontSize: 16, color: '#546779', lineHeight: 1.6 }}>说明怎样运用已具备的能力：输入、操作、验收与停止。</Text>
+                <Text style={{ width: 400, fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>管方法，不负责安装服务。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>写着「查询预约」，不代表宿主已经装好预约服务</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>写着「运行 Python」，也不代表运行环境里已经有 Python。文字描述的是方法，不是已经就绪的依赖。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 27</Text>
+    </Box>
+
+</Slide>

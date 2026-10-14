@@ -1,0 +1,99 @@
+<Slide notes={`最后把评价闭环和数据边界收一下。
+
+评分可以由应用算好后通过 SDK 关联上去，但 Langfuse 不会替你决定「开放日成功」是什么意思，这个定义必须由你写下来。以后引入模型裁判，也要和确定性硬约束、人工评分分别命名。
+
+数据这边要分开处理。密钥、认证头、可复用令牌不写进 Prompt、元数据或教材产物。原始响应里可能含输入资料和生成内容；本地文件即使远端已脱敏，也可能留着完整内容。
+
+还有一点容易误会：store=False 管的是 API 侧的存储行为，它不会阻止 Langfuse 包装器把记录发给你配置的观测服务。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.7　用 Langfuse 观察一次完整排期任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>评价闭环与数据边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 508, height: 440, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>后续用途 → 在本例中的做法</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ width: 448, flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>自动校验评分</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>把确定性校验结果关联为 business_valid，校验没完成要留缺失原因</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ width: 448, flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>人工评价</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>按说明清晰度量表补充人工评分，标明评分者、尺度与证据</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ width: 448, flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>Prompt 管理与实验</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>冻结材料和期望结果做同题比较，先保留原来的失败样本</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ width: 448, flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>聚合与看板</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>比较成功率、延迟和成本；固定样本范围、模式与分母</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 612, height: 440, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>记录内容 → 教材处理方式</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Box style={{ width: 552, flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>密钥、认证头、可复用令牌</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>不写入 Prompt、元数据或教材产物</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Box style={{ width: 552, flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>输入、模型输出与工具参数</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>本例使用虚构材料；真实项目按必要字段记录，并在导出前脱敏</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Box style={{ width: 552, flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>本地响应文件</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>即使远端脱敏，本地文件也可能含完整内容，需要分别控制</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Box style={{ width: 552, flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>环境、材料摘要、运行模式、Trace ID</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>用来定位本次条件，不能以摘要代替需要审阅的证据</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#F4F7FA', borderRadius: 10, padding: '12px 22px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>store=False 只控制相应 API 侧的存储行为，不会阻止包装器向你配置的观测服务发送记录。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>33 / 34</Text>
+    </Box>
+
+</Slide>

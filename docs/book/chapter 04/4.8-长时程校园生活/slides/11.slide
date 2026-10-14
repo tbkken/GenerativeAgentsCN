@@ -1,0 +1,72 @@
+<Slide notes={`同一个再次行动，身份不同，判法就完全不同。
+
+第一支是一次性任务。报名已经确认过了，如果没有新的需求又提交一次，就算重复执行。哪怕对方拒绝重复接收，只要这一轮真的提交了，仍然计入重复。
+
+第二支是周期活动。每天九点的晨读，新的一天就是新的实例，不算重复昨天的任务。所以判断之前先问一句：这是不是同一件事的第二次，还是本来每天都要发生的一次。
+
+第三支是自愿承诺。先有邀请，再要本人明确接受，然后才有“承诺者、内容、完整截止时间”这三样齐备的一条承诺。
+
+分不清这三支，就会出现两种相反的错：把每天的晨读算成重复，或者把重复的报名当成新任务放过去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.3　先区分事项身份，再判断再次行动</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一动作，身份不同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>先认出它属于哪一类</Text>
+
+            <Box style={{ width: 440, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>一次性任务</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>例：观摩报名已确认。办完就该结束，不应有第二次。</Text>
+            </Box>
+
+            <Box style={{ width: 440, height: 128, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>周期活动</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>例：每日 09:00 晨读。新日期本就是新一次，不叫重复。</Text>
+            </Box>
+
+            <Box style={{ width: 440, height: 128, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>自愿承诺</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>例：先有邀请，再有本人明确接受，才立起一条承诺。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 680, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>再次行动怎么判</Text>
+
+            <Box style={{ width: 680, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 92, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>无新需求又提交 → 计重复执行</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>首次完成后，没有新要求再次启动，就是重复；对象拒绝重复接收也算。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 680, height: 132, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 92, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>新日期 → 新实例，不是重复</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>每日晨读按当地日期识别身份，昨天的完成不覆盖今天这一次。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 680, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.55 }}>承诺则要先检查本人是否接受，再核对承诺者、内容与完整截止时间。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 27</Text>
+    </Box>
+
+</Slide>

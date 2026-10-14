@@ -1,0 +1,66 @@
+<Slide notes={`接下来把这一节要走的路线说清楚，一共七件事，按顺序走完，你就有能力组织一场能被追问的汇报。
+
+第一件是给材料定身份，同一份讲义里，需求表、草图、截图、已提交事件、人工算例和作者解释，看起来都很直观，证据作用却完全不同。第二件是用一条问题线把二十分钟串起来。第三件是片段选择规则，不能只播顺利的那一次。
+
+后面四件更偏表达：数字要带着分母和条件出现；结论要拆成观察、解释、下一步三句话；评阅者可以从五个问题开始，沿证据链往回走；最后，无论材料长短，都要保留同一份事实底稿。
+
+编号和后面每一节的扉页一一对应，方便对照。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.8　演示与评审</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的七件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>从材料身份{'\n'}到事实底稿</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 300 }}>七个知识块，编号与每一节的扉页一一对应。</Text>
+            <Box style={{ width: 300, height: 64, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>结论强度＝证据强度</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+            <Box style={{ width: 404, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>① 材料先有身份</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同一份讲义里的材料，证据作用并不相同。</Text>
+            </Box>
+            <Box style={{ width: 404, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>② 一条问题线</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>二十分钟按顺序回答四个问题。</Text>
+            </Box>
+            <Box style={{ width: 404, height: 118, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>③ 片段选择规则</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一个典型闭环，一个未完成或有争议的任务。</Text>
+            </Box>
+            <Box style={{ width: 404, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>④ 数字带分母</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>成功定义、任务数、运行数与比较条件。</Text>
+            </Box>
+            <Box style={{ width: 404, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>⑤ 三句话</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>观察、解释、下一步分开写，不一步跳到推广。</Text>
+            </Box>
+            <Box style={{ width: 404, height: 118, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>⑥ 五个问题</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>评阅沿一条证据链往回走，就能找到缺口。</Text>
+            </Box>
+            <Box style={{ width: 404, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>⑦ 同一份底稿</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>材料可以长短不同，事实只能有一份。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 26</Text>
+    </Box>
+
+</Slide>

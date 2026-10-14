@@ -1,0 +1,76 @@
+<Slide notes={`相似度怎么算？最常用的一种是余弦相似度。公式说的是：把两个向量的点积，除以它们各自长度的乘积。它比较的是方向，不太在意长短，所以很适合给候选片段排序。
+
+接着是我最想让大家记住的一句：相似度高不等于答案正确。得分高，可能只是因为两句话都在谈手作室，其中一条记录却来自一个错误的日期。它说明的是「像」，不是「对」。
+
+还有两条工程上的边界。不同向量模型之间、不同索引设置之间，分数阈值不能直接拿来比较。换个模型，昨天的 0.8 今天可能只有 0.6，那条卡死的分数线就不再成立。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.1　Embedding 为什么适合找相近内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>相似度衡量方向，不衡量正确</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 660, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 15, color: '#546779' }}>常见的相似度之一：余弦相似度</Text>
+
+            <Box style={{ width: 660, height: 82, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>cos(q, d) = ( q · d ) ÷ ( ‖q‖ × ‖d‖ )</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14 }}>
+                <Box style={{ width: 322, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '13px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>q 是问题向量</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>由学生的提问转换而来</Text>
+                </Box>
+                <Box style={{ width: 324, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '13px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>d 是材料片段向量</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>每个候选片段各算一个</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>它比较方向，适合对候选片段排序</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>分数只用来决定谁排在前面，本身不构成结论。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 460, height: 62, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', paddingLeft: 18 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>相似度不是答案正确概率</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 112, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>得分高可能只是「都在谈手作室」</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>其中一条记录却来自错误日期，它依然会被排在前面。</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 112, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>不能跨向量模型比较分数阈值</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>换了模型，分数分布就变了，昨天卡好的线今天未必成立。</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 112, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>也不能跨索引设置比较</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>切片方式、维度与检索参数一变，同一个阈值的含义就跟着变。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,87 @@
+<Slide notes={`费用的算法很简单，但边界很多。
+
+费用要用服务商实际的计费规则和账单来算，并且区分输入、输出以及适用的缓存等项目，不能自己乘一个单价了事。
+
+有一类情况特别容易读错：服务没有返回 Token 的时候，应该记为未知。当前汇总里出现的零值，很可能来自缺少用量字段，不能自动解释成免费。
+
+还有一点，取消或者失败的运行，也可能已经产生了模型费用。
+
+所以我建议把预计值、实际值和未提供的数据分成三栏记录。这样下一次实验才有依据去改预算，而不是用一个成功提示结束观察。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.6　逻辑调用、物理尝试与费用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>没有返回用量时，只能记未知</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 200 }} />
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, paddingLeft: 14 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>怎么读</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 440, paddingLeft: 14 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>要留意什么</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 112 }}>
+            <Box style={{ width: 200, height: 112, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>计费规则</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>用服务商实际的计费规则和账单来算</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 440, height: 112, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>区分输入、输出与适用的缓存等项目</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 112 }}>
+            <Box style={{ width: 200, height: 112, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>用量为零</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>汇总里的零值，可能来自缺少用量字段</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 440, height: 112, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不能自动解释成免费，应记为未知</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 112 }}>
+            <Box style={{ width: 200, height: 112, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>取消或失败</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 112, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>运行结束得早，也可能已经产生模型费用</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 440, height: 112, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>结局不等于没有消耗</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>把预计值、实际值与未提供的数据分栏记录，下一次实验才有依据改进预算。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 23</Text>
+    </Box>
+
+</Slide>

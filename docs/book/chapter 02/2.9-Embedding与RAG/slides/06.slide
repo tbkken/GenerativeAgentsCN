@@ -1,0 +1,90 @@
+<Slide notes={`既然向量这么好用，是不是可以不再用表格查询了？不能这样想。
+
+语义检索擅长的是表述不同的说明文字。学生问「手工体验」，材料里写的是「手作室使用说明」，这种靠关键词碰不到的，向量能排出来。
+
+但精确 ID、日期和数字，还是关键词和结构化筛选更可靠。比如先限定 room_id 等于 craft，再限定活动日期，从确定性的记录里筛，比让向量去猜要稳得多。真实的做法常常是两步合起来：先用字段把范围锁小，再在剩下的材料里做语义检索。
+
+所以这里没有谁淘汰谁的问题。把「用了向量就该扔掉表格查询」当成原则，会丢掉最扎实的那部分能力。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.1　Embedding 为什么适合找相近内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>语义检索与精确条件互补</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, background: '#F4F7FA', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>语义检索</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>找「意思接近」的内容</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>适合</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>表述不同，但意思相近的说明文字</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>例子</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>问「手工体验」，命中「手作室使用说明」</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>手段</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>向量模型加余弦相似度排序</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>产出</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>一串带排序的候选片段</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, background: '#F4F7FA', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>精确匹配与结构化筛选</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>找「确定对得上」的记录</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>适合</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>精确 ID、日期与数字</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>例子</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>先限定 room_id = craft 和活动日期</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>手段</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>关键词、数据库查询、字段筛选</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>产出</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>确定性的记录集合</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 86, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>两种手段互补，常常一起用</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>先用字段把范围锁小，再在剩下的材料里做语义检索；并不存在「用了向量就应该淘汰表格查询」的原则。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 25</Text>
+    </Box>
+
+</Slide>

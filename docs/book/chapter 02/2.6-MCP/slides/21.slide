@@ -1,0 +1,78 @@
+<Slide notes={`配置保存之后，按顺序做三件事。
+
+先看连接状态和实际工具列表，确认宿主确实发现了那两个工具，而不是只显示连接成功。
+
+再用真实的参数查一次，查 craft 在 2026-10-17 的预约，核对返回的占用区间跟业务合同里说的一致。
+
+第三步再补上两个边界情况：不存在的房间，以及与已有预约冲突的候选方案。
+
+核对的时候要把证据留下来。如果界面并没有展示原始参数或结果，那就写清楚证据缺失，不要凭记忆去补一张工具卡片出来。
+
+连接失败时按顺序定位：解释器路径对不对、依赖装没装、服务能不能起来、协议版本对不对。这几项都没动过，就不要去改活动规则，也不要靠猜继续往下做。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.6　保存之后怎么核对</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>按顺序核对三件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 668, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 668, height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>连接状态与实际工具列表</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>确认宿主发现了那两个工具，而不是只显示连接成功</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>用真实参数查一次</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>查 craft 在 2026-10-17 的预约，核对返回的占用区间</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 124, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>补测两个边界</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>不存在的房间，以及与已有预约冲突的候选方案</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 436, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 436, height: 184, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>界面没显示原始参数或结果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>就记录证据缺失，不要凭印象补写工具卡片。</Text>
+            </Box>
+
+            <Box style={{ width: 436, height: 184, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>连接失败的定位顺序</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>解释器路径、依赖、服务启动、协议版本；不要改活动规则，也不要靠猜继续。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 27</Text>
+    </Box>
+
+</Slide>

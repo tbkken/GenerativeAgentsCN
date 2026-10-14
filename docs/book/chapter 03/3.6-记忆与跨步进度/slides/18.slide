@@ -1,0 +1,68 @@
+<Slide notes={`以林岚请求更改公告为例，四步走。
+
+第一步，在已经获得足够依据、即将提交请求时，记录“准备请求公告栏更新；待对象回复确认”。
+
+第二步，使用当前真实交互项发送 INTERACT，本轮结束。
+
+第三步，下一轮读取 external_observations：收到相符的确认，才记录请求结果；没收到，就继续保留待确认状态。
+
+第四步，需要确认外观时，通过新的感知检查公告栏公开状态。最后这条提醒最容易被忽略：不要把自己的请求内容，当作对象已经采纳的内容——请求是请求，采纳是采纳。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.4　在动作之前写“待确认”</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>林岚请求更新公告：四步</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', height: 104, alignItems: 'center' }}>
+            <Box style={{ width: 72, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+            </Box>
+            <Box style={{ width: 1064, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>即将提交请求时，先记便签</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>记录“准备请求公告栏更新；待对象回复确认”——在已经获得足够依据的时刻写。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, alignItems: 'center' }}>
+            <Box style={{ width: 72, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+            </Box>
+            <Box style={{ width: 1064, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>发送 INTERACT，本轮结束</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>使用当前真实交互项发送；成功选择后本轮执行立即结束，不补写完成记忆。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, alignItems: 'center' }}>
+            <Box style={{ width: 72, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#26816B' }}>3</Text>
+            </Box>
+            <Box style={{ width: 1064, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>下一轮读取 external_observations</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>收到相符的确认，再记录请求结果；没有收到，继续保留待确认状态。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, alignItems: 'center' }}>
+            <Box style={{ width: 72, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#CB6B28' }}>4</Text>
+            </Box>
+            <Box style={{ width: 1064, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>用新的感知核对公开状态</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>需要确认外观时，检查公告栏公开状态；不要把自己的请求内容当作对象已经采纳的内容。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

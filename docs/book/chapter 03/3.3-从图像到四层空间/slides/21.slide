@@ -1,0 +1,114 @@
+<Slide notes={`图片规格：头像要求正方形 PNG，至少 32×32；行走图接受 96×128 或 128×128 的 PNG，每帧 32×32，四行依次表示下、左、右、上。
+
+除了尺寸，还要同时检查人物与背景的风格、每帧位置、脚底锚点、桌面遮挡和缩放清晰度。有一个容易忽略的现象：图片本身留白较多时，即使「地图显示大小」设置相同，看起来也会更小。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.5　人物图片与出生装配一起检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>头像与行走图的规格</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>头像</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>正方形 PNG，至少 32×32。</Text>
+            </Box>
+
+            <Box style={{ height: 108, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>行走图</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>接受 96×128 或 128×128 PNG；每帧 32×32；四行依次为下、左、右、上。</Text>
+            </Box>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>一起检查</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>人物与背景风格、每帧位置、脚底锚点、桌面遮挡、缩放清晰度。</Text>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>图片本身留白较多时，相同「地图显示大小」也会显得更小。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+
+            <Text style={{ fontSize: 14, color: '#546779' }}>行走图布局（示意，放大显示）</Text>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 44, height: 77, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>下</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 1</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 2</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 3</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 44, height: 77, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>左</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 1</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 2</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 3</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 44, height: 77, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>右</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 1</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 2</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 3</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 44, height: 77, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>上</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 1</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 2</Text>
+                </Box>
+                <Box style={{ width: 77, height: 77, background: '#EDF4FC', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>帧 3</Text>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779' }}>每帧 32×32；四行依次为下、左、右、上。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 25</Text>
+    </Box>
+
+</Slide>

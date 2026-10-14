@@ -1,0 +1,65 @@
+<Slide notes={`留一个练习给 G3。
+
+G3 到过乙厅，当时的记录里只有「寻找展品」。现在的问题是：如果他继续做了「寻找资料」，或者做了「观看纸艺纹样」，这两种行为该怎么判分？
+
+我的判断是，「寻找资料」仍然只是过程行为，不满足活动条件；真正可能满足条件的是「观看纸艺纹样」，因为那才对应他本人的兴趣——比较传统纸艺纹样。
+
+但满足活动条件还不等于判为成功，还要检查两件事：位置是不是真的在乙厅，以及他到那一刻的累计路程有没有超过 40 格。
+
+这正好说明为什么主指标要同时写清活动语义、实际位置和软预算这三个条件。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.7　失败解释与下一轮练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习：G3 怎样判分</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 508, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>留给读者的一道题</Text>
+            <Box style={{ width: 508, background: '#FFF4E6', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>G3 怎么才算成功？</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.7 }}>G3 的兴趣是比较传统纸艺纹样。他已经到过乙厅，记录里只有「寻找展品」。如果他改做「寻找资料」，或者做「观看纸艺纹样」，该怎样判？</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.6 }}>只有可能满足活动条件的那一个，才谈得上继续核对位置与预算。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 612, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>两个候选行为</Text>
+
+            <Box style={{ width: 612, height: 100, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 48, background: '#546779' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>寻找资料</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>仍是过程行为，不满足活动条件，不进主要分子</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 612, height: 100, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>观看纸艺纹样</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>对应本人兴趣，可能满足活动条件——但还要再查两项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 612, background: '#F4F7FA', borderRadius: 10, padding: '18px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>仍须检查</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>位置：实际坐标与地址要在乙厅，不能只在附近</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>预算：到那一刻的累计已执行路程要 ≤ 40 格</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>活动语义、实际位置、软预算三项同时成立才算成功。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

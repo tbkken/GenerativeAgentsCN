@@ -1,0 +1,72 @@
+<Slide notes={`正式封存不是一个改名动作，它有明确的步骤和前提。
+第一步是拒绝活动状态：正在运行的运行不允许直接封存。第二步是取得写锁，避免和其他写入互相干扰。第三步是从一致的暂存副本生成完整性清单和归档，保证写出来的内容是一个确定的状态。第四步是不原地改写你已有的压缩包，原来的文件保持原样。
+需要如实说明的是，后端已经有正式包的封存与下载接口，但本次并没有确认独立的界面按钮的完整操作路径。这一项应该保留为正式交付之前要核对的环节，我不建议用直接接口或者命令行去补做这次界面验收。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.3　“下载全部”为什么不等于正式 Run 包</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>正式封存怎么做</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>Run 正式封存由 RunService.seal 完成，顺序和前提都不能省。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>第一步</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>拒绝活动状态</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>正在运行的 Run 不允许直接封存。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 118, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>第二步</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>取得写锁</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>避免与其他写入互相干扰。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 118, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>第三步</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>生成清单与归档</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>从一致暂存副本生成，内容确定。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 118, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>第四步</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>不原地改写</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>既有 ZIP 保持原样，不被覆盖。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>为什么要写锁</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>封存期间不允许其他写入，避免清单与包内内容不一致。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 88, background: '#F7F3E8', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>能力已经存在</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>当前后端已有正式包的封存与下载接口，可以生成协议归档。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>但本次未确认相应独立前端按钮的完整操作路径</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>这一项应保留为正式交付前的待核对环节；不用结果 ZIP 按钮替代它，也不用直接接口或 CLI 补做本次界面验收。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

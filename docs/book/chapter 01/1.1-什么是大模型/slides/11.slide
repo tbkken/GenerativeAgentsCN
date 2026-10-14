@@ -1,0 +1,75 @@
+<Slide notes={`第三个知识块，我们看一段回答到底是怎么出来的。
+
+前面说过，模型手里拿的是一组组数值。那么回答是怎么从这些数值里长出来的？
+
+先说结论：它是一次生成一个片段，然后把新生成的片段接回已有的内容，再继续生成下一个。就这样一步一步往下走。
+
+这里有两个容易误解的地方。
+
+第一，这个回环不代表每一次都把全部历史重新算一遍。它是一个生成过程，不是在反复核验。
+
+第二，生成结束有两种情况。一种是模型认为写完了，另一种是达到了我们设定的长度限制。如果是后者，你拿到的可能只是一段被截断的回答。
+
+所以你在对话框里看到一段完整的、结尾很自然的文字，也可能只是刚好停在了那里。这一点，后面讲到错误检查的时候还会用到。`} style={{ width: 1280, height: 720, background: '#F4F7FA', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 240, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>知识块 03</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一段回答是怎样生成的</Text>
+        <Box style={{ width: 72, height: 3, background: '#276FBF' }} />
+        <Text style={{ fontSize: 20, color: '#546779' }}>生成一个片段，接回已有内容，再继续</Text>
+    </Box>
+
+    <Box style={{ height: 400, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 12 }}>
+            <Box style={{ width: 170, height: 72, background: '#FFFFFF', borderRadius: 8, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>实际输入</Text>
+            </Box>
+            <Box style={{ justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 170, height: 72, background: '#FFFFFF', borderRadius: 8, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>数值表示</Text>
+            </Box>
+            <Box style={{ justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 170, height: 72, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>模型计算</Text>
+            </Box>
+            <Box style={{ justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 170, height: 72, background: '#FFFFFF', borderRadius: 8, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>选择 Token</Text>
+            </Box>
+            <Box style={{ justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 170, height: 72, background: '#FFFFFF', borderRadius: 8, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>接回已有内容</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ alignItems: 'center', flexDirection: 'column', gap: 10 }}>
+            <Box style={{ width: 630, height: 2, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>没有满足停止条件，就回到模型计算，继续生成下一个片段</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ background: '#FFF4E6', borderRadius: 8, padding: '12px 22px', border: '1px solid #E5C9A8' }}>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>达到限制时，可能只得到部分回答</Text>
+            </Box>
+            <Box style={{ background: '#ECF7F2', borderRadius: 8, padding: '12px 22px', border: '1px solid #B5C7D8' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>回环表示生成过程，不表示已经核验事实</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 26</Text>
+    </Box>
+
+</Slide>

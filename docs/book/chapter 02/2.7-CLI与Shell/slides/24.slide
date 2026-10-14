@@ -1,0 +1,49 @@
+<Slide notes={`这一节要把三件事带走。
+
+第一，命令是一份合同。参数、工作目录与环境、标准输出、标准错误和退出码，是一次执行的全部信息。调用者要同时看退出码和报告，不能看到有标准输出就判断成功。
+
+第二，规则一旦写明确，就交给程序去判定。半开区间和重叠条件可以逐条判，结果可复现；校验器只判断已经形式化的条件，不替组织者选最好的方案。
+
+第三，不要让模型修改校验器。校验器代表本轮确认的业务规则，改规则就是改评测问题。下一节讲 Skill，把方法、资料、脚本和停止条件组织成可复用的包。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.7　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25, textAlign: 'center' }}>明确规则，交给程序</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 370, height: 156, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>命令有合同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>参数、工作目录与环境、stdout、stderr 与退出码一起记录，缺一项就复现不了。</Text>
+            </Box>
+            <Box style={{ width: 370, height: 156, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>规则明确才交给程序</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>半开区间与重叠条件可以逐条判定，结果可复现；校验器不替组织者选方案。</Text>
+            </Box>
+            <Box style={{ width: 370, height: 156, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不改校验器</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>校验器代表本轮确认的业务规则；改规则就是改评测问题，须单独记录。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>调用者要同时检查退出码和报告：有标准输出不等于成功，退出码是 0 也只说明规则检查通过。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.8　Skill：组织可复用的方法、资料、脚本与停止条件</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,58 @@
+<Slide notes={`接下来讲成本。要理解成本，先要理解一个单位：usage。
+
+一次逻辑调用可能产生多次物理尝试，所以你不能拿「我调了几次」去估算用量。真正要看的，是每次响应里带回来的 usage。
+
+有了 usage，再分三件事记：调用次数、Token 用量、以及时间和金额。
+
+Token 这里有个细节：输入不只是你最后写的那句话。历史消息、工具定义、检索回来的片段、加上图片，都可能被算进输入。输出那边还可能包含按模型规则计费的推理部分。所以拆子类的时候要按服务的口径来，不要在总量已经包含某项的时候再重复相加。
+
+时间也要分开：模型执行的时间、本地命令的时间、用户审阅等待的时间，是三个不同的量。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.13.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从 usage 理解成本</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先核对实际用量，再分别计算时间和费用。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 900, height: 52, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>调用次数</Text></Box>
+                <Text style={{ fontSize: 16, color: '#546779' }}>逻辑调用 1 次，可能对应物理尝试 N 次</Text>
+            </Box>
+
+            <Box style={{ width: 900, height: 52, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>Token 用量</Text></Box>
+                <Text style={{ fontSize: 16, color: '#546779' }}>输入、输出、缓存分别看，不重复累计</Text>
+            </Box>
+
+            <Box style={{ width: 900, height: 52, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>时间与金额</Text></Box>
+                <Text style={{ fontSize: 16, color: '#546779' }}>模型执行、本地命令、用户等待分开记</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 900, height: 54, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>用量以实际返回的 usage 为准，不以调用次数推算</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 34</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,69 @@
+<Slide notes={`这里要把两条容易混淆的信息彻底分开。
+
+实验本身只有两个状态：草稿和封存。草稿说明材料还可以改，封存说明这份实验的内容不能再改，目的是让以后能解释清楚某一次运行用的是哪份材料。
+
+完成、失败、暂停这些说法属于运行，它们说明的是这次仿真走到了哪里，和实验有没有封存没有关系。一份已经封存的实验，可以反复执行，创建出多个运行。
+
+所以报告里写状态时，要先问自己写的是哪一条。写实验状态，说的是材料；写运行状态，说的是这一次执行。两者不能互相代替，也不能因为运行完成了就以为实验应该变成别的状态。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.4　确认执行跨过封存边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>实验状态与运行状态是两条信息</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6, width: 1152 }}>同一次操作里会出现两种状态，它们各自回答不同的问题。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 32, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>实验状态　材料可不可以改</Text>
+            </Box>
+            <Box style={{ width: 566, height: 32, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>运行状态　这次仿真走到哪里</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+            <Box style={{ width: 566, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.5 }}>只有两个状态：DRAFT → SEALED</Text>
+            </Box>
+            <Box style={{ width: 566, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>完成、失败、暂停都属于 Run</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+            <Box style={{ width: 566, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.5 }}>封存后内容不可再改</Text>
+            </Box>
+            <Box style={{ width: 566, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>同一实验可以执行多次，得到多个 Run</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+            <Box style={{ width: 566, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.5 }}>用来解释某次运行用了什么材料</Text>
+            </Box>
+            <Box style={{ width: 566, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>用来解释这次执行的结果是什么</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>运行结束不等于实验改变状态；写成一条信息，报告就会自相矛盾。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,82 @@
+<Slide notes={`一份交付清单，要把需求、证据和文件串在一起。
+
+服务大厅项目交付时要能说明：A 窗口处理使用咨询，B 窗口处理已有设施问题；两组共有四项需求，只有咨询台是否先澄清目的这一处不同。
+
+清单记七类材料：项目说明写范围与负责人；输入清单列地图、人物、对象和两组精确差异；身份登记记实验、Run、Attempt 与内嵌输入摘要；结果索引覆盖全部 Run、失败与未完成任务；证据材料把请求、回复、确认消息和人工判分对应起来；原始导出记字节数、SHA256 和取得方式；接手说明写环境前提与未解决问题。
+
+精确策略片段、私人目的和运行参数都要有固定出处，不能让接收者在多份记录里猜哪一份有效。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.2　用一张清单连接需求、证据与文件</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>七类材料，各有固定出处</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>交付要能说明：A 窗口处理使用咨询，B 窗口处理已有设施问题；两组共有四项需求，只有咨询台是否先澄清目的不同。</Text>
+            <Box style={{ width: 300, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.55 }}>精确策略片段、私人目的、空间方案与运行参数都要有固定出处</Text>
+            </Box>
+            <Box style={{ width: 300, height: 72, background: '#F7F3E8', borderRadius: 8, padding: '14px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>避免接收者在多份聊天记录里猜哪一份有效</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 824, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ width: 824, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 130 }}>项目说明</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 634 }}>本批范围、负责人、交付日期、当前阶段和下一项工作</Text>
+            </Box>
+
+            <Box style={{ width: 824, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 130 }}>输入清单</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 634 }}>地图、五人、三对象、Brain／Skill、模型配置及两组精确差异</Text>
+            </Box>
+
+            <Box style={{ width: 824, height: 62, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 130 }}>身份登记</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 634 }}>实验、Run、全部 Attempt 与内嵌输入摘要；未产生者明确标记</Text>
+            </Box>
+
+            <Box style={{ width: 824, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 130 }}>结果索引</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 634 }}>全部 Run、失败与未完成任务、实际观察窗口、评分入口</Text>
+            </Box>
+
+            <Box style={{ width: 824, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 130 }}>证据材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 634 }}>请求／回复、位置、确认消息和人工判分的对应关系</Text>
+            </Box>
+
+            <Box style={{ width: 824, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 130 }}>原始导出</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 634 }}>文件类型、来源边界、时间、字节数、SHA256 和取得方式</Text>
+            </Box>
+
+            <Box style={{ width: 824, height: 62, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 130 }}>接手说明</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 634 }}>环境前提、已知限制、未解决问题及所需决定</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

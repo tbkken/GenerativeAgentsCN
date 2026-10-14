@@ -1,0 +1,75 @@
+<Slide notes={`六个指标就是本节的核心口径，运行前就要写进评分表。
+访客到达率：分母是两名目标访客，分子是窗口内真的走到指定站位的人；未到达记未达成，注明原因与观察终点。
+公告传播延迟：只对更正前尚未获知的许安计算，从公告更正提交到首次确认正式新安排，单位是虚拟时间。
+交流闭环率：得到明确回应的目标会话数除以已发起的目标会话数；没发起会话则分母为零，记不适用。
+过时信息行动率：更正后仍依据旧安排行动的比例；缺少行动依据就记无法判断。
+对象回复完整性：用有效请求 ID 核对遗漏、重复和错误接收者，并报请求数与待投递数。
+单位有效结果成本：实际成本除以预先定义的成功结果数；成功数为零时保留总成本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.2　先定义分母和观察窗口</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六个指标，运行前先写清口径</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', height: 30, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 14, color: '#546779' }}>指标</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>本章建议的可操作定义</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 14, color: '#546779' }}>未完成怎样处理</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>访客到达率</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>窗口内实际到达指定活动站位的访客数 ÷ 两名目标访客</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>未到达计未达成，注明具体原因与观察终点</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>公告传播延迟</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>更正前未获知者：公告更正提交 → 首次确认正式新安排的虚拟时差</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>未获知记「截至窗口结束未观察到」；更正前已知者另列</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>交流闭环率</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>得到与问题相关明确回应的目标会话数 ÷ 已发起的目标会话数</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>没有发起会话则分母为零，记不适用</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>过时信息行动率</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>更正后仍明确依据旧安排的相关行动次数 ÷ 更正后的相关行动机会</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>缺少行动依据时记无法判断，另报覆盖率</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 36, background: '#26816B' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>对象回复完整性</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>以有效请求 ID 核对有无遗漏、重复和错误接收者</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>同时报请求数、回复数与待投递数</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Box style={{ width: 186 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>单位有效结果成本</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>本轮实际成本 ÷ 预先定义的成功结果数</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>成功数为零时保留总成本，单位值记不可计算</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,68 @@
+<Slide notes={`同样一句话，为什么该去不同窗口？区别在本人手里那点用途。
+
+周澈和谭悦心里是以后要用的场地：一个要办读书会，一个要摆手工作品，都属于安排未来的使用。孟川和邱禾心里是今天已经坏了的东西：一个在东侧，一个在入口，都属于报告现有的问题。
+
+所以咨询台该问的不是“你想干什么”这种大问题，而是缺的那一个字段——你是在安排以后的使用，还是在报告现在的问题。
+
+这个追问一旦发生，补充只能来自同一个人。把教师答案当成补充，整个对照就不成立了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.1　首句相同，目的不同</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>首句一样，目的不一样</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 600, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>安排未来的使用</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>→ A 窗口</Text>
+                </Box>
+                <Box style={{ width: 600, height: 124, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>周澈 H1　下周借活动室办读书会</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>要确认的字段：照明能不能支持这场活动</Text>
+                </Box>
+                <Box style={{ width: 600, height: 124, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>谭悦 H2　想预约手工作品展示</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>要确认的字段：桌面照明够不够用</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 520, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>报告现在的问题</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>→ B 窗口</Text>
+                </Box>
+                <Box style={{ width: 520, height: 124, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>孟川 H3　东侧一盏灯不亮</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>要报告的字段：位置、现象、发现时间</Text>
+                </Box>
+                <Box style={{ width: 520, height: 124, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>邱禾 H4　入口灯持续闪烁</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>要报告的字段：位置、现象、发现时间</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>缺的那个字段，才是咨询台该问的</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>H1 与 H3 首句相同、H2 与 H4 首句相同，区别只在本人持有的用途；补充必须来自同一个人。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,64 @@
+<Slide notes={`这一节做到什么程度算完成？我给大家三个可以核对的标志。
+
+第一，本地校验器可以运行。参考排期跑出退出码 0，错误样本返回非零并给出具体错误，两件事都能复现。
+
+第二，API 路线能保存一次真实响应。如果还没配置密钥，就明确记录"尚未配置"——是明确写下来，不是空着不提。
+
+第三，WorkBuddy 路线能正确读取指定材料。同样，这次没实测也要写下来"尚未实测"。
+
+这三个标志有一个共同点：都要求留下证据，而不是留下印象。两条路线互相帮助理解，但不互相代替验收。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.6　在 WorkBuddy 中完成第一次任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节完成的标志</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, height: 200, background: '#EDF4FC', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>本地校验器可以运行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>参考排期退出码为 0；错误样本返回非零并给出具体错误。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 200, background: '#EDF4FC', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>API 路线存下一次真实响应</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>能保存一次真实响应，或明确记录尚未配置——不要留空白。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 200, background: '#ECF7F2', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B', lineHeight: 1.4 }}>产品路线正确读取材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>能正确读取指定材料，或明确记录尚未实测。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 108, background: '#FFF4E6', borderRadius: 12, padding: '18px 24px', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 4, height: 66, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>两条路线互相帮助理解，但不互相代替验收</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>三项都要求留下证据：文件、报告与退出码，而不是印象。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

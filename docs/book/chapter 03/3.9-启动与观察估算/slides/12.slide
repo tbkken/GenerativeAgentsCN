@@ -1,0 +1,85 @@
+<Slide notes={`三种时间必须分开记录，混在一起就会得出错误的结论。
+
+虚拟时间是故事里的时刻，它由起始时间、步长和步数决定，暂停不会让它自动往前推进。模型耗时是一次请求真实经历的时间，用来判断模型快不快。墙钟时间包含操作、暂停和调试等待，是我们坐在电脑前面经过的时间。
+
+所以暂停二十分钟，不应该让青禾世界里的活动自动迟到二十分钟。反过来说，墙钟很长也不代表模型慢，中间可能有大量人工操作。
+
+估算里的秒数口径用的是墙钟，在对照预计与实际的时候要特别留意这一点。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.3　先把观察窗口算清楚</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种时间要分开记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 160 }} />
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, paddingLeft: 14 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>表示什么</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, paddingLeft: 14 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>怎么算、记在哪</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 118 }}>
+            <Box style={{ width: 160, height: 118, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>虚拟时间</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 118, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>故事里的时刻，决定角色看到的是什么时候的世界</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 118, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>按 起始时间 + (k − 1) × 步长 推进{'\n'}暂停不会让它自动前进</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 118 }}>
+            <Box style={{ width: 160, height: 118, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>模型耗时</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 118, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>一次模型请求真实经历的时间，用来判断模型快不快</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 118, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>从请求开始到结果返回{'\n'}模型调用记录里可以直接读到</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 118 }}>
+            <Box style={{ width: 160, height: 118, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>墙钟时间</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 118, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>我们坐在电脑前面经过的真实时间，还包含操作与等待</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 480, height: 118, background: '#F7F3E8', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>含工具等待、暂停与调试{'\n'}估算给出的秒数用的是它</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 42, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>暂停二十分钟，不应让青禾的虚拟活动自动迟到二十分钟。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 23</Text>
+    </Box>
+
+</Slide>

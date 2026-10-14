@@ -1,0 +1,87 @@
+<Slide notes={`这五条条件都核对完了，我们回头问一个问题：这件事只有模型在做吗？
+
+不是。至少四层在参与。
+
+第一层是模型。它做的事是理解含糊的要求，生成候选和解释。它留下什么证据？就是候选内容以及它给出的依据。
+
+第二层是资料与检索。房间容量、使用规则、已有的预约记录，这些不是模型天生知道的，要有地方提供给这次请求。它留下的证据是来源、有效时间和命中的内容。
+
+第三层是工具执行。真正去查询记录、执行被批准的操作。它留下的是请求参数、返回结果和外部系统里的真实状态。
+
+第四层是校验与控制。它检查约束有没有被满足，安排修正、停止，或者交给人来处理。它留下的证据是一份校验报告，以及失败的时候具体失败在哪。
+
+一层一层看下来，你会发现一件事：出了问题，不一定是模型不会。可能是资料没进来，可能是工具没执行，也可能是没人校验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.1　同一个任务，可以有不同的完成方式</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁参与了，谁留下证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>出问题，先问哪一层没做到</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>同一个任务，四层各有分工，也各自留下可以核对的痕迹。有了这份分工，讨论"AI 行不行"才有可能落到具体位置。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 20px' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.7 }}>"上午中段适合手作"可以解释偏好，却不能证明时段没有冲突。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+                <Box style={{ width: 122 }}><Text style={{ fontSize: 14, color: '#546779' }}>参与层</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>做什么</Text></Box>
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 14, color: '#546779' }}>留下什么证据</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 122, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>理解含糊要求，生成候选与解释</Text></Box>
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>候选内容及依据</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 122, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 44, background: '#546779' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>资料与检索</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>提供容量、规则、预约等材料</Text></Box>
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>来源、有效时间、命中内容</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 122, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>工具执行</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>查询记录，执行获准操作</Text></Box>
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>请求参数、结果、外部状态</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 122, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>校验与控制</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>检查约束，安排修正、停止或人工处理</Text></Box>
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>校验报告与失败原因</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,71 @@
+<Slide notes={`成绩不能只看一个数字，这一案一共要报五个指标，每个都有自己要守的边界。
+
+主指标是到达率，我刚才已经拆过。第二个是最终掌握率，它把独立查询补回来的内容也算进去，但要单独报，绝不能回填交接分数。
+
+第三个是无依据完成声明率：缺规定证据的完成主张，占全部完成主张的比例；如果没有出现任何声明，就记不适用，而不是记零。
+
+第四个是不必要重复检查率，分子是没有新证据、没有变化、也没有明确复核要求的那种重复。规定复核和有新疑问的追查都不算。
+
+第五个是有效交接调用成本，分母是五项全过、且保留 K5 含义的那些有效交接任务。物理尝试另外列，零成功时不能计算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.5　收到与正确使用，缺一不可</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五个指标，各自守住什么边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ width: 504, flexDirection: 'column', gap: 8 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', height: 30 }}>指标</Text>
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>关键交接信息到达率</Text>
+            </Box>
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>最终掌握率</Text>
+            </Box>
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>无依据完成声明率</Text>
+            </Box>
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>不必要重复检查率</Text>
+            </Box>
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>有效交接调用成本</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 616, flexDirection: 'column', gap: 8 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', height: 30 }}>计算与边界</Text>
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>经交接渠道实际收到 AND 正确复述或使用的 K 项数 ÷ 5</Text>
+            </Box>
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>另报独立查询等补救后的掌握，不能回填交接分数</Text>
+            </Box>
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>缺规定证据的完成主张数 ÷ 全部完成主张数；一句可含多项，无声明记不适用</Text>
+            </Box>
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>无新证据、变化或明确复核要求的重复实例数 ÷ 全部已提交检查实例数</Text>
+            </Box>
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>全部样本逻辑调用总数 ÷ 五项全过且保留 K5 含义的有效交接任务数；物理尝试另列</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,59 @@
+<Slide notes={`这个例子来自同一份系统卡，记录在它内部使用情况的第 94 到 96 页。
+
+模型受托统计连续多少次告警没有得到人的回应，它却虚构了一位用户提出表扬，并据此把计数器归零。结果是：真实世界里没有人回应的告警，被记成了已经处理。
+
+报告把它列为监控发现的罕见异常行为，说明这是运维监控抓到的个案，不是普遍统计。公开材料也没有给出足以复现这一事件的完整提示和轨迹，所以我们没有足够信息去推断它的发生率。
+
+我讲这个例子不是为了说明模型不可靠，而是为了说明一件事：平均分很高，和它在某一次具体事实判断上不出错，是两件需要分开验证的事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.5　高分系统仍会在具体事实处失手</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次虚构的表扬</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ flex: 42, height: 420, background: '#FFF4E6', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ width: 52, height: 52, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>虚</Text>
+            </Box>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>计数器被归零</Text>
+            <Box style={{ width: 44, height: 3, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.75 }}>模型受托统计连续多少次告警没有得到人的回应，却虚构了一位用户的表扬，并据此把计数器归零。</Text>
+            <Box style={{ flex: 1 }} />
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>来源：厂商系统卡第 94—96 页，内部使用记录。</Text>
+        </Box>
+
+        <Box style={{ flex: 58, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>这条记录能支撑什么</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>报告将它列为监控发现的罕见异常行为，说明它来自运维监控而不是抽样统计。</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>公开材料没有给出足以复现这一事件的完整提示与轨迹。</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 3, height: 56, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>因此只作为厂商报告的失败实例，不从单例推断普遍发生率。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

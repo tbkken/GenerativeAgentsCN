@@ -1,0 +1,56 @@
+<Slide notes={`核对每一项评分的时候，要再查两个层次，它们很容易被合并成一个。
+
+第一个层次是独立判据：冻结的作者材料说明什么算正确。它必须来自作者那一侧，不能来自被评价的角色。角色说「建议正确」不构成独立判断，因为它并不知道正确答案是什么。
+
+第二个层次是实际发生：要定位真实的 Run、Agent 或对象、Step，以及事件、请求、会话或记忆的身份。教师答案不能证明角色已经收到过信息。
+
+这两层都齐了，一项评分才算有依据。另外保留归档路径、成员文件和记录位置。截图可以辅助说明，但不能靠补造事件 ID 来建立来源链。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.2　让一句主张接受三次追问</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>核对评分时的两个层次</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>两个层次要分开查</Text>
+            <Box style={{ width: 520, height: 176, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>独立判据</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, width: 484 }}>冻结的作者材料说明什么算正确。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 484 }}>角色说「建议正确」不构成独立判断，因为它并不知道正确答案。</Text>
+            </Box>
+            <Box style={{ width: 520, height: 176, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>实际发生</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, width: 484 }}>定位真实 Run、Agent 或对象、Step。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 484 }}>以及事件、请求、会话或记忆身份；教师答案不能证明角色已收到信息。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 608, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>每次核对都要留下位置</Text>
+            <Box style={{ width: 608, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>截图可以辅助，不能替代来源链</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 572 }}>截图能说明界面长什么样，但它不带事件身份。补造事件 ID 去凑一条链，等于把材料变成杜撰。</Text>
+            </Box>
+            <Box style={{ width: 608, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>定位要同时给出四件事</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 572 }}>Run 编号 · 参与对象 · 具体 Step · 记录身份。少一样，别人就回不到那条记录。</Text>
+            </Box>
+            <Box style={{ width: 608, height: 110, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>保留三类位置信息</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 572 }}>归档路径 · 成员文件 · 记录位置。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

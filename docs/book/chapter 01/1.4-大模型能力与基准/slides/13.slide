@@ -1,0 +1,75 @@
+<Slide notes={`读一套样本集，就像读一份考试大纲。我建议固定问五件事。
+
+第一，题量。一共多少题，这一条直接决定分数的精度。GPQA Diamond 只有 198 道题，那么一道题就值半个百分点，两个模型差一个百分点，可能只是两道题的差别。
+
+第二，题型。是选择题、简答题，还是要求交一段能跑的代码；答案要写成什么形式，也要看清。
+
+第三，领域分布。覆盖哪些学科，各占多少比例。如果四成都是数学，总分含义就要重新理解。
+
+第四，难度分层。有没有 Diamond、Verified、Tier 4 这样的子集，我们看的是哪一层。
+
+第五，版本更新。现在是第几版，有没有私有题集，多久更新一次。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>③　1.4.3　样本集：看一套题库先要问的五件事</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>样本集是考试大纲</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 240, height: 98, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>题量</Text>
+            </Box>
+            <Box style={{ width: 896, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>一共多少题；一道题在这个分数上占多大分量，决定了分数的精度</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 240, height: 98, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>题型</Text>
+            </Box>
+            <Box style={{ width: 896, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>选择题、简答题还是可执行任务；答案必须写成什么形式</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 240, height: 98, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>领域分布</Text>
+            </Box>
+            <Box style={{ width: 896, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>覆盖哪些学科、各占多少比例；偏科的总分要重新理解</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 240, height: 98, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>难度分层</Text>
+            </Box>
+            <Box style={{ width: 896, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>有没有 Diamond、Verified、Tier 4 这样的子集；我们看的是哪一层</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 240, height: 98, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>版本更新</Text>
+            </Box>
+            <Box style={{ width: 896, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center', flexDirection: 'row' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>现在是第几版；有没有不公开的私有题集；多久更新一次</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 36</Text>
+    </Box>
+
+</Slide>

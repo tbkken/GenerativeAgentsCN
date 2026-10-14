@@ -1,0 +1,88 @@
+<Slide notes={`接到反馈之后，作者要做的是判断处理范围，而不是急着改文件。
+
+如果修正的只是一个失效路径，通常只影响说明文字，改完再检查一下关联入口就够了。如果更正的是错误判分，那就牵动结果本身，以及由结果派生的图表和摘要，需要一致地复核受影响的样本。
+
+最容易低估的是改咨询台的行为文本。它会影响实验行为，必须进入一套新的独立实验和运行安排，不能改写既有运行所依据的内容，也不能靠重新打包来掩盖。
+
+还有一点常被忽略：确实不需要修改的时候，就写出理由。不要为了完成作业硬造一次变更。原始导出要保留，历史输入不要覆盖。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.5　第四份交付：接收与反馈处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>不同修正牵动不同范围</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 634, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 634, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 568, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>修正一个失效路径</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>通常只影响说明，关联入口一并检查</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 634, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Box style={{ width: 568, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>更正错误判分</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>更新结果及其派生图表，对受影响样本一致复核</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 634, height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 568, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>改咨询台 SOP</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>影响实验行为，必须进入新的独立实验与运行安排</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 634, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 568, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>保留原始导出</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>不改写既有运行所依据的内容，历史输入不覆盖</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 634, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 568, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>确实无需修改</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>写出理由，不为完成作业强造一次变更</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 486, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>用变更影响表说明处理范围</Text>
+
+            <Box style={{ width: 486, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>五类判断，可多选</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>说明 / 判分 / 作者材料 / 实验行为 / 系统机制</Text>
+            </Box>
+
+            <Box style={{ width: 486, height: 74, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>「修改完成」与「复查通过」分开记</Text>
+            </Box>
+
+            <Box style={{ width: 486, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.7 }}>避免把所有问题都用「重新打包一份最终版」掩盖。重新运行得到成功结果，也不会抹去旧的失败记录。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 31</Text>
+    </Box>
+
+</Slide>

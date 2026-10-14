@@ -1,0 +1,85 @@
+<Slide notes={`跟着一条请求走一遍，就能看清跨步反馈的几个交接点。
+
+人物这一轮经 MCP 接受之后执行 INTERACT。世界执行拿到真实的 request_id 和待处理的请求，把它交给对象。
+
+对象在自己的这一步里经 MCP 校验，产生自身的动作和 responses，交回世界。世界再用 StepResult 把请求、对象状态和回复一起提交。
+
+到这一步为止，事情只走到「已提交」。目标人物是在下一轮才收到这条反馈的，他依据实际收到的内容去判断、去更新记忆。
+
+所以有三句话要记住：请求被接受，不等于状态已提交；对象已回复，不等于所有人已获知；恢复的时候仍然要核对请求、状态和待投递回复，做到不重不漏。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.3　从一条咨询看跨步反馈</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一条咨询跨过两个 Step</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>人物（Step k）</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>经 MCP 接受后执行 INTERACT，提出这次咨询</Text></Box>
+            <Box style={{ width: 170, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>角色动作</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>世界执行</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>把真实 request_id 与待处理请求交给对象</Text></Box>
+            <Box style={{ width: 170, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>请求可定位</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 30, height: 30, background: '#CB6B28', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>对象（Step k）</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>经 MCP 校验自身动作与 responses，交回世界</Text></Box>
+            <Box style={{ width: 170, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>本步之后运行</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>整步持久提交</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>StepResult 写入请求、对象状态与回复</Text></Box>
+            <Box style={{ width: 170, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>事实边界</Text></Box>
+        </Box>
+
+        <Box style={{ height: 74, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 30, height: 30, background: '#26816B', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+            </Box>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>目标（Step k+1）</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>依据实际收到的内容判断，并更新自己的记忆</Text></Box>
+            <Box style={{ width: 170, alignItems: 'flex-end' }}><Text style={{ fontSize: 13, color: '#26816B' }}>下一轮才收到</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24, marginTop: 4 }}>
+            <Box style={{ width: 368, height: 62, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>请求被接受 ≠ 状态已提交</Text>
+            </Box>
+            <Box style={{ width: 368, height: 62, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>对象已回复 ≠ 所有人已获知</Text>
+            </Box>
+            <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>恢复须核对请求、状态、待投递回复：不重不漏</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 29</Text>
+    </Box>
+
+</Slide>

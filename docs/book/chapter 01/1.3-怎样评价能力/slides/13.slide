@@ -1,0 +1,111 @@
+<Slide notes={`把两份通知放在一起比，问题立刻显出来。
+
+要求是四条：使用中文、包含日期、列出三个项目、以联系方式结尾。第一份通知四条全过，第二份过了三条。逐条加起来，八条里过了七条，逐约束通过率是百分之八十七点五。
+
+可是“全部约束同时满足的通知有几份”，答案是两份里的一份，百分之五十。
+
+这两个数都没错，它们回答的是不同的问题。前者说明这个助手在每条要求上大体可靠，后者说明能直接拿去用的成品只有一半。看榜单时只看到八十七点五，就很容易高估。
+
+工具调用同理。参数格式正确、工具返回成功，只能证明这次调用没错；任务是否完成，还要看最终房间、容量和有没有改掉别的活动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.3　满足要求，是否就完成了任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>87.5% 与 50% 差在哪里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', height: 236 }}>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 16 }}>
+
+                <Box style={{ height: 110, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>通知一　四条约束全部通过</Text>
+                    <Box style={{ flexDirection: 'row', gap: 8 }}>
+                        <Box style={{ width: 122, height: 32, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>中文</Text>
+                        </Box>
+                        <Box style={{ width: 122, height: 32, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>含日期</Text>
+                        </Box>
+                        <Box style={{ width: 122, height: 32, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>三个项目</Text>
+                        </Box>
+                        <Box style={{ width: 122, height: 32, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>联系方式结尾</Text>
+                        </Box>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 110, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>通知二　通过三条，缺一条</Text>
+                    <Box style={{ flexDirection: 'row', gap: 8 }}>
+                        <Box style={{ width: 122, height: 32, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>中文</Text>
+                        </Box>
+                        <Box style={{ width: 122, height: 32, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>含日期</Text>
+                        </Box>
+                        <Box style={{ width: 122, height: 32, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>三个项目</Text>
+                        </Box>
+                        <Box style={{ width: 122, height: 32, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>未通过</Text>
+                        </Box>
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 32 }} />
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 16 }}>
+
+                <Box style={{ height: 110, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>87.5%</Text>
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>逐约束通过率</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>7 / 8　每条要求大体可靠</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 110, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                    <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#CB6B28' }}>50%</Text>
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>全部约束同时满足</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>1 / 2　能直接交付的成品</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 96, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>工具成功 ≠ 任务成功</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>参数格式正确、工具返回成功，只说明这次调用没错。还要检查最终房间、容量、时间冲突，以及是否误改了其他活动。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>任务成功率</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>= 通过全部必要验收条件的任务数 / 任务总数</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779' }}>中间比率定位失败{'\n'}任务率回答能否交付</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 31</Text>
+    </Box>
+
+</Slide>

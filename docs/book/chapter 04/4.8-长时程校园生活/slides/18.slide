@@ -1,0 +1,63 @@
+<Slide notes={`四个指标的分母口径，我逐条念一遍，方便对照后面的算例。
+
+已完成事项重复执行率：分子是首次完成之后、没有新需求又启动的重复实例，分母是全部已提交的一次性任务实例。
+
+初始任务闭环率：分子是窗口内完整证据成立的 A、B、C 三件，分母就是三。
+
+承诺按期兑现率：分子是按事实标准兑现的数量，分母是已经明确接受、并且截止时间落在窗口内的承诺。没明确接受的不进分母。
+
+整理事实保真率：分子是有此前事实或有效来源支持、可以核验的声明，分母是全部可核验的整理声明。
+
+重复率必须配上闭环率一起看，否则“什么都不做”反而显得干净。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.5　指标与人工练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个指标，四种分母</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 10, padding: '0 4px' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 280 }}>指标</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 852 }}>分子与分母边界</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 68, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 266 }}>已完成事项重复执行率</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.55 }}>首次完成后无新需求又启动的重复实例 ÷ 全部已提交的一次性任务实例</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 68, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 266 }}>初始任务闭环率</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.55 }}>W 内完整证据成立的 A／B／C 数 ÷ 3</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 68, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', width: 266 }}>承诺按期兑现率</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.55 }}>按事实标准兑现数 ÷ 已明确接受且截止落在 W 内的承诺数</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 68, background: '#546779' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 266 }}>整理事实保真率</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.55 }}>有此前事实或有效来源支持的可核验声明 ÷ 全部可核验整理声明</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.55 }}>零任务、零承诺或零整理时，相应比率不适用；重复率须配闭环率，避免不行动也得好分。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 27</Text>
+    </Box>
+
+</Slide>

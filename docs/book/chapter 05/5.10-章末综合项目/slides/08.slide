@@ -1,0 +1,71 @@
+<Slide notes={`登记来源的时候要把四类东西分开，不能混在一起。
+
+作者虚构的设定，是这个教学案例里的人物、地图与委托，它一旦被当成真实行政数据引用，结论就不成立。当前的产品事实，指系统界面、资源格式和入口的当前行为，产品更新以后原来的操作步骤就可能失效。实测材料是自己跑出来的记录、导出文件和判分结果，样本很少时只能算小型探索，不能推断普遍优越。外部方法依据是别人的论文与行业做法，在别的场景有效，不保证本案例同样成立。
+
+每一类都要写清它影响什么，再补一句什么情况会让它不成立。比如假定窗口能并行答复多项请求，就意味着这个题不描述现实窗口容量；假定来访者会如实说明目的，就意味着结果不能直接覆盖故意隐瞒的情境。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.2　第一份交付：问题和材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类来源，各写一个失败条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>来源登记表要区分四类来源，并给每项影响结果的假设写一个可能使它不成立的条件</Text>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>作者虚构设定</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>教学用的服务大厅、四名来访者与委托书，都是作者编写的</Text>
+                <Box style={{ width: 522, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>被当成真实行政数据引用时，结论就不成立</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 566, height: 190, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>当前产品事实</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>系统界面、资源格式与已核验入口的当前行为</Text>
+                <Box style={{ width: 522, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>产品更新后入口或格式变化，原步骤会失效</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 190, background: '#ECF7F2', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#26816B' }}>实测材料</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>实际运行记录、导出文件与人工判分结果</Text>
+                <Box style={{ width: 522, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>运行次数很少时只能算小型探索，不做普遍优越推断</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 566, height: 190, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>外部方法依据</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>他人的论文、方法文档与行业通行做法</Text>
+                <Box style={{ width: 522, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>在别的场景有效，不保证在本案例同样成立</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>两个具体的失败条件</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>窗口能并行答复多项请求　›　说明本题不描述现实窗口容量　·　来访者如实说明目的　›　结果不能直接覆盖故意隐瞒的情境</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 31</Text>
+    </Box>
+
+</Slide>

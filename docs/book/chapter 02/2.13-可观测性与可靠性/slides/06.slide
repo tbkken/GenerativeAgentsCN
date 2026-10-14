@@ -1,0 +1,57 @@
+<Slide notes={`评估的顺序其实很固定：先把任务和判定标准写下来，再跑样本，最后看结果回头改。这个顺序不能倒。先跑样本再想标准，你只会得到一堆没法比较的数字。
+
+使用平台的评估服务并不是开始评估的前提。本章这个小数据集完全可以先在本地保存输入和评分结果，跑得动、看得清就够了。
+
+配套的离线测试覆盖的是可确定的程序行为——规则对不对、边界算不算重叠、报告有没有生成。它不声称测过模型抵抗提示注入的能力。要测那个，必须在隔离的数据副本上做真实的端到端运行，保留每一次失败，不能用模拟响应顶替。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.1　先确定被测对象</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>离线通过，不等于真实成绩</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>评估先定标准，再跑样本</Text>
+            <Box style={{ width: 620, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>第一步　定义任务与判定标准</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先写清楚什么算完成、由谁来判断，再谈分数。</Text>
+            </Box>
+            <Box style={{ width: 620, height: 24, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 620, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>第二步　运行样本并保存结果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>输入与评分结果先存在本地，小数据集不需要平台服务。</Text>
+            </Box>
+            <Box style={{ width: 620, height: 24, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+            <Box style={{ width: 620, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>第三步　分析结果，回头改进</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>改动要能回到具体样本，否则说不清是改好了还是碰巧。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 500, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>平台不是开始评估的前提</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>本章的小数据集可以直接在本地保存输入与评分结果，先跑通再考虑托管服务。</Text>
+            </Box>
+            <Box style={{ width: 500, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>离线测试覆盖可确定的程序行为</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>它证明规则与边界处理正确，不声称测量过模型抵抗提示注入的能力。</Text>
+            </Box>
+            <Box style={{ width: 500, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两件事要分开写</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>真实能力必须在隔离的数据副本上做端到端，保留每次失败，不能用模拟响应替代。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 34</Text>
+    </Box>
+
+</Slide>

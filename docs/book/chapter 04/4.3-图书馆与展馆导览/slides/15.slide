@@ -1,0 +1,56 @@
+<Slide notes={`这一段讲怎么量。第一步是把时间和步数固定下来。
+
+窗口 W 定为 2026 年 10 月 20 日 14 点到 15 点，时区是 Asia/Shanghai。步长是 1 分钟一步，整个窗口一共 61 步。
+
+在这个窗口里，我给每个人 40 格的软步行预算，它既是任务约束，也是人工判分的条件。要特别注意「软」这个字：内核不会自动扣额，也不会在 40 格处截停人物。人物只能根据真实进度自己控制探索。
+
+为什么不能把未知消耗当成零？因为没被记下来的消耗并不等于没有消耗。如果把预算当成内核自动生效的额度，后面所有比值都会被算错。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>④　　4.3.4 — 4.3.7　窗口、预算、指标与判分</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一个窗口，一个软预算</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>时间、步长、每人格数要一起定；预算凸显绕行代价，也会掩盖继续探索后的成功，因此预算前后都要报告。</Text>
+
+        <Box style={{ width: 1152, height: 48, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', padding: '0 20px', marginTop: 8 }}>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>14:00</Text>
+            <Text style={{ fontSize: 16, color: '#546779' }}>14:15</Text>
+            <Text style={{ fontSize: 16, color: '#546779' }}>14:30</Text>
+            <Text style={{ fontSize: 16, color: '#546779' }}>14:45</Text>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>15:00</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 40, marginTop: 8 }}>
+
+            <Box style={{ width: 400, height: 132, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>时间窗口</Text>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>W ＝ 2026-10-20 14:00—15:00</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>Asia/Shanghai</Text>
+            </Box>
+
+            <Box style={{ width: 280, height: 132, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>步长与步数</Text>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>1 分钟／步</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>共 61 步</Text>
+            </Box>
+
+            <Box style={{ width: 392, height: 132, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>软步行预算</Text>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>每人 40 格</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>内核不会自动扣额或截停</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

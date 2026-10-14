@@ -1,0 +1,53 @@
+<Slide notes={`接收有层次之分，从最轻的只读回放，到复算，再到重新运行。
+
+只读回放用的是已有的运行编号，不执行模型，只看结果能不能打开、材料能不能定位。复算报告要用同一套判据、同一个分母和相同的取材边界，看看结果能不能被重新算出来。再往上是重新执行：从实验新跑会得到新的运行编号，从已有运行重跑会读取内嵌的实验，续跑则在同一个运行编号下开一个新的尝试，从下一个提交步继续。
+
+这些层次没有必须全部完成的说法。接收者不需要把每一层都做完，关键是如实记录：完成到只读回放，就写只读回放；重新运行还没有执行，就保留待执行。
+
+把没做的部分写成已完成，是交付里最不该出现的一类错误。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.5　第四份交付：接收与反馈处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>完成到哪一层，就写哪一层</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 438, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>接收的四个层次</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>接收者无需将所有层次一次做完。层次越深，需要的环境、身份与时间越多，记录的成本也越高。</Text>
+            <Box style={{ width: 438, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.7 }}>完成只读回放就准确写只读回放；重新运行尚未执行就保留待执行。把没做的部分写成已完成，是交付里最不该出现的错误。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 682, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 682, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>只读回放</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>使用已有 run_id；不执行模型，只看材料能否定位与打开</Text>
+            </Box>
+
+            <Box style={{ width: 682, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>复算报告</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>使用同一判据、同一分母与相同取材边界，核对结果能否复现</Text>
+            </Box>
+
+            <Box style={{ width: 682, height: 128, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>从实验新跑 / 从 Run 重跑 / 续跑</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>新跑取得新 run_id 与首个 attempt_id；重跑读取内嵌实验；续跑同 run_id、新 attempt_id，从下一提交步继续</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 31</Text>
+    </Box>
+
+</Slide>

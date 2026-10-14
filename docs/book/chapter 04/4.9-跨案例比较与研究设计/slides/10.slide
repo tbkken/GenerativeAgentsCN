@@ -1,0 +1,74 @@
+<Slide notes={`回到六行数据，三组数的读法完全不同。
+
+总闭环率：A 六除以十二是 50%，B 八除以十二约 66.7%，把所有任务平等合并。
+
+每 Run 比率：A 是 50%、75%、25%，B 是 75%、75%、50%。三个数摆出来就能看到分布有重合。
+
+两组之差：66.7% 减 50% 等于 16.7 个百分点，单位是百分点，不是百分比。
+
+换成相对说法，(66.7% 减 50%) 除以 50% 约 33.3%，表示相对基线涨了三成。
+
+三次样本还分布重合，说不了统计显著，更不能说稳定优越。各 Run 任务数相同时，平均 Run 比率才恰好等于汇总任务比率。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.3　比率与权重分别说清</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三组数，三种问法</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>同一个提升，{'\n'}三种说法</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 380 }}>B 比 A 好，可以写成高出 16.7 个百分点，也可以写成相对提升 33.3%。两个说法都对，但回答的是不同问题。</Text>
+        </Box>
+
+        <Box style={{ width: 736, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 736, flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 26 }}>
+                <Box style={{ width: 180 }}><Text style={{ fontSize: 14, color: '#546779' }}>计算</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>数值与它回答的问题</Text></Box>
+            </Box>
+
+            <Box style={{ width: 736, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>总闭环率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>A 6/12＝50%；B 8/12≈66.7% —— 全部任务等权合并</Text></Box>
+            </Box>
+
+            <Box style={{ width: 736, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>每 Run 比率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>A 50%、75%、25%；B 75%、75%、50% —— 三次分布先摆出来</Text></Box>
+            </Box>
+
+            <Box style={{ width: 736, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>B − A</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>约 16.7 个百分点 —— 差值的单位是百分点，不是百分比</Text></Box>
+            </Box>
+
+            <Box style={{ width: 736, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>相对 A 的变化</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>（66.7% − 50%）÷ 50% ≈ 33.3% —— 问「相对基线涨了百分之几」</Text></Box>
+            </Box>
+
+            <Box style={{ width: 736, height: 76, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>三次分布有重合，不能据均值较高就说统计显著或稳定优越；各 Run 任务数相同时，平均 Run 比率才恰好等于汇总任务比率。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 25</Text>
+    </Box>
+
+</Slide>

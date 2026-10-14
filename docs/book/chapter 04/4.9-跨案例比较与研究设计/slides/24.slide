@@ -1,0 +1,67 @@
+<Slide notes={`再看一个典型的归因陷阱。
+
+A 组 3 人、步长 1 分钟、没有清单；B 组 6 人、步长 5 分钟，还加了一张清单，结果 B 更好。能归因于清单吗？
+
+不能。人数从 3 变到 6，改变的是互动机会和成本；步长从 1 分钟变到 5 分钟，改变的是反馈频率和移动速度。两处一起变，清单的作用就分不出来。
+
+要归因，就得恢复共同条件；或者一开始就把这几件事当作因素，事先设计成多因素研究。
+
+再做一个反向练习：给你偏爱的策略写一条反例，比如人人已经看到牌时移牌未必有用，事实少而清楚时清单可能只剩成本。
+
+最后写一页结论，用报告模板把观察、解释和外推限制分开写。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.9　综合练习与参考</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习二：写反例，写一页结论</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 516, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 516, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>能归因于清单吗？</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>A 组 3 人、1 分钟、没有清单；B 组 6 人、5 分钟、加了清单。</Text>
+            </Box>
+
+            <Box style={{ width: 516, height: 180, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>不能。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>人数从 3 变到 6，改变的是互动机会与成本；步长从 1 分钟变到 5 分钟，改变的是反馈频率与移动速度。两处一起变，清单的作用就分不出来。</Text>
+            </Box>
+
+            <Box style={{ width: 516, height: 90, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>要恢复共同条件，或者事先就把这几件事做成多因素设计。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>再给偏爱的策略写一条反例</Text>
+
+            <Box style={{ width: 600, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>人人都已经看到牌的时候，移牌未必有用；事实本来就少而清楚的时候，清单可能只剩下成本。</Text>
+            </Box>
+
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', marginTop: 4 }}>最后一页结论</Text>
+
+            <Box style={{ width: 600, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 150, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>用报告模板写一页结论：观察、解释、外推限制分开写；每个数字都能追到一行结果，每个语义判断都写清依据。计算脚本只核算算术，不验证现实结论。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 25</Text>
+    </Box>
+
+</Slide>

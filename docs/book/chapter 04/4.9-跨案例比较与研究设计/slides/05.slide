@@ -1,0 +1,85 @@
+<Slide notes={`一行数据到底要能指回什么？我用六个字段来说。
+
+真实人物、Step、Event、请求、会话、记忆身份，这六类标识各指向现场的一条真实记录。缺任何一类，这一行就没法回头核对：不知道是谁的行为、不知道落在哪一步、不知道由哪次事件触发、不知道请求发给了谁、也不知道引用的是哪份私有记忆。
+
+然后是键的规矩。教学任务允许自定义键名，只要同一批数据前后一致、能一一对上就行。
+
+但运行 UUID 不允许编造。没有真实运行记录，就如实写「无」，不能生成一个看起来像真的编号串，那会让读者以为它真的跑过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.1　任务记录的关联字段</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一行记录要能定位回现场</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 438, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 438, height: 136, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>键名可以自己定</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>教学任务允许自定义键，只要同一批数据前后一致、能一一对上，就算合格。</Text>
+            </Box>
+
+            <Box style={{ width: 438, height: 136, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>运行 UUID 不得编造</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>没有真实运行记录就写「无」。编一个像真编号的串，读者会以为这份数据真的跑过。</Text>
+            </Box>
+
+            <Box style={{ width: 438, height: 136, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>一行只对一项任务</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>几项任务挤进一行再取平均，失败与成功就混在一起，谁也追不回来。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 678, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 678, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>真实人物</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>这一步是谁的行为，指向对象本身，不用代号顶替</Text>
+            </Box>
+
+            <Box style={{ width: 678, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Step</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>落在哪一步上；一次行动不等于一次独立重复</Text>
+            </Box>
+
+            <Box style={{ width: 678, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Event</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>由哪次世界事件触发；事件与请求不能互相顶替</Text>
+            </Box>
+
+            <Box style={{ width: 678, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>请求</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>向谁发出、发出几次；重复访问要逐次保留</Text>
+            </Box>
+
+            <Box style={{ width: 678, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>会话</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>同一次会话里的往返是一条连续过程，不该拆成独立样本</Text>
+            </Box>
+
+            <Box style={{ width: 678, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>记忆身份</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>引用的是哪份角色私有记忆，不能与其他对象混用</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,75 @@
+<Slide notes={`这段代码把两轮调用并排放，好对照着看差别。
+
+第一轮，正常发请求，instructions 里放行为要求，input 里放这条材料，store 设为真，让服务端保留这一轮。拿到返回之后，first.id 就是这一轮响应的真实标识。
+
+第二轮，关键是 previous_response_id 这一行，把它设成 first.id，服务端就知道要接在第一轮后面。input 里只放新的那条消息，正式人数改成十三人，请重新检查。
+
+但请注意：instructions 这里又写了一遍。上一轮的 instructions 不会自动作为当前轮的指令继承，这是官方文档明确说明的。每写一轮都要问自己：这次的行为要求送到了吗。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.4　另一种方式：引用前一次响应</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>previous_response_id 的请求结构</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ flex: 64, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>第一轮　取得响应 id</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>first = client.responses.create(</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}model=os.environ["OPENAI_MODEL"],</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}instructions=rules,</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}input="手作室容量12人，候选安排10人。请检查人数。",</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}store=True,</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>)</Text>
+            </Box>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>第二轮　关联并重发行为要求</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>second = client.responses.create(</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}model=os.environ["OPENAI_MODEL"],</Text>
+                <Text style={{ fontSize: 13, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}previous_response_id=first.id,</Text>
+                <Text style={{ fontSize: 13, color: '#CB6B28', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}instructions=rules,</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}input="正式人数改成13人，请重新检查。",</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}store=True,</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>)</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 36, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>instructions 仍要显式发送</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>上一轮这一参数不会自动继承</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>store=True 保留这一轮</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>服务端持有，才谈得上被下一轮引用</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>第二轮只发新消息</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>历史由响应关联带过去，不重复粘贴</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>改变的是传递方式</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不代表前面的上下文 Token 免费</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 25</Text>
+    </Box>
+
+</Slide>

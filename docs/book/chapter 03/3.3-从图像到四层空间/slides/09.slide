@@ -1,0 +1,106 @@
+<Slide notes={`新建地图的具体操作：在基础配置的「地图」里点「＋ 新建地图」，填写名称、可选的稳定键和用途，选择「空白地图（自由绘制）」，输入宽 32、高 24、Tile 尺寸 32，再点「创建并编辑」。
+
+这里特别提醒一句：不要为了省事，选一个无关的旧地图来充当默认背景。旧地图自带的历史配置会混进新案例，后面排查起来非常麻烦。
+
+创建之后，编辑器实际使用「世界」「素材」两页，接下来的导入和绑定都在这两页之间来回。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.2　新建地图，导入整张背景</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>新建地图：从空白到 32×24</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 720, background: '#F7F3E8', borderRadius: 10, padding: 12, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 44, background: '#20344B', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 16px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>基础配置 · 地图</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#B5C7D8' }}>示意</Text>
+            </Box>
+
+            <Box style={{ height: 46, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779', width: 120 }}>名称</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>青禾学习中心</Text>
+            </Box>
+
+            <Box style={{ height: 46, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779', width: 120 }}>稳定键（可选）</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>留空也可，填写后便于对照</Text>
+            </Box>
+
+            <Box style={{ height: 46, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779', width: 120 }}>用途</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>第三章教学案例</Text>
+            </Box>
+
+            <Box style={{ height: 46, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779', width: 120 }}>模板选择</Text>
+                <Box style={{ width: 220, height: 32, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>空白地图（自由绘制）</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ flex: 1, height: 46, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>宽</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>32</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 46, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>高</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>24</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 46, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>Tile 尺寸</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>32</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 168, height: 46, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>创建并编辑</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>创建后进入编辑器：「世界」「素材」两页</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>操作要点</Text>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 360 }}>在「地图」点「＋ 新建地图」。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 360 }}>填写名称、可选稳定键和用途。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 360 }}>选择「空白地图（自由绘制）」。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 360 }}>输入宽 32、高 24、Tile 尺寸 32。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 360 }}>点「创建并编辑」，进入「世界」「素材」两页。</Text>
+            </Box>
+            <Box style={{ height: 76, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>不选择一个无关旧地图来充当默认背景。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 25</Text>
+    </Box>
+
+</Slide>

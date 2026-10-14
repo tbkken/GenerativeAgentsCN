@@ -1,0 +1,61 @@
+<Slide notes={`评价规则定了之后，还有一步不能省：把页面、报告和导出三处核对一遍。
+先固定取材范围，说清这次用的是哪一个 Run、边界提交到哪一步，后面所有数字都以它为准。
+然后逐项对照：质量页上的问题总数和展开明细，要跟报告里的 source_committed_step、参与者轮次数、对象轮次数对得上。
+如果这个 Run 恢复过，还要更小心。新的 Attempt 看起来一切正常，不代表以前的告警可以消失，已提交的问题必须覆盖进来。
+导出也要确认：结果 ZIP 里保存的是对应边界的新质量报告；质量读取可以从提交事实重建报告，不覆盖旧报告文件。
+项目里虽有回归测试检查这些一致性，青禾仍要自己完成同样的核对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.6　核对页面、报告和导出</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三处要能互相对上</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+            <Box style={{ width: 400, flexDirection: 'column', gap: 14 }}>
+                <Box style={{ width: 400, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>先固定取材边界</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>本次取材的 Run，以及已提交到哪一步</Text>
+                </Box>
+                <Box style={{ width: 400, height: 180, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>恢复过的 Run</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>要覆盖此前 Attempt 的已提交问题；不能因为新的 Attempt 看起来正常，就丢掉历史告警</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 720, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', height: 28, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+                    <Box style={{ width: 164 }}><Text style={{ fontSize: 14, color: '#546779' }}>核对位置</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>要跟什么对上</Text></Box>
+                </Box>
+                <Box style={{ width: 720, height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 164 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>质量页</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>问题总数与展开明细，要和参与者、Step 一一对上</Text></Box>
+                </Box>
+                <Box style={{ width: 720, height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 164 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>报告</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>source_committed_step、参与者轮次数、对象轮次数</Text></Box>
+                </Box>
+                <Box style={{ width: 720, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 164 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>结果 ZIP 导出</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>保存对应边界的新质量报告；质量读取可从提交事实重建，不覆盖旧报告</Text></Box>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.6 }}>已有回归测试检查跨 Attempt 汇总与页面、导出的一致性，但青禾仍须实际完成同样的核对。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

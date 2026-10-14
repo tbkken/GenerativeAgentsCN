@@ -1,0 +1,58 @@
+<Slide notes={`先说检索这一把尺子怎么用。
+
+Recall@k 的分母是预先标注的相关片段总数。这里最容易错的一步，是把必要条件当成片段。这个练习里有四类必要依据——人数与时长、允许房间、开放时间、已有预约——它们可能对应好多个片段，所以不能直接把 4 写成分母。先标注相关片段集合，再算。
+
+做三组对照：分别用取 1 段、取 3 段和更大的值跑一遍，每次都把检索清单和答案存下来。然后看一件事——增加结果之后，是补齐了证据，还是只是多了几段无关的文字。
+
+最后问一个材料里没有答案的问题：现场是否提供儿童看护。回答应该明确说明无法确认，而不是编一个出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.6　检索命中、引用支持、最终正确分别测量</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>Recall@k 与三项检查练习</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 120, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>检索阶段怎么打分</Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>Recall@k = 前 k 个结果中命中的相关片段数 ÷ 预先标注的相关片段总数</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>分母是预先标注的相关片段总数，不是问题数，也不是必要条件的条数。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 82, background: '#F4F7FA', borderRadius: 8, padding: '12px 20px' }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ width: 300, fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>先列出四项必要依据</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>人数与时长、允许房间、开放时间、已有预约，四类可能要多个片段才凑得齐。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 82, background: '#F4F7FA', borderRadius: 8, padding: '12px 20px' }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ width: 300, fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>分别用不同的前 k 值运行</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>取 1、取 3 和取更大的值各跑一遍，每次保存检索清单和答案。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 82, background: '#F4F7FA', borderRadius: 8, padding: '12px 20px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Text style={{ width: 300, fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>对照两次的结果</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>看是补齐了证据，还是只是加入更多无关文字。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 90, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>再问一个材料里没有答案的问题</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>现场是否提供儿童看护——材料没有相关信息，回答应说明无法确认，而不是补一个说法上去。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,53 @@
+<Slide notes={`项目做完之后还会遇到问题，这里要区分两类，处理方式完全不同。
+
+第一类是系统问题。比如运行中出现了预期之外的行为。这时候要保存入口、操作、预期与实际、身份和边界，然后停止该项验收，按仓库规则处理。先保留现场，再去判断原因。
+
+第二类是研究方案本身不合适。这时候不是停下来，而是记录原因，设计一个新的独立实验，同时把旧证据完整保留下来。旧证据不能删，它是你后来判断的依据。
+
+这两条路径不能混在一起，也不要去改动仿真内核来迁就某一次实验。前者是保留现场，后者是重做并且留痕。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.6　完成不等于所有问题都得到肯定答案</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>发现问题时，先保存入口与边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>两类问题，两条路径</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>它们的处理方式完全不同：一个是停下来保留现场，一个是重做并保留旧的证据。</Text>
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 740, height: 152, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>发现系统问题</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>保存入口、操作、预期与实际、身份和边界</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>停止该项验收，按仓库规则处理</Text>
+            </Box>
+
+            <Box style={{ width: 740, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>发现研究方案不合适</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>记录原因，设计新的独立实验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>保留旧证据，不删改原始事实</Text>
+            </Box>
+
+            <Box style={{ width: 740, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55, width: 676 }}>改动仿真内核去迁就某一次实验，会把两类问题混在一起。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

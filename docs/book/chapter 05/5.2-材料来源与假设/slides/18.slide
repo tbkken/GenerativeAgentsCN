@@ -1,0 +1,53 @@
+<Slide notes={`有人会问：既然有那么多的未确认信息，是不是这些材料都不能做？我的回答是，要看它卡在哪一步。
+
+背景图片可以先画。地图草图、语义资料、碰撞资料，这些都不改变任务答案，先做出来不影响后面的判断。
+
+但依赖错误服务范围的 Skill 不能定稿。因为服务范围一改，它答复的内容就变了，这正是要比较的东西。
+
+判断标准可以这么记：如果这项未知会改变任务答案、权限或主要比较条件，就先处理它，再形成正式比较材料；如果不会，可以先画，标清状态。
+
+还有一条边界必须守住：不要边运行边悄悄换条件。中途改一个参数，前面的结果就不能和后面对照了，整轮实验也就白做。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.5　整理信息时保留原意与空白</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>未确认信息不必一律阻止制作</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>未确认信息不必一律阻止资料制作，关键看它卡在哪一步。</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>背景图片可以先画；依赖错误服务范围的 Skill 不能定稿。</Text>
+        </Box>
+
+        <Box style={{ width: 728, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+
+            <Box style={{ width: 728, height: 150, background: '#ECF7F2', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>可以先做的</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>背景图片、空间草图、语义与碰撞资料——它们不改变任务答案，先做出来，同步标清状态。</Text>
+            </Box>
+
+            <Box style={{ width: 728, height: 150, background: '#FFF4E6', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>必须先处理的</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>会改变任务答案、权限或主要比较条件的未知信息，先处理它，再形成正式比较材料。</Text>
+            </Box>
+
+            <Box style={{ width: 728, height: 110, background: '#F7F3E8', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>一条边界</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>不要边运行边悄悄换条件。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 23</Text>
+    </Box>
+
+</Slide>

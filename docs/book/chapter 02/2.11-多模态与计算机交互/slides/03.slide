@@ -1,0 +1,56 @@
+<Slide notes={`我们从一张最普通的图开始：青禾社区学习中心的教学平面示意图，上面标着三个房间和一条公共走廊。
+
+这张图的身份要先说清楚。它是教材绘制的概念图，不是测量图，不是施工图，也不是本系统可以导航的地图。它表达的是房间在哪里、彼此什么关系。
+
+正因为它是概念图，它能承担的任务就非常有限。它能帮我们认出"手作室"这三个字写在哪个方框里，能帮我们看出哪个房间挨着走廊。除此之外，它给不出任何业务结论。
+
+所以读图之前先问一句：我打算让这张图回答什么？如果答案是容量或者预约状态，那它根本不在图里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.11.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从图片读出什么，不能读出什么</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>图片只用于辨认房间标注与相对位置，业务事实另查数据文件。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>可见　房间标注</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>方框里的名称</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>可见　相对位置</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>谁挨着走廊</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不可见　容量与预约</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>图里没有这两种数据</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 300, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>读图之前先问：我打算让它回答什么</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 26</Text>
+    </Box>
+
+</Slide>

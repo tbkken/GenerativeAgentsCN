@@ -1,0 +1,99 @@
+<Slide notes={`依赖被解析后，运行时为模型提供 call_skill 工具，参数只有两个：name 和 input_text。父技能要把有用的观察、约束和问题传给子技能，再利用子技能返回的自然语言建议继续判断。
+
+两条容易误解的地方。第一，依赖关系不是执行顺序，不会因为某个子 Skill 写在列表第一项就自动先调用。第二，子 Skill 拿到的是同一轮的 IterationContext，但不能替根 Brain 提交世界动作——执行器会直接从子技能的可用工具里去掉 world-act。
+
+本案例再进一步：两个子 Skill 保持纯建议角色，不改世界、也不写记忆。根 Brain 对建议负责，并完成最终校验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.3　当前系统怎样读取 SKILL.md</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>依赖怎么被调用，子 Skill 缺什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 200, height: 104, background: '#20344B', borderRadius: 8, padding: '12px 12px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF', textAlign: 'center' }}>$qinghe-{'\n'}compare-options</Text>
+                <Text style={{ fontSize: 12, color: '#B5C7D8', textAlign: 'center' }}>Brain 正文中的依赖</Text>
+            </Box>
+            <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>运行时解析出依赖</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>注册为可调用的子 Skill</Text>
+            </Box>
+            <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>提供 call_skill 工具</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>参数：name、input_text</Text>
+            </Box>
+            <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 104, background: '#ECF7F2', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>子 Skill 返回建议</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>自然语言结果</Text>
+            </Box>
+            <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 104, background: '#ECF7F2', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>根 Brain 继续判断</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>对建议负责并完成校验</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>子 Skill 不能替 Brain 动手</Text>
+                <Box style={{ flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                        <Box style={{ width: 4, height: 26, background: '#26816B' }} />
+                        <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>得到的是同一轮的 IterationContext</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                        <Box style={{ width: 4, height: 26, background: '#CB6B28' }} />
+                        <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>执行器从子技能的可用工具中去掉 world-act</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                        <Box style={{ width: 4, height: 26, background: '#26816B' }} />
+                        <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>本案例两个子 Skill 不改世界、不写记忆</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>依赖关系不是执行顺序</Text>
+                <Box style={{ flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                        <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                        <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>不会因为写在列表第一项就自动先调用</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                        <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                        <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>父技能把有用的观察、约束和问题传给子技能</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                        <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                        <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>再利用其自然语言结果继续判断</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 22</Text>
+    </Box>
+
+</Slide>

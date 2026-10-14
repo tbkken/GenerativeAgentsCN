@@ -1,0 +1,82 @@
+<Slide notes={`同一件事，在一间屋子里可以说出三种不同的说法。「原来在杏厅」是一个已经过期的旧认识，「也许换到杉厅」只是一条候选建议，「正式改到杉厅」才是新的正式通知。三者指向的行动其实是同一个——去杉厅，但人物对旧消息的处理方式不一样，走法就可能不一样。
+
+这节课要问的不是「能不能通知到」，而是：当正式更正已经送到，那条旧的当前信念还在不在有效态里。如果它还在，检索又把它取回来，人物就可能照旧走去杏厅，这就产生了我们要数的过期行动。
+
+先说明白：青禾读写交流和杏厅、杉厅都是虚构教案，目前没有实验、没有 Run，所以我不预设哪一种处理一定会赢。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.4　通知纠错</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>让过期消息{'\n'}退出当前认识</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>消息内容与行动目标都相同，只改变对旧信念的处理，能否减少收到正式更正之后的过期行动。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>虚构教案</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>两组同 SOP</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>唯一变化</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>过期行动</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 560, height: 196, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>告</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>公告对象状态　—　示意</Text>
+                </Box>
+                <Box style={{ width: 520, height: 44, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>初始</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>original</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>正文：本次会址为杏厅</Text>
+                </Box>
+                <Box style={{ width: 520, height: 44, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>更正后</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>revised</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>正文／生效时间／被采纳请求 ID</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>看见 revised 只知外观变化，不自动知道新地点</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 178, height: 76, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>原来在杏厅</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>已经过期</Text>
+                </Box>
+                <Box style={{ width: 178, height: 76, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>也许换到杉厅</Text>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>候选建议</Text>
+                </Box>
+                <Box style={{ width: 180, height: 76, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>正式改到杉厅</Text>
+                    <Text style={{ fontSize: 13, color: '#26816B' }}>新的正式通知</Text>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779' }}>大厅、人物与消息均为虚构教案，尚未上传或运行；界面元素为示意，非系统截图</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错：让过期消息退出当前认识</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 24</Text>
+    </Box>
+
+</Slide>

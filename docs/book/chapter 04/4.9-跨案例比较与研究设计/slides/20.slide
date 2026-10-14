@@ -1,0 +1,99 @@
+<Slide notes={`研究计划写在一页纸上，要让别人照着就能判分。六个问题必须回答。
+
+第一，谁遇到什么问题，唯一的主要观察结果是什么。主指标只能有一个。
+
+第二，作者、角色、对象、评阅者各知道什么，这决定信息边界是否公平。
+
+第三，改哪一项、哪些条件两组保持相同。只改一处，其余全部冻结。
+
+第四，单位是什么、跑几轮 Run、窗口多长、预算多少、什么条件停止，都要在开始前写下。
+
+第五，什么算成立，未知、未完成和合理拒绝怎么记，四类都要在量表里有着落。
+
+第六，成本、失败和没触发的条件怎样进入报告。
+
+书稿给了实验计划与干预差异两份模板可以直接填。创建实验前请另一读者按规则判一段示例，判不动就先改量表。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.8　一页研究计划应能让别人判分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六个问题写完，别人才能判分</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 612, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ width: 612, height: 66, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 38, height: 38, background: '#276FBF', borderRadius: 19, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45, flex: 1 }}>谁遇到什么问题，唯一的主要观察结果是什么？</Text>
+            </Box>
+
+            <Box style={{ width: 612, height: 66, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 38, height: 38, background: '#276FBF', borderRadius: 19, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45, flex: 1 }}>作者、角色、对象、评阅者各知道什么？</Text>
+            </Box>
+
+            <Box style={{ width: 612, height: 66, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 38, height: 38, background: '#276FBF', borderRadius: 19, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45, flex: 1 }}>改哪一项，哪些条件两组保持相同？</Text>
+            </Box>
+
+            <Box style={{ width: 612, height: 66, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 38, height: 38, background: '#276FBF', borderRadius: 19, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45, flex: 1 }}>单位、Run 数、窗口、预算与停止规则是什么？</Text>
+            </Box>
+
+            <Box style={{ width: 612, height: 66, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 38, height: 38, background: '#CB6B28', borderRadius: 19, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45, flex: 1 }}>什么算成立，未知、未完成与合理拒绝怎么记？</Text>
+            </Box>
+
+            <Box style={{ width: 612, height: 66, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 38, height: 38, background: '#26816B', borderRadius: 19, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45, flex: 1 }}>成本、失败与未触发的条件怎样进入报告？</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 504, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 504, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>实验计划</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>templates/study-plan.md —— 问题、角色知识、空间、组别、窗口与评分</Text>
+            </Box>
+
+            <Box style={{ width: 504, height: 88, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>干预差异</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>templates/intervention-diff.md —— 精确保存两组不同的那一段文本或布局</Text>
+            </Box>
+
+            <Box style={{ width: 504, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>判不动，就先改量表</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>创建实验前请另一读者按规则判一段示例。判不下来，问题多半出在量表上，不在实验上。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 25</Text>
+    </Box>
+
+</Slide>

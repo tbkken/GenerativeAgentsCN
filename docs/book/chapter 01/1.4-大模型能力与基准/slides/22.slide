@@ -1,0 +1,132 @@
+<Slide notes={`ARC-AGI-2 的形式很特别。每一道题会给几个输入输出的格子对照，让你先看出变换规则，再把它用到一个新的输入上。
+
+比如这里给出的规律是：把输入的小格子整体横向复制三遍，得到加宽的输出。前两个例子都在教这个规律，第三个只给输入，要求你写出输出。
+
+它的判分非常硬：每一格的颜色都必须完全对上，没有任何部分分。差一格，整题就是零分。
+
+这道题的设计意图，是让记忆帮不上忙。规则不在任何教科书里，你必须现场从两三个例子里把规律推出来。所以它测的是现场推理能力，而不是记住多少知识。
+
+顺带说一句，它的题目都是全新的，天然抵抗污染；也正因如此，分数涨得慢，人类水平也不高。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>④　1.4.4　样本展示：从两三个例子里推出规则</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>ARC-AGI-2：看例子推规则</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 340, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>示例一</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                        </Box>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                        </Box>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                        </Box>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45, textAlign: 'center' }}>输入两列，输出六列</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 340, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>示例二</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                        </Box>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                        </Box>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                        </Box>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45, textAlign: 'center' }}>换了颜色组合，规律不变</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 340, background: '#FFF4E6', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 14, alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>待解的输入</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#26816B', borderRadius: 3 }} />
+                        </Box>
+                        <Box style={{ flexDirection: 'row', gap: 3 }}>
+                            <Box style={{ width: 20, height: 20, background: '#546779', borderRadius: 3 }} />
+                            <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 3 }} />
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+                    <Box style={{ width: 135, height: 43, background: '#FFFFFF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>？</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45, textAlign: 'center' }}>要自己写出输出，每格必须完全对上</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779', textAlign: 'center' }}>无部分分 · 规则不给 · 靠现场推理</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>规则不在教科书里，也没有公开的分类表——记忆帮不上忙，只能现场推</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 36</Text>
+    </Box>
+
+</Slide>

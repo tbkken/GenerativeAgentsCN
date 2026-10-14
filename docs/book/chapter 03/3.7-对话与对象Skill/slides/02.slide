@@ -1,0 +1,80 @@
+<Slide notes={`先把这一节要看清的东西摆出来，一共四块。
+
+第一块是人和人怎么说话：一条 SPEAK 恰好连接一名其他 Agent，所以「四个人开会」要拆成多轮双人消息，会话身份也不能自己编。
+
+第二块是人和对象怎么说话：INTERACT 只负责把请求交出去，选择键要从感知结果里取，工具层的接受信息不等于对方已经答复。
+
+第三块是对象自己怎么动：绑定根 Skill 之后，公告栏与服务台每一步都会自主运行，公告更新要经过真实请求和自身提交两道关口。
+
+第四块是配置与核对：在地图页面绑定对象 Skill，再沿请求链查清楚谁发的、处理了哪个请求、答复有没有真的进入下一个人的视野。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7　对话与对象 Skill：让信息通过真实交互传播</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 18 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 300 }}>信息不会自己传过去。人和人怎么说话、人和对象怎么说话、对象自己怎么动、配好之后怎么核对，这四件事决定观察能不能站住。</Text>
+            <Box style={{ width: 300, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>谁真的收到了</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一句话说出口，不等于对方已经知道；请求被接受，不等于业务答复已经到了。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>人与人对话 · SPEAK</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>一条 SPEAK 恰好连接一名其他 Agent；会话身份只能取自真实返回值。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>人与对象请求 · INTERACT</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>选择键来自感知结果；请求被接受，不等于答复已经收到。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>对象自己的行动</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>对象每 Step 自主运行，候选建议与正式更新要分开核对。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>配置与核对</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>绑定对象 Skill，再沿请求链核对消息是否真正到达。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 31</Text>
+    </Box>
+
+</Slide>

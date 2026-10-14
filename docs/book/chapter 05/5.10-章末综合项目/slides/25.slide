@@ -1,0 +1,79 @@
+<Slide notes={`同一个维度，在两种交付范围里的依据不一样，这一点必须写进量表。
+
+问题与范围十五分。设计交付看目标、用户、观察单位和边界是否具体；运行交付还要看实际执行与约定一致，或者偏差有没有说明。
+
+材料与信息分配二十分。设计交付看来源、假设和角色知识里有没有泄漏答案；运行交付看保存后的资源与实验副本是否核对。
+
+行为与对照二十分，设计交付要求标准流程精确、唯一变化和依赖明确；运行交付要看包内文本与共同条件的实际核对。
+
+证据与分析二十五分是最重的一块。设计交付只要判据可操作、人工练习标注清楚；运行交付则要求全部样本、定位、费用和结论都能追溯。接收与表达二十分，运行交付还多了实际接收范围与复查结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.6　一份可以说明理由的评分量表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>设计依据与运行依据不同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>分值相同，两种交付范围提供的依据不同；评分前先选择作业范围</Text>
+
+        <Box style={{ width: 1152, height: 40, background: '#20344B', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF', width: 240 }}>维度</Text>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF', width: 90 }}>分值</Text>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF', width: 390 }}>设计交付的主要依据</Text>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF', width: 340 }}>运行交付增加的依据</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 240 }}>问题与范围</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 90 }}>15</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 390 }}>目标、用户、观察单位和边界具体</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 340 }}>实际执行与约定一致或有偏差说明</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 240 }}>材料与信息分配</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 90 }}>20</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 390 }}>来源、假设、角色知识无答案泄漏</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 340 }}>保存后的资源和实验副本核对</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 240 }}>行为与对照</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 90 }}>20</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 390 }}>精确 SOP、唯一变化和依赖明确</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 340 }}>包内文本与共同条件的实际核对</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#ECF7F2', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 240 }}>证据与分析</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', width: 90 }}>25</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 390 }}>判据可操作，人工练习标注清楚</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 340 }}>全部样本、定位、费用和结论可追溯</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 240 }}>接收与表达</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 90 }}>20</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 390 }}>他人能独立找到材料并提出反馈</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 340 }}>实际接收范围、文件及复查结果完整</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 240 }}>合计</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28', width: 90 }}>100</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 390 }}>按设计范围评分</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 340 }}>按运行范围评分</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 31</Text>
+    </Box>
+
+</Slide>

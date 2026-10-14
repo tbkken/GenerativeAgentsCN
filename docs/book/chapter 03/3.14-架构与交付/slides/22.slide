@@ -1,0 +1,45 @@
+<Slide notes={`开放日的基础练习做完之后，就可以提出自己的问题了。
+
+思路是把「我想看看会怎样」变成一个可以测量的假设。
+
+举三个方向。第一，把公告栏放远一些，会不会增加信息更新延迟——因为走过去要花更多步。第二，志愿者更主动地询问，能不能减少按旧安排行动的情况。第三，把视野和注意力降低之后，角色会选择什么样的咨询渠道，是更依赖面对面，还是更依赖公告。
+
+每次先提出可测量的假设，只改变清楚的因素，其他条件保持不变，失败的 Run 也要保留。
+
+原实验封存之后，要创建新的独立实验来记录改动。这不是在旧包上建立一个业务 Revision，也不是覆盖旧的运行证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　·　3.14　沿着一次行动理解架构，整理可交付的实验</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>⑥　　3.14.6　从已有能力走向新场景</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从已经跑通的，走向没做过的</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>把「我想看看会怎样」换成一个可以测量的假设，然后只改变清楚的那一个因素。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24, marginTop: 8 }}>
+            <Box style={{ width: 368, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.6 }}>把公告栏放远一些，会不会增加信息更新延迟？</Text>
+            </Box>
+            <Box style={{ width: 368, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.6 }}>志愿者更主动地询问，是否能减少按旧安排行动？</Text>
+            </Box>
+            <Box style={{ width: 368, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.6 }}>视野与注意力降低后，角色会怎样选择咨询渠道？</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 29</Text>
+    </Box>
+
+</Slide>

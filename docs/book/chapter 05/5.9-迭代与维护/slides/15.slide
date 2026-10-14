@@ -1,0 +1,86 @@
+<Slide notes={`公共作者资源在选入实验的时候，内容及依赖会被物理复制一份。
+
+所以后来修改公共咨询台 Skill，不会自动更新既有实验。Run 启动时，又把当次实验完整嵌入，之后不再读取当前的公共资源或实验目录。
+
+这三层复制带来两个方向的结果。向下看，公共资源的修改不会自动流进旧实验，旧 Run 和原始导出保留原样，历史事实不会被后来的编辑悄悄改写。向上看，维护者必须明确自己改的是哪一份内容：改公共资源，影响的是未来新选入的项目；改实验草稿，影响的才是这一轮的执行输入。
+
+这里有三个"没有"：没有 Revision，没有自动跟随，也没有运行期的外部活引用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.4　选对副本，才能改对地方</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>公共资源、草稿、封存与 Run</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 640, flexDirection: 'column' }}>
+
+            <Box style={{ width: 640, height: 80, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>公共资源　直接编辑</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>影响未来新选入的项目</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 40, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 460, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', width: 166 }}>选入时完整复制</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>独立实验草稿　DRAFT</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>包内副本可以编辑</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 40, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 460, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', width: 166 }}>封存</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 80, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>SEALED　当前输入不可修改</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>需要调整时复制成新的独立草稿</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 40, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 460, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', width: 166 }}>启动时完整嵌入</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>Run 内嵌实验</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>固定本次执行输入</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 480, flexDirection: 'column', gap: 16 }}>
+            <Box style={{ width: 480, height: 152, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>公共修改不自动更新旧实验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>改了公共 Skill，既有实验里的那一份副本仍然是旧内容。</Text>
+            </Box>
+            <Box style={{ width: 480, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>旧 Run 与原始导出保留原样</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>历史事实不会被后来的编辑悄悄改写。</Text>
+            </Box>
+            <Box style={{ width: 480, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>三个"没有"</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>无 Revision、无自动跟随、无运行期外部活引用。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,71 @@
+<Slide notes={`只要进入协作，就必须给这套流程装上闸门，否则成本和失败都会失控。
+
+第一是总调用预算。角色一旦能动态扩张，调用次数就没有上限，所以要先定预算再开工。第二是并发上限，明确同时在跑几个角色，避免一次把所有请求都打出去。
+
+第三是超时处理，这条最容易出问题。超时的意思是"没有返回"，它不等于"没有问题"，两者必须分开对待，不能把超时当成通过。
+
+第四是裁决依据。当审阅意见冲突时以谁为准，要事先写清楚，不能一直加派审查员，直到有人赞同为止。
+
+本章脚本的范围很克制：固定三次调用、只读输入、单一汇总写入，没有无限子任务，也没有跨进程恢复。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.4　工作流和自主协作的差异</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>协作必须设四条闸门</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 18px' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>闸门</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>防的是什么</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>怎么做</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 8, padding: '12px 18px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>总调用预算</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 15, color: '#546779' }}>角色或轮次无限扩张，成本失控</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>开工前先定上限</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 8, padding: '12px 18px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>并发上限</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 15, color: '#546779' }}>一次把太多请求同时打出去</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>明确同时在跑几个角色</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 8, padding: '12px 18px' }}>
+            <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>超时处理</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 15, color: '#546779' }}>把「没有返回」当成「没有问题」</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#CB6B28' }}>超时单独判定，不等于通过</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 8, padding: '12px 18px' }}>
+            <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>裁决依据</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 15, color: '#546779' }}>一直增派审查员，直到有人赞同</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>事先写清冲突时以谁为准</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>本章脚本的范围</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>固定三次调用、只读输入、单一汇总写入；没有无限子任务，也没有跨进程恢复。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 25</Text>
+    </Box>
+
+</Slide>

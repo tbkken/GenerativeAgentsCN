@@ -1,0 +1,81 @@
+<Slide notes={`在动笔写交接稿之前，我把这一案固定了什么、不固定什么说清楚，避免后面反复解释。
+
+固定的是资料：设备私有 K1 到 K5，对外只公开一个 attention 状态。固定的是未知项：阈值、原因、零件、修法，一律说未知。
+
+固定的是记录台的行为：开始是 empty，只保存实际提交的正文，不补缺项，也不保证写得对。
+
+还有一条边界要特别记住：「检查」这个动作本身不证明物理维修。设备没有电气、机械或故障概率模型，所以 ACT 成功只说明动作提交成功了。
+
+这套设定只属于这一案，不是说所有对象都得做成静态问答库。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.1　五条有限事实：不要补造诊断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>这一案固定了什么，不固定什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 14, height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>设备私有资料 K1—K5，对外只公开 state = attention</Text>
+            </Box>
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>公开面不等于私有面</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>未知的阈值、原因、零件与修法，一律说未知</Text>
+            </Box>
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不按组别补答案</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>3</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>记录台初始 empty，只保存实际请求正文并改 recorded</Text>
+            </Box>
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不补缺项、不保证正确</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>人物只能申请保存，也不能等待未发出的请求</Text>
+            </Box>
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>回复经提交后接收</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>边界：检查动作不证明物理维修</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>设备没有电气、机械或故障概率模型；这是本案固定资料设定，不是要求所有对象都作静态问答库。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

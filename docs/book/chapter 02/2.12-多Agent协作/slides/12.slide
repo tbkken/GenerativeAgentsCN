@@ -1,0 +1,64 @@
+<Slide notes={`这条链只走三步，但每一步都在保护范围。
+
+最左边是原始预约事实：只有十点到十点半被占用。这个边界是硬的，它不会因为后面怎么描述而改变。
+
+中间是交接包。它装的不是一句概括，而是结论、来源、适用时段、未解决项和证据。为什么要这么细？因为下游角色要能自己回查，而不是只能相信上游的一句转述。
+
+最右边是接收角色。它拿到交接包后，先回查来源，再汇总。
+
+下面两条是边界。第一条说，交接里要保留内容的身份——事实、程序判定和角色建议不是一回事。第二条是警戒：不能把十点到十点半扩写成上午不可用；多数投票也不能把建议提升为事实，更不能覆盖容量限制。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.3　交接的是证据，不只是摘要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交接包里必须装什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 24, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>保留范围与来源，让接收角色可以自己回查</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: 340, height: 190, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>原始预约事实</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', fontWeight: 'bold' }}>仅 10:00—10:30 占用</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>范围有明确边界{'\n'}来自预约文件</Text>
+            </Box>
+            <Box style={{ width: 44, height: 190, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 190, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>交接包</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', fontWeight: 'bold' }}>结论 · 来源 · 适用时段</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>未解决项与证据{'\n'}不能只传一句摘要</Text>
+            </Box>
+            <Box style={{ width: 44, height: 190, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 190, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>接收角色</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', fontWeight: 'bold' }}>回查来源后汇总</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>不直接采信上游转述{'\n'}判断依据要能落回文件</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 700, height: 78, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>保留内容的身份</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>事实与程序判定、角色建议要分开存放，不能混成一种口径</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 78, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能扩写为「上午不可用」</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>多数投票不能改变原始事实</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 25</Text>
+    </Box>
+
+</Slide>

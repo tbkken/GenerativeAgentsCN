@@ -1,0 +1,98 @@
+<Slide notes={`四条私有限制分别挂在三个人身上。
+
+温乔那一条是 F1：读图阅读必须早于纸艺手作。任新那一条是 F2：合作拼图必须十一点开始。白露手上有两条，F3 是手作必须在操作室，F4 是阅读必须在阅览室。主持人陶明初始什么都没有，既没有限制也没有教师答案，他手上只有自己实际收到的条件和来源。
+
+这里最容易出错的是白露。她和主持人之间只有一条人物连线，但那条线承载了两条独立事实。核对的时候要分别去找这两条事实的真实内容；数箭头，数出来是三条条件，那就错了。
+
+还有一个反方向的错：主持人收到了，不等于其他三个人都收到了。这两件事必须分开记。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.2　条件卡只能分别发给持有者</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个人各拿到什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 704, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 704, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 112, height: 48, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>温乔</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>F1　一条</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>读图阅读必须早于纸艺手作</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 704, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 112, height: 48, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>任新</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>F2　一条</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>合作拼图必须 11:00 开始</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 704, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 112, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>白露</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>F3、F4　两条独立事实</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>手作必须操作室；阅读必须阅览室</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 704, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Box style={{ width: 112, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>陶明</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>主持人　初始为零条</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>无私有限制、无教师答案；汇总实际收到的条件与来源</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 416, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>两条事实{'\n'}只走一条连线</Text>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 416 }}>白露到陶明只有一条人物连线，却承载 F3、F4 两条限制。核对时要分别找到两条事实的真实内容，不能按箭头数判成三条条件。</Text>
+
+            <Box style={{ width: 416, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>主持人已收到 ≠ 全员已收到</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>两类事实必须分开记录</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 416, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#B5C7D8' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>卡片表不得进入共同上下文</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>完整卡片表不进共同 Brain、主持人初始记忆或题面对象</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 26</Text>
+    </Box>
+
+</Slide>

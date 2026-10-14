@@ -1,0 +1,64 @@
+<Slide notes={`查询的返回字段不多，但每个都容易被读错。
+
+reachable 为 true，只说明存在一条可走路线；distance_tiles 是这条路线的格数；next_coord 只是路径的第一格，不是最终目的地；movement_required 为 false，表示人物已经处在目标范围内，不需要移动。
+
+最容易忽略的是性质：这是一次查询。它不修改坐标，也不消耗本轮唯一的世界动作。查询完人物还站在原地，真正动起来要等 MOVE 提交成功。
+
+把这几个字段的语义记准，后面核对轨迹时就不会把查询当移动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.2　导航是查询，不是移动</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>返回字段说清了什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>一次导航查询的返回字段，各自回答一个具体问题。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>reachable: true</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>存在一条可走路线</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>distance_tiles</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>这条路线的格数</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 38, background: '#CB6B28' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>next_coord</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>只是路径第一格，不是目的地</Text></Box>
+            </Box>
+
+            <Box style={{ height: 62, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 38, background: '#26816B' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>movement_required: false</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>已经处于目标范围内</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 72, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>查询不修改坐标，也不消耗本轮唯一的世界动作</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>真正移动要等 MOVE 提交成功</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 23</Text>
+    </Box>
+
+</Slide>

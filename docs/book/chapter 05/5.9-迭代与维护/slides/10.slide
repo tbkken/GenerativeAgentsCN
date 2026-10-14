@@ -1,0 +1,66 @@
+<Slide notes={`维护不只有重跑，但有些改动确实必须重跑。
+
+如果改的是书稿排版、错别字或者证据链接的位置，这些不进入模型输入，复查范围就是文档本身：引用是否准确，有没有改变原来的结论。
+
+只要碰到已经执行过的精确 Skill 文本，哪怕只改一个词，也不能悄悄替换之后继续拿旧 Run 说它有效。旧 Run 是用旧文本跑出来的，改完就必须有新的对应证据。
+
+评分口径的变化同样要留记录：原来的结果仍然可以复核，新的评分作为有出处的分析材料保存。它不能写回历史 Run，冒充系统当时的评价。
+
+这两类改动的区别其实很简单：一个改的是别人怎么读，一个改的是系统怎么跑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.2　不同变更需要不同的验证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>文档可以只改字，行为输入必须留新证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 10 }}>
+            <Box style={{ width: 560, height: 64, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>只复查文档</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>改动不进入模型输入</Text>
+            </Box>
+            <Box style={{ width: 560, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>修正交付清单中的错别字</Text>
+            </Box>
+            <Box style={{ width: 560, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>补齐缺失的证据链接</Text>
+            </Box>
+            <Box style={{ width: 560, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>核对引用是否准确、含义未变</Text>
+            </Box>
+            <Box style={{ width: 560, height: 82, background: '#FFFFFF', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>书稿排版修改不一定需要模型运行，也不必新开实验。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 10 }}>
+            <Box style={{ width: 560, height: 64, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>必须有新的对应证据</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>改动进入模型或评分</Text>
+            </Box>
+            <Box style={{ width: 560, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>精确 Skill 文本只改一个词</Text>
+            </Box>
+            <Box style={{ width: 560, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>评分口径发生变化</Text>
+            </Box>
+            <Box style={{ width: 560, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>新独立实验、精确差异与消耗</Text>
+            </Box>
+            <Box style={{ width: 560, height: 82, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>不能悄悄替换文本后，继续用旧 Run 证明它有效。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,54 @@
+<Slide notes={`先建立一条线，后面所有指标都挂在这条线上。
+
+起因是两句话：“回答很像专业策划”“说话比较谨慎”。这两句都是印象。印象不是没用，它提示我们先去看什么，但它不能拿来比较两个候选，因为没有人能说清它到底测了什么。
+
+要把它变成可测量的，第一件事是确定使用目标。目标是减少报名整理中的遗漏，还是可靠地调整活动安排，这两件事要准备的材料和检查的东西完全不同。
+
+目标定下来，才轮到选样本：用什么材料、出哪些题。然后决定记录什么可见的结果，再在动手之前把判分规则写死，避免看到答案后回头改标准。判完分才汇总成指标，最后写上适用范围。
+
+顺序不能颠倒。很多看起来精确的数字之所以没用，是因为链条的某一环在事后才被补上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.3　导言</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一条从目标到边界的评价链</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>指标只是这条链上的一环。选错了任务，再精确的计算也回答不了原来的问题。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16, marginTop: 8 }}>
+            <Box style={{ width: 150, height: 62, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>使用目标</Text>
+            </Box>
+            <Box style={{ width: 150, height: 62, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>任务样本</Text>
+            </Box>
+            <Box style={{ width: 150, height: 62, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>可观察输出</Text>
+            </Box>
+            <Box style={{ width: 150, height: 62, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>判分规则</Text>
+            </Box>
+            <Box style={{ width: 150, height: 62, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>汇总指标</Text>
+            </Box>
+            <Box style={{ width: 150, height: 62, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>适用范围</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 31</Text>
+    </Box>
+
+</Slide>

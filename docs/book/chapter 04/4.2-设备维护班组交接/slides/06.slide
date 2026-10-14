@@ -1,0 +1,93 @@
+<Slide notes={`这一步要把两个对象的职责划清，不然很容易把不属于它们的话塞进去。
+
+设备间 T-17 只做一件事：按真实请求把资料交出来。它不会替人物起草交接稿，也不会因为知道你在哪一组就多给点提示。所有对象回复都要先提交，人物在后面的轮次才会收到。
+
+资料区的记录台更简：开始是 empty，它只保存实际提交的正文，然后把自己的状态改成 recorded，再按请求 ID 回一句确认。它不补缺项，也不保证正文写得对。
+
+这两条边界合起来，才让「保存了」和「说对了」不混为一谈。人物能做的只是申请保存。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.1　五条有限事实：不要补造诊断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>设备给事实，记录台只保存</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>两个对象，各自只做一件事</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Box style={{ height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>设备：只按请求给资料</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>给什么取决于问了什么，而不是取决于问的人是谁。</Text>
+            </Box>
+            <Box style={{ height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>记录台：只保存，不补写</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>保存的是提交上去的原文，正文对错由提交者负责。</Text>
+            </Box>
+            <Box style={{ height: 104, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>两者都不接触答案</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>教材里的教师判据不进共同上下文，人物只能自己整理。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 20 }}>
+
+            <Box style={{ height: 240, background: '#F7F3E8', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>设备间　T-17</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#CB6B28', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>按真实请求返回资料，K1—K5 都在这里</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#CB6B28', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>不替人物写交接稿，不依组别补答案</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#CB6B28', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>未知阈值、原因、零件、修法都说未知</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#B5C7D8', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>对象回复经提交后，在人物后续轮次接收</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 240, background: '#EDF4FC', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>资料区　记录台</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#276FBF', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>初始 empty，只保存实际提交的正文</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#276FBF', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>通过自身 SET_OBJECT_STATE 改为 recorded</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#276FBF', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>按请求 ID 回复保存确认</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#B5C7D8', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不补缺项，也不保证正文写对了</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

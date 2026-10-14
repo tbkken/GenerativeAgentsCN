@@ -1,0 +1,117 @@
+<Slide notes={`这四层是四道关卡，注意它们是串行往下走的。
+
+第一关是响应可用：先看 status 是不是 completed，有没有拒绝，有没有被中断。这一步不做，后面全是空谈。
+
+第二关是格式正确。JSON 语法和 Schema 结构合成一道，是因为它们都只回答同一件事：这份数据的形式能不能被程序读进去。
+
+第三关是业务可行：人数、时间、预约这些记录之间，以及记录与规则之间，相不相容。
+
+第四关是来源有效：日期、文件与适用范围对不对。
+
+关键是这一条：任何一关失败，都不要硬往下走。正确的做法是保留失败原因，回去修正输入，或者直接停住。来源的日期与适用范围要在生成前就核实，不能等结果出来再去挑材料。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.1　检查分四层</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四道验收关，缺一不可</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ height: 52, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 3, height: 30, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>验收返回结果前，先确认响应没有拒绝或中断；业务可行性与资料来源要在一份结果里分别核对。</Text>
+        </Box>
+
+        <Box style={{ height: 250, flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+
+            <Box style={{ width: 236, height: 250, background: '#EDF4FC', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>响</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>响应可用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>检查状态、拒绝与中断</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>status 必须 completed</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 236, height: 250, background: '#EDF4FC', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>格</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>格式正确</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>JSON 语法与 Schema 结构</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>能否解析、字段合规</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 236, height: 250, background: '#EDF4FC', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>业</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>业务可行</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>记录之间及记录与规则是否相容</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>人数、时长、预约冲突</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 236, height: 250, background: '#ECF7F2', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>源</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>来源有效</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>数据有依据且适用于本次任务</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#26816B' }}>日期、文件与适用范围</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 36, flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Box style={{ width: 236, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 44 }} />
+            <Box style={{ width: 236, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 44 }} />
+            <Box style={{ width: 236, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 44 }} />
+            <Box style={{ width: 236, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 118, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>任一必要检查失败：保留原因，修正输入或停止</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>来源的日期与适用范围也应在生成前核实；把来源放在最后核对，不表示可以等生成结束后才决定使用哪份材料。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 23</Text>
+    </Box>
+
+</Slide>

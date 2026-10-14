@@ -1,0 +1,54 @@
+<Slide notes={`讲完接口层面的两种状态传递方式，我们换到产品里看同一件事。
+
+这次我用的还是青禾这件事，但动作换成了在界面上做：新建一个任务，用 @ 引用 requests.csv、rooms.csv 和 rules.md 这三份材料，先让它生成一张事实与来源的对照表。
+
+这一步的目的是建立证据。它得说清楚每一条事实是从哪份文件的哪一部分来的。
+
+然后追加一句追问：只讨论手作体验，请说明还缺哪些资料才能确定时间。这时候它应该意识到，预约状态还没有核对过。
+
+最后才是在材料的练习副本里，把手作人数从十人改成十三人，明确要求重新读取文件。要看的是：旧的那个容量可行的结论，会不会被撤回。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.3.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>WorkBuddy：文件引用、追问与任务交接</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#26816B' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>把人数从 10 改成 13，看旧的「容量可行」结论会不会被撤回。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 330, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>① 引用三份材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>先生成「事实—来源」表</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 320, height: 76, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>② 追问还缺什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>预约状态尚未核对</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>③ 只在副本中改人数</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>要求重新读取文件</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 25</Text>
+    </Box>
+
+</Slide>

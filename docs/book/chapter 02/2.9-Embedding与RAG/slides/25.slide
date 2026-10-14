@@ -1,0 +1,63 @@
+<Slide notes={`这一节到这里，我想留下三个问题，以后做检索增强的时候都可以拿出来问一遍。
+
+第一个，找得回依据吗？检索出来的那几段，能不能回到原文件，能不能说清是那一段原文。
+
+第二个，引得住结论吗？每一条结论是不是真的由引用支撑，还是引用了一个看起来相关、其实答不了这个问题的片段。
+
+第三个，判得对结果吗？最终的方案，有没有通过业务规则的检查。
+
+这三个问题连起来，就是这一节想说的价值：把可追溯的资料送到生成环节，并且让资料不足这件事可以被发现，而不是被一段流畅的文字盖过去。更新预约这类任务仍然优先用有明确身份与日期的查询工具，两种方法可以在同一个 Agent 里协同使用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 6, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>记住三个问题</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px' }}>
+                <Text style={{ width: 72, fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>找得回依据吗</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>检索出来的片段，能不能回到原文件，说清是哪一段原文。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px' }}>
+                <Text style={{ width: 72, fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>02</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>引得住结论吗</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>每一条结论，是不是真的由引用支撑，而不是引用了一个答不了问题的片段。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '14px 22px' }}>
+                <Text style={{ width: 72, fontSize: 34, fontWeight: 'bold', color: '#26816B' }}>03</Text>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>判得对结果吗</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>最终的方案，有没有通过业务规则的逐项检查。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 90, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>2.9 Embedding 与 RAG　·　先找依据，再组织答案</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>把可追溯的资料送到生成环节，并让资料不足可以被发现。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 25</Text>
+    </Box>
+
+</Slide>

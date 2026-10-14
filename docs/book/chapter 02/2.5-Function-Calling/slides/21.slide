@@ -1,0 +1,57 @@
+<Slide notes={`工具失败的时候，返回什么，比返回得漂不漂亮重要得多。
+
+这里有两种"空"，一定要分开。第一种是"该日期没有预约"：查询正常执行了，范围内的确没有记录，返回一个空列表是对的。第二种是"这个日期不在本教学数据支持的范围内"：这次查询根本没有做成，它是一个失败，必须返回明确的错误类别。
+
+为什么要较真？因为如果两种情况都返回空列表，模型看到的结果一模一样，它就有很大概率把"查不了"读成"没有预约"，然后给出一个看起来很合理、实际上没有依据的方案。
+
+所以工具失败要返回错误类别，不要返回空列表。这也是为什么我们在前面强调参数里要写枚举、执行端要检查范围。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.4　参数错误、工具失败与无进展</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两种"空"必须分开</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>工具失败应返回明确的错误类别，而不是空列表。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+            <Box style={{ width: 560, height: 300, background: '#ECF7F2', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>该日期没有预约</Text>
+                <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>查询正常执行，范围内确实没有记录。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 16px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>返回空结果 + 明确的查询范围，说明"查过、没有"。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 560, height: 300, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>日期不受本教学数据支持</Text>
+                <Box style={{ width: 56, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>这次查询没有做成，它是一个失败。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 16px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>返回明确的错误类别，让模型知道该改输入，而不是当结果用。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', height: 96 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>两者都返回 [] 时，模型就可能把"查询失败"误读成"房间空闲"，凭一次没有做成的查询给出方案。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 26</Text>
+    </Box>
+
+</Slide>

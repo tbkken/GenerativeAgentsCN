@@ -1,0 +1,87 @@
+<Slide notes={`三个角色各看什么、交什么、不碰什么，最好一开始就写清楚，否则汇总时才发现口径打架。
+
+资料核对员的输入是同一份材料、候选、校验报告和可选说明，交回来的是带来源的约束核对与缺口。它有一条明确的禁区：不替换原始预约记录。
+
+表达审查员的输入和它一样，只是侧重表述与依据，回来说的是哪些表述需要补充依据。它不能宣告房间已被预订，那是业务动作，不属于它的权限。
+
+汇总员吃的是原输入包加上前两份审阅意见，产出 team-report.md，但不自行改写已经验收的排期。这三条禁区其实都在说同一件事：审阅角色只能提意见，不能替业务做决定。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.1　先判断是否值得拆分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个角色各交什么，不负责什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 440, flexDirection: 'row', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>角色与输入</Text>
+            </Box>
+            <Box style={{ width: 32 }} />
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>交付物</Text></Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 244 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不负责的事项</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 440, height: 140, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>资料核对员</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>同一份材料、候选、校验报告与可选说明</Text>
+            </Box>
+            <Box style={{ width: 32 }} />
+            <Box style={{ width: 400, height: 140, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>带来源的约束核对与缺口</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>每条核对结论都要能回到具体来源</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 244, height: 140, background: '#FFF4E6', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不替换原始预约记录</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>只核对，不改写事实</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 440, height: 140, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>表达审查员</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>同上，侧重表述与依据</Text>
+            </Box>
+            <Box style={{ width: 32 }} />
+            <Box style={{ width: 400, height: 140, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>哪些表述需要补充依据</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>指出言之无据的句子，不替它补理由</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 244, height: 140, background: '#FFF4E6', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不宣告房间已被预订</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>业务动作不属于审阅权限</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 440, height: 140, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>汇总员</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>原输入包与前两份审阅意见</Text>
+            </Box>
+            <Box style={{ width: 32 }} />
+            <Box style={{ width: 400, height: 140, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>team-report.md</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>唯一写最终报告的步骤</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 244, height: 140, background: '#FFF4E6', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不自行改写已验收的排期</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>汇总不等于重做决定</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 25</Text>
+    </Box>
+
+</Slide>

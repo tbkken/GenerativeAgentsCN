@@ -192,3 +192,9 @@ tests/.symlink-capability-probe-*/
 
 # Machine-specific local model launcher
 /start-claude.bat
+
+# Local book authoring logs, working memory, and discarded deck drafts
+/docs/book/**/.slidep/
+/docs/book/.workbuddy/memory/
+/docs/book/**/_old_v1_backup/
+/docs/book/**/_new_v2_rejected/

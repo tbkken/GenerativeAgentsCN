@@ -1,0 +1,78 @@
+<Slide notes={`有几类行为是量表明确不能通过的，处理顺序也要先说清楚。
+
+第一类是伪造运行身份，明明没有跑过却写成已经运行。第二类是把人工填写的数据标成实测结果，这是把练习冒充证据。第三类最隐蔽：删除不利样本，把没有闭环或者失败的任务从分母里拿掉，让结果看起来好看。
+
+遇到这些情况，顺序是先要求修正，把材料改到与事实相符，再进入评分。相关维度不能因为报告包装精美就获得通过，因为量表要辨认的是知识与证据的缺口。
+
+这条规则看起来严格，但它保护的是整份交付的可信度。一旦有一处可以被包装蒙过去，其他所有结论都要重新被怀疑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.6　一份可以说明理由的评分量表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>伪造与删除：先要求修正</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'flex-start', gap: 32 }}>
+
+            <Box style={{ width: 700, flexDirection: 'column', gap: 12 }}>
+
+                <Box style={{ width: 700, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                    <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                    <Box style={{ width: 630, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>伪造运行身份</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>没有真实运行，却把材料写成已经运行并取得结果</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 700, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                    <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                    <Box style={{ width: 630, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把人工数据标成实测</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>把自己填写的人工判分练习当作实验产出提交</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 700, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                    <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                    <Box style={{ width: 630, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>删除不利样本</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>把未闭环或失败的任务从分母里拿掉，让结果看起来更好</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 420, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>处理顺序</Text>
+
+                <Box style={{ width: 420, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>先要求修正</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>把材料改到与事实相符，再进入评分</Text>
+                </Box>
+
+                <Box style={{ width: 420, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>再判断维度</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>相关维度按缺失处理，不因包装精美而通过</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>相关维度不能凭包装精美获得通过</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>伪造运行身份、把人工数据标成实测或删除不利样本，都应先修正再评分</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 31</Text>
+    </Box>
+
+</Slide>

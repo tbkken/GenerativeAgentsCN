@@ -1,0 +1,58 @@
+<Slide notes={`这一节留三个问题，读后面九个案例的时候随时回来问。
+
+第一，我提的这个问题能被结果推翻吗？如果跑出任何结果都能解释过去，那它就还不是一个问题。
+
+第二，两组之间的差异，是不是只差一处，而且已经登记在案？改动写不出来、存不下来，结果就没法归因。
+
+第三，我报出来的结论，停在哪一层证据上？是系统机制、本次模型行为，还是现实应用效果。
+
+把这三句话问完，再看案例里的图表和评分表，就知道该信到哪里为止。也别忘了，本章八个案例目前都是虚构教案，还没有实际运行结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4.0 阅读准备　·　带进后面九个案例</Text>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>记住三句自检</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ flexDirection: 'row', background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>这个问题能被结果推翻吗？</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>跑出任何结果都能解释过去，它就还不是一个问题</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>两组之间只差一处吗？</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>差异要写得出来、存得下来，才能归因到这一处</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>结论停在哪一层证据上？</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>系统机制、本次模型行为，还是现实应用效果</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', marginTop: 6 }}>第四章　面向问题的场景化应用　·　4.0 阅读准备　·　八个案例均为虚构教案，尚无实际 Run 结果</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 20</Text>
+    </Box>
+
+</Slide>

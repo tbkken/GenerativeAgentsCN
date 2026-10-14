@@ -1,0 +1,59 @@
+<Slide notes={`我们前面学过 prompt、上下文、结构化输出、工具调用、MCP 和 CLI 与 Shell。它们有一个共同的麻烦：换个活动，就得把「读规则、查预约、生成、校验」整套要求重新讲一遍，漏掉一处，结果就不一样。
+
+Skill 要解决的就是这件事。它把一套方法与辅助文件装进一个目录：SKILL.md 写明适用条件与操作步骤，另有参考资料、脚本和模板。宿主接到任务时，可以挑一个合适的材料包来用。
+
+但请记住一句话：Skill 保存的是方法，不是结果。这一次做得怎么样，仍然由本次输入、模型和工具执行共同决定。安装 Skill，不代表每次任务都会自动调用它，更不代表业务结果一定正确。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体：技术、OpenAI API 与 WorkBuddy　·　2.8</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>把一套方法{'\n'}做成材料包</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 600 }}>跨活动复用「读规则—查预约—生成—校验」，可以减少重复说明与遗漏。Skill 把方法及其辅助文件组织成材料包，供宿主按任务选用。</Text>
+            <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>里面装了什么</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>怎样渐进读取</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>装好怎么取证</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Box style={{ width: 500, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 22, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>open-day-planner/</Text>
+                </Box>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B', lineHeight: 1.9 }}>├── SKILL.md</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#546779', lineHeight: 1.9 }}>├── references/</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#546779', lineHeight: 1.9 }}>├── scripts/</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#546779', lineHeight: 1.9 }}>└── assets/</Text>
+                <Box style={{ width: 440, height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>方法留下来，结果仍然重新决定。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 140, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>已安装？</Text>
+                </Box>
+                <Box style={{ width: 140, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>已调用？</Text>
+                </Box>
+                <Box style={{ width: 140, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>已验证？</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

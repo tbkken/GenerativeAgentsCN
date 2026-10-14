@@ -1,0 +1,44 @@
+<Slide notes={`先看条件。青禾读写交流定在 2026 年 11 月 7 日 10:30 到 11:00，计划六位来宾，我们只模拟协调员沈禾和叶青、吴悠、江辰三个人。原会址是杏厅，候选新址是杉厅，理由是投影检修。
+
+Run 的候选窗口是当天 09:30 到 10:30，一分钟一步，一共 61 步，路线准备后校准并冻结。
+
+为什么要把这些写死？因为环境一动，出了问题就说不清是记忆替代起了作用还是别的。两间厅都容得下六个人，时间与内容不变，四层地址也一样，这些共同条件必须先讲清楚。
+
+另外，公告对象一开始只是 original 状态、正文写着杏厅。看见它变成 revised，只等于看到外观变了，并不自动知道新地点。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>1　　4.4.1 — 4.4.2</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先把条件钉死，再谈纠错</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>活动、两厅、人数与 Run 窗口全部固定；更正是在三份真实确认收齐之后才被允许发生。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>查询原公告</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>收齐三份确认</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>对象提交更正</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

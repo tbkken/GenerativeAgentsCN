@@ -1,0 +1,64 @@
+<Slide notes={`练习的参考思路，我把关键点串一遍。
+
+练习一里，容量需要有效的场地资料或者查询结果；预约完成需要真实执行和状态证据；偏好需要用户明确的表达，或者可追溯的有效记忆。单独一段回答不能证明外部预约已经发生，它只证明了模型写下了这句话。
+
+练习二算出的三个指标都是零点八，因为真正正确的是八条，凭空多出来的是两条，漏掉的是两条。但指标把约束按同一种单位计数，而实际执行时某些条件是不可违反的边界。十条约束里漏掉一条普通说明，和漏掉预约冲突，后果完全不同。
+
+练习三，至少一次成功是零点九六，两次都成功是零点六四。这两个数依赖每次尝试独立同分布，而真实的重试往往会改变提示、共享先前状态或者遇到不同的难度。
+
+练习四和练习五没有唯一文字答案。评价重点是能不能明确条件、证据、分母和失败处理，而不是你有没有选中某个品牌。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.7　章末练习与参考思路</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>参考思路：把条件说清</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>练习一　各自的证据不同</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>容量要场地资料或查询结果；预约完成要真实执行及状态证据；偏好要用户明确表达或可追溯的有效记忆。单独一段回答不能证明外部预约已经发生。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>练习二　指标不能覆盖硬边界</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>TP 为 8、FP 为 2、FN 为 2，Precision、Recall 与 F1 都是 0.8。指标把约束按同一种单位计数，应另列关键约束是否满足。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>练习三　假设不成立就换算法</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>至少一次成功为 0.96，两次都成功为 0.64。重试时改提示、共享先前状态、难度不同、配置变化，都可能让独立同分布不成立。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>练习四、五　没有唯一文字答案</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>评价重点是能否明确条件、证据、分母与失败处理，而不是是否选择某个品牌。过程比结论更重要。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 3, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>练习二：TP 8／FP 2／FN 2，Precision、Recall、F1 均为 0.8</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>练习三：至少一次成功 1 − 0.2² = 0.96；两次都成功 0.8² = 0.64</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 27</Text>
+    </Box>
+
+</Slide>

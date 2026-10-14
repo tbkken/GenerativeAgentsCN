@@ -1,0 +1,47 @@
+<Slide notes={`这一部分讲的是怎么把观察变成可以比较的数字。
+我一共定四个指标。集合到达率，是窗口内首次进入集合区的人数除以三，引导员不进分母。人均移动负担，是三个人在窗口内全部已执行路径的边数除以三，单位是格每人。
+路线执行启动时延，是从第一次拿到目标可达路线，到第一次真的朝这个目标移动之间隔了多少虚拟分钟，可以是零。无效请求率，是地址、目标证据或权限不合法的导航和 MOVE 拒绝数，除以全部导航和 MOVE 请求数。
+四个口径写清楚之后，数字才有意义；口径不写，别人没法复核，也没法跟别的案例比较。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>⑤　　4.7.5 指标与人工判分</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先定口径，再看数字</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>四个指标各自回答一个问题；分母写不出来，结果就不能比较。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 250, height: 76, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>集合到达率</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 76, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>人均移动负担</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 76, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>路线执行启动时延</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 76, background: '#FFF4E6', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>无效请求率</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 26</Text>
+    </Box>
+
+</Slide>

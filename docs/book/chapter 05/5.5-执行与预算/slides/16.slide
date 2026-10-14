@@ -1,0 +1,48 @@
+<Slide notes={`预算这个词很容易被理解成一张费用估算表。但在一个可交接的项目里，它还要装下另一半：什么情况下停下来、停下来之后谁来看。
+
+为什么这半边不能省？因为执行当中一定会遇到意外。模型请求反复失败、重试次数比预期多、某个步骤迟迟不动。如果没有事先写好条件，现场的人只能凭感觉决定继续还是停，而这个决定往往会被“已经投入这么多了”带着走。
+
+所以预算表要写成能采取行动的样子：一边是预计消耗，另一边是触发条件和触发之后要做的动作。条件必须可判断，动作必须具体到找谁、看什么。
+
+还要强调一句：这些是项目监控规则，不是已经配置进 Runtime 的自动硬上限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ④</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 80, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>④</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>预算里要写进{'\n'}停止与复核条件</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>预算既包含预计消耗，也包含停止和复核条件；条件要可判断，动作要具体。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 480, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '18px 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>预计消耗</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>轮次、调用、Token 与费用，按写明的假设逐项推算。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 148, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 480, height: 148, background: '#FFF4E6', borderRadius: 10, padding: '18px 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>停止与复核条件</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>阈值、触发后的动作，以及由谁核对真实计费与后续授权。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 28</Text>
+    </Box>
+
+</Slide>

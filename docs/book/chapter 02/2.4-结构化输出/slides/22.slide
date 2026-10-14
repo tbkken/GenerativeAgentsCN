@@ -1,0 +1,87 @@
+<Slide notes={`最后说清产品边界，再做诊断。
+
+WorkBuddy 在这一步做的是文件生成和脚本验证：按合同生成了文件、跑通了校验脚本；但不能因此声称它开启了 strict 参数。两者的模型配置、传输协议和内部生成方式可能不同。
+
+两条路线真正共用的，是那份交付合同和那套确定性校验规则。
+
+诊断方法：复制一份有效夹具，每次只改一个因素。手工活动改成十点到十一点，应报预约冲突；删掉一项活动，应报活动缺失；重复一个合法活动，应报活动重复。
+
+最后：把时间改成不带时区的写法，程序应直接指出时间合同不满足，而不是按运行电脑的时区默默补值。
+
+这些练习说明，结构化输出让错误更容易被定位，而不是让错误变得不可能。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.5 — 2.4.6　交付边界与失败诊断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>产品边界与失败诊断</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>能说什么，不能说什么</Text>
+
+            <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不能声称已开启 strict</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>不能据此声称 WorkBuddy 已开启 OpenAI API 的 strict 参数。</Text>
+            </Box>
+
+            <Box style={{ height: 140, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>两条路线的内部可能不同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>模型配置、传输协议和内部生成方式可能都不一样。</Text>
+            </Box>
+
+            <Box style={{ height: 140, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>真正共用的是这两样</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>交付合同和确定性的校验规则，两条路线完全一致。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 18, height: 26, alignItems: 'center' }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>每次只改一个因素</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>应发现的问题</Text></Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>手作改为 10:00—11:00，保留六十分钟</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>预约冲突</Text></Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>删除一项活动</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>活动缺失</Text></Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>重复一个合法活动</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>活动重复</Text></Box>
+            </Box>
+
+            <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>时区不能默默补值</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>把时间改为不含时区的 2026-10-17T10:30:00，程序应指出时间合同不满足，而不是按运行电脑的时区补一个值。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 23</Text>
+    </Box>
+
+</Slide>

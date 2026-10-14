@@ -1,0 +1,72 @@
+<Slide notes={`样本集会过期。
+
+先说 ARC 这条线。第一版 2019 年发布，五年里几乎没有模型越过，后来被推理模型攻破，团队在 2025 年 3 月重做第二版，专门删掉靠暴力搜索能解的题。2026 年 3 月第三版又来了，加入多步骤的组合推理。
+
+再说数学这条线。FrontierMath 第一版 2024 年 11 月发布，后来 Epoch 自己审计，发现四成以上的题有错，2026 年 6 月推出修正后的第二版，删掉若干道题。
+
+这说明两件事：题放久了可能被模型见过，分数虚高，这就是污染；题目本身也可能有错，需要事后修。所以引用分数，一定要带版本号和日期。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>③　1.4.3　样本集：污染、饱和与版本更新</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>样本集会过期</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>推理题的重做：越往后越防"暴力搜"</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 354, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>2019</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>ARC-AGI-1</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>五年内几乎没有模型能越过，纯语言模型只有个位数</Text>
+                </Box>
+                <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+                <Box style={{ width: 354, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>2025-03</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>ARC-AGI-2</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>删掉可暴力搜索的题，加入组合推理与情境规则</Text>
+                </Box>
+                <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+                <Box style={{ width: 354, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>2026-03</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>ARC-AGI-3</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>加入多步骤交互与跨实例泛化，题目更接近真实任务</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>数学题的修正：出题人自己把错题改掉</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 354, height: 150, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>2024-11</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>FrontierMath v1</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>六十多位数学家参与出题，含大量研究级问题</Text>
+                </Box>
+                <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#CB6B28' }}>›</Text></Box>
+                <Box style={{ width: 354, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>审计</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>42% 的题有错</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>题目本身、参考答案或判分规则存在问题</Text>
+                </Box>
+                <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+                <Box style={{ width: 354, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#26816B' }}>2026-06</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>FrontierMath v2</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.45 }}>修正错误、删除问题题；新旧分数不再可比</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 36</Text>
+    </Box>
+
+</Slide>

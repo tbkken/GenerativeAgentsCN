@@ -1,0 +1,74 @@
+<Slide notes={`一个真实请求从进入到被回应，中间隔着一整步。这一步的距离，是很多验收记录出错的地方。
+
+第 N 步里，来访者把真实请求放进待处理集合，咨询台在一次 world-act 里同时提交 responses 和对应的真实请求 ID，动作成功之后本轮就结束。到第 N+1 步，这份已提交的答复被恰好一次定向投递给目标人物，他依据真正收到的内容继续行动。
+
+这里有两个分开的判断：对象已经回复，和人物已经理解，不是同一件事。写记忆的时候如果把「已发送请求」直接写成「对方已确认」，进度就被提前写成了完成。所以核对时要追查两样东西：对象那次 world-act 的提交记录，以及目标人物下一轮的实际接收。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.2　一份可直接审阅的咨询台全文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个真实请求 ID 要走两步</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 44, background: '#276FBF', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>第 N 步</Text>
+            <Text style={{ fontSize: 15, color: '#EDF4FC' }}>真实请求与对象处理</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>请求进入待处理</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>真实请求进入本轮的待处理集合</Text>
+            </Box>
+            <Box style={{ width: 44, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>一次 world-act</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同次携带 responses 与真实请求 ID</Text>
+            </Box>
+            <Box style={{ width: 44, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>本轮结束</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>成功动作后立即结束本轮</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 44, background: '#26816B', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 6 }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>第 N+1 步</Text>
+            <Text style={{ fontSize: 15, color: '#ECF7F2' }}>目标人物下一轮上下文</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 500, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>恰好一次定向投递</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>已提交的答复送达目标人物</Text>
+            </Box>
+            <Box style={{ width: 44, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 500, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>据实际收到继续</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>依据真正收到的内容决定下一步</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 60, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 4 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 200 }}>分开判断</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 900 }}>对象已回复不等于人物已理解；请求 ID 不能编造。消息顺序为示意，不是实际 Trace。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 27</Text>
+    </Box>
+
+</Slide>

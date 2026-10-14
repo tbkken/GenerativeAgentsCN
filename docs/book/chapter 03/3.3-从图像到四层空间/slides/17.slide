@@ -1,0 +1,76 @@
+<Slide notes={`通路编辑在「世界」的「通路」里，右侧提供四种工具：阻挡、可走、恢复素材结果、路径检查。
+
+交互上要注意手势：按住 Ctrl 再左键点击或拖动，才是编辑格子；普通拖动用于平移画布。素材页对应的是「碰撞」，在切片局部网格配置，放置时随素材旋转，和世界页的通路是两套东西。
+
+还有一个优先级问题：世界级手工配置优先于素材结果。改完之后要检查「配置来源」，防止忘记旧的覆盖还在生效。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.4　画面有门，还要把门设为可走</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>通路工具与编辑手势</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>「世界 › 通路」</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 340 }}>按住 Ctrl 再左键点击或拖动，编辑格子；普通拖动用于平移画布。</Text>
+            <Box style={{ height: 120, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 88, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>世界级手工配置优先于素材结果；修改后检查「配置来源」，防止忘记旧覆盖仍在生效。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 780, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 384, height: 132, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 92, background: '#20344B' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>阻挡</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>把外墙、房间分隔和物件占用标为不可走。</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 384, height: 132, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 92, background: '#26816B' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>可走</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>打开门洞格，让大厅与房间连通。</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 384, height: 132, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 92, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>恢复素材结果</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>撤销世界级覆盖，回到素材自带的碰撞配置。</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 384, height: 132, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 92, background: '#CB6B28' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>路径检查</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>按住 Ctrl 依次点 A、B，查看两点连通结果。</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 64, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.5 }}>素材页对应的是「碰撞」，在切片局部网格配置，放置时随素材旋转。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 25</Text>
+    </Box>
+
+</Slide>

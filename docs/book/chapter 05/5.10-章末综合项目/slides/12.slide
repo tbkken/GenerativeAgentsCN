@@ -1,0 +1,67 @@
+<Slide notes={`文本写完以后不要自己看一遍就算过，要请同伴做一次反例审读。
+
+做法是给他几个输入条件，然后让他只看标准流程，说出下一步应该怎么做。第一个条件是原文里目的仍然缺失，他应该只问缺失的那一个字段，先不要再给建议。第二个条件是同一个人已经回答了关键字段，那就不该重复追问，应该直接进入范围判断。第三个条件是收到错误的窗口转介，这时要说明分工并指向另一窗口，不需要重新核实目的。第四个条件是答复在最后一轮才生成，这一条的关键在于，它不能自动算作人物在窗口内已经收到。
+
+如果两个人对同一个条件有不同理解，先回去把文本改清楚。指望多跑几次模型来消除歧义，是掩盖问题。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.3　第二份交付：行为与对照</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>反例审读：只依 SOP 解释下一步</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>给同伴四个输入条件，让他仅根据标准流程说明下一步，不借助作者口头补充</Text>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 264 }}>目的仍缺失</Text>
+            <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', width: 756 }}>只问缺失的那一个字段，先不再给出建议</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 264 }}>同一人已回答关键字段</Text>
+            <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', width: 756 }}>不再重复追问，直接进入范围判断与下一步说明</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 264 }}>收到错误窗口转介</Text>
+            <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', width: 756 }}>说明服务分工并指向另一窗口，不重新核实目的</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 264 }}>最后一轮才生成答复</Text>
+            <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', width: 756 }}>不能自动算作人物在观察窗口内已经收到</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两人对同一条件有不同理解时，先改清文本</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>不要指望增加模型调用次数消除作者留下的歧义</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 31</Text>
+    </Box>
+
+</Slide>

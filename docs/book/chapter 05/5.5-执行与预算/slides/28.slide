@@ -1,0 +1,54 @@
+<Slide notes={`回到这一节要交付的东西：一份别人能按其继续工作的执行计划与预算登记。
+
+完成标准不在数字漂不漂亮，而在三件事。范围与职责分得清楚，谁以什么身份对什么负责，写在纸上就能看懂。预算能被重算，数量、假设、单价逐项列出，换掉任何一个假设结果都跟着变。阈值带着动作，到达物理尝试阈值、费用复核阈值或两小时复核点时，都知道该做什么、找谁确认。
+
+最后是状态的诚实。现在这份计划可以写得很完整，但运行结果仍然是空的，所以它只能叫“计划执行”。只有后续运行产生了事实，有了提交边界、Attempt 记录和实际用量，才能把它改成“已经观察”。
+
+下一节就把这些记录组织成一份可以被审查的结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>完成标准</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>从“计划执行”到“已经观察”</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 500, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#546779' }}>计划执行</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>计划可以完整，运行结果仍然为空</Text>
+            </Box>
+            <Box style={{ width: 44, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 500, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>已经观察</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>有了提交边界、Attempt 记录与实际用量之后</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>本节的完成标准：一份别人能按其继续工作的执行计划与预算登记。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F7F3E8', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#546779' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>范围分得清、预算算得回、阈值带动作；下一节把这些记录组织成可审查的结果。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>28 / 28</Text>
+    </Box>
+
+</Slide>

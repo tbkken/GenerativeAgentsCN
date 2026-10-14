@@ -1,0 +1,67 @@
+<Slide notes={`题量直接决定分数的分辨率。
+
+HLE 两千五百道题，一个百分点大约是二十五道题，所以它报告到小数点后一位是有意义的。GPQA Diamond 只有一百九十八道题，半个百分点就是一道题，这时候两个模型差一个百分点，其实只是两道题的差别。
+
+FrontierMath 第四层更极端，只有四十三道题，一道题就值二点三个百分点，分数必须带误差范围读。
+
+再看一句常见的话：某模型在某个基准上领先两个百分点。如果这个基准有两千五百道题，两个百分点是五十道题，比较可信；如果只有四十三道题，两个百分点还不到一道题，基本没有意义。
+
+所以看到分数，第一件事是问分母是多少。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>③　1.4.3　样本集：分母不同，一个百分点的分量就不同</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>题量与代表性</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 28, alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 700, flexDirection: 'column', gap: 16 }}>
+                <Box style={{ width: 700, height: 122, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                    <Text style={{ width: 120, fontSize: 30, fontWeight: 'bold', color: '#276FBF' }}>2,500</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>HLE</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>一道题约合 0.04 个百分点，小数点后一位是有意义的</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 700, height: 122, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                    <Text style={{ width: 120, fontSize: 30, fontWeight: 'bold', color: '#546779' }}>198</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>GPQA Diamond</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>一道题约合 0.5 个百分点，一个百分点的差距可能只是两道题</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 700, height: 122, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                    <Text style={{ width: 120, fontSize: 30, fontWeight: 'bold', color: '#CB6B28' }}>43</Text>
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>FrontierMath Tier 4</Text>
+                        <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>一道题约合 2.3 个百分点，分数必须带着误差范围读</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 424, height: 398, background: '#F4F7FA', borderRadius: 12, padding: '20px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>同样一句"领先两个百分点"</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>在 2,500 题的基准上，是五十道题左右的差距，比较可信。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>在 43 题的基准上，还不到一道题，几乎不构成信号。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#FFF4E6', borderRadius: 8, padding: '12px 14px' }}>
+                    <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>题量小不等于不好；它只是必须配误差范围和人工复核一起读</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 36</Text>
+    </Box>
+
+</Slide>

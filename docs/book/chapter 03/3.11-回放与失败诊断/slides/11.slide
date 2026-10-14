@@ -1,0 +1,128 @@
+<Slide notes={`选择正确的 Run 之后进入仿真回放，先做一件常被跳过的事：记下可用的 Step 上限和当前 Step。后面所有结论都要挂在这个范围上。
+
+界面上大致分三块。左边是时间线，标记会区分检查点、对话、事件和 Attempt 边界，用它可以快速定位到那件事发生在哪一步。中间是画面和近景，用来核对人物比例、脚底锚点、遮挡和状态图切换。右边是人物、会话和对象状态，用来核对坐标、参与者、实际消息和对象状态前后值。
+
+左边定位、中间看表现、右边查事实，三个位置各有分工。任何一条结论，都要能说清是在哪一块、哪一个 Run、哪一个 Step 上得到的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.3　在页面中沿一条事件检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>仿真回放「示意界面」</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column' }}>
+            <Box style={{ width: 1152, height: 48, background: '#276FBF', borderTopLeftRadius: 10, borderTopRightRadius: 10, padding: '0 20px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>仿真回放（示意）</Text>
+                <Box style={{ width: 200, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>界面示意 · 不是系统截图</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, padding: 12 }}>
+
+                <Box style={{ width: 268, height: 398, background: '#FFFFFF', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>时间线</Text>
+                    <Box style={{ width: 244, height: 52, background: '#F4F7FA', borderRadius: 6, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+                        <Box style={{ flexDirection: 'column', gap: 2 }}>
+                            <Text style={{ fontSize: 14, color: '#20344B' }}>检查点</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>完整状态边界</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 244, height: 52, background: '#F4F7FA', borderRadius: 6, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+                        <Box style={{ flexDirection: 'column', gap: 2 }}>
+                            <Text style={{ fontSize: 14, color: '#20344B' }}>对话</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>会话与消息</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 244, height: 52, background: '#F4F7FA', borderRadius: 6, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 4, height: 30, background: '#26816B' }} />
+                        <Box style={{ flexDirection: 'column', gap: 2 }}>
+                            <Text style={{ fontSize: 14, color: '#20344B' }}>事件</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>对象状态变化</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 244, height: 52, background: '#FFF4E6', borderRadius: 6, paddingLeft: 10, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 4, height: 30, background: '#CB6B28' }} />
+                        <Box style={{ flexDirection: 'column', gap: 2 }}>
+                            <Text style={{ fontSize: 14, color: '#CB6B28' }}>Attempt 边界</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>重跑与恢复的分段</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 244, height: 58, background: '#EDF4FC', borderRadius: 6, paddingLeft: 12, flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#276FBF' }}>先记录 Step 上限与当前 Step</Text>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>所有结论都挂在这个范围内</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 560, height: 398, background: '#FFFFFF', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>画面与近景（示意）</Text>
+                    <Box style={{ width: 536, height: 220, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>公共大厅 · 手作室 · 阅读角</Text>
+                        <Box style={{ flexDirection: 'row', gap: 14 }}>
+                            <Box style={{ width: 170, height: 82, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 14, color: '#276FBF' }}>手作室</Text>
+                            </Box>
+                            <Box style={{ width: 170, height: 82, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 14, color: '#276FBF' }}>阅读角</Text>
+                            </Box>
+                        </Box>
+                        <Box style={{ flexDirection: 'row', gap: 14 }}>
+                            <Box style={{ width: 62, height: 44, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 13, color: '#FFFFFF' }}>许安</Text>
+                            </Box>
+                            <Box style={{ width: 62, height: 44, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 13, color: '#FFFFFF' }}>林岚</Text>
+                            </Box>
+                            <Box style={{ width: 62, height: 44, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 13, color: '#FFFFFF' }}>周宁</Text>
+                            </Box>
+                            <Box style={{ width: 62, height: 44, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 13, color: '#FFFFFF' }}>陈晨</Text>
+                            </Box>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 536, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>近景要看的四件事</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>人物比例 · 脚底锚点 · 遮挡 · 状态图是否正确切换</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 276, height: 398, background: '#FFFFFF', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>人物 / 会话 / 对象</Text>
+                    <Box style={{ width: 252, height: 88, background: '#F4F7FA', borderRadius: 6, padding: 10, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>人物</Text>
+                        <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.45 }}>实际坐标与四层地址</Text>
+                    </Box>
+                    <Box style={{ width: 252, height: 88, background: '#F4F7FA', borderRadius: 6, padding: 10, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>会话</Text>
+                        <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.45 }}>参与者与实际消息轮次</Text>
+                    </Box>
+                    <Box style={{ width: 252, height: 88, background: '#F4F7FA', borderRadius: 6, padding: 10, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>对象状态</Text>
+                        <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.45 }}>状态前后值与请求 ID</Text>
+                    </Box>
+                    <Box style={{ width: 252, height: 62, background: '#FFF4E6', borderRadius: 6, padding: 10, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#CB6B28' }}>回放加载失败时</Text>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>先存页面诊断、Run 与可用边界</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>「示意」全部由原生色块绘制，不使用任何界面截图，也不引用书稿 figures 下的图片。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 27</Text>
+    </Box>
+
+</Slide>

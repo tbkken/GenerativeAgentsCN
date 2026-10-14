@@ -1,0 +1,59 @@
+<Slide notes={`我们准备两个工具，各管一件事。
+
+第一个叫 get_room_availability。输入是房间编号和日期，返回青禾教学数据里已有的预约记录，同时说明这次查询覆盖的范围。它只读，不连接真实预约系统，也不改任何预约。教学里这么做是为了让行为可以预期：同样的输入，永远得到同样的输出。
+
+第二个叫 validate_schedule，接收一份候选方案，返回确定性的检查结果。后面那个十点开始、十点结束一比的手作候选，就是靠它发现和现有预约冲突的。
+
+一个取数据，一个判数据，职责分开。模型在中间只负责决定要问什么，以及拿到答案之后怎么调整方案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.1　先定义一个清楚且有限的工具</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两个只读工具，各管一件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>先把查询能力做好，比一下子把任意数据库操作或命令执行暴露给模型更容易理解和验证。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 320, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontFamily: 'Consolas, monospace', color: '#276FBF' }}>get_room_availability</Text>
+                <Box style={{ width: 60, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>输入　room_id 与 date</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>返回　教学预约记录及其查询范围</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>只读本章材料；不连接真实预约系统，也不修改任何预约。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '10px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同样的输入永远得到同样的输出，行为可以预期。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 320, background: '#ECF7F2', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontFamily: 'Consolas, monospace', color: '#26816B' }}>validate_schedule</Text>
+                <Box style={{ width: 60, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>输入　一份候选方案</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>返回　确定性的检查结果</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>十点开始的手作候选会被它发现与已有预约冲突，进而要求修正候选。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '10px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>它只判定候选，不修改原预约，也不替模型改方案。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 26</Text>
+    </Box>
+
+</Slide>

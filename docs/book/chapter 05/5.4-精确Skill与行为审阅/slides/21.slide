@@ -1,0 +1,51 @@
+<Slide notes={`审阅要分成两种工作来看，因为它们的对象不一样。
+
+作者负责内容闭包：完整 Skill、人物资料、对象分工、初始空间和模型配置是否一致。他检查的是「我交出去的这组东西，内部有没有互相矛盾」。
+
+观察者负责证据闭包：什么记录足以证明询问确实发生、补充确实到达、建议确实被采用、窗口回复确实被理解。他检查的是「结论有没有支撑」，而不是「材料写得对不对」。
+
+这两种工作完全可以由同一个人承担，但审阅记录应该分开保存。原因很实际：一旦先知道了正确答案，人很容易在复述角色的经历时替他把细节补齐。分开记录，就是不给这种补写留空间。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.5　作者与观察者分别审什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>内容闭包与证据闭包</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>两种审阅的对象不同：一个查材料内部是否一致，一个查结论是否有记录支撑。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 296, background: '#EDF4FC', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>作者负责内容闭包</Text>
+                <Box style={{ width: 40, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>检查这几项在两组之间是否一致：</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.9 }}>完整 Skill 全文{'\n'}人物资料{'\n'}对象分工{'\n'}初始空间与模型配置</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 296, background: '#ECF7F2', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>观察者负责证据闭包</Text>
+                <Box style={{ width: 40, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>检查什么记录足以证明这些事发生过：</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.9 }}>询问发生{'\n'}补充到达{'\n'}建议被采用{'\n'}窗口回复被理解</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 160 }}>记录要分开</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 940 }}>两种工作可以由同一人承担，但审阅记录应分开保存，避免知道正确答案后替角色补写经历。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,77 @@
+<Slide notes={`我先说清楚这一节要解决什么问题。三名成员各自拿到一张条件卡，题面本身是共同的，但限制是分散的：有人说了一条，有人说了两条，主持人手上一条都没有。
+
+于是会出现两种看起来很像的结果——随手排一个说得通的方案，也可能恰好满足六项。可那是猜中的，不是推出来的。
+
+本节唯一改变的地方，是在准备定稿的时候显式调用一次逐项核对：把已经收到的限制和当前候选逐条比一遍，缺什么就标出来，再决定是追问、修订还是定稿。
+
+最后提醒一句：这是一个虚构的排程题，只有唯一解，它不证明现实里学生合作学习的效果，也不证明系统的业务成败。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.5 小组协作学习</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>把分散条件{'\n'}变成有依据的结论</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>条件只发给持有者，主持人定稿前显式核对约束。是否因此改善最终方案？</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 120, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>分散条件</Text>
+                </Box>
+                <Box style={{ width: 120, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>唯一解</Text>
+                </Box>
+                <Box style={{ width: 120, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>七项判据</Text>
+                </Box>
+                <Box style={{ width: 120, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>分母不同</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Text style={{ fontSize: 14, color: '#546779', marginBottom: 8 }}>条件卡分配与定稿（示意）</Text>
+
+            <Box style={{ flexDirection: 'row', gap: 14 }}>
+                <Box style={{ width: 188, height: 100, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>温乔</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>私有 F1{'\n'}阅读早于手作</Text>
+                </Box>
+                <Box style={{ width: 188, height: 100, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>任新</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>私有 F2{'\n'}拼图 11:00 开始</Text>
+                </Box>
+                <Box style={{ width: 188, height: 100, background: '#FFF4E6', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>白露</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>私有 F3、F4{'\n'}一条连线两条事实</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>主持人 陶明</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>初始无私有限制、无教师答案；保存实际取得的条件和来源</Text>
+            </Box>
+
+            <Box style={{ height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 80, background: '#ECF7F2', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>形成定稿后逐人传达</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>主持人知道 ≠ 全员知道；同案向三人传达 ≠ 三项结论</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

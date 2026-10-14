@@ -1,0 +1,65 @@
+<Slide notes={`工程成绩还牵出一个初学者最容易搞混的问题：窗口大，是不是就等于能力强。
+
+这里其实是两个不同的问题。第一个是"资料放得进去吗"——大窗口有助于携带更多材料，这一点确实成立。第二个是"放进去之后能完成什么"——找对信息、处理材料里的矛盾、始终遵守最早提出的约束，这些都不由窗口大小自动保证。
+
+把这个区别放回我们的任务：活动筹备的资料应该有目录、有来源、有明确的当前状态，而不是一股脑塞进对话；仿真角色应该把已经确认的进展保存成可以检索的记忆，而不是每一轮都往上下文里塞进越来越长的聊天记录。
+
+所以看到"支持 100 万 Token"这样的描述，先问它把什么放进去了，再问它在里面做成了什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.4　工程与长上下文：高分背后包含执行环境</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>窗口装得进，不等于任务做得出</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ flex: 62, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>两个不同的问题</Text>
+            </Box>
+
+            <Box style={{ height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', justifyContent: 'center', gap: 4, flexDirection: 'column' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>资料放得进去吗？</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>大窗口有助于携带更多材料。</Text>
+            </Box>
+
+            <Box style={{ height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', justifyContent: 'center', gap: 4, flexDirection: 'column' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>放进去后能完成什么？</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>找对信息、处理矛盾、始终遵守最早的约束，都不由窗口大小保证。</Text>
+            </Box>
+
+            <Box style={{ height: 108, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', justifyContent: 'center', gap: 4, flexDirection: 'column' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>回到我们的两类任务</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>筹备资料要有目录、来源与明确的当前状态；仿真角色要把已确认的进展保存成可检索记忆，而不是每轮塞入越来越长的聊天记录。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 38, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Box style={{ height: 96, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>1M Token</Text>
+                <Text style={{ fontSize: 14, color: '#D7E6F7' }}>可携带的材料规模</Text>
+            </Box>
+            <Box style={{ height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#546779' }}>↓</Text>
+            </Box>
+            <Box style={{ height: 96, background: '#CB6B28', borderRadius: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>完成整份任务</Text>
+                <Text style={{ fontSize: 14, color: '#FBE3D0' }}>需要另外验证的一步</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>窗口大小只是条件之一，不是完成度的证明。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,80 @@
+<Slide notes={`这五个问题我按顺序念一遍，你可以拿自己的报告对照。
+
+第一，这句话比较的究竟是什么，能不能在委托书里找到对应的问题？很多主张在措辞上很好听，回到委托书就找不到出处。
+
+第二，判分标准是在观察结果之前确定的吗？如果标准改过，有没有说明为什么改？
+
+第三，被引用的证据来自哪一次运行、哪个提交边界，别人能不能重新定位到同一段记录？
+
+第四，失败、没有回应和不利样本，有没有进入同一份结果表？只统计成功的那部分，结论一定会偏。
+
+第五，结论有没有超出材料、系统机制或接收验证的范围？
+
+这五问不需要逐行读文件，沿着一条证据链走一遍就够了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.6　评阅者可以从五个问题开始</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>沿一条证据链往回走</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ width: 430, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>不必逐行审查所有文件</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 430 }}>挑一个主要结论，沿它的证据链往回走一遍，通常就能暴露关键缺口。</Text>
+            <Box style={{ height: 120, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>从结论出发，找到引用的记录，再找到记录对应的运行与提交边界。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 694, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 94, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>这句话比较的究竟是什么，能否在委托书中找到对应问题？</Text></Box>
+            </Box>
+
+            <Box style={{ height: 94, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>判分标准是在观察结果前确定的吗，修改过的标准是否有说明？</Text></Box>
+            </Box>
+
+            <Box style={{ height: 94, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>被引用的证据来自哪次 Run、哪个提交边界，能否重新定位？</Text></Box>
+            </Box>
+
+            <Box style={{ height: 94, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>失败、没有回应和不利样本是否进入同一份结果表？</Text></Box>
+            </Box>
+
+            <Box style={{ height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>5</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>结论是否超出了材料、系统机制或接收验证的范围？</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 26</Text>
+    </Box>
+
+</Slide>

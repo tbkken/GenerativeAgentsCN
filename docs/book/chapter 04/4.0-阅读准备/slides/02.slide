@@ -1,0 +1,57 @@
+<Slide notes={`这一节分成三组准备工作，做完再看具体案例，就不会把它读成故事。
+
+第一组解决提问：把太宽的说法改写成能被结果推翻的句子，并且只说到证据允许的那一层。第二组解决管理：作者和评阅者手里的完整题目、答案与判据要留在评阅侧，角色和对象各自持有自己的事实、目标与进度，共同材料也必须说明是从哪次初始输入、感知或消息取得的；两组之间只许差一个预登记的因素，而且这个差异要留档。第三组解决证据：每一个主要判断都要能找到对应证据，判分先写清成立、不成立、部分成立和无法判断的例子。
+
+三组都做完，后面九个案例里的图表和评分表，才知道该信到哪里为止。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节地图　三组阅读准备</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的三组准备</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>这一节不进入案例，先把九个案例共用的动作讲清楚：问得准、管得住、证得出。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16, flex: 1 }}>
+
+            <Box style={{ width: 360, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 56, height: 56, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>问得准</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.5 }}>把「让大厅更高效」改写成可检验的句子</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>· 写清比较什么、看哪个指标{'\n'}· 补上可能的反例{'\n'}· 结论只说到证据允许的那一层</Text>
+            </Box>
+
+            <Box style={{ width: 360, background: '#ECF7F2', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 56, height: 56, background: '#26816B', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>管得住</Text>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>资料放在谁手里、两组差在哪、数的是什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>· 作者／角色／评阅材料分开{'\n'}· 两组只差一个预登记因素{'\n'}· 时间点、任务单位与独立 Run 分别计数</Text>
+            </Box>
+
+            <Box style={{ width: 360, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 56, height: 56, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>证得出</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.5 }}>每个结论都要找得到对应的证据入口</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>· 六个主要判断各配证据入口{'\n'}· 判分先写清四种结果{'\n'}· 教案落实为独立的作者材料</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 20</Text>
+    </Box>
+
+</Slide>

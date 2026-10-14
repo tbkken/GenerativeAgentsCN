@@ -1,0 +1,80 @@
+<Slide notes={`前面几节我们分别准备了地图、人物和行为。现在要把它们组合成一份边界清楚的实验：这一次采用哪张地图、哪些角色、哪一套 Skill 和模型配置，哪些内容还能改，哪些已经成为某次运行的依据。
+
+创建实验时，系统不是记下几个公共资源的链接，而是把选中的资源和它们的依赖复制进实验，形成一份独立材料。所以创建成功得到的是草稿，公共作者资源以后怎么改，都不会传播到这份副本里。
+
+这份材料会经历两步：先是可编辑的 DRAFT，确认执行时封存成 SEALED，此后内容不可再改。要改，就向下复制出一份新实验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>第三章　3.8　实验生命周期</Text>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>草稿、副本、{'\n'}预检与封存</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>把已经准备好的地图、人物和行为组合成一份边界清楚的实验，再看清哪些还能改、哪些已经成为运行依据。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 118, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>独立副本</Text>
+                </Box>
+                <Box style={{ width: 118, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>重开核对</Text>
+                </Box>
+                <Box style={{ width: 118, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>预检边界</Text>
+                </Box>
+                <Box style={{ width: 118, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>封存不可改</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column' }}>
+
+            <Box style={{ width: 600, height: 78, background: '#F7F3E8', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>公共作者资源</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 140, height: 30, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>修改不自动传播</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 600, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>实验 A　DRAFT</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 140, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>可编辑包内副本</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 600, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 78, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>实验 A　SEALED</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 140, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#26816B' }}>内容不可修改</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 600, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>实验 B　DRAFT</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 140, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>新 UUID、独立内容</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

@@ -1,0 +1,60 @@
+<Slide notes={`再换个角度，看看对象自己那一边在做什么。
+
+绑定根 Skill 以后，公告栏和服务台每一步都会自主运行，哪怕此刻没有任何人提问。它们可以按需感知周围、检索自己的记忆、处理待办的请求，然后提交一次动作。
+
+它们不是人物。固定设施不移动，所以能提交的动作只有三种：ACT 是做一件与自身有关的事，WAIT 是本轮等待，SET_OBJECT_STATE 是修改自己的状态。
+
+这里要特别提醒：对象不是只会被动的问答机。它有自己的记忆和状态，会自己决定这一轮要做什么。
+
+所以在观察实验的时候，不仅要看人物有没有去问，还要看对象那一步到底做了什么，两条线都要能对上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.3　对象也有独立的轮次</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>对象也有独立的轮次</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 300 }}>绑定根 Skill 后，公告栏与服务台每 Step 都会自主运行，即使当前没有人提问。</Text>
+            <Box style={{ width: 300, height: 140, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>它们不是人物</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>固定设施不移动，没有可自由移动的身体。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 820, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>每 Step 自主运行，可提交一次动作</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>按需感知、检索自己的记忆、处理待办请求，然后交出自己的动作。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 260, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>ACT</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>做一件与自身有关的事</Text>
+                </Box>
+                <Box style={{ width: 260, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>WAIT</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本轮等待，不做任何动作</Text>
+                </Box>
+                <Box style={{ width: 260, height: 132, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B', lineHeight: 1.3 }}>SET_OBJECT_STATE</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>修改自身状态并提交</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 31</Text>
+    </Box>
+
+</Slide>

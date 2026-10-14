@@ -1,0 +1,50 @@
+<Slide notes={`拿到一个分数，先要把限定它的条件填成四格。
+
+第一格是模型身份。要写完整标识，而不只是显示名，还要记下能拿到的精度——是精确快照，还是只是一个会更新的别名。
+
+第二格是题目范围。同一个名字的基准可能已经换过题，所以要写版本、子集、样本量，以及有没有做过修订。
+
+第三格是运行条件。用不用工具、总预算多少、采样怎么设、用哪个框架，这些都会改变结果。
+
+第四格是来源与时间。这是厂商自报，还是维护方公布？报告日期是哪一天？哪些字段没有披露？
+
+四格填不齐，就先写"未披露"。未披露本身就是一种结论，随手补一个日期不是。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.5.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一个分数，需要带着这些条件</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先判断条件是否可比，再比较分数。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ flex: 1, height: 58, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>谁 · 模型身份</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 58, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>测什么 · 题目范围</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 58, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>怎样运行 · 运行条件</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 58, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>证据从哪来 · 来源与时间</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

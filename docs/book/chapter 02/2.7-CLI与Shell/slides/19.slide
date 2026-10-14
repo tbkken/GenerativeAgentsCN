@@ -1,0 +1,71 @@
+<Slide notes={`OpenAI Responses 也提供了原生的 shell 工具，它有两种执行位置。
+
+托管模式在 OpenAI 管理的容器里执行。这个容器不是读者的 Windows 电脑，读不到本机 E 盘上的文件。要在里面校验青禾的材料，得先把脚本和输入送进那个环境。
+
+本地模式由调用者的执行环境处理请求。应用需要接收 shell_call，实际执行命令，再用匹配的 call_id 把 shell_call_output 送回去。返回项包含标准输出、标准错误，以及退出或超时结果。
+
+要特别注意一点：它是 Responses 的工具能力，不能把相同的字段直接套到 Chat Completions 请求里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.5　OpenAI 原生 Shell 工具的两种位置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同样叫 shell，位置完全不同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 48 }}>
+
+            <Box style={{ width: 552, height: 356, background: '#F4F7FA', borderRadius: 12, overflow: 'hidden', flexDirection: 'column' }}>
+                <Box style={{ height: 56, background: '#276FBF', padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>托管模式</Text>
+                    <Text style={{ fontSize: 14, color: '#EDF4FC' }}>container_auto</Text>
+                </Box>
+                <Box style={{ padding: '20px 24px', flexDirection: 'column', gap: 14 }}>
+                    <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>在 OpenAI 管理的容器中执行命令</Text>
+                    </Box>
+                    <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>容器不是读者的电脑，读不到本地 E: 盘</Text>
+                    </Box>
+                    <Box style={{ height: 64, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>要校验青禾材料，须先把脚本与输入送入</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 552, height: 356, background: '#F4F7FA', borderRadius: 12, overflow: 'hidden', flexDirection: 'column' }}>
+                <Box style={{ height: 56, background: '#26816B', padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>本地模式</Text>
+                    <Text style={{ fontSize: 14, color: '#ECF7F2' }}>local</Text>
+                </Box>
+                <Box style={{ padding: '20px 24px', flexDirection: 'column', gap: 14 }}>
+                    <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>应用接收 shell_call，实际执行命令</Text>
+                    </Box>
+                    <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>以匹配的 call_id 送回 shell_call_output</Text>
+                    </Box>
+                    <Box style={{ height: 64, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>返回 stdout、stderr 与退出或超时结果</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>它是 Responses 的工具能力，不能把相同字段直接套到 Chat Completions 请求中。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

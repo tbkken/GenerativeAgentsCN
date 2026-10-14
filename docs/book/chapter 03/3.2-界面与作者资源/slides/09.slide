@@ -1,0 +1,68 @@
+<Slide notes={`这里有两项能力特别容易看错。
+
+第一项是 Embedding。你可以把 Embedding 配置保存下来，表单也会告诉你保存成功。但这不证明这一次记忆检索已经用了向量。配置在那儿，和运行时真的走这条路，是两件事。
+
+第二项是 Evaluator。它可以作为一种资源被复制、被带进包里，但复制成功不证明运行链已经调用它。
+
+要特别小心「配置存在」和「实际生效」这两种说法。写笔记、写结论的时候，应该分开记录：资源准备好了是一件事，运行时用没用到是另一件事。
+
+第三章后面的内容会分别去查实际消费的位置和质量结果，先把这条区分记住。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.2　认识资源，不把源码合同当作已完成操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两处最容易误解的能力</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>能保存配置，不等于这次运行已经用到它。两件事要分开记录、分开核对。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 48 }}>
+
+            <Box style={{ width: 552, height: 250, background: '#F4F7FA', borderRadius: 10, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>Embedding　服务配置</Text>
+                <Box style={{ width: 512, height: 48, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>能保存 Embedding 配置</Text>
+                </Box>
+                <Box style={{ width: 512, height: 30, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+                </Box>
+                <Box style={{ width: 512, height: 48, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>不证明这次记忆检索已经使用向量</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 552, height: 250, background: '#F4F7FA', borderRadius: 10, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>Evaluator　业务评价配置</Text>
+                <Box style={{ width: 512, height: 48, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>能作为资源复制、带进包里</Text>
+                </Box>
+                <Box style={{ width: 512, height: 30, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+                </Box>
+                <Box style={{ width: 512, height: 48, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>不证明运行链已经调用它</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>后续分别检查两件事</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>实际消费的位置：这次运行到底读没读这份配置；质量结果：它有没有真的改善输出。资源合同写得再完整，也代替不了这两项观察。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 22</Text>
+    </Box>
+
+</Slide>

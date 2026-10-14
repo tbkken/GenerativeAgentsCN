@@ -1,0 +1,83 @@
+<Slide notes={`我把五步并排摆出来，请大家盯住第二步。
+
+第一步是取事实：先真的问到设备的回复，再区分资料里写的是什么、本轮实际做了什么。这一步两组一样。
+
+第二步开始分岔。基线组直接用自己的话写一份说明，不调用任何整理工具；对照组调用一次交接整理子技能，把已有事实和来源交给它，再拿建议回查自己的说明。
+
+后面三步又合流：提交给记录台等待保存确认、真实开口通知宋青、回应他提出的疑问。两组条件相同，所以最后结果的差别，只能归到整理方式上。
+
+另外记住，子技能只返回建议，它不做世界动作、不替人写记忆、不接触答案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.3　共同流程，只改变整理段</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>共同前置五步，只改整理那一段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 192, height: 100, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 12, color: '#546779' }}>第 1 步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>取真实回复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 192, height: 100, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 12, color: '#CB6B28' }}>第 2 步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>形成说明</Text>
+            </Box>
+            <Box style={{ width: 44, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 192, height: 100, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 12, color: '#546779' }}>第 3 步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>提交并确认</Text>
+            </Box>
+            <Box style={{ width: 44, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 192, height: 100, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 12, color: '#546779' }}>第 4 步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>真实通知</Text>
+            </Box>
+            <Box style={{ width: 44, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 192, height: 100, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 12, color: '#546779' }}>第 5 步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>回应问题</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 120, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+            <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>2</Text>
+            <Box style={{ flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>唯一差异落在第 2 步：怎么整理这份说明</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>其余四步两组完全相同，差别才有归因依据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>基线</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>用自然语言自由整理一份交接说明，不调用交接整理子 Skill</Text></Box>
+        </Box>
+
+        <Box style={{ height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>对照</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>调用一次交接整理子 Skill，把已有事实与来源交给它，再依据建议检查说明</Text></Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>子 Skill 只返回建议：不提交世界动作、不替人写记忆、不接触答案；额外调用、长文本与阅读负担都计成本。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

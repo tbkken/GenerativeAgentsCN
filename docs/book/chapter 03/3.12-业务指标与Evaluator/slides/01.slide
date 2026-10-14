@@ -1,0 +1,52 @@
+<Slide notes={`我们先解决一个很实际的问题：一次实验跑完，怎么判断它到底有没有用。
+青禾走完四十八步，只能说明我们指定的执行过程结束了。公告有没有改成新时间、许安有没有真的拿到消息、大家有没有按新安排行动，这些都还没有被回答。
+要区分这些结果，办法只有一个：在运行之前就把业务指标定好，运行之后拿世界里真实发生的事实来评分。
+我会把三件事分开讲：执行是否结束、系统诊断发现了什么、开放日的研究目标有没有达到。它们可以互相解释，但不能互相替代。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 680, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动　·　3.12</Text>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>怎样判断实验有用</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>四十八步走完，只说明指定执行过程结束。要判断实验有没有用，先把执行状态、系统诊断与研究目标分开，再按事先定义的规则评分。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>三层评价</Text>
+                </Box>
+                <Box style={{ width: 128, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>指标分母</Text>
+                </Box>
+                <Box style={{ width: 128, height: 40, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>观察窗口</Text>
+                </Box>
+                <Box style={{ width: 128, height: 40, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>评分规则</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Box style={{ width: 560, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#546779' }}>四十八步走完　≠　活动目标达成</Text>
+            </Box>
+            <Box style={{ width: 560, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 56, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>执行状态　　是否结束、在哪里中断</Text>
+            </Box>
+            <Box style={{ width: 560, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>行为质量　　空检索、回退、重复与 SOP 依据</Text>
+            </Box>
+            <Box style={{ width: 560, height: 56, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>业务成效　　通知更正、获知、到达与行动</Text>
+            </Box>
+            <Box style={{ width: 560, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>COMPLETED 不自动推出业务通过；{'\n'}NOT_EVALUATED 不算通过。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

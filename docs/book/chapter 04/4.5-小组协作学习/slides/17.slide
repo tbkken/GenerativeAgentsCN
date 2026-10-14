@@ -1,0 +1,80 @@
+<Slide notes={`不给分的情形有三类。
+
+字段缺失，比如只写了活动没写教室，这一项就没办法判。矛盾，比如同一个时段安排了两项，前后说不通。不可判，指的是表述里没有具体活动也没有具体教室，像「设备安排没意见」这种话，看着像表态，其实什么都没说。
+
+还有一种更整体的情况要单独处理：如果到最后都没有一份明确的最终方案，那这个 Run 就标成「未定稿」。这时候不能拿他中途提过的最佳候选来顶替，也不能因为结果不好看就把这条 Run 从统计里删掉。
+
+分母始终是七，表达措辞不影响判分——措辞再漂亮，方案不满足就是不满足。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.5　七项判据与不同分母</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>哪些情况不给分</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 634, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 16, color: '#546779' }}>三种一律不给分，措辞不影响判分。</Text>
+
+            <Box style={{ width: 634, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#546779' }} />
+                <Box style={{ width: 112, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>字段缺失</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, flex: 1 }}>只写了活动、没写时段或教室，这一项无法判</Text>
+            </Box>
+
+            <Box style={{ width: 634, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 112, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>矛盾</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, flex: 1 }}>同一时段安排了两项，方案自身说不通</Text>
+            </Box>
+
+            <Box style={{ width: 634, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#546779' }} />
+                <Box style={{ width: 112, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>不可判</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, flex: 1 }}>没有具体活动与教室，例如「设备安排没意见」</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 486, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>没有明确最终方案时</Text>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 486 }}>整个 Run 标成「未定稿」，这是一个独立的缺口，不是分数低。</Text>
+
+            <Box style={{ width: 486, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>不拿最佳候选替换定稿</Text>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>不删除该 Run</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 486, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>主指标分母固定为 7</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>不因样本字段缺报而缩小</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 26</Text>
+    </Box>
+
+</Slide>

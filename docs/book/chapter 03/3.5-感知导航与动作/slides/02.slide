@@ -1,0 +1,85 @@
+<Slide notes={`这一节要看清五件事，正好对应五个小节。
+
+第一，感知返回的是有范围的事实，看得见多少由视野和带宽说了算。第二，导航是一次查询，不是移动本身，查询给出路线但不改坐标。第三，内核按移动预算决定走了多远，一轮走多少格是算出来的。第四，六种动作原语各有含义，谁能做哪件事由身份决定。第五，从配置页面一路检查到结构化事实，用证据判断而不是用感觉判断。
+
+五个问题环环相扣：不知道位置就没法导航，不导航就谈不上动作，不查事实就不知道动作有没有真的发生。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>要看清的五件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>一句话背后是三个问题</Text>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>语言要落进空间，<br/>每个环节都要留下<br/>可检查的事实。</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>五个小节从感知讲到取证，编号与后面的扉页一一对应。</Text>
+        </Box>
+
+        <Box style={{ width: 788, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ height: 96, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 56, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>感知返回有范围的事实</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>视野是硬上限，注意力带宽分类限制候选输出</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 56, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>导航是查询，不是移动</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>reachable 只说明存在可走路线，查询不改坐标</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 56, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>内核怎样决定走了多远</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>预算 = 步长 × movement_tiles_per_minute，至少一格</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 56, height: 56, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>六种动作分别表达什么</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>身份决定可用原语，校验、接受与提交是不同阶段</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 56, height: 56, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>从页面一路检查到事实</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>配置预检、回放检查器、调用记录三道取证</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 23</Text>
+    </Box>
+
+</Slide>

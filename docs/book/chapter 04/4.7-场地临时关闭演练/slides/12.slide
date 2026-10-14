@@ -1,0 +1,82 @@
+<Slide notes={`这一套条件式行为有四个出口，它们之间没有先后顺序，而是按当前事实各走一条。
+第一条，路线返回可达而且确实还需要移动，那就保留同一个完整目标提交 MOVE。第二条，已经进入集合区了，就记录待核对的到达信息，并在当前位置做一次集合准备动作。
+第三条，目标本身合法但确实不可达，那就先把原因保存下来，再去咨询实际可交互的公告对象，或者看得见的引导员。第四条，参数被拒绝，就按具体错误去修正，绝不猜地址，也不靠扩大视野去突破上限。
+每一轮成功选出一个世界动作之后就结束。下一轮重新以实际位置判断进度，而不是拿上一轮的坐标继续推算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.3　条件式 Brain 的四个出口</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个目标，四条判断分支</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>我的目标是进入本次实际配置的集合区；每轮先读取事实上发生了什么，再决定本轮的出口。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 380, height: 56, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>读当前坐标、地址与有效进度</Text>
+            </Box>
+            <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 380, height: 56, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>用真实已知地址查询路线</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>四条出口，互不先后</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 250, height: 180, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>返回可达，仍需移动</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>提交 MOVE</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>保留相同完整目标；下一轮以实际位置判断进度。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 180, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 180, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>已进入集合区</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>一次集合准备 ACT</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>记录待核对的到达信息，在当前位置完成。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 180, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 180, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>目标合法但不可达</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>保存原因再咨询</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>咨询实际可交互公告或可见引导员，不穿墙。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 180, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 180, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>参数被拒绝</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>按具体错误修正</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>不猜地址，也不扩大视野突破上限。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+            <Box style={{ width: 560, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.4 }}>每轮成功选择世界动作后结束</Text>
+            </Box>
+            <Box style={{ width: 560, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 46, background: '#546779' }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.4 }}>下一轮以实际位置判断进度</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 26</Text>
+    </Box>
+
+</Slide>

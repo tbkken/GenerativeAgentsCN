@@ -1,0 +1,103 @@
+<Slide notes={`路径检查的用法是按住 Ctrl 依次点 A、B 两个点。结果分四种：起点阻挡、终点阻挡、不可达、可达距离。前三种都是失败，只有第四种给出路线和距离。
+
+按地图资料，至少要查大厅到三个房间、房间到对象旁站位的路线。但一次成功只证明这两个端点连通，还要检查实际人物出生点及可交互站位。
+
+最后强调：预览线不是角色已走过的路。运行时 Brain 要先获得可见目标，再提出导航与移动，最后以提交后的坐标核对抵达。预检没有报错，也不能替代这个运行检查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.4　画面有门，还要把门设为可走</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>路径检查的四种结果</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 480, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 480 }}>按地图资料检查：大厅至三个房间、房间至对象旁站位。</Text>
+
+            <Box style={{ height: 74, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#546779' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>起点阻挡</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>A 点本身落在阻挡格上</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 74, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#546779' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>终点阻挡</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>B 点本身落在阻挡格上</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 74, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#546779' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>不可达</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>两点之间没有连通路线</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 74, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>可达距离</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>给出路线与距离</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 640, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>一次成功路径，只证明这两个端点连通</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>还要检查实际人物出生点及可交互站位。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>运行时（3.5 展开）</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 176, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#276FBF' }}>可见目标</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 176, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#276FBF' }}>导航与移动</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 200, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#26816B' }}>提交后核对抵达</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>路径检查的预览线，不当成角色已走过的路</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>预检没有报错，也不能替代运行检查。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,53 @@
+<Slide notes={`回路接起来了，接下来要处理的是它出错的时候。
+
+收到一个工具请求，应用要做的判断不是"能不能执行"，而是"应该走哪一条路"。符合条件才执行；参数可以修正的，把诊断信息回传出去；预算耗尽，或者反复没有新进展，就停下来。
+
+这里面最容易被忽略的是最后一条。停下来不是失败，而是保护：继续跑下去只会消耗预算，还会让报告里多出一堆没有意义的尝试。
+
+还有一个前提：工具名必须来自允许列表。模型返回的字符串不能直接交给动态执行，未知工具、无效 JSON、字段类型错误都要进入受控的错误分支，而不是拼一把试试看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.5.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>参数错误、工具失败与无进展</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#CB6B28' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>不是所有工具请求都该被执行，也不是所有失败都该重试。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 280, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>符合条件才执行</Text>
+            </Box>
+            <Box style={{ width: 280, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>可修正错误回传诊断</Text>
+            </Box>
+            <Box style={{ width: 280, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>预算耗尽或无进展则停</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 300, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#CB6B28' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>工具名必须来自允许列表，不能直接交给动态执行</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 26</Text>
+    </Box>
+
+</Slide>

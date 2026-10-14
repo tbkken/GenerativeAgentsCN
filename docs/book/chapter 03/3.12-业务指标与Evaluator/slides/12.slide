@@ -1,0 +1,54 @@
+<Slide notes={`除了标准情况，还有几种边界必须提前想清楚，否则事后很容易把一个负数悄悄变成零。
+如果许安在公告更正之前，已经从别的渠道核实了正式安排，那这条要单独列出来，叫做「更正前获知，非公告传播延迟」。来源和实际时差都保留，减出来是负数就写负数，不能截成零。
+如果他更正前只是听到了候选方案，那就保留候选记录，继续去找正式确认的时间点。这样既没有抹掉提前获知，也不会把「建议」误算成「已经发布的安排」。
+第三，暂停不能算进虚拟延迟。如果研究的是用户在界面上等待的真实时间，那要另外设一个墙钟指标。
+最后，把虚拟延迟和墙钟延迟放进同一列，恢复实验和连续实验就没办法公平比较了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.3　怎样计算一次延迟</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>提前获知、候选方案与暂停</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', height: 30, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 296 }}><Text style={{ fontSize: 14, color: '#546779' }}>情况</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>怎样处理</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 296 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>更正前已从其他渠道核实</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>单列「更正前获知，非公告传播延迟」，保留来源与实际时差，不把负差值截成零</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 296 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>更正前只听到候选方案</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>保留候选记录，继续查找正式确认的时间</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 296 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>暂停期间</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>不计入虚拟延迟；若要研究等待界面的真实时间，另设墙钟指标</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 296 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两种延迟混在一列</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>恢复实验与连续实验，无法放在一起公平比较</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

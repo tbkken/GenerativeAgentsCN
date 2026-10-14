@@ -1,0 +1,62 @@
+<Slide notes={`最后回到「完成」这个词本身。本章采用两种交付范围。
+
+设计交付包括可审读的委托、资料、信息分配、精确行为文本和计划，它验收到「可以开始实施」。运行交付在设计交付之上增加实际实验、全部 Run、结果和接收记录，验收到双方约定的读取、复算或者重新执行层次。
+
+两者都可以成为合格成果，关键是名称要和证据相称。明明只做到设计准备，却写成运行成功，这是最常见也最难补救的问题。
+
+当前这份书稿属于教学材料交付。它没有完成第二种范围，也没有假定前三章的历史证据可以替代这个服务大厅。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.6　完成不等于所有问题都得到肯定答案</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>完成不等于所有问题都得到肯定答案</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 1152 }}>两种范围都可以成为合格成果，但交出的名称必须与手里的证据相称。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 560, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>设计交付</Text>
+                </Box>
+                <Box style={{ width: 560, height: 190, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>可审读的委托、资料、信息分配、精确行为文本和计划</Text>
+                    <Box style={{ width: 520, height: 2, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>验收到「可以开始实施」</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 560, height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>运行交付</Text>
+                </Box>
+                <Box style={{ width: 560, height: 190, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>在其上增加实际实验、全部 Run、结果和接收记录</Text>
+                    <Box style={{ width: 520, height: 2, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>验收到双方约定的读取、复算或重新执行层次</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1060 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两者都能合格，但名称与证据要相称</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>当前书稿属于教学材料交付，没有完成第二种范围，也不假定历史证据可以替代这个服务大厅。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

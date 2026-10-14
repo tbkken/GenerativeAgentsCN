@@ -1,0 +1,44 @@
+<Slide notes={`这一块解决两个问题：一句话从哪来，以及两份材料互相矛盾的时候听谁的。
+
+我特别想强调一句话：来源不是一句“来自文档”。你说来自文档，接收者还是没法回查。至少要能定位到哪一份文档的哪一段，最好连版本和采用段落都留下来。
+
+因为文件是会变的。作者后来又改了两句，你当时用的是哪一句，只有把原文和摘要一起保留，接收者才能解释这次实验为什么用这些文字。
+
+第二件事是冲突。两份材料不一致的时候，最危险的做法是折中，把两句话拼成一个看起来更完整的版本，让对象自己去选相信谁。正确做法是先登记冲突编号，记录它影响什么，再由作者决定本次采用哪一条。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>2　　5.2.2 — 5.2.3</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>来源能追到原文，冲突先登记</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>先保存收到的原文，再写整理稿；来源至少要能定位到哪一份文档的哪一段。两份材料打架时，先登记，再决定本次采用谁。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>收到的原文</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>整理稿</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#546779' }}>来源登记（可回查段落）</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 23</Text>
+    </Box>
+
+</Slide>

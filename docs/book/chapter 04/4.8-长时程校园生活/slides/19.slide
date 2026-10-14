@@ -1,0 +1,86 @@
+<Slide notes={`这一组数字全部是人工判分和算术的结果，不是某次真实运行跑出来的，先说在前头。
+
+左边这一支数的是执行实例：A 一次、C 一次、B 三次，一共五个实例。其中 B 首次确认之后又提交了两次，后来两次都算重复，所以重复率是二除以五，等于百分之四十。三件任务首次都闭环，闭环率是三除以三，等于百分之百。
+
+中间这一支数的是整理声明：共八项，六项有证据，两项有问题，一项虚构完成、一项来源不明，严格保真六除以八等于百分之七十五。
+
+右边这一支数的是调用：全部尝试合起来一千四百四十次逻辑调用，其中对象占了三百六十次。用一千四百四十除以三人乘二十四小时，得到每人每虚拟小时二十次。三支的单位不同，不能互相推。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.5　人工判分与算术（非 Run 结果）</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>5 个实例、8 项声明、1440 次调用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 376, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 360, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 360, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>执行实例 · 5 个</Text>
+                </Box>
+                <Box style={{ width: 360, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>A 一次 ＋ C 一次 ＋ B 三次</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>B 首次确认后再提交两次</Text>
+                </Box>
+                <Box style={{ width: 360, height: 96, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>后两次计重复</Text>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#CB6B28' }}>2 / 5 ＝ 40%</Text>
+                </Box>
+                <Box style={{ width: 360, height: 108, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>A、B、C 首次均闭环</Text>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#26816B' }}>3 / 3 ＝ 100%</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 360, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 360, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>整理声明 · 8 项</Text>
+                </Box>
+                <Box style={{ width: 360, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>6 项有证据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>2 项有问题：1 虚构完成、1 来源不明</Text>
+                </Box>
+                <Box style={{ width: 360, height: 96, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>两种问题分列</Text>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#CB6B28' }}>6 / 8 ＝ 75%</Text>
+                </Box>
+                <Box style={{ width: 360, height: 108, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>保真率不由闭环率推得：任务全闭环，声明仍可能失真。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 360, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 360, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>逻辑调用 · 3 人 × 24 小时</Text>
+                </Box>
+                <Box style={{ width: 360, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>L ＝ 1440，其中对象 360，含全部 Attempt</Text>
+                </Box>
+                <Box style={{ width: 360, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>L ÷（3 人 × 24 小时）</Text>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#276FBF' }}>20 次／人·虚拟小时</Text>
+                </Box>
+                <Box style={{ width: 360, height: 108, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>对象成本进分子，不冒充第四个人；监控阈值不是界面自动硬限额。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>三个分支数的单位不同：5 个执行实例与 3 项初始任务、8 项声明、3 人 × 24 虚拟小时。一次性任务全部闭环，仍可能反复重做。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 27</Text>
+    </Box>
+
+</Slide>

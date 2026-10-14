@@ -1,0 +1,69 @@
+<Slide notes={`判断一个模型是不是"学会了"，可以问三个问题。以后每遇到一个"AI 好像学会了"的说法，都可以拿它们来问一遍。
+
+第一行：如果你用大量资料去学习广泛的规律，那属于预训练，参数会更新。
+
+第二行：如果你用示范、偏好或者奖励去改善它的行为，那属于后训练，参数同样会更新。
+
+第三行，也是最常见的一行：你把今天的房间表放进请求里，这只是推理时提供上下文，参数通常不会更新。
+
+做成表格的好处是，它把"我做了什么事"和"模型因此变了什么"这两件事分开了。
+
+第三行的区别尤其重要。它意味着这份材料只在这一次的上下文里有效。换一个新的对话，如果你想让它继续用这份房间表，就必须重新提供。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.4　模型如何从训练走到使用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>你做的事，改的是哪一样</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 320, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>分开看"我做了什么"和"模型变了什么"</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>同一件事，落在不同的阶段，对模型的影响完全不同。第三行是日常最常遇到的情况。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 8, padding: '14px 16px', border: '1px solid #E5C9A8' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>提供上下文不等于更新参数。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Text style={{ width: 400, fontSize: 15, color: '#546779' }}>你做的事</Text>
+                <Text style={{ width: 240, fontSize: 15, color: '#546779' }}>通常属于什么</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>参数是否因此更新</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', alignItems: 'center' }}>
+                <Text style={{ width: 400, fontSize: 17, color: '#20344B' }}>用大量资料学习广泛规律</Text>
+                <Text style={{ width: 240, fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>预训练</Text>
+                <Text style={{ flex: 1, fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>是</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', alignItems: 'center' }}>
+                <Text style={{ width: 400, fontSize: 17, color: '#20344B' }}>用示范、偏好或奖励改善行为</Text>
+                <Text style={{ width: 240, fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>后训练</Text>
+                <Text style={{ flex: 1, fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>是</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', alignItems: 'center', border: '1px solid #E5C9A8' }}>
+                <Text style={{ width: 400, fontSize: 17, color: '#20344B' }}>把今天的房间表放进请求</Text>
+                <Text style={{ width: 240, fontSize: 17, color: '#CB6B28', fontWeight: 'bold' }}>推理时提供上下文</Text>
+                <Text style={{ flex: 1, fontSize: 17, color: '#CB6B28', fontWeight: 'bold' }}>通常不会</Text>
+            </Box>
+
+            <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>下一次没有提供这份表，就不能假定它仍能使用。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 26</Text>
+    </Box>
+
+</Slide>

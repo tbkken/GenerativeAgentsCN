@@ -1,0 +1,93 @@
+<Slide notes={`信息要进入一次回答，必须走过一条明确的路径。
+
+外部资料、工具、应用保存的记忆，还有我发出的消息，它们都停在模型外面。它们不会自动被模型看到。中间必须有一步：应用按需去选择、去读取，把真实内容带回来，放进当前上下文。
+
+只有进了当前上下文，模型才能用上它。
+
+参数知识走的是另一条路。它不经过读取这一步，而是直接参与模型的计算，因为它本来就在参数里。
+
+所以有两条结论。
+
+第一，文件在电脑里，不等于已经进入模型的上下文。这句话值得反复强调。
+
+第二，检索增强生成，也就是把模型和可检索的资料结合起来，它为取用和更新信息提供了一条途径。但检索到资料之后，仍然要检查它有没有被用对——检索到和用对，是两件事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.5　四种容易混在一起的"知道"</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>信息必须走过一条明确的路径</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 18, flex: 1, justifyContent: 'center' }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+
+                <Box style={{ width: 220, height: 200, background: '#F4F7FA', borderRadius: 10, padding: 14, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>外部资料与工具</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>应用持久记忆</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>用户消息与指令</Text>
+                </Box>
+
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+
+                <Box style={{ width: 210, height: 200, background: '#FFF4E6', borderRadius: 10, border: '1px solid #E5C9A8', padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>应用按需读取</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>选择、检索，把真实内容带回来</Text>
+                </Box>
+
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+
+                <Box style={{ width: 210, height: 200, background: '#EDF4FC', borderRadius: 10, border: '1px solid #276FBF', padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>当前上下文</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>本轮实际可用的指令、历史、资料与记忆</Text>
+                </Box>
+
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+
+                <Box style={{ width: 210, height: 200, background: '#EDF4FC', borderRadius: 10, border: '1px solid #B5C7D8', padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>已有模型</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>处理当前输入</Text>
+                </Box>
+
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+
+                <Box style={{ width: 180, height: 200, background: '#ECF7F2', borderRadius: 10, border: '1px solid #26816B', padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>生成回答</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>本次实际可用的信息共同决定</Text>
+                </Box>
+
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 14 }}>
+                <Box style={{ background: '#FFF4E6', borderRadius: 8, padding: '12px 20px', border: '1px solid #E5C9A8' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>参数知识：训练学到的规律</Text>
+                </Box>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>--- 影响计算 ---›</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>不经过读取，直接参与模型计算</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ flex: 3, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 22, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>文件在电脑里，不等于已经进入模型的上下文。</Text>
+            </Box>
+            <Box style={{ flex: 4, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>检索增强生成提供了取用资料的途径，但检索到之后仍要检查是否用对。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 26</Text>
+    </Box>
+
+</Slide>

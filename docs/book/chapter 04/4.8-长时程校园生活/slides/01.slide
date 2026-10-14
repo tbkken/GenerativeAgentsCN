@@ -1,0 +1,75 @@
+<Slide notes={`我先说清楚这一节要回答什么问题。昨日已经办完的事，第二天会不会被重新做一遍？一个人答应别人的事，跨过午夜以后还算不算数？到了第二天做的总结，会不会把还等着确认的事写成已经完成？这三种毛病看着琐碎，却正好是长时程运行最典型的问题。
+
+我用的场景是虚构的白榆校园开放学习周：三名学习者在居住、阅览、讨论和公共休息四个相邻区域里活动，不模拟课程、饥饿或者疲劳。我要比较的不是谁跑得更久，而是逐项进度和额外的跨日整理这两种记忆组织方式，各会带来什么收益、又要付出什么代价。
+
+跑得久，不等于更聪明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.8　选修案例</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>跨过午夜以后，{'\n'}还记得什么</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 500 }}>同一件事，昨天办完了今天会不会重做；一句承诺，跨过午夜会不会丢失；一份总结，会不会把“待确认”写成“已完成”。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 150, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>三名学习者</Text>
+                </Box>
+                <Box style={{ width: 150, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>24 / 48 小时</Text>
+                </Box>
+                <Box style={{ width: 150, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>跨日这一处</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 620, height: 52, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一次性任务</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>办完就该结束</Text>
+            </Box>
+            <Box style={{ width: 620, height: 52, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>周期活动</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>新日期就是新一次</Text>
+            </Box>
+            <Box style={{ width: 620, height: 52, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>自愿承诺</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>有人答应才算数</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 126, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>10-19 08:00</Text>
+                    </Box>
+                    <Box style={{ width: 140, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>10-19 16:00</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 44, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>午夜 00:00</Text>
+                    </Box>
+                    <Box style={{ width: 138, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>10-20 08:00</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>跨日时间线示意　节点间距不按时长比例</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

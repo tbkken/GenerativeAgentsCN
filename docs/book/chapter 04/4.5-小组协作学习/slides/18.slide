@@ -1,0 +1,59 @@
+<Slide notes={`主指标只有一个：满足的条件数除以七。分母固定，不因为样本没报全就变小。
+
+这么设计，部分分是可以比较的：六比七和四比七，一眼能看出差距。
+
+但它有两个陷阱。第一，七项不是七种独立能力，它们来自同一套题面和同四条私有限制，所以六比七并不说明这个小组快成功了。第二，高部分分不等于能执行：一个在纸面上几乎全对的方案，如果从来没有被明确说出口，那它只是候选，不是定稿。
+
+所以未定稿必须单独标注：既不用最佳候选去替换，也不把这条 Run 从统计里拿掉。措辞、语气、说法怎么变，都不影响判分，我们只看方案内容。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.5　七项判据与不同分母</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>主指标只有一个</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '20px 28px', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.2 }}>主指标 ＝ 满足条件数 ÷ 7</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>分母固定为 7；字段缺失、矛盾或不可判一律不给分，表达措辞不影响</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, height: 230, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>一</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>措辞不影响</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65, flex: 1 }}>说法、语气、句式怎么变都一样，只看方案里写了什么活动、什么时段、什么教室。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 230, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>二</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>高分不等于能执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65, flex: 1 }}>七项来自同一套题面与四条私有限制，不是七种独立能力；部分分高只说明接近标准答案。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 230, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 40, height: 40, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>三</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>未定稿单独标注</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.65, flex: 1 }}>不拿最佳候选替换，也不删除该 Run；没被明确说出口的方案不算定稿。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 26</Text>
+    </Box>
+
+</Slide>

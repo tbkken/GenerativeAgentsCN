@@ -1,0 +1,67 @@
+<Slide notes={`项目资料的可复用性还依赖三件事：来源、内容说明和访问方式。别人能不能用，往往不取决于材料多漂亮，而取决于这三件事有没有写清。
+
+这里可以参考 FAIR 原则。它强调数字资料应当便于寻找、访问、互操作与再利用，并要求说明来源。要注意两点：第一，它允许必要的认证与授权，并不意味着所有资料必须公开；第二，这一章只是借鉴这些原则来组织交付入口，我不声称获得了任何认证。
+
+所以我在交付清单里给每一项都留下来源说明和取用方式，别人拿到材料时既不缺上下文，也知道哪些部分需要申请权限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.7　为不同听众保留同一事实底稿</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>来源、说明与访问方式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>资料可复用的三件事</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 400 }}>来源、内容说明和访问方式。别人能不能用一份材料，往往取决于这三件事有没有写清。</Text>
+            <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>借鉴，不等于获得认证</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>本章借鉴 FAIR 原则组织交付入口，不声称获得了任何认证。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 712, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>可发现</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>能被检索到，有清楚的名称与位置</Text></Box>
+                <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#546779' }}>Findable</Text></Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>可访问</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>说明在哪里取、以什么方式取</Text></Box>
+                <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#546779' }}>Accessible</Text></Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>可互操作</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>格式与他人工具可以对接</Text></Box>
+                <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#546779' }}>Interoperable</Text></Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>可复用</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>说明来源与条件，别人能再次使用</Text></Box>
+                <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#546779' }}>Reusable</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>FAIR 原则允许必要的认证与授权，并不意味着所有资料必须公开。</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 26</Text>
+    </Box>
+
+</Slide>

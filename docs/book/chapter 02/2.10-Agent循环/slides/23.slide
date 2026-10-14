@@ -1,0 +1,64 @@
+<Slide notes={`本节最后留两个反例，请大家自己想清楚再动手试。
+
+第一个：让助手连续三次查询同一个房间，却不修改排期。这是合理复核，还是无进展？
+
+答案取决于查询有没有可能获得新的事实。如果数据文件是固定的、查询参数相同、输出也相同，那就不应该无限继续。这时候继续查，只是在消耗预算。
+
+第二个：把 plan.md 改成「全部通过」，同时保留一份有预约冲突的 schedule.json。然后重新运行校验。
+
+你会看到，校验器不认文本。执行状态、文本总结和业务完成度，这三件事必须分别记录。
+
+这一条我建议每个人都亲手做一遍：改一句描述，看看结果会不会变。它最能说明为什么「说得对」不等于「做对了」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.6　本节练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两个反例：复核还是无进展</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>先自己判断，再动手验证。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 170, background: '#EDF4FC', borderRadius: 10, padding: '0px 22px', gap: 20 }}>
+            <Box style={{ width: 200, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>反例一</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>连续查询同一个房间{'\n'}却不修改排期</Text>
+            </Box>
+            <Box style={{ width: 3, height: 118, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>取决于查询是否可能获得新事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>数据文件固定、查询参数相同、输出也相同，就不应无限继续；这时候继续查只是在消耗预算。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 170, background: '#FFF4E6', borderRadius: 10, padding: '0px 22px', gap: 20 }}>
+            <Box style={{ width: 200, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>反例二</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>plan.md 改成{'\n'}「全部通过」</Text>
+            </Box>
+            <Box style={{ width: 3, height: 118, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>文本改了，冲突还在</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>保留有预约冲突的 schedule.json 重新运行校验：执行状态、文本总结与业务完成度要分别记录。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F7F3E8', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>让文件与结果说话，不是让总结说话</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>「说得对」不等于「做对了」，两者要分开记录、分开核对。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

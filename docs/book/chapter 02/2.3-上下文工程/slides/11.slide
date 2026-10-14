@@ -1,0 +1,49 @@
+<Slide notes={`接下来看跨轮的状态怎么传。这一块先讲手工保留。
+
+有一个基本事实要先说清楚：直接发一个请求过去，服务端不会自动知道你的应用上一次发送了什么。它没有这个上下文，除非你把它带上去。
+
+所以手工管理的做法是，自己保存原输入，把上一轮的完整输出加到下一次的输入里，再追加用户的新消息。这里的关键词是「完整」：完整输出可能包括工具调用、推理相关条目和消息元数据，只保存最后那段文本，这些东西就丢了。
+
+书稿里给了两条路线，这一条是手工保留历史，下一条是用响应 ID 关联。两条都是可选项，选定一条就够了，但无论选哪条，都要说得清本轮实际获得的输入到底是什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.3.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>OpenAI API：手工保留多轮状态</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>直接请求不会自动知道应用上一次发送了什么。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 340, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>本轮输入：历史与新材料</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>保留完整输出项</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>下轮输入：完整历史加新消息</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 25</Text>
+    </Box>
+
+</Slide>

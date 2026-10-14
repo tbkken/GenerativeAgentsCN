@@ -1,0 +1,156 @@
+<Slide notes={`现在看十道题的具体得分。
+
+前十道题里，第四题问阅读活动几点结束，标准答案是十点十分，助手答成了十点三十。第九题问绘画活动的人数上限，标准答案十二人，助手答了十五人。其余八题都对。
+
+每题对记一，错记零，最后一列相加得到八。准确率就等于正确题数除以纳入评价的题数，八除以十，百分之八十。
+
+注意判分里那个约定：上午九点和零九比零被视为同一个答案。这不是小事，格式上的差异要不要算错，必须在动手之前说清楚。
+
+还有一点，这十道题主要测的是信息读取。它没有测复杂排程，更没有测真实工具执行。所以这个百分之八十，只在这份资料、这十道题和这套判分规则下成立，不能说成所有开放日问题都有八成的成功率。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.1　从十道小题开始</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>十道事实题，八个答对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row', height: 24, padding: '0 12px', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 13, color: '#546779' }}>题</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>问题</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 13, color: '#546779' }}>标准答案</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 13, color: '#546779' }}>助手答案</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 13, color: '#546779' }}>分</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#546779' }}>1</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>报到几点开始？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>09:00</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#20344B' }}>09:00</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>1</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#546779' }}>2</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>志愿者几点集合？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>08:45</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#20344B' }}>08:45</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>1</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#546779' }}>3</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>阅读活动几点开始？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>09:30</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#20344B' }}>09:30</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>1</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#FFF4E6', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>4</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>阅读活动几点结束？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>10:10</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>10:30</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>0</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#546779' }}>5</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>阅读活动在哪个房间？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>阅览室</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#20344B' }}>阅览室</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>1</Text></Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row', height: 24, padding: '0 12px', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 13, color: '#546779' }}>题</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>问题</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 13, color: '#546779' }}>标准答案</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 13, color: '#546779' }}>助手答案</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 13, color: '#546779' }}>分</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#546779' }}>6</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>阅读活动人数上限？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>20 人</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#20344B' }}>20 人</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>1</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#546779' }}>7</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>绘画活动几点开始？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>10:00</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#20344B' }}>10:00</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>1</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#546779' }}>8</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>绘画活动几点结束？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>10:40</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#20344B' }}>10:40</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>1</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#FFF4E6', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>9</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>绘画活动人数上限？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>12 人</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>15 人</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>0</Text></Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', height: 50, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 14, color: '#546779' }}>10</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>服务台提供无障碍协助？</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#546779' }}>提供</Text></Box>
+                    <Box style={{ width: 66 }}><Text style={{ fontSize: 14, color: '#20344B' }}>提供</Text></Box>
+                    <Box style={{ width: 30 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>1</Text></Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 112, background: '#F4F7FA', borderRadius: 10, gap: 12 }}>
+            <Box style={{ width: 120, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>准确率</Text>
+            </Box>
+            <Box style={{ width: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#546779' }}>=</Text>
+            </Box>
+            <Box style={{ width: 168, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>正确题数　8</Text>
+            </Box>
+            <Box style={{ width: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#546779' }}>/</Text>
+            </Box>
+            <Box style={{ width: 230, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>纳入评价的题数　10</Text>
+            </Box>
+            <Box style={{ width: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#546779' }}>=</Text>
+            </Box>
+            <Box style={{ width: 120, height: 56, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>80%</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 31</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,52 @@
+<Slide notes={`接手这件事，第一步不是整理文件，而是问清楚接收者到底要完成什么。
+
+我见过很多交付，作者把压缩包发过去，附一句「请帮我看看」。这句话听起来客气，实际上没有告诉对方任何可执行的动作：看什么、看到什么程度、要不要运行模型。
+
+所以要先选检查类型。是审设计、核文件、看回放、复算分数，还是重新执行？这五类检查回答的是五个不同问题，作者准备材料的方式也完全不同。
+
+只有把目标写成一句能落地的话，比如确认两组只改变了咨询台的澄清策略，并检查 H1 到 H4 的判分能否追到证据，后面的材料范围和验证深度才有依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.7　交付与复现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ①</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>①</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先说清接收者要完成什么</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>「请帮我看看」不是充分的交付目标。接收者要审设计、核文件、看回放、复算分数，还是重新执行？先选检查类型，再按类型准备材料。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 6 }}>
+            <Box style={{ width: 200, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>设计审阅</Text>
+            </Box>
+            <Box style={{ width: 200, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>文件核对</Text>
+            </Box>
+            <Box style={{ width: 200, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>事实回放</Text>
+            </Box>
+            <Box style={{ width: 200, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>结果复算</Text>
+            </Box>
+            <Box style={{ width: 200, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>重新执行</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,68 @@
+<Slide notes={`两份材料分别保存，这件事在工程上不是形式。它们用的是同一个 skill_key 和相同的依赖，所以如果把两份内容不同的材料放进同一个资源闭包，系统应该给出冲突诊断。
+
+我在实际审阅中见过相反的做法：后保存的那一份把前面覆盖掉，然后作者对外说「我做了对照」。这种情况下已经无法判断每组运行时到底读到了哪一份，对照也就不成立了。
+
+所以这一节要求的是三件事分开写清楚：同一标识与相同依赖、分别保存于独立实验副本、以及冲突时必须阻断而不是静默覆盖。另外提醒一句，公共 Skill 保存之后，已有的实验不会自动更新，历史运行仍然读的是当时的版本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.3　对照只替换这一个段落</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同 key 两份内容要分开保存</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 640, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, width: 576 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>同一标识与相同依赖</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>两组使用同一个 skill_key 和相同依赖，变化的只是决策段内容。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 640, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, width: 576 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>分别保存于独立副本</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>两份材料各自保存在自己的实验副本中，不共享一份公共资源。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 640, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, width: 576 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>不是跟随公共 Revision</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>它们是内容不同的两个实验，不是运行时跟随某个公共资源的版本。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 480, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 480, height: 232, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>混进同一闭包应阻断</Text>
+                <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>同 key、不同内容的两份 Skill 如果混进一个资源闭包，应当得到冲突诊断。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>不能静默覆盖之后，对外声称已经做过了对照。</Text>
+            </Box>
+
+            <Box style={{ width: 480, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>保存不会回写历史</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>公共 Skill 保存之后，既有实验也不会自动更新，历史运行读的仍是当时的版本。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 27</Text>
+    </Box>
+
+</Slide>

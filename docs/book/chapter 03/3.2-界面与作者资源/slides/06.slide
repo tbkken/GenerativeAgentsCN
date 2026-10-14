@@ -1,0 +1,55 @@
+<Slide notes={`有三个地方只看名字会认错，我一个个说。
+
+第一个是「地图」按钮。同一个按钮文字，可能打开公共地图，也可能打开当前实验里的地图。判断依据是页面所在的范围和实验名称，不能只看按钮上的字；改完保存之后，从同一个入口重新打开，才能确认改对了地方。
+
+第二个和第三个是「人群」和「大脑」。它们并不是另外两个一级菜单。进入「智能体」以后可以切换「智能体／人群」，进入「技能」以后可以切换「技能／大脑」。这种分组有它的道理：人群组织人物，大脑本身也是一种 Skill。
+
+最后提醒一句，不要根据旧截图去找已经变动的导航位置，界面对不上是常事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.1　先看清正在编辑哪一份内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个只看名字会认错的地方</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 44 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>按钮文字和页签名称都会重复出现</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>它们指向的资源并不一样。看清分组关系，比记住位置更可靠。</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 4 }}>
+                <Box style={{ width: 3, height: 34, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>不要根据旧截图寻找已经变动的导航位置</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 808, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 150, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>看到「地图」，不能只看这两个字</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>同一个「地图」按钮可能打开公共地图，也可能打开当前实验内的地图；判断依据是页面所在范围与实验名称。</Text>
+            </Box>
+
+            <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>「人群」不是第四个一级菜单</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>进入「智能体」之后，才可以在「智能体／人群」之间切换；人群把这四个人组织成一次选择集。</Text>
+            </Box>
+
+            <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>「大脑」也不是一级菜单</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>进入「技能」之后，才可以在「技能／大脑」之间切换；大脑本身也是一种 Skill。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 22</Text>
+    </Box>
+
+</Slide>

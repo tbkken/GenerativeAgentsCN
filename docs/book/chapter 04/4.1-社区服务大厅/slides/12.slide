@@ -1,0 +1,57 @@
+<Slide notes={`两组的共同 SOP 是一样的：读取真实的待办请求，依据服务范围说明窗口、理由和下一步；按请求编号回复，不广播，也不声称已经办好；获知的目的，只能在这个对象自己的记忆里和真实的请求者关联起来。
+
+接下来是成本口径，这一点最容易被忽略。
+
+第一，错误窗口的请求逐次计；走错之后可以改道，但已经发出去的那几次请求照样算数。第二，额外的追问轮次也算；对照多问的那一轮不是免费的。第三，对象调用同样计成本，每一次调用都有代价，不存在零成本重试。
+
+所以“先问清楚”可能有收益，也一定带着代价，这两面都要记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.3　共同 SOP 与成本口径</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>走错一次也要记账</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>共同 SOP（两组相同）</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>读取真实待办请求，按服务范围说明窗口、理由与下一步；按请求 ID 回复，不广播、不声称已办理。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 240 }}>错误窗口请求</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>逐次计；走错后可改道，但已发出的请求仍算数。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 240 }}>额外追问轮次</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>对照多问的那一轮计入成本，不是免费获得的信息。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 240 }}>对象调用</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>每次调用都有代价；不存在零成本的重试。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>新增信息必须来自实际回复，不能预塞进任务表；地图、人物、模型、依赖、窗口规则与留存设置两组相同。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

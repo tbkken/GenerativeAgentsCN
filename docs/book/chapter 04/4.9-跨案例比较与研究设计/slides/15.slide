@@ -1,0 +1,79 @@
+<Slide notes={`我把代价分成上下两层来看。
+
+上面是总量：A 用 370 次逻辑调用、411 次物理尝试，换来 6 项闭环；B 用 480 次逻辑调用、516 次物理尝试，换来 8 项闭环。B 总投入明显更高。
+
+下面把总量除以闭环数。逻辑调用那边，A 是 370 除以 6 约 61.67，B 是 480 除以 8 正好 60；物理尝试那边，A 是 68.5，B 是 64.5。
+
+B 总投入更高、单位成功代价却略低，这两句可以同时成立，不矛盾。
+
+报的时候两边都要给：只报总量，B 看起来更贵；只报单位值，又把 B 说得更划算。
+
+逻辑调用与物理尝试不能相加当成一个总调用；零成功时单位值算不出来，仍只报总投入。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.5　总投入与单位成功代价</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>总投入高，单位代价未必高</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 64, background: '#F7F3E8', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>六行人工数据的算术，不是费用，也不是真实耗时</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>分子包含失败、重试与未闭环任务的全部消耗</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>基线 A</Text>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B' }}>370 逻辑调用　·　411 物理尝试</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>取得 6 项闭环</Text>
+            </Box>
+            <Box style={{ width: 564, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>对照 B</Text>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B' }}>480 逻辑调用　·　516 物理尝试</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>取得 8 项闭环</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>逻辑调用／闭环</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>370 ÷ 6 ≈ 61.67</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>物理尝试／闭环</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>411 ÷ 6 ＝ 68.5</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 564, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>逻辑调用／闭环</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>480 ÷ 8 ＝ 60</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>物理尝试／闭环</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>516 ÷ 8 ＝ 64.5</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>B 总投入高、单位成功代价略低，两者可同时成立。逻辑调用与物理尝试分别计数，不能相加成一种「总调用」；零成功时单位值不可计算，仍列总投入。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 25</Text>
+    </Box>
+
+</Slide>

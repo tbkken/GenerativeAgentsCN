@@ -1,0 +1,37 @@
+<Slide notes={`这一段带走三件事。
+
+状态只说明执行走到哪一步。完成不证明业务指标通过，排队不证明有一个持久的任务队列，收尾也不证明正式包已经导出。
+
+三种时间要分开记：虚拟时间是故事里的时刻，模型耗时是真实请求的耗时，墙钟时间还包含工具、暂停和人工处理。暂停不会让虚拟时间自动推进。
+
+观察最后要落到一张真实的运行观察表上，每次观察标明 Run、Attempt、已提交的 Step、当前状态和证据来源，把预计值、实际值和未提供的数据分栏。下一节我们看暂停、取消、续跑与重跑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.9　启动、观察与估算：读懂一次仿真的进度</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>状态只说阶段</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.5 }}>完成不证明业务通过，排队不证明有持久队列，收尾不证明正式包已导出。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>三种时间分开记</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>虚拟时间、模型耗时与墙钟时间，暂停不推进虚拟时间。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>观察落到记录表</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>标明 Run、Attempt、已提交 Step、状态与证据来源。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：暂停、取消、续跑与重跑 —— 沿 Run、Attempt 和提交边界理解恢复</Text>
+
+    </Box>
+
+</Slide>

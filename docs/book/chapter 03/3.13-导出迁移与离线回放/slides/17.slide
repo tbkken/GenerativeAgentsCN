@@ -1,0 +1,66 @@
+<Slide notes={`迁移要分三层验收，每一层单独取证。
+第一层是原包与完整性：核对大小、哈希，以及清单和成员有没有缺漏。这一层只说明你手上的字节是完整的。
+第二层是离线回放：读取既有的事实和包内素材，不再调用模型。这一层证明的是记录能被读出来，不需要原作者的资源库还在。
+第三层是恢复或者重跑：这时候才需要兼容的环境、模型服务和凭据，并且要按一份独立的执行计划去验证。
+一层通过不能代替下一层。还有一点是硬要求：密钥不进包，包里只保存环境变量名这样的连接要求，凭据由目标机器注入。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.5　迁移时哪些东西需要重新配置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>迁移的三个验收层次</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>每条「单独取证」箭头都要补一组新的验收记录；一层通过不能代替下一层。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+
+            <Box style={{ width: 340, height: 172, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>01</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>原包与完整性</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>核对大小、SHA256、清单与成员；只说明手上的字节完整。</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 172, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 340, height: 172, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>02</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>离线回放</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>读取既有事实与包内素材，不再调用模型；不需要原作者资源库。</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 172, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 340, height: 172, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.0 }}>03</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>恢复或重跑</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>兼容环境、模型服务与凭据；按独立执行计划验证。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 74, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+            <Text style={{ fontSize: 15, color: '#26816B' }}>分别取证：原包哈希一致只完成第一层，后两层要各自重新验证，不能沿用上一层的结论。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 74, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>密钥不入包，由目标机器注入；本章没有真实异机验收，回放与再次执行也不同。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

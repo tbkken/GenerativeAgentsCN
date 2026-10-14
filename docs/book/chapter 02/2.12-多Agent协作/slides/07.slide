@@ -1,0 +1,65 @@
+<Slide notes={`这里要分清楚两种"失败"，它们的意思完全不同。
+
+一种是执行失败：请求没发出去，或者响应没有正常处理完。这时候这次汇总就该停下来，因为输入不完整，硬凑出的报告没有意义。
+
+另一种是审查员在正常返回的情况下提出了批评意见。这不但不是失败，反而是我们要的东西，它必须进入汇总。
+
+两位审查员收到的是同一份材料，但各自的指令、上下文和输出文件是独立的，所以它们可能从不同角度发现问题，也可能重复。汇总员要做的是把这些意见整理清楚，而不是替它们做决定。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.1　先判断是否值得拆分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>执行失败不等于发现业务问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 24, background: '#FFF4E6', borderRadius: 12, padding: '22px 26px' }}>
+            <Box style={{ width: 4, height: 92, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#CB6B28' }}>执行失败</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>请求、响应处理等环节未能完成</Text>
+            </Box>
+            <Box style={{ flex: 1 }} />
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>中止本次汇总</Text>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>→</Text>
+                <Box style={{ width: 110, height: 46, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>停在这里</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ flex: 1, height: 118, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>正常返回的批评意见</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>这是审查的产物，不是失败，应进入汇总</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 118, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>两位审查员收到相同材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>输入一致，才谈得上比较两人的结论</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 118, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>但上下文各自独立</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>指令、上下文与输出文件互不共享</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 42, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>完整成功路线：固定三次模型调用</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>两次独立审阅加一次汇总；不动态扩张团队，也不并写同一候选文件。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,63 @@
+<Slide notes={`这几行人工算术，数字不多，但每一个都容易被记错。
+
+第一行，完整一百四十五步，三人乘二十四小时，等于七十二个虚拟人时，这是分母。
+
+第二行，调用一千四百四十次，其中对象三百六十次，除以七十二，得到每人每虚拟小时二十次；对象那三百六十次另外列出来。
+
+第三行，一百四十五步乘以四个参与者——三个人加咨询台——等于五百八十个轮次。这里要注意，五百八十是轮次，不是五百八十个请求，一个轮次里可能包含多次调用。
+
+第四行，四十八小时窗口二百八十九步，乘以四个参与者，等于一千一百五十六个轮次，同样不是请求数。
+
+如果只是跑了一半就停，我要报告实际覆盖到哪儿、还有哪些没完成，而不是拿单位值直接说便宜。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.6　覆盖小时与单位值</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先算覆盖小时，再除以它</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 10, padding: '0 4px' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 520 }}>人工算术</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 616 }}>结果</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', width: 506 }}>完整 145 步，3 人 × 24 小时</Text>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', flex: 1 }}>72 人 · 虚拟小时</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 64, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', width: 506 }}>L ＝ 1440，其中对象 360</Text>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', flex: 1 }}>20 调用／人·虚拟小时；对象 360 另列</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 64, background: '#546779' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', width: 506 }}>145 步 × 4 参与者</Text>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', flex: 1 }}>580 轮次，不是 580 请求</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 64, background: '#546779' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', width: 506 }}>289 步 × 4 参与者</Text>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', flex: 1 }}>1156 轮次，不是 1156 请求</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.55 }}>H ＝（k−1）× Δ ÷ 60；长上下文、整理与重试可增成本，估算与真实用量分开报。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 27</Text>
+    </Box>
+
+</Slide>

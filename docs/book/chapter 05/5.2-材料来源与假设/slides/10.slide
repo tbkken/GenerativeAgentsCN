@@ -1,0 +1,52 @@
+<Slide notes={`摘要这件事我想多说一句，因为它最容易被误用。
+
+摘要是给人看的，作用是辨认。文件多了以后，你翻到一份摘要，能认出这是哪一份材料、哪一版，就不至于张冠李戴。它还带来一个好处：文件后来被改了，你手上还留着当时用的内容和摘要，接收者就能解释这次实验为什么用了这些文字。
+
+但摘要本身不证明资料正确。它没有来源权威，也不因为写得流畅就更可信。
+
+还有一个容易混的地方：作者文稿的修改记录，不是公共资源的业务 Revision。前者是作者侧的版本痕迹，后者是资源身份。后续进入 Studio 时，仍然按稳定资源身份和独立实验副本管理，这部分在第三章讲过。
+
+所以看摘要的时候，把它当索引，不要当证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.2　建一张能追到原文的来源表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>摘要能辨认材料，不能证明正确</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 452, height: 420, background: '#ECF7F2', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#26816B' }}>内容摘要可以做什么</Text>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>辨认材料</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>先保存收到的原文，再写整理稿；后来的概括不能覆盖最初含义。</Text>
+            <Box style={{ width: 404, height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>用于辨认：这是哪一份材料、哪一版。翻到它，能对上号就够了。</Text>
+        </Box>
+
+        <Box style={{ width: 676, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+
+            <Box style={{ width: 676, height: 200, background: '#FFF4E6', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>摘要不能做什么</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>不能证明资料正确，也不能因为文件更新就更可信。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>文件后来改动时，仍要保留本次采用的内容与摘要。</Text>
+            </Box>
+
+            <Box style={{ width: 676, height: 200, background: '#F4F7FA', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>作者侧的修改记录，不是业务 Revision</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>作者文稿的修改记录属于作者侧版本；进入 Studio 后，仍按稳定资源身份和独立实验副本管理。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>见第三章的资源身份说明。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,82 @@
+<Slide notes={`把四个动作摆到一条线上，再补上两个出口。
+
+观察，看的是用户提的任务、材料，以及上一次工具真实返回了什么。决定，是模型生成候选、挑下一个要查的东西。应用执行，是程序校验身份和参数之后运行受控操作。核验，检查约束和进度，然后决定继续还是停。
+
+如果核验发现有解不开的问题、而且预算还允许，就把真实结果带回去，回到观察，再走一轮。这就是回路的意义：不是推倒重来，是带着新的事实再判断一次。
+
+什么时候结束？四种情况都算有结果——通过、失败、无进展、预算耗尽，每一种都要保留记录。
+
+最后记住两句话：模型提出工具请求，不等于工具已经执行；一段文字总结，不等于业务已经验证。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.1　从一次回答到一个闭环</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>观察、决定、执行、核验</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>一轮闭环：带真实结果再判断，核验通过或到达停止条件才结束。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 244, height: 158, background: '#EDF4FC', borderRadius: 8, padding: '16px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>观察</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>用户任务、材料{'\n'}与真实工具结果</Text>
+            </Box>
+            <Box style={{ width: 44, height: 158, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 244, height: 158, background: '#EDF4FC', borderRadius: 8, padding: '16px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>决定</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>生成候选{'\n'}选择下一个工具</Text>
+            </Box>
+            <Box style={{ width: 44, height: 158, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 244, height: 158, background: '#EDF4FC', borderRadius: 8, padding: '16px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>应用执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>校验身份与参数{'\n'}运行受控操作</Text>
+            </Box>
+            <Box style={{ width: 44, height: 158, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 244, height: 158, background: '#ECF7F2', borderRadius: 8, padding: '16px 16px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>核验</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>检查约束与进度{'\n'}决定继续或停止</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1108, height: 54, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0px 20px', gap: 14 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>仍有问题且预算允许</Text>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>›</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>带回真实结果，回到「观察」，再走一轮</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 4 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 150 }}>结束并保留记录</Text>
+            <Box style={{ width: 216, height: 48, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>通过</Text>
+            </Box>
+            <Box style={{ width: 216, height: 48, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>失败</Text>
+            </Box>
+            <Box style={{ width: 216, height: 48, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>无进展</Text>
+            </Box>
+            <Box style={{ width: 216, height: 48, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>预算耗尽</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>工具请求不等于已执行操作　·　文字总结不等于业务验证</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>本章工具只有查询和校验能力，产物是本地筹备文件。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

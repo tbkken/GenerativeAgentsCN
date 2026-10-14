@@ -1,0 +1,53 @@
+<Slide notes={`最后一个知识块，讲出错以后按什么顺序查。
+
+最常见的错误反应是：结果不对，就怪模型不行，或者怪提示写得不好。这个顺序其实是反的。
+
+正确的顺序是三步。第一步，先看源文件里有没有这条信息。比如活动缺少时长，很可能是材料里根本没写。
+第二步，如果源文件齐全，再看它有没有真的进入这次请求。文件在目录里躺着，不代表内容被送到模型面前。
+第三步，只有前两个条件都成立，才把遗漏归为模型或提示的问题。
+
+不按这个顺序查，很容易改错地方。你反复调提示，真正的问题却是文件没被读到。
+
+还有一种更严重的情况叫证据越界：模型写着“已确认全部房间可用”，但工具根本没有执行过。这不是措辞问题，不能用润色掩盖，必须回到执行记录上去看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.2.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>失败诊断与练习</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先查源文件，再查是否进入请求，最后才归因模型或提示。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 240, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>源文件里有没有</Text>
+            </Box>
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>有没有进入请求</Text>
+            </Box>
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 44, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>才归因模型或提示</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

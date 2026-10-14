@@ -1,0 +1,62 @@
+<Slide notes={`我挑出四条最容易被跳过的边界。
+第一，代表被询问的时候，只说明自己的理由和不可调整的条件，不替别人宣布态度。主持人听到一句话，不等于另外三个人也都知道了。
+第二，收到候选之后按自己实际知道的时间和模式判断；不清楚就先问，沉默不表示同意。
+第三，未回应的要如实标记，含糊的表态要等澄清，不能自己补一个意思。
+第四，候选改过之后必须重新问三个人，不能拿对旧候选的同意继续用。
+另外还有一条特别提醒：问「理由还有补充吗」，对方回答「没别的补充」，这不能算对候选的表态。态度按含义判断，不要机械地要求他必须说出某个指定词。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.3　共同 SOP：态度必须针对具体候选</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四条最容易跳过的边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ height: 360, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>听到理由，不等于{'\n'}可以对候选表态。{'\n'}沉默，也不表示同意。</Text>
+                <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>代表被询问时说明自己的理由与不可调整条件；收到候选后按实际已知的时间、模式判断。{'\n'}共同 SOP 九条的整体口径：说明理由、按事实判断、逐人询问、如实记录、改候选重征询。</Text>
+            </Box>
+
+            <Box style={{ width: 520, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>不替别人宣布态度；说话只经真实发言逐人传达</Text>
+                </Box>
+                <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>不清楚先问；沉默不表示同意</Text>
+                </Box>
+                <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>未回应如实标记，含糊表态待澄清</Text>
+                </Box>
+                <Box style={{ height: 80, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>更改候选后重新问三人，不沿用对旧候选的同意</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>「理由还有补充吗？」之后回答「没别的补充」，不能算候选投票</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>态度按含义判断，不机械要求指定词；仍不清楚就再澄清，不能自己补一个意思。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

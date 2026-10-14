@@ -1,0 +1,92 @@
+<Slide notes={`很多人会问：四个人共用一个 Brain，他们不会长得一模一样吗？
+
+不会。角色差异来自五样东西：人物资料、当前任务、当前位置、收到的消息和私有记忆。林岚在服务台听到的新答复，许安并不知道；许安对旧公告的记忆，林岚也没有。同一个 Brain 拿到不同的输入，自然做出不同的决定。
+
+所以我们不需要为四个人画四张固定流程图，也不需要复制四套几乎相同的程序——那是把"第几步必须说哪句话"当成自主行为。
+
+反过来，公告栏和服务台虽然也有自己的 Skill，但它们是地图对象，有各自的对象身份，不会出现在公共 Agent 列表里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.1　先分清"是什么类型"和"在哪里使用"</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个人共用一个 Brain</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>角色差异{'\n'}不在程序里</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>同一个 Brain，读到不同的输入，做出不同的决定。不必复制四套几乎相同的程序，也不把"第几步必须说哪句话"当作自主行为。</Text>
+            <Box style={{ width: 380, background: '#F7F3E8', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>对象不是 Agent</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>公告栏与服务台有各自的对象身份，不会出现在公共 Agent 列表中。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 740, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>4 名 Agent　·　共用同一个 Brain</Text>
+                <Box style={{ flexDirection: 'row', gap: 10, justifyContent: 'center' }}>
+                    <Box style={{ width: 130, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>林岚</Text>
+                    </Box>
+                    <Box style={{ width: 130, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>周宁</Text>
+                    </Box>
+                    <Box style={{ width: 130, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>陈晨</Text>
+                    </Box>
+                    <Box style={{ width: 130, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>许安</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 708, height: 22, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>↓</Text>
+                </Box>
+                <Box style={{ width: 340, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>qinghe-open-day-brain</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 740, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 740, height: 52, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                    <Box style={{ width: 4, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 110 }}>人物资料</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>性格、习惯与表达方式各不相同</Text>
+                </Box>
+                <Box style={{ width: 740, height: 52, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                    <Box style={{ width: 4, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 110 }}>当前任务</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>本轮要完成的目标不同</Text>
+                </Box>
+                <Box style={{ width: 740, height: 52, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                    <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 110 }}>位置</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>感知到的现场不同</Text>
+                </Box>
+                <Box style={{ width: 740, height: 52, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                    <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 110 }}>收到的消息</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>只收到发给自己的会话与答复</Text>
+                </Box>
+                <Box style={{ width: 740, height: 52, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                    <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 110 }}>私有记忆</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>只记得自己经历过的事</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 22</Text>
+    </Box>
+
+</Slide>

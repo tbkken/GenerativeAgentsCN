@@ -1,0 +1,83 @@
+<Slide notes={`追加一条记忆，必需字段只有自然语言 content。可以附带 kind、1 到 10 的 poignancy、SPO 三元组、地址和 evidence_memory_ids。
+
+注意工具没有任意的 source 参数——所以“谁说的、何时获得、尚有哪些不确定性”要直接写进内容里。
+
+示例的写法值得学：先说收到了服务台关于手作室使用时段的答复，再声明以该答复的真实内容为依据继续核实公告，最后明确“此条记录咨询所得信息，不代表公告已更新”。一句话把来源、依据和不确定性都交代清楚了。
+
+提醒一句：这是教学用内容写法，描述的是获得真实答复后才允许记录的记忆，并不是已经执行的工具结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.2　四个工具组成记忆的生命周期</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>append：写什么，怎么写</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>必需字段，只有{'\n'}自然语言 content</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>工具没有任意的 source 参数——“谁说的、何时获得、尚有哪些不确定性”，都写进内容本身。</Text>
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.65 }}>需要引用已有记忆时，再使用真实返回的记忆 ID。</Text>
+        </Box>
+
+        <Box style={{ width: 780, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 300, background: '#F7F3E8', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>教学用内容写法（并非已执行的工具结果）</Text>
+                    <Box style={{ width: 64, height: 28, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>便签</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'flex-start' }}>
+                    <Box style={{ width: 96, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>content</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, flex: 1 }}>“我已收到服务台关于手作室使用时段的答复；以该答复的真实内容为依据继续核实公告。此条记录咨询所得信息，不代表公告已更新。”</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 96, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>kind</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>event</Text>
+                    <Box style={{ width: 110, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center', marginLeft: 16 }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>poignancy</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>7</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可附字段</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ flex: 1, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>kind</Text>
+                    </Box>
+                    <Box style={{ flex: 1.4, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>poignancy 1–10</Text>
+                    </Box>
+                    <Box style={{ flex: 1.4, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>SPO 三元组</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>地址</Text>
+                    </Box>
+                    <Box style={{ flex: 2.2, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>evidence_memory_ids</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

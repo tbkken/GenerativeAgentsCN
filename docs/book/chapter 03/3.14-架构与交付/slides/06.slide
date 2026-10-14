@@ -1,0 +1,61 @@
+<Slide notes={`这里有两个边界，办实验的时候特别容易踩。
+
+第一，Studio 的数据库是可以用的。它保存作者资源和可以重建的索引，让编辑工作快起来，这没有问题。
+
+但是 Runtime 和 Replay 不应该依赖这个数据库。它们要依赖的是实验包与 Run 文件——那些是自包含的、可以有摘要、可以搬走的文件。
+
+第二，一个已经导出的 Run，在回放时不能偷偷去查当前的公共人物、当前的地图，或者刚刚改过的 Brain。
+
+为什么？因为那个 Run 是过去某一时刻的快照，当时的公共资源是什么样，它就应该按什么样回放。如果回放时去查现在的公共资源，看到的画面就不再是那次执行的事实，后面所有的分析都失去依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.1　五个职责如何配合</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两条不能破的边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 420, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>可以保存</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>Studio 数据库保存作者资源与可重建索引，让编辑与交换更顺手。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>仍须依赖</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>Runtime 与 Replay 依赖的是实验包与 Run 文件——自包含、有摘要、可搬走。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 46, background: '#546779' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6, flex: 1 }}>索引丢了可以重建；实验包丢了，那次执行就没法还原。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 712, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+            <Box style={{ width: 712, height: 210, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不能让已导出的 Run 在回放时偷偷查询</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>当前公共人物、当前地图，或者刚改过的 Brain，都不该出现在回放路径上。</Text>
+            </Box>
+
+            <Box style={{ width: 712, height: 210, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>为什么这条红线这么硬</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>那个 Run 是过去某一刻的快照。回放时若去读现在的公共资源，看到的就不再是当时的事实，后面的对照与评价都会失去依据。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 29</Text>
+    </Box>
+
+</Slide>

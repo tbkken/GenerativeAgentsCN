@@ -1,0 +1,64 @@
+<Slide notes={`从一个任务换到另一个任务的时候，最容易犯的错是假定上下文会自动跟过去。
+
+新建任务时不要这样假定。比较稳妥的做法是准备一份简短的交接说明，写清四件事：输入是哪些文件，已经确认了哪些约束，哪些工作还没完成，输出放在哪里。写完这四样，再去引用原始资料。
+
+为什么不直接靠产品的记忆？因为记忆这件事要分开看。个人偏好这类稳定信息，记忆确实方便；但活动预约是会变的，人数会改，时段会被人占，所以当前查询不能被长期记忆替代。
+
+另外，这一节没有假定 WorkBuddy 底层用哪种响应链、哪种摘要算法或哪种向量数据库。我们能验证的是它实际引用了哪些材料、生成了什么文件，以及继续追问时有没有正确使用新事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.5　WorkBuddy：文件引用、追问与任务交接</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>新建任务前，先写一份交接说明</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ flex: 42, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>不要假定旧任务的上下文已经转移</Text>
+                <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>交接说明写清四件事，然后再引用原始资料重建上下文。这样第二个任务看到的是明确的状态，而不是对前一个任务的猜测。</Text>
+            </Box>
+
+            <Box style={{ flex: 58, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                    <Box style={{ width: 150 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>输入文件</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>这次任务要读哪些材料</Text></Box>
+                </Box>
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                    <Box style={{ width: 150 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>已确认约束</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>已经核对过的条件与数值</Text></Box>
+                </Box>
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                    <Box style={{ width: 150 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>未完成的工作</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>还差哪些步骤没有做</Text></Box>
+                </Box>
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                    <Box style={{ width: 150 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>输出位置</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>结果应该写到哪里，交给谁</Text></Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 30, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>个人记忆可以保存偏好，但活动预约会变化，不能用长期记忆取代当前查询。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 25</Text>
+    </Box>
+
+</Slide>

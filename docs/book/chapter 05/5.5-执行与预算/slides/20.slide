@@ -1,0 +1,60 @@
+<Slide notes={`小规模试跑是可选的一件事。可选意味着做了不加分、不做也不扣分，关键是别把它写成别的东西。
+
+如果确实需要检查耗时或者素材，可以单独把它登记为一项准备活动，写清输入是什么、跑了多少步、用了多少预算，以及它回答不了什么问题。
+
+有两点不能含糊。第一，试跑不能证明 76 步内全部咨询会闭环；步数短、对象少，它验证不了完整窗口。第二，它不是正式运行前必须完成的一至三步仪式，并没有这条规定。
+
+反过来，如果选择不试跑，也要说清楚：保留估算的不确定性，同时采用明确的观察点。最不该做的是事后补写一份根本不存在的试跑报告。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.4　把预算写成能采取行动的表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>小规模试跑是可选项</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>可选，{'\n'}就写成可选的样子</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 420 }}>做了要有记录，不做的理由也要写清楚。两种情况都不能让估算的不确定性凭空消失。</Text>
+            <Box style={{ width: 420, height: 88, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>不试跑时：保留不确定性，改用明确观察点。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 700, height: 132, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 8, justifyContent: 'center', padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>登记为一项准备活动</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>说明输入、步数、预算，以及它明确不回答的问题。它不占用两 Run 的范围。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 132, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', gap: 8, justifyContent: 'center', padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不能证明 76 步内会闭环</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>步数短、对象少，验证不了完整窗口里的四项任务是否都能走完。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 132, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', gap: 8, justifyContent: 'center', padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不是强制的开跑仪式</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>正式运行前并没有必须完成一至三步的硬性规定。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>不要事后补写一份并不存在的试跑报告。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 28</Text>
+    </Box>
+
+</Slide>

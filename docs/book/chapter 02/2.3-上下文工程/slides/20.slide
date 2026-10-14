@@ -1,0 +1,85 @@
+<Slide notes={`这个追问练习怎么做，我把动作拆成三步。
+
+第一步，在教学目录里新建任务，通过 @ 引用三份材料：requests.csv、rooms.csv 和 rules.md，然后先要求它生成一张事实与来源的对照表。
+
+第二步，追加一句：只讨论手作体验，请说明还缺哪些资料才能确定时间。这时候它应该意识到，预约状态还没有核对过。
+
+第三步，只在练习副本里把手作人数改成十三，明确要求重新读取文件。
+
+接下来要看三件事。它有没有引用新值？有没有撤回容量可行的旧结论？修改前后的文件和回答有没有保留下来？
+
+如果它继续使用十人，先核对三个动手环节：目录是不是打开了正确的那个，有没有选中同名的旧文件，以及重新读取这个动作到底有没有真的完成。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.5　WorkBuddy：文件引用、追问与任务交接</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>追问时，要看哪三件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ flex: 40, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>三步动作</Text>
+
+            <Box style={{ height: 120, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>① 引用三份材料</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>requests.csv、rooms.csv、rules.md</Text>
+            </Box>
+
+            <Box style={{ height: 120, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>② 先生成事实来源表</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>每条事实写清出自哪份文件</Text>
+            </Box>
+
+            <Box style={{ height: 120, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>③ 再追加限制条件</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>只讨论手作体验，还缺哪些资料</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 60, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>要看的变化</Text>
+
+            <Box style={{ height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 50, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>有没有引用新值</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>回答里出现的是 13 人还是 10 人</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 50, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>有没有撤回旧结论</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>「容量可行」是否被明确取消</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 50, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>有没有留下记录</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>保留修改前后的文件与回答</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>若仍用旧人数，先查三处</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>目录、同名旧文件、是否真正重新读取</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 25</Text>
+    </Box>
+
+</Slide>

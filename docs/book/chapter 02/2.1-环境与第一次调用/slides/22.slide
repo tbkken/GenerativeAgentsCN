@@ -1,0 +1,86 @@
+<Slide notes={`如果你要用自己的模型，产品里也可以接。路径是"设置 → 模型管理"，填写服务地址、Key 和模型名，再按官方说明把需要的能力配好。
+
+这里有一条很容易踩的坑：WorkBuddy 的默认自定义接口是按 /chat/completions 处理的。把它指向一个自定义地址，并不能自动证明它支持这一节用的所有 Responses 参数。
+
+这个差异不是说谁对谁错，而是提醒我们：API 示例和 WorkBuddy 实验可以使用各自兼容的模型，但要分别记录自己的配置。记录之后，将来出现"为什么两边结果不一样"，你才有东西可以对。
+
+配置这件事，写下来比记在脑子里可靠得多。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.6　在 WorkBuddy 中完成第一次任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>自定义模型与兼容边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 518, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 48, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>入口：设置 → 模型管理</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>在客户端里找到模型配置的位置</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 48, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>填写服务 URL、Key 与模型名</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>这三项都要如实填写，不要沿用书中的占位值</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 48, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>按官方说明配置所需能力</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>缺哪项能力就补哪项，不要假定默认都支持</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', marginTop: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>两条路线可以使用各自兼容的模型，但要分别记录自己的配置。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 602, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>默认走 /chat/completions</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>WorkBuddy 的默认自定义接口按这个路径处理请求。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 132, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 88, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>开启自定义 URL，不自动证明支持全部 Responses 参数</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>接口路径不同，能用的参数就可能不同；遇到不支持，先回到该服务的文档核对。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>两套配置，各记各的</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>把模型名、接口与账户信息分别记录下来，便于对照。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

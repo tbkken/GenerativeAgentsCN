@@ -1,0 +1,79 @@
+<Slide notes={`把数字算一遍。
+三个人分别走了 12 格、18 格和 9 格，前两个人进入集合区，第三个人中途停下。到达率是 2 除以 3，大约是 66.7%；人均移动负担是 39 除以 3，等于 13 格每人。两个公式的分母都是同样三个人。
+请求这边，一共发生 20 次导航或 MOVE 请求，其中 2 次地址不合法，1 次是合法目标但确实不可达。
+无效请求率是 2 除以 20，等于 10%。那 1 次不可达要单独报出来，不能塞进无效请求的分子里，因为参数本身没有问题，是环境里的通路确实不存在。
+零请求的分母不适用；窗口截止还没到达的人，保留最后状态和原因。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.5　一次人工演算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次演算：2/3、13 格／人、10%</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 472, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>三个结果</Text>
+
+            <Box style={{ width: 472, height: 142, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#26816B' }}>2 / 3 ≈ 66.7%</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>集合到达率：只有已到达的两人进分子，分母始终是三人。</Text>
+            </Box>
+
+            <Box style={{ width: 472, height: 142, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF' }}>39 / 3 = 13 格／人</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>人均移动负担：12、18、9 三人的已执行边全部计入成本。</Text>
+            </Box>
+
+            <Box style={{ width: 472, height: 142, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>失败者走得短，不证明效率高</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>9 格那位没有到达，短柱只说明他停得早。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 652, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 26 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>20 次导航／MOVE 请求</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>记账方式</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>全部请求</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>20 次，作为无效请求率的分母</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>地址非法</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>2 次，进入无效请求的分子</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>合法目标不可达</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>1 次，另报，不进无效分子</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>无效请求率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>2 ÷ 20 = 10%</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 26</Text>
+    </Box>
+
+</Slide>

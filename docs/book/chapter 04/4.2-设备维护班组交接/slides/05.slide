@@ -1,0 +1,73 @@
+<Slide notes={`把这五条反过来看，会看到一串「不是」。
+
+橙色灯不是损坏，数值 7 不是超限，前次只做外观观察不是本轮已完成检查，没有内部核查结果不是已确认内部异常，没有恢复正常确认更不是已经修好。这五句是同一件事：资料说的是它自己，不是我们对它的解释。
+
+那设备没说的部分写什么？写未知。阈值、原因、零件、修法，我们手上一条都没有，就不能替它填。
+
+这一案把设备做成这样，是为了让后面的分数有据可查：能查到的才能算到达，猜对不算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.1　五条有限事实：不要补造诊断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>事实到此为止，缺口一律说未知</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 12, justifyContent: 'center' }}>
+            <Box style={{ width: 200, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>K1　指示灯现象</Text>
+            </Box>
+            <Box style={{ width: 200, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>K2　数值 7</Text>
+            </Box>
+            <Box style={{ width: 200, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>K3　前史 E-17</Text>
+            </Box>
+            <Box style={{ width: 200, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>K4　缺内部核查</Text>
+            </Box>
+            <Box style={{ width: 200, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>K5　未确认恢复</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 40, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 24, color: '#CB6B28' }}>↓</Text>
+        </Box>
+
+        <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>同样五条资料，都推不出诊断</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>不是损坏　·　不是超限　·　不是已完成全面检查　·　不是内部异常　·　不是已恢复</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 8, marginTop: 4 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>设备没有说、我们也只能写未知的四项</Text>
+            <Box style={{ flexDirection: 'row', gap: 24 }}>
+                <Box style={{ width: 264, height: 68, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#546779' }}>未知阈值</Text>
+                </Box>
+                <Box style={{ width: 264, height: 68, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#546779' }}>未知原因</Text>
+                </Box>
+                <Box style={{ width: 264, height: 68, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#546779' }}>未知零件</Text>
+                </Box>
+                <Box style={{ width: 264, height: 68, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#546779' }}>未知修法</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>这是本案的固定资料设定：设备按真实请求提供事实，不替人物写交接稿，不依组别补答案；不是要求所有对象都作静态问答库。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

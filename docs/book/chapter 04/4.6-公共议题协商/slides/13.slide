@@ -1,0 +1,78 @@
+<Slide notes={`两组唯一不同的地方，就是收到理由之后有没有一个必做的逐人复述确认。
+基线组拿到 R1 到 R5 之后，自己归纳一下，就直接进入对同一候选的逐人态度征询。对照组多一步：先逐人复述自己对这个代表理由的理解，问一句「我理解得准确吗」，等本人真实确认或者修正，再更新记录，然后进入和基线完全相同的态度征询。
+除此之外，场地核实、询问理由、候选征询、最终记录、模型与人物条件、时间窗口全都一样。
+这就是单因素对照的基本要求。如果同时改了两样东西，最后就说不清到底是哪一项起了作用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.4　唯一变化：理由复述确认</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>基线／对照：只差一处</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 430, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 54, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>基线</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>无必做的逐人复述确认</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 86 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>收到理由</Text></Box>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>根据已收到的理由自行归纳</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 86 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>进入征询</Text></Box>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>直接对同一候选逐人征询态度</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 86 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>依据</Text></Box>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>已收到的理由，不再逐人复核理解</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 86 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>记录</Text></Box>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>记录实际回应与分歧</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 54, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>对照</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>增加逐人理由复述确认</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 86 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>收到理由</Text></Box>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>逐人复述自己的理解，询问是否准确</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 86 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>进入征询</Text></Box>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>据回复更新记录，再进入同一征询</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 86 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>依据</Text></Box>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>本人的真实确认或修正</Text>
+                </Box>
+                <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 86 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>记录</Text></Box>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>记录实际回应与分歧（口径相同）</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>场地核实、询问理由、候选征询、最终记录、模型、人物条件与时间窗口全部相同；唯一差别就是这一处复述确认。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

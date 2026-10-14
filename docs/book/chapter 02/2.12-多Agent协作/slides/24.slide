@@ -1,0 +1,59 @@
+<Slide notes={`这一节留一个练习，用来验证角色到底有没有在查证据。
+
+做法是复制一份 plan.md，在里面加一句"已向居民发出通知"，但不给任何发送工具，也不给发送结果。然后把这份文件传给脚本，或者在 WorkBuddy 里引用它。
+
+接下来看三方的反应：单个助手、两个审阅角色，还有汇总员，有没有人指出这句话缺乏证据。如果都没有，说明角色只是在复述，而不是在核对。
+
+判分的时候，看的是具体结论和依据，不是讨论了几轮。哪怕一句简短的"这条没有发送记录支撑"，也比一大段没有出处的话更有价值。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.6　如何判断协作值得保留</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次练习：缺少证据的声明</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 24, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>在一份 plan.md 副本里加一句没有依据的声明，看谁会发现</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: 340, height: 234, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>改一份副本</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>在 plan.md 中加入{'\n'}「已向居民发出通知」{'\n'}但不提供发送工具与结果</Text>
+            </Box>
+            <Box style={{ width: 44, height: 234, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 234, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>把文件传进去</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>用脚本的 plan 参数指向它{'\n'}或在 WorkBuddy 中引用{'\n'}让两个审阅角色独立读同一份</Text>
+            </Box>
+            <Box style={{ width: 44, height: 234, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 234, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>看谁指出缺证据</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>观察单 Agent、两个审阅角色{'\n'}和汇总员是否都指出{'\n'}这句话没有发送记录支撑</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 700, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>练习命令</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>python multi_agent.py fixtures/valid-schedule.json --plan path/to/plan.md</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>判分对象是结论和依据</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不是讨论轮数</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 25</Text>
+    </Box>
+
+</Slide>

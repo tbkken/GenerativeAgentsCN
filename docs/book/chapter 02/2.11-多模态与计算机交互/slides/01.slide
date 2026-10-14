@@ -1,0 +1,75 @@
+<Slide notes={`图片、录音和网页会同时出现在一个任务里，但它们带来的麻烦并不一样。图片和录音负责让我们看懂输入，网页这类只有入口的任务，还得靠工具去替我们执行动作。
+
+先把一句话立住：看懂，和做到，是两件事，验收的对象也完全不同。
+
+青禾社区学习中心的开放日筹备正好走这三条线。教学平面示意图帮我们辨认房间名称和相对位置，负责人的录音把口头需求变成可以核对的文字，教学网页让我们练习展开详情、读取信息。每走一步都要说清楚，这件事证明了什么，还有什么没有被证明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体：技术、OpenAI API 与 WorkBuddy　·　2.11</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>多模态与计算机交互</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 600 }}>图片、录音和网页分别带来视觉、语音与界面任务。多模态帮助理解输入，计算机工具帮助宿主执行动作。</Text>
+            <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>图里读出了什么</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>录音核对了吗</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>动作真的执行了吗</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 500, background: '#F4F7FA', borderRadius: 12, padding: 14, flexDirection: 'column', gap: 12 }}>
+
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>教学平面示意　非比例</Text>
+                    <Box style={{ width: 92, height: 24, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 149, height: 92, background: '#FFFFFF', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>手作室</Text>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>仅有名称标注</Text>
+                    </Box>
+                    <Box style={{ width: 149, height: 92, background: '#FFFFFF', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>阅读室</Text>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>仅有名称标注</Text>
+                    </Box>
+                    <Box style={{ width: 149, height: 92, background: '#FFFFFF', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>交流室</Text>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>仅有名称标注</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 40, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>公共走廊</Text>
+                </Box>
+
+                <Box style={{ height: 34, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#26816B' }}>图片依据：房间标注与相对位置</Text>
+                </Box>
+
+                <Box style={{ height: 34, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>图中没有容量数字，也没有预约状态</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

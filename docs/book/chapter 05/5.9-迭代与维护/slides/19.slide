@@ -1,0 +1,65 @@
+<Slide notes={`继续、再做和改后再做，说的是不同的动作，必须用正确的身份去描述。
+
+第一种，原运行暂停后继续：还是同一个 Run，增加一个新的 Attempt，从完整的已提交边界的下一个 Step 开始。
+第二种，从旧 Run 重跑：读取旧 Run 内嵌的实验，创建新的 Run；公共资源的新改动不会自动进入。
+第三种，修改咨询策略之后执行：这是一份新的独立实验输入，然后才产生新的 Run。
+
+还有一种不算执行的动作，重新评阅已有事实：引用同一个 Run，新增一份独立的评分说明，不制造新的执行事实。
+
+这张表要和交付索引保持一致。Attempt 的增加说明执行尝试变了，不是模型策略产生了一个业务版本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.5　用正确身份描述下一项工作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四种下一项工作的身份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, height: 40, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Text style={{ fontSize: 14, color: '#546779', width: 320 }}>下一项工作</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>输入与身份变化</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 320, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 292 }}>原运行暂停后继续</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', width: 768, lineHeight: 1.5 }}>同一 Run，新 Attempt，从完整已提交边界的下一 Step 开始</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 320, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 292 }}>从旧 Run 重跑</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', width: 768, lineHeight: 1.5 }}>读取旧 Run 内嵌实验，创建新 Run；公共资源的新改动不会自动进入</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 320, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 292 }}>修改咨询策略后执行</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', width: 768, lineHeight: 1.5 }}>新的独立实验输入，再产生新的 Run</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 320, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#546779' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 292 }}>重新评阅已有事实</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', width: 768, lineHeight: 1.5 }}>引用同一 Run，新增独立评分说明，不制造新的执行事实</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 27</Text>
+    </Box>
+
+</Slide>

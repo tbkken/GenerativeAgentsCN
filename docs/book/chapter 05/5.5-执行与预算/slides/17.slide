@@ -1,0 +1,101 @@
+<Slide notes={`费用的来源可以逐层拆开。
+
+1,900 次物理尝试是基数，每次假设输入 1,500 Token、输出 300 Token。输入侧 285 万 Token，按每百万一美元是 2.85 美元；输出侧 57 万 Token，按每百万四美元是 2.28 美元。两块相加，每个 Run 是 5.13 美元。
+
+两个 Run 合计 10.26 美元，再加 20% 预留得 12.312，向上取整登记为 12.32 美元。
+
+旁边还有一条独立的预留：两个 Run 的调用量 3,800 次乘 1.2，得到 4,560 次。
+
+另外提醒：13 美元是费用复核阈值，12.32 美元是预算登记值，含义不同。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.4　把预算写成能采取行动的表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从一次尝试折到总预算</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column' }}>
+
+            <Box style={{ width: 700, height: 76, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>假设 1,900 次物理尝试</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>每次输入 1,500 Token、输出 300 Token</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 340, height: 96, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>输入 · 285 万 Token</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>2.85 美元</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>假设每百万 1 美元</Text>
+                </Box>
+                <Box style={{ width: 340, height: 96, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>输出 · 57 万 Token</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>2.28 美元</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>假设每百万 4 美元</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 76, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>每 Run</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>2.85 + 2.28 = 5.13 美元</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 76, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>两个 Run</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>10.26 美元</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 84, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>加 20% 预留</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>12.312 → 向上取整 12.32 美元</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 420, height: 164, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>独立的调用预留</Text>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B' }}>4,560 次</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>两 Run 调用量 3,800 乘 1.2，得到物理尝试预留。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>13 美元不是预算值</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>它是负责人的费用复核阈值，触发的是核对真实计费与授权范围这个动作。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 140, background: '#F7F3E8', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>只是假设算术</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不是厂商现价，也不是实测账单；项目监控阈值不是 Runtime 自动硬上限。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 28</Text>
+    </Box>
+
+</Slide>

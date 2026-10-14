@@ -1,0 +1,74 @@
+<Slide notes={`交付记录里可以放一类容易做的检查：用纯文档解析去看材料的名称、类型、依赖关系和资源闭包是否完整。
+
+这类检查能省掉很多低级错误。比如名字写错、类型选错、依赖漏了、闭包混进了不该有的东西，解析就能发现。所以它是必要的一步。
+
+但它只能说明材料能被解析，不能说明模型已经遵守了 SOP。一份格式完全正确的 Skill，运行时仍然可能做出别的判断，因为行为的验证要靠真实输入和真实调用。
+
+系统配置、绑定、封存和实际运行仍然需要在浏览器里完成，第三章讲过这条验证边界。所以记录里要把「已经检查过什么」和「还没检查什么」分开写，不能合成一句「材料已通过」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.6　一次内容审阅怎样交付</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>解析通过不等于遵守 SOP</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 620, flexDirection: 'column', gap: 10 }}>
+
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>纯文档解析能检查什么</Text>
+
+                <Box style={{ width: 620, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>名称与类型是否写对</Text>
+                </Box>
+
+                <Box style={{ width: 620, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>依赖是否声明完整</Text>
+                </Box>
+
+                <Box style={{ width: 620, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>资源闭包有无多余或缺失</Text>
+                </Box>
+
+                <Box style={{ width: 620, height: 56, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>这些都属于纸面检查</Text>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+                <Box style={{ width: 500, height: 240, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>不能声明的事情</Text>
+                    <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>通过解析检查，只能说明材料能被解析。</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>不能据此声明模型已经遵守了这份 SOP。</Text>
+                </Box>
+
+                <Box style={{ width: 500, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>仍要在浏览器完成</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>系统配置、绑定、封存与实际运行，属于第三章讲过的验证边界。</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', width: 1152 }}>记录里要区分「已经检查过什么」与「还没检查什么」，不能合成一句「材料已通过」。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 27</Text>
+    </Box>
+
+</Slide>

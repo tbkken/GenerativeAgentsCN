@@ -1,0 +1,61 @@
+<Slide notes={`当前估算接口用的是这一条公式：基数等于 Agent 数加 Skill 对象数，再乘以步数。
+
+青禾这一轮模拟四名人物和两个绑定 Skill 的对象，四加二等于六，乘四十八步，基数就是二百八十八。源码据此给出模型调用在 C 到 3C 之间、Token 在 500C 到 3000C 之间、墙钟秒数在 2C 到 30C 之间的范围。
+
+这些数字只是当前固定公式的输出。公式还没有逐条展开实际的子 Skill 调用链，也没有依据你所用的模型吞吐做校准，所以上下界不能当成费用承诺或完成时间保证。
+
+另外，第二章里的二十四人、十人、十六人是活动需求，不是已经创建的 Agent 数。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.5　当前估算究竟怎样计算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>当前估算用的是这一条公式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#276FBF' }}>C =（Agent 数 + Skill 对象数）× Step 数</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>基数叫 C</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, color: '#20344B' }}>（4 名人物 + 2 个对象）× 48 步</Text>
+            <Text style={{ fontSize: 26, color: '#276FBF' }}>=</Text>
+            <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#276FBF' }}>288</Text>
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>参与者轮次，不是实测调用</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 21 }}>
+            <Box style={{ width: 370, height: 100, background: '#EDF4FC', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>模型调用</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>C – 3C</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>代入后 288 – 864 次</Text>
+            </Box>
+            <Box style={{ width: 370, height: 100, background: '#EDF4FC', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>Token</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>500C – 3000C</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>代入后 144,000 – 864,000</Text>
+            </Box>
+            <Box style={{ width: 370, height: 100, background: '#ECF7F2', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>墙钟秒数</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>2C – 30C</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>代入后约 9.6 – 144 分钟</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>288 是作者方案的粗估基数；第二章的计划人数是活动需求，不代表系统已经创建了这么多角色。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,88 @@
+<Slide notes={`一张可交接的问题单要回答六个字段。
+
+现象，写明哪项需求没有达到哪个事前判据，不要写"效果不好"。
+位置，落到实际的实验、Run、Attempt、Step，以及相关的人物与对象。
+证据，写出请求、回复、记忆、路径或页面记录的具体出处。
+解释，把已经证实的原因和仍待排查的假设分开写。
+修改建议，说清准备改变什么，以及为什么针对这个原因。
+验收条件，说明下一次应该看见哪些事实，怎样才算仍然没解决。
+
+只写"咨询台好像忘了"，原因还是未知，接手的人只能把整个过程重走一遍。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.1　先写问题，再写修改</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一张可交接的问题单</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>问题单要回答的六件事</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>问题单不是抱怨，也不是承诺。它把现象、位置、证据、解释、建议和验收条件写在一处，别人拿到就能接着往下查。</Text>
+            <Box style={{ width: 440, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>猜测不等于原因</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>"咨询台好像忘了"只是一个人的印象。没有出处，就没有下一步。</Text>
+            </Box>
+            <Box style={{ width: 440, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>问题单也允许空着</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>未证实的部分保持开放，比写成"已修复"更便于别人接手。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 680, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 680, height: 36, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 108 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>应记录的内容</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 108 }}>现象</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 502 }}>哪项需求没有达到哪个事前判据</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 108 }}>位置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 502 }}>实际实验、Run、Attempt、Step 及相关人物／对象</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 108 }}>证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 502 }}>请求、回复、记忆、路径或页面记录的具体出处</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 108 }}>解释</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 502 }}>已证实原因、仍待排查的假设分别是什么</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 108 }}>修改建议</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 502 }}>准备改变什么，为什么针对这个原因</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 108 }}>验收条件</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 502 }}>下一次应看见哪些事实，怎样判断仍未解决</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,75 @@
+<Slide notes={`这里有一个特别容易搞混的地方。
+
+排期表里写过 24 人、10 人、16 人。这三个数字是三项活动的计划人数，是办活动时预计会来多少人，不是这次实验里已经创建了多少个 Agent。
+
+这次实验实际只模拟了四位代表人物和两个对象。
+
+所以有一句话必须说清楚：没有建模的参与者，不计入到达率、会话数或者费用的分母。分母是多少，取决于我建模了多少，而不是活动本来会来多少人。
+
+更不能把这四个人的行为，直接推断成真实社区人群的统计规律。四个样本说明不了人群，它只能说明这四个角色在这个世界里做了什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.2　四个人，两项对象能力</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>计划人数不是 Agent 数</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>原排期里写下的三项活动，计划人数分别是：</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 370, height: 128, background: '#F7F3E8', borderRadius: 10, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B' }}>24</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>计划人数</Text>
+            </Box>
+            <Box style={{ width: 370, height: 128, background: '#F7F3E8', borderRadius: 10, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B' }}>10</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>计划人数</Text>
+            </Box>
+            <Box style={{ width: 370, height: 128, background: '#F7F3E8', borderRadius: 10, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B' }}>16</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>计划人数</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>不等于本次实验已经创建的 Agent 数</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 116, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF' }}>4</Text>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>名代表人物</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>公共 Agent 资源</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 566, height: 116, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#26816B' }}>2</Text>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>个地图对象</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>绑定根 Skill</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>分母取决于建模规模</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>没有建模的参与者不计入到达率、会话或费用分母；也不能把四人的行为推断为真实人群的统计规律。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

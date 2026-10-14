@@ -1,0 +1,84 @@
+<Slide notes={`这一节要解决的是一件很具体的事：当我们把服务大厅的一次比较实验交给别人，对方凭什么知道该继续还是该停。
+
+我先说明当前的状态。四项咨询需求已经明确，唯一策略差异也定了，但还没有创建实验、没有真实调用、没有业务结果。所以这里拿出来的计划和预算都是事前材料，不是已经跑出来的成绩。
+
+一份合格的事前材料要回答四件事：下一步做什么、依据什么进入下一阶段、准备消耗多少资源、遇到问题由谁判断。把这四件事写清楚，接手的人就不必再来问一遍。
+
+记住这个分寸：计划可以写得很完整，运行结果却仍然是空的。只有后续事实形成，才能把“计划执行”改成“已经观察”。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>什么时候继续，什么时候停下</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>让下一位负责人{'\n'}知道何时继续、{'\n'}何时停下</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 500 }}>一份别人能按其继续工作的执行计划与预算登记：材料、配置、输入、事实、结果，每一步都可检查。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 158, height: 42, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>事前材料</Text>
+                </Box>
+                <Box style={{ width: 158, height: 42, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>尚未创建 Run</Text>
+                </Box>
+                <Box style={{ width: 158, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>可交接的计划</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>执行顺序是一条可检查的链，每阶段完成后再留下交接记录</Text>
+            <Box style={{ width: 620, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>材</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>材料可审阅</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>需求、窗口分工、两段咨询策略</Text>
+            </Box>
+            <Box style={{ width: 620, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 620, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>配</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>配置已保存</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>图片、空间、出生点、Skill 与模型</Text>
+            </Box>
+            <Box style={{ width: 620, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 620, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>输</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>实验输入已固定</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>两组除咨询策略外保持一致</Text>
+            </Box>
+            <Box style={{ width: 620, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 620, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>运</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>运行事实可读</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>Run、Attempt 与已提交 Step</Text>
+            </Box>
+            <Box style={{ width: 620, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>果</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>结果可交付</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>四项任务与全部失败都已登记</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 28</Text>
+    </Box>
+
+</Slide>

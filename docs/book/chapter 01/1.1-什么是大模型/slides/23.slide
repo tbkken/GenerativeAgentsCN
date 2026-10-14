@@ -1,0 +1,79 @@
+<Slide notes={`我们用一个具体的依据把四个格子填上。依据是两条：房间容量是十二人，本次没有执行预约。
+
+先看上面两个格子，它们对应"两次回答几乎一样"的情况。如果两次都说"容量十二人、还没有预约"，那既稳定又正确，这是我们想要的。但如果两次都说"容量十五人、已经预约"，注意——它稳定，但它错得很稳定。多问几遍得到同样的答案，并不能把错误变成正确。
+
+再看下面两个格子，对应"两次措辞不一样"的情况。一次说"容量十二人、未预约"，另一次说"最多十二人、尚未预约"，用词变了，事实一致，这仍然可以用。但如果一次说"未预约"、另一次说"已预约"，那就是变化之中夹着错误。
+
+所以重复出现不等于可靠，措辞变化也不等于出错。
+
+最后一句要记住：把随机性调低，可能让差异变小，但它不能保证正确，也不能保证完全重现。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.6　为什么回答会变化，为什么会有"幻觉"</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>稳定与正确，是两个维度</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 652, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 8, padding: '12px 18px' }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>核验依据：容量 12 人；本次未执行预约</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 318, height: 158, background: '#ECF7F2', borderRadius: 10, border: '1px solid #26816B', padding: 16, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>稳定且正确</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>两次均说：容量 12 人，未预约</Text>
+                </Box>
+                <Box style={{ width: 318, height: 158, background: '#FFF4E6', borderRadius: 10, border: '1px solid #CB6B28', padding: 16, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>稳定但错误</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>两次均说：容量 15 人，已预约</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 318, height: 158, background: '#EDF4FC', borderRadius: 10, border: '1px solid #B5C7D8', padding: 16, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>事实一致</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>容量 12 人、未预约　与　最多 12 人、尚未预约</Text>
+                </Box>
+                <Box style={{ width: 318, height: 158, background: '#FFF4E6', borderRadius: 10, border: '1px solid #CB6B28', padding: 16, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>含有错误</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>容量 12 人、未预约　与　容量 12 人、已预约</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>不能合并成一个"稳定可靠"</Text>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                <Box style={{ width: 3, height: 52, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>重复说"15 人、已预约"，说很多遍仍然错误。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                <Box style={{ width: 3, height: 52, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>措辞变化但事实一致，回答仍然可用。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'flex-start' }}>
+                <Box style={{ width: 3, height: 72, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>降低随机性可能减少差异，但不能保证正确，也不保证完全重现。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 26</Text>
+    </Box>
+
+</Slide>

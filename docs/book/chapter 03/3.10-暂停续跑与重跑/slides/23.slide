@@ -1,0 +1,130 @@
+<Slide notes={`这一节做完，验收材料要留下两样东西。
+
+第一样是一张身份对照表：暂停前的 Run、Attempt、Step 是多少，恢复之后对应的值又是什么，对象和会话的检查结果是什么，取消的限制在哪里，以及是否真的完成了一次重跑。
+
+第二样是连续帧证据。只有连续的帧序列才能说明边界是接着的，单张截图说明不了这件事。
+
+还没有实际做的项目，就在表里写“待验收”。这里有一条纪律：不要用看起来像真的 UUID 去把表格填满。那样表格是完整的，证据却是假的。
+
+把这两样东西准备好，后面回放和诊断那一段才有可以对的东西。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.6　重跑与修改后再跑</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节完成时要留下什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, height: 460, background: '#F4F7FA', borderRadius: 12, padding: 16, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>身份对照表</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 256, height: 40, background: '#EDF4FC', borderRadius: 6, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>记录项</Text>
+                </Box>
+                <Box style={{ width: 196, height: 40, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>暂停前</Text>
+                </Box>
+                <Box style={{ width: 196, height: 40, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>恢复后</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 256, height: 56, background: '#FFFFFF', borderRadius: 6, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>Run　run_id</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 256, height: 56, background: '#FFFFFF', borderRadius: 6, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>Attempt　attempt_id</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 256, height: 56, background: '#FFFFFF', borderRadius: 6, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>Step　已提交边界</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 256, height: 56, background: '#FFFFFF', borderRadius: 6, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>对象与会话检查</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 256, height: 56, background: '#FFFFFF', borderRadius: 6, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>取消限制 · 是否完成重跑</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+                <Box style={{ width: 196, height: 56, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>待填</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 420, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>交付物一　身份对照表</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>暂停前与恢复后的对应值，逐行填上真实记录。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>交付物二　连续帧证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>连续的帧序列才能说明边界接着，单张截图说明不了。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>没做的就写「待验收」</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>不用示意 UUID 把表格填满；表格完整而证据为假，比留空更有害。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

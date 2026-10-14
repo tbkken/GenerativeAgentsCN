@@ -1,0 +1,79 @@
+<Slide notes={`最后回到 WorkBuddy，把这一套检查跑一遍。
+
+安装走「技能 → 添加技能」：可以上传已有的技能包，也可以描述需求创建，入口取决于客户端支持。装完在已安装列表确认它是启用状态。
+
+然后跑一次任务，输入：「使用 open-day-planner，读取本次青禾材料，生成方案并运行独立校验；预约工具不可用时明确使用教学快照。」跑完要去看它实际读了哪份 SKILL.md、脚本有没有执行，不能拿安装提示当证据。
+
+接着做对照：关掉这个 Skill，在独立任务里用同样材料再跑一次，比较约束遗漏、有没有运行检查、错误定位和交付完整性。关闭和卸载不是一回事：关闭只是暂停模型的自动调用，文件还在。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.6　在 WorkBuddy 中安装和复用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>安装、使用，再做一次关闭对照</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 668, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 70, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>安装</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>进入「技能 → 添加技能」，上传已有技能包或描述需求创建；在已安装列表确认启用状态。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 70, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>调用</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>在新任务中选择本章工作区，输入「使用 open-day-planner，读取本次青禾材料，生成方案并运行独立校验」。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 70, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>关闭对照</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>用相同材料再跑一次，比较约束遗漏、是否运行检查、错误定位与交付完整性。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 444, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ width: 444, height: 52, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>几件要注意的事</Text>
+            </Box>
+
+            <Box style={{ width: 444, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>关闭与卸载不同：关闭保留文件，只暂停模型自动调用；开关状态属于用户配置。</Text>
+            </Box>
+
+            <Box style={{ width: 444, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不以安装完成提示替代调用证据；要查看实际读取与脚本执行。</Text>
+            </Box>
+
+            <Box style={{ width: 444, height: 92, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>客户端拒绝导入包时，记录接受的文件类型与报错，改用客户端支持的创建入口。</Text>
+            </Box>
+
+            <Box style={{ width: 444, height: 92, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>不凭文件名推断任意目录都能自动发现；也不悄悄删掉脚本后声称同样功能。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,90 @@
+<Slide notes={`录音转成文字以后，还不能直接交给排期助手。要先把几类特别容易出错的项挑出来核对。
+
+第一类是人名。负责人是谁，直接影响这条需求由谁确认，听错了后续就找不到人。
+
+第二类是时间。负责人说"十点半开始"，如果转写成"十点开始"，机器照做，排出来的场次就全错了。这两个说法只差几个字，业务结果完全不同。
+
+第三类是人数。十个人还是一个班的人，决定了哪个房间放得下。
+
+第四类是否定词。中文里"不用加椅子""不安排在上午"，一个"不"字听漏了，意思就反过来了。
+
+这四类都要回听原音频确认。确认之后的文本，才可以进入后面的结构化流程。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.3　语音：先转写，再确认关键事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从录音到可核对的结构化需求</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>人名</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>决定这条需求由谁确认，后面对不上号就找不到人。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>时间</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>"十点"与"十点半"只差几个字，排出来的场次完全不同。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>人数</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>十个人还是十来个，直接决定哪个房间放得下。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>否定词</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>"不安排在上午"漏掉一个"不"，意思正好反过来。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 512, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#546779' }}># 上传自己准备的短录音，不附带他人真实语音</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#CB6B28' }}>$env:OPENAI_TRANSCRIPTION_MODEL = '替换为账户支持文件转写的模型ID'</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#20344B' }}>python multimodal.py transcribe '自己的教学录音.wav'</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#546779' }}>transcript = client.audio.transcriptions.create(</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#276FBF' }}>    model = transcription_model</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#276FBF' }}>    file  = audio_file</Text>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#546779' }}>)　print(transcript.text)</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#ECF7F2', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 4, height: 46, background: '#26816B' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>转写结果保存后，先核对原音频，再把确认过的文本交给排期助手。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#FFF4E6', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>不能因为它来自语音，就绕过人数、日期与预约校验。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 26</Text>
+    </Box>
+
+</Slide>

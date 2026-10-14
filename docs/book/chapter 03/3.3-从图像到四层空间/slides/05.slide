@@ -1,0 +1,98 @@
+<Slide notes={`四个 Arena 的范围都写在配置里：阅读室从格 (1,1) 开始，宽 10 高 12；手作室从 (12,1) 开始，宽 9 高 12；交流室从 (22,1) 开始，宽 9 高 12；公共大厅从 (1,13) 开始，宽 30 高 10，横向连接三个房间。
+
+这些范围值表达的是语义区域，不承诺其中每一格都可走。外墙、房间分隔和物件占用，要等通路配置确定之后才能判断。
+
+所以核对范围时，只核对边界与教学作用，不要顺手把它当成可走区域。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.1　先把尺度定下来</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个 Arena 的范围与教学作用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>X、Y＝左上角格坐标；W、H＝范围大小（格数）。World 与 Sector 覆盖整张 32×24 地图。</Text>
+        </Box>
+
+        <Box style={{ height: 84, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ width: 148, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>阅读室</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>X 1　Y 1</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>W 10　H 12</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 64, background: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>阅读访客的目标区域</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 84, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ width: 148, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>手作室</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>X 12　Y 1</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>W 9　H 12</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 64, background: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>手作准备与信息调整</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 84, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ width: 148, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>交流室</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>X 22　Y 1</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>W 9　H 12</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 64, background: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>入场后的整理与交流</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 84, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+            <Box style={{ width: 148, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>公共大厅</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>X 1　Y 13</Text>
+            </Box>
+            <Box style={{ width: 168, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>W 30　H 10</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 64, background: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>连接房间、查询公告与咨询</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 56, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>范围包含语义区域，不承诺其中每一格都可走；墙体与物件占用由通路配置确定。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 25</Text>
+    </Box>
+
+</Slide>

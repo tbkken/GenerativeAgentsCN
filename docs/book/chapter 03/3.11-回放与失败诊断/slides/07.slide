@@ -1,0 +1,72 @@
+<Slide notes={`有人会问：回放的时候，模型是不是又把当时的事情重新想了一遍？不是。回放的任务是解释已经发生的记录，不是重新决策。
+
+它读取两类输入：一类是 Run 里已经提交的帧，以及提交身份和哈希记录；另一类是 Run 内嵌的地图、素材和空间语义索引。然后校验身份、内嵌实验哈希、帧连续性和提交记录，并且只校验到 committed_step，再把这些既有事实归约成位置、活动、会话和对象外观。
+
+这里有一个关键：它不会执行 Brain，也不会执行 Skill，更不会重新调用模型。投影缓存是可以丢弃的，丢掉以后重新读取原始输入再校验一次就行，但这条回路不会绕到 Brain 去生成新的决定。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.2　Replay 为什么不重新思考</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>回放不重新执行 Brain</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 88, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Run 已提交帧</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>与提交身份、哈希记录</Text>
+            </Box>
+            <Box style={{ width: 560, height: 88, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Run 内嵌地图与素材</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>与空间语义索引</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>校验</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>身份 · 内嵌实验哈希 · 帧连续性 · 提交记录，且只到 committed_step</Text>
+        </Box>
+
+        <Box style={{ height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>归约</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>Replay 归约既有事实，不生成任何新的选择</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 760, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>页面结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>位置与活动 · 会话与对象外观</Text>
+            </Box>
+            <Box style={{ width: 368, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>可丢弃投影缓存</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>丢弃后重新读取原始输入</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 70, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不执行 Brain 或 Skill，不重新调用模型</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>缓存可以重建，但不能成为比原始提交更高的事实来源。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 27</Text>
+    </Box>
+
+</Slide>

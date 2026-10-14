@@ -1,0 +1,73 @@
+<Slide notes={`Run 包之所以能独立交付，是因为它在创建的时候把实验完整嵌了进去。所以打开一个运行包，里面就带着它当时用的实验，不需要回头去作者的资源库里找原记录。
+实验包里面有两份关键材料：一份保存统一的资源内容，另一份保存装配，也就是地图、Brain、模型的用途、出生位置和运行参数。运行包则在此之上再带上 Attempt、帧、快照和质量信息。
+跨资源依赖在资源包里可以是显式未绑定的，但进入实验之前必须绑定完整。没有绑定关系和不能确定的内容，接收者不应该靠同名资源去猜。识别实验和 Run，读的是清单里的 UUID。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.1　三种包回答三个问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>清单决定类型与身份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 78, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>协</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>ga-package v2　内容合同</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>清单里的 package_kind 确认类型，UUID 确认身份</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 368, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 368, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 368, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>config</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>资源内容与自身附件；可有显式未绑定的跨资源依赖，进入实验前必须绑定完整。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>exp</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>完整资源闭包；实验装配、输入与参数，含地图、Brain、模型用途与出生位置。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 152, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>run</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>完整内嵌实验与执行事实；Attempt、帧、快照与质量，用于回放与恢复。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 52, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 26, background: '#26816B' }} />
+            <Text style={{ fontSize: 15, color: '#26816B' }}>exp 在 Run 创建时完整嵌入 run：运行包自带它当时所用的实验，接收者不必回头找原记录。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 74, background: '#FFF4E6', borderRadius: 10, padding: '10px 22px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>普通结果 ZIP 不在这条链上</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>把结果 ZIP 改成 .garun，不会沿任何箭头自动补齐 Run 协议。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

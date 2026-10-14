@@ -1,0 +1,80 @@
+<Slide notes={`每一类交付物都有它推不出来的结论，这句话我想单独强调一遍。
+
+约束与来源，可以对照原始材料、列出缺失项，但它不能证明已经执行过查询或操作。写了已查询不等于查过。
+
+候选及最终排期，可以解析 JSON、核对活动和时间，但合法 JSON 不等于可行排期，字段都对，活动照样可能撞车。
+
+校验报告有独立命令、退出码和具体错误，这是最硬的一份。可它只覆盖已经编码进校验器的规则。
+
+方案说明能和最终排期逐项一致，但不能证明真实通知、预订或发布已经完成。运行记录写着模型、输入、响应、工具与日期，可本地模拟测试不能证明远端服务可用。
+
+所以每份文件都要说清它支持哪一句结论，以及到此为止。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.4　用交付清单明确完成边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>每一类交付物都有它推不出的结论</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 240, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>约束与来源</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>对照原始材料，列出缺失项</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#CB6B28' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不能证明已执行查询或操作</Text>
+        </Box>
+
+        <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 240, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>候选及最终排期</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>解析 JSON、核对活动和时间</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#CB6B28' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>合法 JSON 不等于可行排期</Text>
+        </Box>
+
+        <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 240, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>校验报告</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>独立命令、退出码、具体错误</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#CB6B28' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不能证明未编码的规则也满足</Text>
+        </Box>
+
+        <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 240, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>方案说明</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>与最终排期逐项一致</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#CB6B28' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不能证明真实通知、预订或发布完成</Text>
+        </Box>
+
+        <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 240, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>运行记录</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>模型、输入、响应、工具、版本与日期</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#CB6B28' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本地模拟测试不能证明远端服务可用</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 25</Text>
+    </Box>
+
+</Slide>

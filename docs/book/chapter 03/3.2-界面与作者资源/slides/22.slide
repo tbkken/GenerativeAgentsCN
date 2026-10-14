@@ -1,0 +1,66 @@
+<Slide notes={`这一节讲完了，我留下三条核对顺序，以后每次打开作者界面都可以走一遍。
+
+第一条，先认范围。动手之前确认自己站在公共作者资源里，还是某个实验的副本里。名字一样不代表落点一样。
+
+第二条，再认资源。记住七类资源各自能做什么，也要记住哪些能力目前还没有对应的编辑入口，不要凭空想象一条点击流程。
+
+第三条，最后交清单。四个人物及图片、人群成员、地图与对象素材、选定的 Brain 和依赖、模型配置，逐项确认保存过、重开过。
+
+确认完这些，状态才可以从「教材设计」改成「已配置」。接下来我们要进入空间，把图像对齐成四层可以使用的场地。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>3.2　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>记住三条核对顺序</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>先认范围，再认资源，最后按清单收尾。公共材料与实验副本分开对待，资源准备好不等于运行已经用上。</Text>
+        </Box>
+
+        <Box style={{ width: 704, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>先认范围</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>改之前，确认自己在公共资源还是实验副本</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>再认资源</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>七类资源能做什么，哪里还没有编辑入口</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#FFF4E6', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>最后交清单</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>身份、内容、装配分别核对，重开确认</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 6 }}>
+                <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>下一节　3.3　从图像到四层空间</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 22</Text>
+    </Box>
+
+</Slide>

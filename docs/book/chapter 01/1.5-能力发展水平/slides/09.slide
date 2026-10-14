@@ -1,0 +1,64 @@
+<Slide notes={`这两行数字出自 Google 同一份 2026 年 9 月的方法报告，模型调用标识是 gemini-3.8-flash。
+
+第一行 CharXiv Reasoning，测复杂科研图表的信息综合，不使用工具，86.2%。
+
+第二行 GDP.PDF，测专家级 PDF 文档理解，35.0%。这里的 35.0% 是 All pass rate，必须按全部要求同时通过才算一次，完整通过率就是 35.0%。
+
+绝不能把 86.2% 减掉 35.0% 说成"能力损失"，两项任务与判分口径都不同。
+
+实用的判断是：让模型帮忙读图、找文档信息已经有价值；要它一次处理完一份长文档、满足全部细则，仍须分项检查。像开放日方案，时间、地点、容量、无障碍与附件引用必须同时正确。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.2　多模态已经能处理复杂材料，整份交付仍需验收</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两种视觉任务，两种评分</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 40, height: 372 }}>
+
+            <Box style={{ flex: 58, height: 372, background: '#ECF7F2', borderRadius: 12, padding: 26, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>CharXiv Reasoning　·　复杂科研图表的信息综合</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}>
+                    <Text style={{ fontSize: 64, fontWeight: 'bold', color: '#26816B', lineHeight: 1.05 }}>86.2%</Text>
+                    <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>无工具</Text>
+                </Box>
+                <Box style={{ width: 72, height: 4, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.75 }}>模型可以在该设置下解决较多图表推理问题，说明"读图找信息"这件事已经有实用价值。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>判分口径：reasoning score，默认 pass@1。</Text>
+            </Box>
+
+            <Box style={{ flex: 42, height: 372, background: '#FFF4E6', borderRadius: 12, padding: 26, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>GDP.PDF　·　专家级 PDF 文档理解</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}>
+                    <Text style={{ fontSize: 64, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.05 }}>35.0%</Text>
+                    <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>All pass</Text>
+                </Box>
+                <Box style={{ width: 72, height: 4, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.75 }}>该题集按全部要求同时通过计分。本次完整通过率为 35.0%，说明"整份做完"是另一件事。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>判分口径：All pass rate。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 88, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能相减：两项结果的任务和判分不同，86.2% 减 35.0% 不是"能力损失"</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>来源性质：厂商自报；模型调用标识 gemini-3.8-flash，通用方法为默认采样、除另有注明外按 pass@1 报告，试验次数与题集快照未完整披露。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

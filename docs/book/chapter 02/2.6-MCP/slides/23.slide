@@ -1,0 +1,73 @@
+<Slide notes={`三个设置分别管一件事，谁也不能替代谁。
+
+allowed_tools 缩小本次导入的工具范围，决定这次会话里模型能看到哪些工具。它是收窄，不是授权。
+
+require_approval 管理的是向服务发送请求之前的批准过程。设成每次询问，就是把发送这个动作交给调用者确认。
+
+服务身份与授权在服务端那一侧，校验这个调用者可以做什么。这一项在客户端改配置改不出来，权限是由服务授予的。
+
+最常见的误解是：批准就等于授权。不是。批准只是调用者同意把这次请求发出去，它不会让一个本来没有权限的服务凭空获得权限。反过来，把审批调成从不询问，也修不好认证、网络或合同错误。三个维度必须分开查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.5　三个互相独立的设置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个设置分别管一件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 27 }}>
+
+            <Box style={{ width: 366, height: 320, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>本次导入</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF', fontFamily: 'Consolas' }}>allowed_tools</Text>
+                <Box style={{ width: 326, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>缩小本次导入的工具范围，决定这次会话里模型能看到哪些工具。</Text>
+                <Box style={{ width: 326, height: 96, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>它是收窄，不是授权</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>没有导入的工具不会被调用，但导入不等于有权限。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 366, height: 320, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>发送之前</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF', fontFamily: 'Consolas' }}>require_approval</Text>
+                <Box style={{ width: 326, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>管理向服务发送请求的批准过程，决定发送之前要不要先问一次。</Text>
+                <Box style={{ width: 326, height: 96, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>设成每次询问</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>把发送这个动作交给调用者确认。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 366, height: 320, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>服务端一侧</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>服务身份与授权</Text>
+                <Box style={{ width: 326, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>校验这个调用者实际可以做什么，权限由服务授予。</Text>
+                <Box style={{ width: 326, height: 96, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>改客户端配置改不出来</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>它不在客户端这一侧决定。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>批准不会扩展服务授予的权限</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>改成 never 也修不好认证、网络或合同错误；三个维度必须分开核对。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 27</Text>
+    </Box>
+
+</Slide>

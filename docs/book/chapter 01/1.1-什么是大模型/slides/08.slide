@@ -1,0 +1,124 @@
+<Slide notes={`我们一步一步来看。
+
+第一步是原文。你输入的是"请安排阅读分享"这七个汉字，人一眼就看懂了。
+
+第二步是切分。模型不是按字来处理，而是按片段来处理。这四个片段在这里正好是四个词，但真实情况里，一个片段可能是半个词，也可能是一个标点。所以千万记住：片段和汉字之间没有固定的换算关系。
+
+第三步是换成编号。每个片段对应一个编号，编号的作用是索引——它本身不表示词义，只是让模型知道"我说的是这个片段"。
+
+第四步是嵌入，也就是把编号映射成一组数值。到这一步，模型手里拿的才是一串可以参与计算的数字。而且同一个片段，在不同句子里的表示还会受到周围内容的影响。
+
+所以"模型认识字"这句话其实不准确。它认识的是片段，以及片段背后的数值。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.2　Token：文字怎样变成可计算的输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从原文，到编号，再到向量</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 36 }}>
+
+        <Box style={{ width: 660, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Text style={{ width: 72, fontSize: 15, color: '#546779' }}>原文</Text>
+                <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', border: '1px solid #B5C7D8' }}>
+                    <Text style={{ fontSize: 20, color: '#20344B' }}>请安排阅读分享</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Text style={{ width: 72, fontSize: 15, color: '#546779' }}>切分</Text>
+                <Box style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 8, padding: '12px 0', border: '1px solid #B5C7D8', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#20344B' }}>请</Text>
+                    </Box>
+                    <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 8, padding: '12px 0', border: '1px solid #B5C7D8', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#20344B' }}>安排</Text>
+                    </Box>
+                    <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 8, padding: '12px 0', border: '1px solid #B5C7D8', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#20344B' }}>阅读</Text>
+                    </Box>
+                    <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 8, padding: '12px 0', border: '1px solid #B5C7D8', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#20344B' }}>分享</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Text style={{ width: 72, fontSize: 15, color: '#546779' }}>编号</Text>
+                <Box style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 8, padding: '12px 0', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>101</Text>
+                    </Box>
+                    <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 8, padding: '12px 0', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>202</Text>
+                    </Box>
+                    <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 8, padding: '12px 0', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>303</Text>
+                    </Box>
+                    <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 8, padding: '12px 0', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>404</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Text style={{ width: 72, fontSize: 15, color: '#546779' }}>向量</Text>
+                <Box style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ flex: 1, background: '#ECF7F2', borderRadius: 8, padding: '12px 0', border: '1px solid #B5C7D8', flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
+                        <Box style={{ width: 16, height: 16, background: '#276FBF', borderRadius: 3 }} />
+                        <Box style={{ width: 16, height: 16, background: '#B5D4F4', borderRadius: 3 }} />
+                        <Box style={{ width: 16, height: 16, background: '#8FC0EA', borderRadius: 3 }} />
+                    </Box>
+                    <Box style={{ flex: 1, background: '#ECF7F2', borderRadius: 8, padding: '12px 0', border: '1px solid #B5C7D8', flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
+                        <Box style={{ width: 16, height: 16, background: '#8FC0EA', borderRadius: 3 }} />
+                        <Box style={{ width: 16, height: 16, background: '#276FBF', borderRadius: 3 }} />
+                        <Box style={{ width: 16, height: 16, background: '#B5D4F4', borderRadius: 3 }} />
+                    </Box>
+                    <Box style={{ flex: 1, background: '#ECF7F2', borderRadius: 8, padding: '12px 0', border: '1px solid #B5C7D8', flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
+                        <Box style={{ width: 16, height: 16, background: '#B5D4F4', borderRadius: 3 }} />
+                        <Box style={{ width: 16, height: 16, background: '#8FC0EA', borderRadius: 3 }} />
+                        <Box style={{ width: 16, height: 16, background: '#276FBF', borderRadius: 3 }} />
+                    </Box>
+                    <Box style={{ flex: 1, background: '#ECF7F2', borderRadius: 8, padding: '12px 0', border: '1px solid #B5C7D8', flexDirection: 'row', justifyContent: 'center', gap: 6 }}>
+                        <Box style={{ width: 16, height: 16, background: '#276FBF', borderRadius: 3 }} />
+                        <Box style={{ width: 16, height: 16, background: '#8FC0EA', borderRadius: 3 }} />
+                        <Box style={{ width: 16, height: 16, background: '#B5D4F4', borderRadius: 3 }} />
+                    </Box>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779', marginLeft: 84 }}>片段、编号与向量均为示意；色块深浅表示数值不同，不代表真实嵌入结果。</Text>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>Token 是片段</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>可能是字、词的一部分或标点，不能固定换算成汉字。</Text>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>编号用于索引</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>编号本身不表示词义，它只是一个查得到的位置。</Text>
+            </Box>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>向量用于计算</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>每个编号映射为一组数值，表示还受周围内容影响。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 26</Text>
+    </Box>
+
+</Slide>

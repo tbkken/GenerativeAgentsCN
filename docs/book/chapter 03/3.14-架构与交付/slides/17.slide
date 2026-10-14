@@ -1,0 +1,58 @@
+<Slide notes={`接着要提醒一件事：不要把行为约定夸大成底层保证。
+
+例如本章要求「对实际可见的人说话」。这个要求要成立，得结合感知记录和当前实现一起检查：感知里到底有没有这个人、距离和视野条件满不满足。不能只凭一句约定就认为它自动成立。
+
+再比如，角色资料里写着「我是组织者」。这句话不会让它自动获得新的内核权限。身份写着什么，和系统允许它做什么，是两件事。
+
+还有一处也要分开说：Skill 的业务规则，和能力服务的权限规则，需要分别说明。业务规则管「该怎么做」，权限规则管「能不能做」；把两者混在一起讲，验收的时候就会说不清。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.4　Brain 决定做法，内核守住事实边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>不要夸大成底层保证</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 484, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>约定的归约定，{'\n'}保证的归保证</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 484 }}>角色资料、SOP、Skill 文本里写下的要求，属于行为约定；它们要变成结论，必须在真实记录里找到对应的事实。</Text>
+            <Box style={{ background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>两种规则要分开写</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>Skill 的业务规则管「该怎么做」；能力服务的权限规则管「能不能做」。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 648, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 648, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 68, background: '#276FBF' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>要求「对实际可见的人说话」</Text></Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6, flex: 1 }}>要结合感知记录与当前实现检查：这个人是否真的出现在感知里。</Text>
+            </Box>
+
+            <Box style={{ width: 648, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 68, background: '#CB6B28' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>写着「我是组织者」</Text></Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6, flex: 1 }}>不会自动获得新的内核权限；身份写着什么与系统允许做什么是两件事。</Text>
+            </Box>
+
+            <Box style={{ width: 648, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 68, background: '#26816B' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', lineHeight: 1.5 }}>Skill 的业务规则</Text></Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6, flex: 1 }}>与能力服务的权限规则需要分别说明，验收时才说得清哪一条成立。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 29</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,45 @@
+<Slide notes={`这一块先把"要不要拆"这件事问清楚。
+
+多 Agent 的每个角色，其实可以复用同一个模型，所以增加角色并不会自动带来更强的能力。真正值得拆的理由只有三类：两个角色能发现彼此遗漏的风险，各自看不同的材料把上下文隔开，或者两个任务互不依赖、可以并行从而缩短等待。
+
+青禾的资料很少，一次调用加本地校验常常已经足够。这里把任务拆成资料核对、表达审查和统一汇总三个角色，是为了让协作机制可见，而不是宣布多 Agent 更好。
+
+接下来每个角色都要签一份合同：任务、输入、工具、输出合同和结束条件。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.12.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先判断是否值得拆分</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>一次调用加本地校验常常已经足够，拆开是为了观察协作机制。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 330, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>减少遗漏</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>隔离上下文</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>缩短独立等待</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 25</Text>
+    </Box>
+
+</Slide>

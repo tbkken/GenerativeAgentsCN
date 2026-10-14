@@ -1,0 +1,79 @@
+<Slide notes={`接着说数字要带的五项条件：成功定义、任务数、运行数、未完成数和比较条件。缺哪一项，听众就会自己脑补一项，而脑补的结果通常比事实更乐观。
+
+本案的闭环定义要写得像一条链：入口给出有效建议，窗口给出适配回复，来访者实际确认。三个环节都发生，才算闭环。只是给出一次入口建议，还不满足这个条件。
+
+第四章的人工练习里，四项任务中有三项闭环，另有一项已经拿到入口有效建议但没有完成窗口闭环，所以 H2 的首次有效回应已经发生，最终闭环仍未发生。把这两句一起说出来，听众才既看到亮点，也看到边界。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.4　让数字带着分母和条件出现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>「提高了」缺了哪些条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ width: 690, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>五件事，缺一件就会被听众自己补上</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 222, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>成功定义</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>什么算成功</Text>
+                </Box>
+                <Box style={{ width: 222, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>任务数</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>四项教学任务</Text>
+                </Box>
+                <Box style={{ width: 222, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>运行数</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>当前尚无真实运行</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 339, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>未完成数</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>已获入口建议但未完成窗口闭环的任务</Text>
+                </Box>
+                <Box style={{ width: 339, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>比较条件</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>基线组与澄清组，其余设定一致</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 690 }}>第四章的人工练习给出三项闭环、四项任务，另有一项已获得入口有效建议却未完成窗口闭环。数字与它的判据要一起出现。</Text>
+        </Box>
+
+        <Box style={{ width: 434, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ height: 280, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>本案的闭环定义</Text>
+                <Box style={{ height: 40, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>入口给出有效建议</Text>
+                </Box>
+                <Box style={{ height: 28, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text>
+                </Box>
+                <Box style={{ height: 40, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>窗口给出适配回复</Text>
+                </Box>
+                <Box style={{ height: 28, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text>
+                </Box>
+                <Box style={{ height: 40, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>来访者实际确认</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 220, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>一次入口建议还不算闭环</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>H2 的首次有效回应已经发生，最终闭环仍未发生。两句话要一起说。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 26</Text>
+    </Box>
+
+</Slide>

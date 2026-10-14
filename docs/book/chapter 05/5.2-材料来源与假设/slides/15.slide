@@ -1,0 +1,71 @@
+<Slide notes={`先把本轮采用的固定条件列清楚，接收者才有对照的基准。
+
+四项咨询任务；四位来访者加引导员余真，共五名 Agent；咨询台加两个窗口，共三个对象；二十乘十六格地图，入口、等候区、A 服务区、B 服务区共四个 Arena；时间从二零二六年十月十八日九点到十点十五分，时区上海，步长一分钟，共七十六步。
+
+这些值不是估计出来的，是本次采用的条件。这句话要写在材料表上，不然接收者会以为它们来自真实大厅的统计。
+
+材料表还要多一栏：假设怎样影响结论。内部通道设计为连通，实际录入后的路线待验；人物从规定 Arena 出生，坐标待空间选择器保存；对象可按 SOP 答复多个请求，不能据此推出真实窗口的服务速度。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.4　把假设写成可检查的约束</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先写清楚：这些值从哪里来</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 620, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>四项咨询任务</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>四位来访者 + 引导员余真 = 五名 Agent</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>咨询台 + 两个窗口 = 三个对象</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>20×16 格地图，四个 Arena：入口、等候区、A 服务区、B 服务区</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>2026-10-18　09:00—10:15，Asia/Shanghai，步长一分钟，共 76 步</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 508, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+            <Box style={{ width: 508, height: 150, background: '#FFF4E6', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>这些值属于本次采用的条件</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>不是从真实大厅统计中估计出来的结果。</Text>
+            </Box>
+
+            <Box style={{ width: 508, height: 250, background: '#F4F7FA', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>材料表还要列出：假设怎样影响结论</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>内部通道设计为连通，实际录入后的路线待验。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>人物从规定 Arena 出生，但坐标待空间选择器保存。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>对象可按 SOP 答复多个请求，不能据此推出真实窗口的服务速度。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 23</Text>
+    </Box>
+
+</Slide>

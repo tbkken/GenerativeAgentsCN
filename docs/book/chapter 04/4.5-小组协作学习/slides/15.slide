@@ -1,0 +1,52 @@
+<Slide notes={`接下来是评价口径。
+
+一个方案要同时满足七条：活动对不对、时段对不对、教室对不对、阅读有没有早于手作、拼图是不是十一点开始、手作是不是在操作室、阅读是不是在阅览室。
+
+主指标就是满足的条数除以七。分母固定是七，不因为这个样本有没有报全字段而改变。
+
+还有一件事要说清楚：这七项并不是七种互相独立的能力。它们都来自同一套题面和同四条私有限制，所以一个高部分分只能说明方案接近标准答案，不能说明这个小组真的能把方案执行出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　4.5.5</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>七项判据{'\n'}与不同分母</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>主指标＝满足条件数÷7；字段缺失、矛盾或不可判不给分，表达措辞不影响判分。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, gap: 20 }}>
+            <Box style={{ width: 140, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>C1</Text>
+            </Box>
+            <Box style={{ width: 140, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>C2</Text>
+            </Box>
+            <Box style={{ width: 140, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>C3</Text>
+            </Box>
+            <Box style={{ width: 140, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>C4</Text>
+            </Box>
+            <Box style={{ width: 140, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>C5</Text>
+            </Box>
+            <Box style={{ width: 140, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>C6</Text>
+            </Box>
+            <Box style={{ width: 140, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>C7</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', width: 900 }}>C1–C3 来自共同题面　·　C4–C7 来自四条私有限制</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 26</Text>
+    </Box>
+
+</Slide>

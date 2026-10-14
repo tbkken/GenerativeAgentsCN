@@ -1,0 +1,78 @@
+<Slide notes={`五类缺口分别长什么样，我一个个说。
+
+输入缺口，是这份材料明明存在，却没有真正进入这次输入；或者进来了，但来源和有效时间说不清。这类问题在提示和上下文那一层解决。
+
+事实缺口，是任务需要当前的、外部的事实，比如房间的预约状态，而模型的知识里没有。这时候无论把提示写得多细，都换不来一条真事实。
+
+执行缺口，是计算、转换、读写文件这些动作要真的发生。模型可以描述一次计算，但描述不等于执行。
+
+方法缺口，是同一套做法要反复使用，步骤、脚本和停止条件都需要固定下来。
+
+验证缺口，是结果出来了，但没人能说清它是哪一次尝试产生的，输入、响应和产物对不上号。这五类缺口，各自对应不同的技术层。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.1　按问题选择技术</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先找缺口：五类缺口各缺什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ width: 130, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>输入缺口</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>该给的材料没进输入，或来源与有效时间不清楚</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ width: 130, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>事实缺口</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>需要当前预约、容量这类外部事实，模型自己答不出来</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ width: 130, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>执行缺口</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>计算、转换、读写文件要真的被执行，不是被描述</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ width: 130, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>方法缺口</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一套做法要重复使用，步骤、脚本与停止条件需要固定</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Text style={{ width: 130, fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>验证缺口</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不知道错误出在哪次调用，输入、响应与产物对不上</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 20 }}>
+
+            <Box style={{ height: 200, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>缺哪一类，补哪一层</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>五类缺口落在不同层上。把所有工具先装一遍，再去找地方用，是最常见的浪费。</Text>
+            </Box>
+
+            <Box style={{ height: 200, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>每新增一种都要说清</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>它解决的是哪一类缺口。说不出来，就说明这次引入还没有必要。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 25</Text>
+    </Box>
+
+</Slide>

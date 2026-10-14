@@ -1,0 +1,80 @@
+<Slide notes={`到达的定义要写得没有歧义。
+我采用的判据是：已经提交的实际坐标进入集合区的语义范围，就算到达；每个人只记第一次，不要求他站在某个指定的点上。
+准备动作是补充信息，不是到达率的必要条件。有人在集合区做了一次准备，有人直接停下，都不影响到达的判定。
+还有一点在解释结果时特别重要：南区的人物在基线里原本就可能走下面那个口子，所以关掉上面的缺口，对三个人的影响并不一样。
+给结论的时候，要把三个人的起点、路线和结果分别列出来，不能只报一个总数，否则别人看不出这个差异到底是从哪里来的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.4　到达的判据与解释方式</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>到达怎么算</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 393, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>构成到达的三条</Text>
+
+            <Box style={{ width: 393, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>已提交状态的实际坐标进入集合区语义范围</Text>
+            </Box>
+
+            <Box style={{ width: 393, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>每人只记首次进入，重复进入不重复计入</Text>
+            </Box>
+
+            <Box style={{ width: 393, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>不要求站在指定点，落在集合区内的任意格即可</Text>
+            </Box>
+
+            <Box style={{ width: 393, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>准备 ACT 是补充，不是到达率的必要条件</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 731, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>解释结果时要一起列出什么</Text>
+
+            <Box style={{ width: 731, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>三人的起点、路线和结果</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不能只报一个总数，否则看不出差异来自哪一段路线、哪一个人。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 731, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>南区人物基线就可能走下口</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>封掉上缺口对他的路线影响很小，他的移动负担不必跟着上升。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 731, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>关闭不必同样影响三个人</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>把「总体变差」直接讲成「每个人变差」，是把个体差异抹掉的说法。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 26</Text>
+    </Box>
+
+</Slide>

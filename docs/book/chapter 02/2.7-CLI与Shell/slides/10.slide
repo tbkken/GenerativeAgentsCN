@@ -1,0 +1,45 @@
+<Slide notes={`在把命令交给模型之前，我要先自己把它跑通三次。
+
+第一次用正确的方案，看它是不是真的返回通过。第二次用错误方案，看它是不是真的指出问题。第三次故意给一个不存在的文件名，看它是不是能把输入错误和方案不合格区分开。
+
+这三次加起来，才说明这条命令是「活的」：它既会通过，也会拒绝，还会报输入错误。如果只跑一次成功案例，我无法判断它是真的检查了规则，还是无论给什么都返回 0。
+
+顺序很重要。手工基线在自己手里建立起来，后面模型执行的结果才有参照。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.7.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先手工运行，再让模型调用</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先把命令在自己手里跑通三次，再把它交给模型。</Text>
+
+        <Box style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 300, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>第一次　正确方案</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 300, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>第二次　错误方案</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 300, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>第三次　不存在的文件</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

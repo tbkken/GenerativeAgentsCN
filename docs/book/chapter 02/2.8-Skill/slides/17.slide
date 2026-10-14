@@ -1,0 +1,52 @@
+<Slide notes={`还有一个很实际的问题：Skill 装到哪里，才算装好了？
+
+截至本章核查日期，至少有三条路可走。
+
+第一条是原生托管：把目录或 ZIP 上传，服务给你一个 Skill 身份，再把它挂载到托管 Shell 上。第二条是本地 Shell：用的是本地真实存在的目录路径，写进 local 环境配置，但执行仍然由应用自己完成。第三条是应用层 SOP 加载：应用自己读 SKILL.md，按需把内容加进提示，然后跑自己那套受控的工具循环。
+
+三条路都能让方法被复用，但它们的字段、路径、权限来源都不一样。先确定是走哪一条，再谈怎么写配置，顺序不能倒。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.8.4–2.8.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>三种装载路线</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>同一份 Skill，装到托管 Shell、本地 Shell 和应用里，是三套机制。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 1152, height: 76, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ width: 190, fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>路线一　原生托管</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>上传目录或 ZIP，拿到 Skill 身份，再挂载到托管 Shell 上执行。</Text>
+            </Box>
+
+            <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ width: 190, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>路线二　本地 Shell</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>使用本地真实存在的 Skill 路径，执行仍由应用与本地环境完成。</Text>
+            </Box>
+
+            <Box style={{ width: 1152, height: 76, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ width: 190, fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>路线三　应用层 SOP</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>应用自己读 SKILL.md，按需加入提示，再跑自己的受控工具循环。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 27</Text>
+    </Box>
+
+</Slide>

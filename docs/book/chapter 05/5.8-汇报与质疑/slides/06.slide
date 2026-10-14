@@ -1,0 +1,47 @@
+<Slide notes={`第二个要讲清楚的是顺序。二十分钟的汇报，依次回答四个问题：研究什么、怎样比较、证据是什么、能解释到哪里。我用一条问题线把它们串起来，不让听众在中途失去线索。
+
+前四分钟讲问题，接着四分钟讲唯一差异，中间六分钟放证据，最后六分钟做解释与讨论。为什么证据和讨论各占六分钟？因为这两段最容易被挤掉，而它们恰恰是听众判断结果可信不可信的地方。
+
+这里要说清一件事：这个时间分配是汇报建议，不是系统运行耗时。虚拟时间、播放时长和运行耗时是三件不同的事，不能用同一串数字互相代替。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.8　演示与评审</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ②</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>②</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>用一条问题线组织二十分钟</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>依次回答四个问题：研究什么、怎样比较、证据是什么、能解释到哪里。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 12, marginTop: 8 }}>
+            <Box style={{ width: 276, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>0—4　问题</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>4—8　唯一差异</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>8—14　证据</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>14—20　解释与讨论</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 26</Text>
+    </Box>
+
+</Slide>

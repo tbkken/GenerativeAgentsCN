@@ -1,0 +1,47 @@
+<Slide notes={`第四个知识块，我们把视角从"一次对话"拉到"一个模型的一生"。
+
+今天我把房间容量表放进对话，模型立刻就能用上。那这算不算"我训练了它"？不算。
+
+要把这件事说清楚，需要区分三个阶段。预训练，是在大量资料上学习广泛规律，参数会被改变。后训练，是用示范、反馈或者奖励去改善它的行为，参数继续被改变。而普通推理，也就是我们平时提问，用的是已经有的参数去处理当前的输入。
+
+所以，我把今天的房间表交给它，改变的是这一次的上下文，不是模型本身。
+
+这也解释了一个日常现象：今天讲给它的事，明天换一个对话，它就不一定知道了——因为我并没有改变它的参数，只是这一次让它看到了这份材料。`} style={{ width: 1280, height: 720, background: '#F4F7FA', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 240, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>知识块 04</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>模型如何从训练走到使用</Text>
+        <Box style={{ width: 72, height: 3, background: '#276FBF' }} />
+        <Text style={{ fontSize: 20, color: '#546779' }}>今天把房间表交给助手，与训练一个模型有什么不同</Text>
+    </Box>
+
+    <Box style={{ height: 400, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 26 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 30 }}>
+            <Box style={{ width: 356, height: 130, background: '#FFFFFF', borderRadius: 10, border: '1px solid #B5C7D8', padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>预训练</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>在大量资料上学习广泛规律</Text>
+                <Text style={{ fontSize: 16, color: '#276FBF', fontWeight: 'bold' }}>参数：会更新</Text>
+            </Box>
+            <Box style={{ width: 356, height: 130, background: '#FFFFFF', borderRadius: 10, border: '1px solid #B5C7D8', padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>后训练</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>用示范与反馈改善行为</Text>
+                <Text style={{ fontSize: 16, color: '#276FBF', fontWeight: 'bold' }}>参数：会更新</Text>
+            </Box>
+            <Box style={{ width: 356, height: 130, background: '#FFF4E6', borderRadius: 10, border: '1px solid #E5C9A8', padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>普通推理</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>用已有参数处理当前输入</Text>
+                <Text style={{ fontSize: 16, color: '#CB6B28', fontWeight: 'bold' }}>参数：通常不变</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 18, color: '#546779' }}>三段展示的是作用差异，不是每次提问都重复训练。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 26</Text>
+    </Box>
+
+</Slide>

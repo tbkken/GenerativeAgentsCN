@@ -1,0 +1,84 @@
+<Slide notes={`这五个问题的顺序是有讲究的。
+
+第一块回答「里面装了什么」：目录、SKILL.md、参考资料、脚本和模板各自负责什么。第二块回答「怎么省上下文」：为什么装了一百个 Skill 也不该把一百份说明全部送进模型。第三块回答「凭什么敢装」：先读文件、再本地执行、最后用三种方案各跑一遍。第四块是装载路线：托管 Shell、本地 Shell 和应用层 SOP 加载是三套机制。最后一块是安装之后的取证和边界。
+
+五块连起来是一条线：先看懂它，再敢装它，最后能证明它真的起作用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8　Skill：把一套方法做成可以重复使用的材料包</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本章要看清的五件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>五个问题{'\n'}一层一层往下问</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>每一块都能单独回答一个问题：它是什么、怎么用、凭什么可信。</Text>
+        </Box>
+
+        <Box style={{ width: 812, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>材料包里有什么（2.8.1）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一个目录、一个 SKILL.md 和三组辅助文件，就能描述一整套可复用的方法。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>渐进读取怎样节省上下文（2.8.2）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>先给名称与描述，选中后再读 SKILL.md，最后按需展开引用文件。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>先验证方法，再安装（2.8.3）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>先读文件、本地执行，再用正确、冲突、缺字段三种方案各跑一遍。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>三种装载路线（2.8.4–2.8.5）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>托管 Shell、本地 Shell 与应用层 SOP 加载，机制不同，不能互相套用。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>取证、复用与边界（2.8.6–2.8.7）</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>安装、读取、执行、通过分别取证；系统侧的合同第三章再展开。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 27</Text>
+    </Box>
+
+</Slide>

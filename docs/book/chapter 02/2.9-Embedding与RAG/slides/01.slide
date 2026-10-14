@@ -1,0 +1,61 @@
+<Slide notes={`青禾的材料一开始很少，几张纸，直接读完交给模型就行。可当资料扩成历年方案、场地说明和志愿者手册，再整份读进去，就既费钱又混进大量无用内容。
+
+这时候换一个顺序：先从材料里找出真正相关的那几段，再把它们和问题一起交给模型。这条路线叫 RAG，检索增强生成。它做的是在生成的时候补充依据，并不改动模型本身的权重。
+
+还要记住一句：找依据的手段不止向量检索一种。文件名、关键词、数据库查询都能参与，没有必要为了做 RAG 先搭一套向量数据库。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体：技术、OpenAI API 与 WorkBuddy　·　2.9</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>Embedding 与 RAG</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 600 }}>先找依据，再组织答案。材料变多以后，与其把整份资料塞进请求，不如先检索出真正相关的那几段，再让模型在证据范围内回答。</Text>
+            <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>这段材料够回答吗</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>引用的来源对吗</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>找不齐时怎么办</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 500, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>一个问题</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>手作体验什么时候可以举办？</Text>
+            </Box>
+            <Box style={{ width: 500, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 500, height: 136, background: '#ECF7F2', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>检索出的依据</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 145, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>时长与人数</Text>
+                    </Box>
+                    <Box style={{ width: 145, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>允许使用的房间</Text>
+                    </Box>
+                    <Box style={{ width: 145, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>已有预约记录</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>每段都带着自己的来源位置</Text>
+            </Box>
+            <Box style={{ width: 500, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+            <Box style={{ width: 500, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>有依据的答案</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>只依据这些片段作答，缺失就说明不足</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

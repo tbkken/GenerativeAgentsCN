@@ -1,0 +1,50 @@
+<Slide notes={`接下来要看的是全文本身。读它之前，先跟踪一个真实请求 ID，否则很容易把「对象已经回复」当成「人物已经理解」。
+
+第 N 步，真实请求进入待处理集合，对象在一次 world-act 里同时携带 responses 和真实请求 ID，动作成功后本轮结束。第 N+1 步，这份已提交的答复被恰好一次定向投递给目标人物，他才根据实际收到的内容继续行动。
+
+请求 ID 不能编造，因为它就是答复和请求之间的唯一对应关系。消息顺序只是示意，不是实际 Trace；真正核对时要看提交记录。这也是我需要把全文和它的提交链路放在一起讲的原因：行为是否发生，要靠证据说话。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.4　精确 Skill 与行为审阅</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ②</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>②</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一份可直接审阅的咨询台全文</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>阅读全文前先跟踪一个真实请求 ID：对象本轮提交回复，来访者下一轮才能据实际接收继续行动。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 300, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>真实请求 ID</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>对象提交答复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>下一轮接收</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,50 @@
+<Slide notes={`两条路线都跑完之后，"完成"这件事还需要一个明确的边界。
+
+本章交付的东西分三组：需求与来源，也就是事实、规则和缺失项；排期与校验，也就是排期文件和那份独立报告；说明与记录，也就是方案说明、请求和工具记录。
+
+注意这三组都是文件，不是结论。它们能证明有人把材料读进去了、把规则编码了、把校验跑过了，但它们不能证明别的。
+
+还有一步要提前讲清：这些文件进到仿真系统之前，必须重新配置和重新执行。地图、坐标、角色、Brain、Skill、模型用途，以及实验装配，都要通过系统规定的流程建立。
+
+这一节剩下的内容就是围绕这条边界展开的：先给交付清单，再说清什么时候才去研究微调、蒸馏和部署，最后是章末练习。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.14.4　用交付清单明确完成边界</Text>
+            <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15, textAlign: 'center' }}>先落到文件，再谈完成</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 368, height: 120, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>需求与来源</Text>
+            </Box>
+            <Box style={{ width: 368, height: 120, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>排期与校验</Text>
+            </Box>
+            <Box style={{ width: 368, height: 120, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>说明与记录</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 24, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text></Box>
+
+        <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>第三章重新配置与执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>地图、角色、Skill、模型用途与实验装配，都要通过系统规定的流程建立。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 25</Text>
+    </Box>
+
+</Slide>

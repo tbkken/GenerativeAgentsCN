@@ -1,0 +1,81 @@
+<Slide notes={`第一条练习线是读图。做法很简单：把教学平面示意图拖进输入框，或者直接粘贴一张截图，然后选一个明确支持图片输入的模型。
+
+我问的第一个问题是："哪些信息直接可见，哪些需要查表或查询工具？"这个问题故意留了后半段，就是要看它会不会主动承认图里没有的东西。
+
+接着我再加上房间表，要求它把两类依据分开写：哪一句来自图片，哪一句来自表格。
+
+这里有一个很容易被忽略的坑：上传成功不等于图片内容已经被正确理解。附件上传是界面上的事，模型是不是真的看到了图、看对了，要另外验。
+
+所以最后拿到回答，还要回头核对：它标的图片依据，图上真有吗？`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.5　在 WorkBuddy 中分别练习读图与网页操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把图片依据和表格依据分开写</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 12 }}>
+
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>任务输入区　拖入图片或粘贴截图</Text>
+                    <Box style={{ width: 88, height: 24, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 10 }}>
+                    <Box style={{ height: 70, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>图片附件　教学平面示意（色块占位）</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>追问：哪些信息直接可见，哪些需要查表或查询工具？</Text>
+                </Box>
+
+                <Box style={{ height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>追加要求：附上房间表，分别标明图片依据与表格依据</Text>
+                </Box>
+
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>模型必须支持图片输入</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>附件能否上传、模型能否看图、工具能否查表，是三次独立确认。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 432, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>图片依据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>房间名称写在哪个位置；哪个房间挨着公共走廊。</Text>
+            </Box>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>表格依据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>每个房间的容量；各个时段的预约状态。</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>上传成功不等于图片内容已被正确理解，两类依据要分开核对。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 26</Text>
+    </Box>
+
+</Slide>

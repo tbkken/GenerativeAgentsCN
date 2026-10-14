@@ -1,0 +1,48 @@
+<Slide notes={`最后回到教学场景：把同一条校验命令放进 WorkBuddy 的工作区里运行。
+
+我要做的事情和手工运行时一样——确认文件在不在、跑校验器、看报告、解释退出码。区别在于这次是给客户端下任务，所以要把要求说完整，包括「保留失败报告」和「不要为了通过而修改规则」。
+
+这和前面讲的受控包装器是一回事：命令由环境执行，结果回到我手里，由我来判断。
+
+只要记住一条，看绿色文字、看任务结束、看一句「已检查」，都不是证据。证据是实际的命令、退出码和文件产物。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>⑥</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.7.6 · 2.7.7</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>在教学工作区执行与本节练习</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>把同一条命令放进教学工作区，核对实际命令与文件产物。</Text>
+
+        <Box style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 332, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 5, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>写清任务</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>确认文件、运行、展示、保留失败报告</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 332, height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 5, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>核对证据</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>实际命令、退出码与文件产物</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text></Box>
+            <Box style={{ width: 332, height: 84, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', gap: 5, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>完成练习</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>三个候选，一次为什么的反问</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

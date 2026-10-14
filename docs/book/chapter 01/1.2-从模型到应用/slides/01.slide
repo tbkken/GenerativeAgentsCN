@@ -1,0 +1,53 @@
+<Slide notes={`我们先把上一节留下的问题接上。上一节讲的是模型本身：它怎么切分文字、怎么占上下文、怎么一步步生成。但真正交到我们手里的，往往不是一个模型，而是一个能干活的东西——它读过资料，能查记录，也有人检查结果。
+
+所以这一节要换个角度看同一件事：为什么同一个模型，放进不同的应用里，表现会差很多。
+
+我用青禾开放日这件事继续往下走。要求是安排一场手作活动，10 个人，连续 30 分钟，房间容量 12 人，09:00 到 12:00 开放，10:00 到 10:30 已经有人预约了。
+
+现在把两条候选时段摆出来。10:00 开始的那条，正好落进已有预约里，冲突。10:30 开始的那条，紧接在预约后面，可用。
+
+这两条候选可能出自同一个模型。差别不在模型，在它周围那一层。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 320, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>第一章　认识大模型，读懂能力与评价　·　1.2</Text>
+        </Box>
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>从模型到应用：能力来自哪些层</Text>
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.65, width: 940 }}>同一个模型，放进不同应用，表现可能不同。判断"这个 AI 很强"之前，先看它拿到了什么资料、能调用什么工具，以及谁来检查结果。</Text>
+    </Box>
+
+    <Box style={{ height: 360, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 280, height: 250, background: '#EDF4FC', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>用户请求</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>安排一场开放日手作活动</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>10 人　·　连续 30 分钟{'\n'}房间容量 12 人{'\n'}开放时间 09:00—12:00</Text>
+        </Box>
+
+        <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+
+        <Box style={{ width: 230, height: 250, background: '#F4F7FA', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>理解要求，生成候选时段与解释</Text>
+            <Box style={{ flex: 1 }} />
+            <Text style={{ fontSize: 14, color: '#546779' }}>生成候选不等于核对事实</Text>
+        </Box>
+
+        <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+
+        <Box style={{ width: 440, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, border: '2px solid #CB6B28', padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>10:00—10:30　冲突</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>与已有预约落在同一时段</Text>
+            </Box>
+            <Box style={{ height: 96, background: '#ECF7F2', borderRadius: 10, border: '2px solid #26816B', padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>10:30—11:00　可用</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>与预约端点相接，首尾相接不算重叠</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

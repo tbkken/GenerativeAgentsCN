@@ -1,0 +1,70 @@
+<Slide notes={`只读核验也会失败，而且失败不止一种。
+
+文件损坏，指的是字节对不上、解不开或读到一半中断。这类失败要记录是哪个文件、在哪一步失败，然后退回重传。
+
+协议不支持，指的是读取环境版本与包协议不匹配。这时要记录读取环境与包的协议版本，换兼容环境重试，而不是断定材料有问题。
+
+内容缺失，指的是清单声明存在、实际却没包含。要登记缺失的是哪一项、对应清单哪一条，退回补充。
+
+证据对应错误，指的是结论和原始记录对不上。要登记差异，退回修正报告，而不是由接收者猜出结论。
+
+这四类的下一步动作完全不同，所以不能统一写成「复现失败」。写清失败类型，接收者才知道该退文件、换环境、补内容，还是改报告。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.4　接收方先做只读核验</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>失败也要分类登记</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 34, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 20 }} />
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 240 }}>失败类型</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 400 }}>实际含义</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 436 }}>怎样登记与下一步</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 240 }}>文件损坏</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 400 }}>字节不一致、无法解开或读取中断</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 436 }}>记录哪个文件、哪一步失败，退回重传</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 240 }}>协议不支持</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 400 }}>读取环境版本与包协议不匹配</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 436 }}>记录读取环境与包版本，换兼容环境重试</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 240 }}>内容缺失</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 400 }}>清单声明存在，实际未包含</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 436 }}>登记缺失项与对应清单条目，退回补充</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 240 }}>证据对应错误</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 400 }}>结论与原始记录对不上</Text>
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, width: 436 }}>登记差异，退回修正报告，不由接收者猜出结论</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>这四类不能统一写成「复现失败」：下一步动作完全不同，退文件、换环境、补内容和改报告是四件事。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

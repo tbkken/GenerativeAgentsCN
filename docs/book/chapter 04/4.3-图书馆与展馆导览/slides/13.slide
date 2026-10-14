@@ -1,0 +1,69 @@
+<Slide notes={`两个条件共用同一份 Brain，里面的行为次序是这样定的。
+
+先检索自己的目标和已经获得的信息，再感知当前地点。当发现了导览牌或者资料对象、而信息还不够的时候，接近之后提交真实查询；如果遇到能回答问题的讲解员，可以询问。只依据收到的介绍来选择主题，不根据甲厅、乙厅这两个名字去猜答案。
+
+如果没有拿到必要信息，可以沿着已知的公共空间探索，发现新区域之后再核实。目标确定以后查询合法路径，按实际位置继续移动；抵达后在真实地点做一次与兴趣相符的阅读或观看活动，并把有证据的体验写进个人记忆。
+
+两个组别都不改 Brain、不加对照专用 Skill、不增加视野或讲解员提醒。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.3　相同 SOP，让位置通过真实信息起作用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两组共同 Brain 的 SOP</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>同一份行为规则，两个条件都不改</Text>
+            <Box style={{ width: 700, background: '#EDF4FC', borderRadius: 12, padding: '26px 28px', flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 6, height: 200, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, color: '#20344B', lineHeight: 1.75, flex: 1 }}>先检索自己的目标和已获信息，再感知当前地点。发现导览或资料对象而信息尚不足时，接近后提交真实查询；遇到能回答问题的讲解员可以询问。只依据收到的介绍选择主题，不根据甲厅、乙厅的名称猜答案。未获必要信息时，可以沿已知公共空间探索，发现新区域后再核实。目标确定后查询合法路径，按实际位置继续移动；抵达后在真实地点做一次与兴趣相符的阅读或观看活动，并把有证据的体验写入个人记忆。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>行为次序</Text>
+
+            <Box style={{ width: 420, height: 76, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>检索自己的目标与已获信息</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 76, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>再感知当前地点</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 76, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>信息不足时提交真实查询</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 76, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 32, height: 32, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1 }}>抵达后做相符活动并写入记忆</Text>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>两组都不改 Brain、不加对照专用 Skill、不增加视野或讲解员提醒。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

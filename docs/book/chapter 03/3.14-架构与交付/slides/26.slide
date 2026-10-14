@@ -1,0 +1,59 @@
+<Slide notes={`练习一：人物说「我已经通知许安」，但我们手上只有人物自己的 ACT 描述，没有 SPEAK、没有 INTERACT、也没有对象回复。
+
+答案是不能判定消息已传达。要先检查实际通信入口在哪里，再看会话或请求身份，然后看接收方可见的内容，最后看接收方有没有后续响应。
+
+一句话自述不能补齐一条不存在的链条，这是整章最核心的判断习惯。
+
+练习二：公共公告栏 Skill 已改，原实验是封存的，现在想比较新旧行为，该怎么办。
+
+参考思路是保留旧实验和 Run，复制成一个新的独立草稿，在其中显式更新包内内容并核查依赖，再预检、再运行。千万不要拿旧 Run 的成功结果去证明新的 Skill。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.7　章末练习与参考思路</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习一、练习二</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 336, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>练习一　沿证据判断完成</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>人物说「我已经通知许安」，但只有人物自己的 ACT 描述，没有 SPEAK、INTERACT 或对象回复。能否判定消息已传达？</Text>
+                <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65, flex: 1 }}>不能。先检查实际通信入口、会话或请求身份、接收方可见内容，再看接收方是否有后续响应。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>自然语言自述不能补齐不存在的链条。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 336, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>练习二　判断该复制什么</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>公共公告栏 Skill 已修改，原实验为 SEALED，读者想比较新旧行为，应如何操作？</Text>
+                <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65, flex: 1 }}>保留旧实验和 Run，复制为新的独立草稿，显式更新草稿中的包内内容并核查依赖，再次预检和运行。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>不要用旧 Run 的成功结果证明新的 Skill。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#546779' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>两道题练的是同一件事：把「已经发生」和「有人这样说」分开，再去核对交付材料的每一个位置。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 29</Text>
+    </Box>
+
+</Slide>

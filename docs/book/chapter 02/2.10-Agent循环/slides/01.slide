@@ -1,0 +1,66 @@
+<Slide notes={`助手已经会读材料、会调用工具了，但这还不够。真正让一段任务能自己往前走、又能在该停的时候停下来，靠的是一段控制逻辑。
+
+一轮闭环里有四个动作。先观察——用户提了什么任务、材料是什么、上一次工具真实返回了什么。再决定——这一步是模型的强项，它生成候选、挑下一个要查的东西。然后是执行——这件事必须由应用来做，校验身份和参数，运行被允许的操作。最后是核验——检查约束有没有满足，进度有没有推进。
+
+核验这一步最容易被跳过。一句话说得再漂亮，也只是模型的输出；只有校验器真的返回通过，才说明我们编码的约束被满足了。
+
+还要提醒一句：整段循环里，程序始终握着执行边界这条线。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体：技术、OpenAI API 与 WorkBuddy　·　2.10</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 592, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>Agent 循环、</Text>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>规划与记忆</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 580 }}>会读材料、会调工具之后，还缺一段能自己转起来、又停得住的控制逻辑。四个动作谁来做、什么时候停、哪些事实要重新确认，就是本节全部内容。</Text>
+            <Box style={{ flexDirection: 'row', gap: 14, marginTop: 6 }}>
+                <Box style={{ width: 180, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>谁决定下一步</Text>
+                </Box>
+                <Box style={{ width: 180, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>谁来执行</Text>
+                </Box>
+                <Box style={{ width: 180, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>什么时候停</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 528, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 528, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>观察</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>用户任务、材料与真实工具结果</Text>
+            </Box>
+            <Box style={{ width: 528, height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 528, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>决定</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>生成候选，选择下一个工具</Text>
+            </Box>
+            <Box style={{ width: 528, height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 528, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>应用执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>校验身份与参数，运行受控操作</Text>
+            </Box>
+            <Box style={{ width: 528, height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text></Box>
+            <Box style={{ width: 528, height: 80, background: '#ECF7F2', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>核验</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>检查约束与进度，决定继续或停止</Text>
+            </Box>
+            <Box style={{ width: 528, height: 48, background: '#FFF4E6', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>仍有问题且预算允许：带回真实结果，回到观察</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>教学课件　GenerativeAgentsCN</Text>
+    </Box>
+
+</Slide>

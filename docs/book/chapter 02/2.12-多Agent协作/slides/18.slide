@@ -1,0 +1,45 @@
+<Slide notes={`前面讲的都是机制，现在把它放进一个真实的产品里看。
+
+WorkBuddy 的官方文档把"专家"描述为专业角色，把"专家团"描述为由团长拆解、分配并汇总的协作执行机制。操作入口在左侧的"专家"，进去是专家中心，在角色或团队的说明里可以点"召唤"。
+
+具体能看到哪些团队，取决于你的账户和客户端版本，这一点要自己核对。
+
+我想强调的是：产品入口只是起点。真正要判断的是，界面上有没有出现真实的任务分工、阶段结果和汇总产物。如果只是换了个说法，而看不到独立任务，那就只记录产品可见的过程，不要替它脑补内部结构。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.12.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>在 WorkBuddy 中使用专家与专家团</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>产品入口只是起点，能不能看到真实分工，要看界面与配置。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 330, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>专家　专业角色</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>专家团　拆解与汇总</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>可见团队以账户为准</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 25</Text>
+    </Box>
+
+</Slide>

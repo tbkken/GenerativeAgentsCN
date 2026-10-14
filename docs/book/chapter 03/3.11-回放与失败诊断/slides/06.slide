@@ -1,0 +1,79 @@
+<Slide notes={`回放归约只接受已提交事实，这一条边界必须守住。
+
+原因很实际：Thought、计划和临时文本非常有用，它们能解释角色为什么这样选，读起来也最像人话。但它们没有进入持久提交，不能证明角色真的移动过，也不能证明某个对象状态真的变了。如果拿它们当证据，等于把「模型想过什么」当成「世界发生了什么」。
+
+所以在读一条回放时，先确认自己站在提交边界以内，再用审计材料去解释动机。顺序反了，判断就会跟着文字走，而不是跟着事实走。
+
+一句话：审计材料帮忙理解，不负责证明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.1　一条动作怎样成为可回放事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>审计材料不进入回放归约</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>回放归约只接受已提交事实</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>下面这条通道进入归约；审计材料停在通道之外，只用来解释原因。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 240, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>accepted</Text>
+                </Box>
+                <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 240, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>World Commit</Text>
+                </Box>
+                <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 240, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>StepResult</Text>
+                </Box>
+                <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 240, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>Replay 只读</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1072, height: 64, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', flex: 1 }}>Thought、计划与临时文本 —— 只解释选择原因，不改变事实</Text>
+                <Box style={{ width: 168, height: 32, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>不进入回放归约</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 368, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>已提交事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>可归约为位置、活动、对话与对象状态，是回放输入的唯一来源。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 128, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>审计材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>可以解释选择原因，不能代替已提交事实证明位移与状态。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 128, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>判断顺序</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>先确认提交边界，再解释行为动机；顺序反了就会被文字带走。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,35 @@
+<Slide notes={`把这一段收成三句话。
+第一，包要看清单：类型和身份写在清单里，改文件名不会补齐协议，也不会创建新的业务身份。
+第二，层次要分开取证：原包字节与完整性、离线回放、恢复或重跑是三层，每一层都需要一组新的验收记录，一层通过不能代替下一层。
+第三，承诺要跟证据走：完成了独立环境验证之后，再写那个环境里的结论。交付的不是一键复现这四个字，而是固定的输入、真实的记录，和一份说清边界的验证说明。
+下一节把架构和交付物串起来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.13　导出、迁移与离线回放</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>包要看清单</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>类型与身份写在清单里，改名不会补齐协议，也不创建新身份。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>层次要分开取证</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>字节、离线回放、再次执行各要一组记录。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>承诺要跟证据走</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>完成独立验证之前，只写能做到的事。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：沿着一次行动理解架构 —— 整理可交付的实验</Text>
+
+    </Box>
+
+</Slide>

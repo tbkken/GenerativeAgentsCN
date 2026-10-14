@@ -1,0 +1,57 @@
+<Slide notes={`最后留下五个问题，你可以拿它来检查自己写的 Skill。
+
+什么时候用：适用条件写清楚了吗？依据什么事实：它读的是哪几份材料？能够调用什么：需要哪些工具、哪些能力？怎样确认完成：由哪个程序、看哪份报告？失败时在哪里停下：规则冲突或者输入缺失，应该怎么收场？
+
+这五条如果有一条只能靠作者当面口头补充，那它就还没有写进材料包。这时候要做的事情很具体：把这条说明补进去，然后再验证一遍。
+
+把这五个问题答完，你的 Skill 才算真的可以被别人拿去复用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.8　小结</Text>
+            <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25, textAlign: 'center' }}>五个问题，自查你的 Skill</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 14 }}>
+            <Box style={{ width: 240, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>什么时候用</Text>
+            </Box>
+            <Box style={{ width: 220, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>依据什么事实</Text>
+            </Box>
+            <Box style={{ width: 220, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>能够调用什么</Text>
+            </Box>
+            <Box style={{ width: 220, height: 84, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>怎样确认完成</Text>
+            </Box>
+            <Box style={{ width: 196, height: 84, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>失败时在哪停下</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>任何一条只能靠作者口头补充，就说明它还没写进材料包</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>把这条说明补进去，然后再验证一遍，方法才算真正交到别人手里。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.9　Embedding、检索与 RAG</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 27</Text>
+    </Box>
+
+</Slide>

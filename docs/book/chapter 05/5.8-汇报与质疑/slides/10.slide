@@ -1,0 +1,41 @@
+<Slide notes={`第三个问题跟演示片段有关：选择片段本身也需要规则。
+
+设想某次运行里 H1 一次就闭环，而 H2 在窗口截止之前没有收到答复。只播放 H1，整个过程会显得非常顺畅，可边界问题就被遮住了。听众看到的顺畅，其实是我挑出来的。
+
+所以只要有相应样本，就选一个典型闭环加一个未完成或者判分有争议的任务；确实不存在的类别，明确记为未观察到。同时要在报告里记下选择方法，并保留全体运行和任务索引，让后来的人能验证我是不是只挑了好看的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.8　演示与评审</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ③</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>③</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>选择片段也需要规则</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>某次运行里 H1 一次闭环、H2 在截止前没有收到答复，只播 H1 会显得顺畅，却遮住边界问题。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32, marginTop: 8 }}>
+            <Box style={{ width: 560, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>一个典型闭环</Text>
+            </Box>
+            <Box style={{ width: 560, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>一个未完成或判分有争议的任务</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 26</Text>
+    </Box>
+
+</Slide>

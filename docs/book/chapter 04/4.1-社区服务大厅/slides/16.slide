@@ -1,0 +1,57 @@
+<Slide notes={`指标一共四个，重点在每个分母都不一样，必须分开算。
+
+一，正确咨询闭环率：窗口内拿到适配回复、并真实确认正确下一步的任务数除以四。只到入口建议、只是抵达、或复述错了，都不算。
+
+二，无效窗口访问率：错误窗口的请求数除以全部窗口请求数。入口咨询与澄清不计入分母，重复错误逐次计。
+
+三，重复说明负担：向同一对象、未增新事实就重复提交核心需求的次数除以四。首次向另一窗口说明、补充目的、新发现不计。
+
+四，首次有效回应时延：首次咨询到收到首条适配且可执行的建议，按虚拟分钟算，“请等一下”不算；逐人、分需求类型报告，未回应者保留。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.5　指标覆盖全部四项任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个指标，四个分母</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 28 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 14, color: '#546779' }}>指标</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>分子／分母与边界</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 204 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.35 }}>正确咨询{'\n'}闭环率</Text></Box>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>W 内获适配窗口回复且真实确认正确下一步的任务数 ÷ 4；每任务一次。入口建议、仅抵达、错误复述均不够。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ width: 204 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>无效窗口{'\n'}访问率</Text></Box>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>错误窗口交互请求数 ÷ 全部窗口交互请求数；不含入口咨询／澄清；重复错误请求逐次计。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ width: 204 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>重复说明{'\n'}负担</Text></Box>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>向同一对象、未增新事实的核心需求重复提交次数 ÷ 4，次／任务；首次向另一窗口说明、补充目的、新发现或纠正口误不计。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ width: 204 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B', lineHeight: 1.35 }}>首次有效{'\n'}回应时延</Text></Box>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>首次咨询 → 实际收到首条适配且可执行建议，虚拟分钟；“请等一下”不算。逐人、分需求类型报告，未回应者保留。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

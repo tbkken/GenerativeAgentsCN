@@ -1,0 +1,53 @@
+<Slide notes={`第二个知识块要立一件事：我们比的是同一个任务上的不同做法，所以材料必须只有一份。
+
+开放日的时间先定死：2026 年 10 月 17 日，Asia/Shanghai，09:00 到 12:00。三个活动是阅读分享 24 人 60 分钟、手作体验 10 人 60 分钟、交流活动 16 人 45 分钟，对应三个房间，容量 30、12、20。
+
+此外手作室在 10:00 到 10:30 已经被人预约了。
+
+我强调"以材料为准"，是因为模型知道很多一般性常识，比如手作活动大概要多久、什么时间人多。这些听起来合理，但没有一处能替代文件里的数字。材料固定下来，后面换模型、换工具的对照才有意义。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.1.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>统一材料，才能比较结果</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>日期、容量与当前预约以本章材料为准，不能靠模型常识补齐。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>2026-10-17　Asia/Shanghai　09:00—12:00　·　同一组材料</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 44, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 190, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>阅读分享 24 人</Text>
+            </Box>
+            <Box style={{ width: 190, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>手作体验 10 人</Text>
+            </Box>
+            <Box style={{ width: 190, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>交流活动 16 人</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

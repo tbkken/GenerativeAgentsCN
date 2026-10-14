@@ -1,0 +1,58 @@
+<Slide notes={`逻辑调用和物理尝试要分开统计。
+
+一次「让模型处理当前任务」是逻辑调用。因为超时或者格式错误重新发出去的请求，是同一个调用下面的物理尝试。一次逻辑调用可能只对应一次物理请求，也可能对应好几次重试。
+
+基数二百八十八的单位是参与者轮次，不是逻辑调用次数，两者之间不能一一对应。每一轮都可能有多次调用，展开的只是其中一次。
+
+页面已经有按用途显示逻辑调用、物理请求、重试和耗时的视图，正在执行的请求还要结合 Trace 一起看。把两件事混在一起，算出来的费用和延迟都会失真。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.6　逻辑调用、物理尝试与费用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次逻辑调用，可能多次物理尝试</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>一次逻辑调用</Text>
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>让模型处理当前这一个任务，是统计的基本单位</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 110, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>物理尝试 1</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>第一次真正发出去的请求，记一次物理调用</Text>
+            </Box>
+            <Box style={{ width: 566, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>可能的物理重试</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>因超时或格式错误重发，属于同一次逻辑调用</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 60, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>两者都要统计；页面已有按用途显示逻辑调用、物理请求、重试与耗时的视图。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 42, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>288 的单位是参与者轮次，不能与逻辑调用一一对应。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,56 @@
+<Slide notes={`这一节要带走的是三句话。
+
+第一句，范围先定。这次只交可审阅的设计，还是连真实运行和接收记录一起交？这个问题不定，后面所有材料的准备方式都是模糊的。
+
+第二句，需求连证据。每一项需求都要配一个验收问题和一种无法替代的证据；缺口允许存在，但要留在表里，不要用不支持的链接把它盖住。
+
+第三句，名称与证据相称。设计准备就写设计准备，不要写成运行成功。这句话看起来只是措辞，实际上决定了别人能不能信任你交出去的东西。
+
+下一节我们看资料来源与假设，把材料从哪儿来这件事说清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.1　项目范围与完成条件</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节小结</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>记住三句话</Text>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF', width: 56 }}>一</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>范围先定</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>只交设计，还是连运行与接收一起交；两种范围的完成材料不同。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B', width: 56 }}>二</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>需求连证据</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>每项需求配一个验收问题和一种无法替代的证据，缺口要留在表里。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28', width: 56 }}>三</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>名称与证据相称</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>设计准备就写设计准备，不把尚未发生的运行写成已完成。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>第五章　5.1　项目范围与委托　·　下一节：资料来源与假设</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

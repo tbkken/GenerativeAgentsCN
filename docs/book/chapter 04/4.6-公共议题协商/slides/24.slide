@@ -1,0 +1,48 @@
+<Slide notes={`最后把这场协商收在三句话上。
+第一句，回应覆盖率不等于一致意见。三个人都对候选表了态，只能说明态度记录是完整的；它不能说明三个人都同意。写报告时要把这两件事分开。
+第二句，理由确认不等于候选同意。问「理由还有没有补充」，或者问「我理解得准不准」，核对的是理由，不是对候选的态度。两组确认的对象不一样，不能互相替代。
+第三句，记录下分歧不等于实验失败。没有找到可接受的方案，只要每个人的理由和分歧都被准确留下来，这次记录的质量依然可以很高。
+这场协商里真正的风险不是没有共识，而是把不同的声音写成了一个声音。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>4.6　公共议题协商　·　虚构教案，尚无 Run</Text>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>把分歧留下来，{'\n'}不是把结论做出来</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ flexDirection: 'row', gap: 14 }}>
+            <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+            <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>回应覆盖率 ≠ 一致意见</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>三个人都表过态，不等于三个人都同意</Text>
+            </Box>
+            <Box style={{ width: 4, height: 76, background: '#26816B' }} />
+            <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>理由确认 ≠ 候选同意</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>「理由没有补充」不能算对候选的表态</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14 }}>
+            <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+            <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>记录下分歧 ≠ 实验失败</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>没有可接受方案，记录质量仍可能很高</Text>
+            </Box>
+            <Box style={{ width: 4, height: 76, background: '#B5C7D8' }} />
+            <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>别把不同的声音写成一个声音</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>下一步：4.7 场地临时关闭演练</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

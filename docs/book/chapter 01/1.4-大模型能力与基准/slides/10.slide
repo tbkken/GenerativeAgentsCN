@@ -1,0 +1,67 @@
+<Slide notes={`HLE 全称是 Humanity's Last Exam，人类最后的考试，由安全研究机构 CAIS 和 Scale AI 联合主办，正式论文发表在 2026 年的《自然》杂志上。
+
+它的出题网络很大：近一千位学科专家做贡献者，来自大约五百家机构、分布在五十个国家。
+
+公开题集一共两千五百道题，覆盖一百多个学科，从数学、物理、化学，到古典学、语言学、人文社科。题目里大约百分之十四需要同时看懂图和文字才能答，百分之二十四做成选择题，其余是要求精确匹配的简答题。
+
+它还有一份私有题集不公开，用来检查模型是不是照着公开题背答案。出题时还设了奖金池，这也是它能收到大量冷门专家题的原因。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>②　1.4.2　机构案例一：一个基准的规模可以有多大</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>CAIS × Scale AI：HLE</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 28, alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 424, height: 420, background: '#F7F3E8', borderRadius: 12, padding: '20px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>主办方</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>Center for AI Safety（CAIS）</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>Scale AI</Text>
+                <Box style={{ width: 384, height: 2, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>一方是安全研究机构，一方是数据与评测企业，合起来做出题、审题与评测平台。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>正式论文刊于《自然》2026 年，第 649 卷</Text>
+            </Box>
+
+            <Box style={{ width: 700, flexDirection: 'column', gap: 15 }}>
+
+                <Box style={{ width: 700, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                    <Text style={{ width: 150, fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>近 1000 位</Text>
+                    <Text style={{ width: 474, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>专家贡献者，来自约 500 家机构、分布在 50 个国家，多为教授与研究人员</Text>
+                </Box>
+
+                <Box style={{ width: 700, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                    <Text style={{ width: 150, fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>2,500 题</Text>
+                    <Text style={{ width: 474, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>公开题集规模，覆盖 100 多个学科；另有不公开的私有题集防背题</Text>
+                </Box>
+
+                <Box style={{ width: 700, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 66, background: '#276FBF' }} />
+                    <Text style={{ width: 150, fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>约 14%</Text>
+                    <Text style={{ width: 474, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>的题目必须同时看懂图和文字才能作答；24% 做成选择题，其余是简答</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '12px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>规模本身不等于权威，但"谁写的、谁复核的、发表在哪里"这三条是可核查的硬信息</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 36</Text>
+    </Box>
+
+</Slide>

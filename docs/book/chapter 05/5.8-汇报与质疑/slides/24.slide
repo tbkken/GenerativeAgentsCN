@@ -1,0 +1,51 @@
+<Slide notes={`同一份底稿，面对三种读者会变成三种材料。
+
+讲师需要一页问题和讨论提示，能在二十分钟里把这件事讲清楚。操作者需要环境和接收说明，知道怎样把这份教案在自己的环境里跑起来。研究读者需要全体结果和判分记录，方便自己复算。
+
+材料可以长短不同，引用的事实只能有一份。这里最容易出的错是摘要更新不同步：报告里已经改成两项成功，图注和讲稿还写着三项，听众一眼就看出这不是同一套事实。
+
+所以摘要更新之后，要回头检查图注、讲稿和报告中的数字是否同步。这个动作很小，但它决定别人相不相信我的整套材料。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.7　为不同听众保留同一事实底稿</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种读者，一份底稿</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>长短可以不同，事实只能一份</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 500 }}>三类材料引用同一份事实底稿，摘要更新后一起检查，才不会出现两套数字。</Text>
+            <Box style={{ height: 170, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>摘要更新后要同步核对</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>检查图注、讲稿和报告中的数字是否同步，避免一份仍写三项成功、另一份已改成两项。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ height: 160, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>讲师</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>需要一页问题与讨论提示，能在二十分钟里把这件事讲清楚。</Text>
+            </Box>
+            <Box style={{ height: 160, background: '#ECF7F2', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>操作者</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>需要环境与接收说明，知道怎样在自己的环境里把这份教案跑起来。</Text>
+            </Box>
+            <Box style={{ height: 160, background: '#F7F3E8', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>研究读者</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>需要全体结果和判分记录，方便自己复算与核对。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 26</Text>
+    </Box>
+
+</Slide>

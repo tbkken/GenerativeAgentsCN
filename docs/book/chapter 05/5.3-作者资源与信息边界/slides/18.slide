@@ -1,0 +1,64 @@
+<Slide notes={`选入实验的时候，复制过去的是完整内容和它的依赖。这一点要记住：公共资源后面改了，不会自动传到已经复制出去的实验副本里，两边从此是分开的。
+
+Skill 有个特殊情况。同一个 key、内容也一样，可以合并；同一个 key 但内容不一样，就必须处理冲突，不能靠名字相近就静默挑一个用。
+
+有人会问，图片原件在我自己的作者目录里明明存在，为什么实验里看不到？因为原件存在，不等于已经上传进实验副本。
+
+还有一层边界要划清：提供 Embedding 配置，不表示记忆已经改用向量检索；有评分表，也不表示自定义 Evaluator 已经由 Runtime 执行。这些能力的当前范围要看第三章的核查记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.4　完整资源闭包需要逐项点清</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>复制的是完整内容与依赖</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 300, background: '#EDF4FC', borderRadius: 12, padding: '26px 30px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>复制行为</Text>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>选入实验时复制的是完整内容及依赖</Text>
+                </Box>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>公共资源后续改动不会自动传过去</Text>
+                </Box>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>原件存在，不等于已上传进实验副本</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 300, background: '#ECF7F2', borderRadius: 12, padding: '26px 30px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>同 key 的两种情况</Text>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>Skill 同 key 同内容，可以合并</Text>
+                </Box>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>同 key 异内容，必须处理冲突</Text>
+                </Box>
+                <Box style={{ width: 500, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>不能靠名称相近静默选择一个</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#FFF4E6', borderRadius: 12, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ width: 1076, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>配置存在，不等于能力已启用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>提供 Embedding 配置不表示记忆已改用向量检索；评分表也不表示自定义 Evaluator 已由 Runtime 执行。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,55 @@
+<Slide notes={`筛选和摘要是两个不同的动作，顺序不能颠倒。
+
+筛选是挑，把无关的挡在外面。三项活动这件事，不需要每一轮都带十年宣传稿；整月预约的记录，可以按日期、房间和时段筛一遍，只把命中的那部分带进来，同时把来源和筛选条件留下。
+
+摘要是在筛完以后压，它要保留事实、来源和还没有解决的事情。比如这样一句：阅读分享二十四人，来源 requests.csv；预约已查；候选未通过。句子很短，但每一段都能对上出处。
+
+最后一句要记住：摘要是派生结果，重要的事实仍然要能回查原文件，摘要不能变成唯一的证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.2　长上下文不是无限记忆</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先筛选，再摘要</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ flex: 55, height: 200, background: '#EDF4FC', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>筛选　·　把无关的挡在外面</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>三项活动无需每轮携带十年宣传稿；整月预约可由程序按日期、房间和时段筛选。</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>保留来源与筛选条件，别人才能复核这次到底看了哪些记录。</Text>
+            </Box>
+
+            <Box style={{ flex: 45, height: 200, background: '#F4F7FA', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>摘要　·　留下事实与未解决项</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>保留事实、来源和尚未解决的事项。</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>摘要压缩的是篇幅，不是证据链。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>一条合格的摘要示例</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>阅读分享二十四人，来源 requests.csv；预约已查；候选未通过</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 56, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 30, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>摘要是派生结果；重要事实仍须能回查原文件。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 25</Text>
+    </Box>
+
+</Slide>

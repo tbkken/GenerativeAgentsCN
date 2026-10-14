@@ -1,0 +1,85 @@
+<Slide notes={`最后说清观察窗口能证明什么，这一点经常被写错。
+
+这一案例建议的四十八步，观察到的是十点半调整之后的开始阶段。它足以作为检验信息获取、公告变化和后续行动的时间窗口设计。
+
+但它不保证模型一定完成这些环节，也没有覆盖十一点半手作结束那一段。所以结论只能写「在这个窗口里观察到什么」。
+
+写结果记录的时候，千万不要用手册里计划好的剧情去填补还没发生的部分。计划是计划，观察是观察。
+
+一句话：窗口是设计好的观察范围，不是一次完整的活动结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.6　核对消息是否真正到达</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>48 步窗口能证明什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 110 }}>
+            <Box style={{ width: 180, height: 74, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Step 1</Text>
+            </Box>
+            <Box style={{ width: 44, height: 74, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 180, height: 74, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Step 11</Text>
+            </Box>
+            <Box style={{ width: 44, height: 74, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 180, height: 74, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Step 41</Text>
+            </Box>
+            <Box style={{ width: 44, height: 74, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 180, height: 74, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>Step 48</Text>
+            </Box>
+            <Box style={{ width: 44, height: 74, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 220, height: 74, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>11:30 手作结束</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>轴上的节点间距是示意，不是实测耗时；最右侧落在观察窗口之外。</Text>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 200 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>足以检验什么</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>信息获取、公告变化与后续行动的时间窗口设计。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 200 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>不能证明什么</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不保证模型一定完成这些环节，也不覆盖十一点半的手作结束。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#20344B' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>结果记录应写「本窗口内观察到什么」，不要用剧本计划填补尚未发生的部分。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>29 / 31</Text>
+    </Box>
+
+</Slide>

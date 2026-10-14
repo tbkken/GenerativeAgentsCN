@@ -1,0 +1,58 @@
+<Slide notes={`第二个知识块，我们看一句普通的话在模型眼里是什么样子。
+
+同一句话其实涉及两个问题。第一个问题是：文字怎样变成模型能够处理的数值。第二个问题是：这一次请求，要占用多少上下文空间。这两件事经常被合成一句"Token 有多少"，但它们不是一回事。
+
+先看第一个问题。文本不会原样进入模型。它先被切成片段，每个片段换成一个编号，编号再映射成一组数值。所以模型真正计算出结果时，手里拿的是一组组数字，不是我们看到的汉字。
+
+第二个问题同样重要。这一次送进模型的指令、历史消息、资料和工具结果，再加上留给我们生成内容的空间，是共用同一份容量的。容量满了，就必须筛选或者截断。
+
+这个知识块后面三页，我们就沿着这两条线看清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'row', gap: 40, alignItems: 'center' }}>
+
+        <Box style={{ width: 440, height: 420, borderRadius: 12, background: '#276FBF', padding: 32, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#C6DCF2' }}>知识块 02</Text>
+            <Box style={{ width: 56, height: 3, background: '#9FD5C2' }} />
+            <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1.1 }}>Token</Text>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#DCEAF8', lineHeight: 1.4 }}>文字怎样变成可计算的输入</Text>
+            <Text style={{ fontSize: 16, color: '#BBD5EE', lineHeight: 1.6 }}>一边是文本变成数值，一边是本次请求的容量预算。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 26 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一句"请安排阅读分享"，会走过四步</Text>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 140, height: 124, borderRadius: 8, background: '#EDF4FC', border: '1px solid #B5C7D8', padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>原文</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>请安排阅读分享</Text>
+                </Box>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text>
+                <Box style={{ width: 140, height: 124, borderRadius: 8, background: '#EDF4FC', border: '1px solid #B5C7D8', padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>切分片段</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>请 ／ 安排 ／ 阅读 ／ 分享</Text>
+                </Box>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text>
+                <Box style={{ width: 140, height: 124, borderRadius: 8, background: '#EDF4FC', border: '1px solid #B5C7D8', padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>换成编号</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>101 ／ 202 ／ 303 ／ 404</Text>
+                </Box>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text>
+                <Box style={{ width: 140, height: 124, borderRadius: 8, background: '#ECF7F2', border: '1px solid #26816B', padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>映射为向量</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>每个编号变成一组数值</Text>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>片段划分、编号与向量均为示意，不是真实分词结果；实际用量以对应分词器或接口统计为准。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 26</Text>
+    </Box>
+
+</Slide>

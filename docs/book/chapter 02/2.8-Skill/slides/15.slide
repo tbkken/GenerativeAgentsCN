@@ -1,0 +1,86 @@
+<Slide notes={`验证一个 Skill，光看它能不能跑成功是不够的。要拿三种方案分别喂进去，看校验程序能不能区分开。
+
+第一种是正确方案：人数、房间、时间都满足条件，期望校验退出码为 0，报告写明全部检查通过。第二种是预约冲突方案：方案和已有预约的时间段重叠，期望它报出冲突在哪一段、和哪条预约重叠。第三种是缺字段方案：schedule.json 里少了一个必填字段，期望它指出缺的是哪个，而不是替我们猜一个默认值。
+
+三种输入的判定必须不同，否则这个校验器等于没做事。最后还要换一次人数或者预约材料再跑一遍，看流程会不会重新读取输入。如果它直接复制了上一轮的答案，那说明它记住的是结论，而不是方法。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.3　先验证方法，再安装</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种方案，三种判定</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>同一个校验器，三种输入必须给出三种不同的判定，否则它等于没做事。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 368, height: 80, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>方案一</Text>
+                        <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>正确方案</Text>
+                    </Box>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#26816B' }}>通过</Text>
+                </Box>
+                <Box style={{ width: 368, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>输入：人数、房间与时间都满足条件，活动 ID 与房间 ID 保持不变。</Text>
+                </Box>
+                <Box style={{ width: 368, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>预期：退出码为 0，报告写明全部检查项通过。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 368, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 368, height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>方案二</Text>
+                        <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>预约冲突方案</Text>
+                    </Box>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#CB6B28' }}>报冲突</Text>
+                </Box>
+                <Box style={{ width: 368, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>输入：候选时间与已有预约的时间段发生重叠。</Text>
+                </Box>
+                <Box style={{ width: 368, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>预期：指出冲突发生在哪一段，与哪条已有预约重叠。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 368, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 368, height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Box style={{ flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>方案三</Text>
+                        <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>缺字段方案</Text>
+                    </Box>
+                    <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#CB6B28' }}>报缺字段</Text>
+                </Box>
+                <Box style={{ width: 368, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>输入：schedule.json 中缺少一个必填字段。</Text>
+                </Box>
+                <Box style={{ width: 368, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>预期：指出缺失的字段名，不猜测、不补默认值。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 82, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>复制上一轮答案，不能证明 Skill 实现了方法复用</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>换一次人数或预约材料，观察流程是否重新读取输入、重新运行校验。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 27</Text>
+    </Box>
+
+</Slide>

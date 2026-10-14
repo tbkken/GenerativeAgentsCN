@@ -1,0 +1,133 @@
+<Slide notes={`进入这一节之前，先记住三个可以分别核对的部分：画面长什么样、地点叫什么、角色实际可以走到哪里。这三件事对应三套不同的配置，任何一件没做完，地图都不能算装配完成。
+
+六个步骤沿这个顺序展开：先定尺度与四层空间，再把背景导入编辑器，然后建立地址树、设置通路与门洞，接着装配四个人物的出生位置，最后用旧案例理解检查方法，并留下本节的交付清单。
+
+每一步都要区分「已经核对」和「只是看起来对」，这也是全章的基本态度。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3　从图像到四层空间</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要核对的三件事，拆成六个步骤</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16 }}>
+
+        <Box style={{ height: 44, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 16, color: '#546779' }}>三个可以分别核对的部分：</Text>
+            <Box style={{ width: 176, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>画面长什么样</Text>
+            </Box>
+            <Box style={{ width: 176, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>地点叫什么</Text>
+            </Box>
+            <Box style={{ width: 216, height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>角色实际可以走到哪里</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ flex: 1, flexDirection: 'row', gap: 24 }}>
+
+                <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                        </Box>
+                        <Box style={{ flexDirection: 'column' }}>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>3.3.1</Text>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>先把尺度定下来</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>格坐标和像素有什么区别？</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>32×24 格、每格 32 像素；World、Sector、Arena、Game Object 四层各管什么。</Text>
+                </Box>
+
+                <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                        </Box>
+                        <Box style={{ flexDirection: 'column' }}>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>3.3.2</Text>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>新建地图，导入整张背景</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>图片进列表就是背景吗？</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>新建 32×24 空白地图，导入原图、切片、绑定根节点，三类信息分别核对。</Text>
+                </Box>
+
+                <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                        </Box>
+                        <Box style={{ flexDirection: 'column' }}>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>3.3.3</Text>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>建立四层地址树</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>图上写名字等于有地址吗？</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>用「＋」逐层创建节点，填名称、范围与语义；状态外观与初始 state 匹配。</Text>
+                </Box>
+
+            </Box>
+
+            <Box style={{ flex: 1, flexDirection: 'row', gap: 24 }}>
+
+                <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 36, height: 36, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                        </Box>
+                        <Box style={{ flexDirection: 'column' }}>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>3.3.4</Text>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>画面有门，还要把门设为可走</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>画出的门能直接通过吗？</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>先封连续隔断，再打开门洞格；路径检查区分四种结果，预览线不是走过的路。</Text>
+                </Box>
+
+                <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                        </Box>
+                        <Box style={{ flexDirection: 'column' }}>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>3.3.5</Text>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>人物图片与出生装配</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>预定坐标能代替选择器吗？</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>头像与行走图按规格核对；空间选择器自动产生可走落点，X、Y 只读。</Text>
+                </Box>
+
+                <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 36, height: 36, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                        </Box>
+                        <Box style={{ flexDirection: 'column' }}>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>3.3.6</Text>
+                            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>用旧案例理解检查方法</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>旧案例能证明新地图吗？</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>晨间与穿门案例教检查方法；本节留下背景、语义、碰撞、出生与核对清单。</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 25</Text>
+    </Box>
+
+</Slide>

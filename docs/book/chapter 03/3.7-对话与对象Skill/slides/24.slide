@@ -1,0 +1,63 @@
+<Slide notes={`配置里有一组东西特别容易混：状态标签和换图映射。
+
+换图映射管的是画面。公告栏有两张状态图片，通过 state_images 分别对应 original 和 revised，状态一变，画面就换。
+
+状态标签管的是「对外公开的状态叫什么」。服务台的 ready 就是一个公开状态标签，但它的画面沿用背景里的默认外观，不需要另外配一张 ready 的状态图片。
+
+所以这两项相关但不同：一项决定换什么图，一项决定它公开叫什么状态。
+
+最后提醒：手动切图只能验证素材映射；要证明 Skill 真的更新了，还得在运行中找到真实的 SET_OBJECT_STATE，再看回放里的状态变化。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.5　在地图页面配置对象</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两项配置：状态标签与换图映射</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>换图映射</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>state_images 对应 original 与 revised</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>公告栏的两张状态图片决定画面换成什么。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>公开状态标签</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>服务台 ready 沿用背景默认外观</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不需要另配一张 ready 状态图片；标签与换图是两项配置。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>状态标签和换图映射是两项相关但不同的配置</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#20344B' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>手动切图只能验证素材映射</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>运行中仍需找到真实 SET_OBJECT_STATE 与回放里的状态变化，才能证明 Skill 完成了更新。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 31</Text>
+    </Box>
+
+</Slide>

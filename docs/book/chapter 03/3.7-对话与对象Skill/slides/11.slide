@@ -1,0 +1,74 @@
+<Slide notes={`这条链路上有三处真实载体，验收的时候就核对这三处。
+
+第一处是人物提出请求：INTERACT 经过世界提交，形成一条带身份的请求，带着 request_id、agent_key、agent_name 与观察时间。
+
+第二处是对象处理请求：在本步的对象轮次里，通过 world-act 的 responses 把答复提交出去。答复不能只写在对象的最终总结里，那样不算发送。
+
+第三处是目标人物收到：下一轮 external_observations 里出现的那条真实答复。只有这一处，才能证明对方确实收到了。
+
+工具层面那声 accepted，不能拿来代替第三段。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.2　INTERACT 只负责发出请求</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个真实载体</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>读图时核对三个载体：谁提出的、谁处理的、谁真的收到。</Text>
+
+        <Box style={{ width: 1152, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 190 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>人物提出请求</Text>
+            </Box>
+            <Box style={{ width: 350 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>INTERACT 经世界提交形成带身份的请求</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>请求带 request_id、agent_key、agent_name、请求内容与观察时间。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 190 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>对象处理请求</Text>
+            </Box>
+            <Box style={{ width: 350 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>本 Step 对象轮次通过 responses 提交答复</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>答复必须通过本次动作送达，不能只写在对象的最终总结里。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ width: 190 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>目标人物收到</Text>
+            </Box>
+            <Box style={{ width: 350 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', lineHeight: 1.5 }}>下一轮 external_observations 中的真实答复</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>只有这里能证明答复已经到达；回复恰好一次，不向其他人广播。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>收到工具层面的接受信息，不等于已经收到对象的业务答复</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 31</Text>
+    </Box>
+
+</Slide>

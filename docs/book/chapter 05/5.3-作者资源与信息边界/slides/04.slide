@@ -1,0 +1,79 @@
+<Slide notes={`先看作者和评分者。他们手里应该有这位来访者的完整目的、规定的首句、窗口职责，还有四个任务的教师答案表。这些是判分依据，只有作者一侧才需要。
+
+再看来访者本人。他只知道自己的目的和第一句话；窗口怎么分工、教师答案是什么，他一开始都不知道。另外三位来访者也一样，不会预先拿到别人的目的和首句。
+
+咨询台、两个窗口和引导员余真处在中间位置：他们事先知道窗口职责，但不知道每个人的私人目的和首句，更不知道答案。
+
+最后单独看教师答案表。它虽然也放在作者一侧，但性质和其他材料不同——不能进角色资料，也不能进公共 Brain。分支表示的是归属，不代表消息已经投递出去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.1　同一张作者表，不等于同一份角色输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一份材料，四种可见范围</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 44 }}>
+
+        <Box style={{ width: 260, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 260, height: 200, background: '#F7F3E8', borderRadius: 12, padding: '0 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>初始信息分配</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>以某一位{'\n'}来访者为例</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 848, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 848, height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, width: 784 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>作者／评分者</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>该来访者完整目的；规定首句、窗口职责；四任务教师答案表</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 848, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, width: 784 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>该来访者本人</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>知道本人目的和首句；初始未知窗口分工与教师答案</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 848, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, width: 784 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>其他来访者</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>不预先得到此人的目的和首句；初始未知窗口分工与教师答案</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 848, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, width: 784 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>咨询台／窗口、引导员余真</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>预先已知窗口职责；未知私人目的与首句，以及教师答案</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 848, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, width: 784 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>教师答案表</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>只给作者／评分者，不进入角色或公共 Brain</Text>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, marginTop: 4 }}>分支表示信息归属，不表示消息已经投递；先区分任务信息，再说明各类资料应放进哪里。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 27</Text>
+    </Box>
+
+</Slide>

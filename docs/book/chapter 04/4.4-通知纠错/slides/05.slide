@@ -1,0 +1,68 @@
+<Slide notes={`接下来要看的是信息边界，这决定了什么算真本事。
+
+沈禾手里有原通知、有检修依据，也确认杉厅可用，他有权提出更正。叶青、吴悠、江辰只知道活动名称和时间，正式会址需要他们自己去查。公告对象持有原通知，并且允许沈禾依据检修申请改成杉厅。
+
+更要紧的是右边这一列：什么不能提前塞给他们。沈禾不能假设那三个人已经收到过什么确认；三名参与者不能预知检修、最终结果，也不能读到别人的私有记忆；公告对象不能自带「谁已经收到了」的推测。
+
+一旦允许预塞，人物就算一句话不说也能说对，结果就什么也证明不了。还有一点容易混：公告变成 revised 只是外观变了，新地点仍然要经过真实内容才能知道。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.1　固定活动与初始知情分布</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁一开始知道什么，谁不能预塞</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>初始资料决定每个人能做什么；禁区决定这个实验还有没有说服力。</Text>
+
+        <Box style={{ height: 24, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>参与者／对象</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>初始资料</Text></Box>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 350 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>不得预塞</Text></Box>
+        </Box>
+
+        <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>沈禾</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>原通知、检修依据、杉厅可用；有权提出更正</Text></Box>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ width: 350 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>三人已经收到的虚构确认</Text></Box>
+        </Box>
+
+        <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>三名参与者</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>活动名称与时间；正式会址需要自行查询</Text></Box>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ width: 350 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>检修、最终结果、他人私有记忆</Text></Box>
+        </Box>
+
+        <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>公告对象</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>原通知；允许沈禾据检修申请改杉厅</Text></Box>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ width: 350 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>推测的人物接收情况</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 22px', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>看见 revised 只等于看到外观变了</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>新地点必须经真实内容获知；推测他人是否收到、代填确认，都属于预塞。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

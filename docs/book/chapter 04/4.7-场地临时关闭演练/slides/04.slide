@@ -1,0 +1,170 @@
+<Slide notes={`两套布局并排看，差别只有一处。左边是基线，墙上两个口子都开；右边只把上面的口子改成阻挡，下面的口子原样保留。
+橙色折线想表达的是：下口可能提供绕行方向，但它不是某个人已经走过的路径，也不代表精确路长。
+纸面上可以从 7,3 沿着 x 等于 7 这一列往南走到 7,8，再经 8,8、9,8 折向北进入集合区，全程不穿墙，也不穿过公告对象。
+还有一点要先记住：南区的人物在基线里原本就可能走下面这个口子，所以关闭上面的缺口，不一定同样影响三个人。解释结果的时候，要把三个人的起点、路线和结果分别列出来看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.1　用地图说明唯一干预</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>只封上口，下口照旧</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 396, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 546, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 34, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 84, height: 30, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+                    </Box>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>开放布局（基线）</Text>
+                </Box>
+                <Box style={{ height: 300, flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 96, flexDirection: 'column', gap: 18 }}>
+                        <Box style={{ width: 96, height: 88, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>北等候区</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>y 1–3</Text>
+                        </Box>
+                        <Box style={{ width: 96, height: 88, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>中等候区</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>y 4–6</Text>
+                        </Box>
+                        <Box style={{ width: 96, height: 88, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>南等候区</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>y 7–9</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 132, flexDirection: 'column', gap: 12 }}>
+                        <Box style={{ width: 132, height: 240, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>连接区</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>x 5–8</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>四人起点侧</Text>
+                        </Box>
+                        <Box style={{ width: 132, height: 48, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                            <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#CB6B28' }}>公告对象 B</Text>
+                            <Text style={{ fontSize: 11, color: '#546779' }}>(6,5) 占格阻挡</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 92, flexDirection: 'column' }}>
+                        <Box style={{ width: 92, height: 58, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙</Text>
+                        </Box>
+                        <Box style={{ width: 92, height: 52, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>通 (8,3)</Text>
+                        </Box>
+                        <Box style={{ width: 92, height: 86, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙 x = 8</Text>
+                        </Box>
+                        <Box style={{ width: 92, height: 52, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>通 (8,8)</Text>
+                        </Box>
+                        <Box style={{ width: 92, height: 52, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 148, height: 300, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>集合区</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>x 9–15</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>三人共同目标</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 546, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 34, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 84, height: 30, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+                    </Box>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>关闭布局：只封 (8,3)</Text>
+                </Box>
+                <Box style={{ height: 300, flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 96, flexDirection: 'column', gap: 18 }}>
+                        <Box style={{ width: 96, height: 88, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>北等候区</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>y 1–3</Text>
+                        </Box>
+                        <Box style={{ width: 96, height: 88, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>中等候区</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>y 4–6</Text>
+                        </Box>
+                        <Box style={{ width: 96, height: 88, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>南等候区</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>y 7–9</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 132, flexDirection: 'column', gap: 12 }}>
+                        <Box style={{ width: 132, height: 240, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>连接区</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>x 5–8</Text>
+                            <Text style={{ fontSize: 12, color: '#546779' }}>四人起点侧</Text>
+                        </Box>
+                        <Box style={{ width: 132, height: 48, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                            <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#CB6B28' }}>公告对象 B</Text>
+                            <Text style={{ fontSize: 11, color: '#546779' }}>(6,5) 占格阻挡</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 92, flexDirection: 'column' }}>
+                        <Box style={{ width: 92, height: 58, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙</Text>
+                        </Box>
+                        <Box style={{ width: 92, height: 52, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>封 (8,3)</Text>
+                        </Box>
+                        <Box style={{ width: 92, height: 86, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙 x = 8</Text>
+                        </Box>
+                        <Box style={{ width: 92, height: 52, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>通 (8,8)</Text>
+                        </Box>
+                        <Box style={{ width: 92, height: 52, background: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#FFFFFF' }}>墙</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 148, height: 300, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>集合区</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>x 9–15</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>三人共同目标</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 124 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>绕行方向{'\n'}（示意）</Text>
+            </Box>
+            <Box style={{ width: 196, height: 50, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>西侧 (7,3)</Text>
+            </Box>
+            <Box style={{ width: 44, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 196, height: 50, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>沿 x = 7 南行</Text>
+            </Box>
+            <Box style={{ width: 44, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 196, height: 50, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>下口 (8,8)</Text>
+            </Box>
+            <Box style={{ width: 44, height: 50, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 196, height: 50, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>折向北进集合区</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 26</Text>
+    </Box>
+
+</Slide>

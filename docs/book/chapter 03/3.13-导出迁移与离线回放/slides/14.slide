@@ -1,0 +1,41 @@
+<Slide notes={`文件拿到手之后，还有两件事要做：把它的来源登记清楚，以及在迁移的时候分层验收。
+登记的意思是保留原文件，另建一份记录，写清楚文件名、实际大小、哈希、生成时间，以及它是从哪次运行的哪个尝试、哪个提交步骤导出来的。
+验收要分三层来看，每一层单独取证。原包字节与完整性是一层，离线回放是一层，恢复或者重跑又是一层，一层通过不能代替下一层。
+本章没有真实异机验收，这一点我也会在讲结果的时候明确说出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　　3.13.4 — 3.13.5</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>登记与迁移：分层取证</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>先登记来源，再按字节、离线回放、再次执行三层分别验收；一层通过不能代替下一层。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32, marginTop: 10 }}>
+            <Box style={{ width: 204, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>文件名</Text>
+            </Box>
+            <Box style={{ width: 204, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>实际大小</Text>
+            </Box>
+            <Box style={{ width: 204, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>SHA256</Text>
+            </Box>
+            <Box style={{ width: 204, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>生成时间</Text>
+            </Box>
+            <Box style={{ width: 204, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', fontFamily: 'Consolas, monospace' }}>来源与源 Step</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

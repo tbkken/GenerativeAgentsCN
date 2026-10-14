@@ -1,0 +1,86 @@
+<Slide notes={`难度分层最容易被忽略。
+
+GPQA 有三层。全部六百四十六题叫 Extended；筛掉专家意见不一致的，剩四百四十八题叫 Main；再收紧，要求两位专家都答对、非专家至多答对三分之一，剩一百九十八题叫 Diamond。看到 GPQA，要问是哪一层。
+
+SWE-bench 类似。原始版两千两百九十四题，人工核验过的五百题子集叫 Verified，后来又做了更大的 Pro 版，一千八百六十五题，覆盖多语言。
+
+FrontierMath 第二版共三百三十八题，分四层，其中第四层四十三题是研究级的，一名研究者可能花好几个小时。
+
+同一套题库，看的是哪一层，分数的含义完全不同。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>③　1.4.3　样本集：同一个名字底下藏着几层不同的题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>难度分层</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 396, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>GPQA</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>546</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>Extended：全部题目</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>448</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>Main：专家过半认同</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#FFF4E6', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>198</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.4 }}>Diamond：两位专家全对、非专家至多答对三分之一</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>引用时必须写明是哪一层</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 396, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>SWE-bench</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#F7F3E8', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#546779' }}>2,294</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>Full：原始全量</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#FFF4E6', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>500</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.4 }}>Verified：人工核验子集，2026 年 2 月退役</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#ECF7F2', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>1,865</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.4 }}>Pro：多语言、结构性抗污染</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>三个版本的分数不可互换</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 396, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>FrontierMath（v2）</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>338</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>第二版题目总数</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>295</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>第 1–3 层：较易到很难</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#FFF4E6', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ width: 80, fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>43</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.4 }}>第 4 层：研究级，私有题集</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>官方成绩默认用私有集</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 36</Text>
+    </Box>
+
+</Slide>

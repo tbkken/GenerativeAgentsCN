@@ -1,0 +1,86 @@
+<Slide notes={`看到任何一个分数，先补齐四个条件。
+
+第一，模型身份。是哪个模型、哪个版本，还是同一个模型的两种配置。
+
+第二，题目范围。是全部题库，还是人工核验过的子集，还是难度最高的一层。分母不同，一个百分点代表的分量完全不同。
+
+第三，运行条件。闭卷还是可以用工具，跑一次还是跑多次取最好。
+
+第四，来源与时间。是官方榜单、论文，还是某个聚合站点，是哪一天的快照。
+
+拿 HLE 来说，2026 年 9 月前后，不同站点给出的头名分数从百分之五十五点五到百分之六十七点七不等。差距来自协议与快照日期，不是模型忽然变强。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>①　1.4.1　评估方法：缺一个条件，分数就不能用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>读分数的四个条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 28, alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 660, flexDirection: 'column', gap: 16 }}>
+                <Box style={{ width: 660, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ width: 120, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>模型身份</Text>
+                    <Text style={{ width: 464, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>哪个模型、哪个版本，还是同一个模型的两种配置</Text>
+                </Box>
+                <Box style={{ width: 660, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ width: 120, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>题目范围</Text>
+                    <Text style={{ width: 464, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>全部题库、人工核验子集，还是难度最高的那一层</Text>
+                </Box>
+                <Box style={{ width: 660, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ width: 120, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>运行条件</Text>
+                    <Text style={{ width: 464, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>闭卷还是可用工具；跑一次，还是多次取最好</Text>
+                </Box>
+                <Box style={{ width: 660, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ width: 120, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>来源与时间</Text>
+                    <Text style={{ width: 464, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>官方榜单、论文，还是聚合站点；哪一天的快照</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 464, height: 464, background: '#FFF4E6', borderRadius: 12, padding: '20px 20px', flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>同一个 HLE，头名分数差一截</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>2026 年 9 月不同站点给出的头名成绩</Text>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 210, height: 22, background: '#CB6B28', borderRadius: 4 }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>67.7%</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>带工具协议</Text>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 202, height: 22, background: '#CB6B28', borderRadius: 4 }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>65.0%</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>另一站点，同期</Text>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 172, height: 22, background: '#CB6B28', borderRadius: 4 }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>55.5%</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>更早的快照（9 月 7 日）</Text>
+
+                <Box style={{ flex: 1 }} />
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '10px 14px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>差异来自协议与快照日期，不是模型忽然变强</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 36</Text>
+    </Box>
+
+</Slide>

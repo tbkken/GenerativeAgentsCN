@@ -1,0 +1,94 @@
+<Slide notes={`把材料交给 WorkBuddy 里的助手，操作一共四步。
+
+第一步，新建任务。
+第二步，点击输入框左下角的“选择工作空间”，选中教学材料副本所在的目录。这一步决定了助手能看到哪些文件。
+第三步，把四份材料加进来。可以用 @ 引用，也可以直接上传或者拖拽。
+第四步，发送第三版提示，也就是刚才那份写进了验收规则和未知项处理的任务合同。
+
+路径和输入方式依据的是官方“创建任务”文档，实际按钮名称要以你用的版本为准，界面会变，思路不会变。
+
+加完文件以后别急着要结果。先验一遍材料是否真的进去了：让它说出读了哪些文件、提取出什么事实。附件图标不代表内容被使用，这一步跳过去，后面所有的核对都建立在不牢靠的前提上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.5　WorkBuddy：先检查读到了什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四步把材料交给助手</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 648, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>新建任务</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>在 WorkBuddy 中创建一个新任务</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>选择工作空间</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>点击输入框左下角“选择工作空间”，选中材料副本所在目录</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>加入四份材料</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>用 @ 引用四份文件，或使用上传、拖拽方式添加</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 110, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>发送第三版提示</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>把完整任务合同发出去，等待第一轮回复</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 472, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>操作时要留意</Text>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>以所用版本为准</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>路径与输入方式依据官方“创建任务”文档，实际按钮名称可能随版本变化。</Text>
+            </Box>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>第一轮不要急着要方案</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>先让它列出读了哪些文件、提取出哪些事实。</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>图标不等于内容被使用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>只看到附件图标，不足以证明文件内容已经被读到。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

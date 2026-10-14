@@ -1,0 +1,92 @@
+<Slide notes={`这一节我按四个问题往下讲，它们是有顺序的。
+
+第一，检查分几层。很多人一听到「格式对不对」就当成一件事，其实是四件事：响应本身可用吗、JSON 语法过关吗、字段和类型符合合同吗、业务和来源站得住吗。分开看，才知道该查什么。
+
+第二，合同怎么写。必填字段、允许的枚举值、禁止额外字段，这些写清楚了，程序才能替我们挡住一部分错误。
+
+第三，怎么把合同放进请求里。Responses 接口用的是 text.format，请求发出去以后，先看状态和拒绝，再解析。
+
+第四，谁来裁定对错。时间冲突这类规则不能让模型自己说了算，得交给独立程序算。四个问题合起来，就是这一节要交付的能力。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4　结构化输出：让结果可以被程序接收</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一句话主线</Text>
+            <Text style={{ fontSize: 17, color: '#276FBF', lineHeight: 1.75 }}>把结果写成程序能读的合同，再让独立程序裁定它对不对。</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>沿用青禾开放日：10 人、手作室 10:00—10:30 已有预约、六十分钟候选三段。</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>四个问题由外向内：先看结果可不可用，再看约定严不严，最后看谁来裁定。</Text>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ width: 230, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>检查分四层</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>2.4.1</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>响应、格式、业务、来源各回答一个问题，不能合并成一句「格式对不对」。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ width: 230, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>设计一份合同</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>2.4.2</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>必填、枚举、禁止额外字段；可空值与时间都必须带业务含义。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ width: 230, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>按合同请求并验收</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>2.4.3</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>把合同放进 Responses 的 text.format，先看状态与拒绝，再解析。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 124, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ width: 230, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>独立裁定与失败诊断</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>2.4.4 — 2.4.6</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>半开区间判冲突，确定性校验器裁定，每次只改一个因素定位错误。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 23</Text>
+    </Box>
+
+</Slide>

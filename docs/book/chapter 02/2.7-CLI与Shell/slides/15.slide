@@ -1,0 +1,69 @@
+<Slide notes={`受控函数只有四步，每一步都在缩小模型能影响的范围。
+
+第一步定义工具 run_schedule_check，它只接受允许的输入名称。第二步做白名单映射：reference 指向参考方案，candidate 指向我提供的候选方案，名字之外的输入一概不认。
+
+第三步才是真正的执行。应用用参数列表启动本机 Python，写死了解释器、UTF-8 模式、脚本路径和输入文件，shell 设为 False。第四步把退出码、标准输出、标准错误作为 function_call_output 交回模型。
+
+整条回路沿用 2.5 节的 Function Calling，模型没有拼接任意命令的能力。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.4　在 OpenAI 应用中包装受控命令</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>只交出名字，不交出命令</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+
+            <Box style={{ width: 232, height: 214, background: '#EDF4FC', borderRadius: 10, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>定义工具</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>run_schedule_check{'\n'}只接受允许的输入名称</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 214, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 232, height: 214, background: '#EDF4FC', borderRadius: 10, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>02</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>白名单映射</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>reference → 参考方案{'\n'}candidate → 候选方案</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 214, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+
+            <Box style={{ width: 232, height: 214, background: '#ECF7F2', borderRadius: 10, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>03</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>受控子进程</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>参数列表启动本机 Python{'\n'}shell=False，timeout=10</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 214, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+
+            <Box style={{ width: 232, height: 214, background: '#ECF7F2', borderRadius: 10, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>04</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>结果回传</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>exit_code、stdout、stderr{'\n'}作为 function_call_output</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>调用链沿用 2.5 节的 Function Calling 回路；输入名称之外的路径与参数，全部由应用自己决定。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

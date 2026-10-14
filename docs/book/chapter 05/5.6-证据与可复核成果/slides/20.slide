@@ -1,0 +1,89 @@
+<Slide notes={`人工阅卷要留下别人能重复的判断，具体是四步。
+
+第一步，先读冻结的任务表和判据，再逐项核对 H1 到 H4。顺序不能反，先看结果容易被结果牵着走。
+
+第二步，每一项都要写结论，分三档：证据支持、证据表明不成立、证据不足，并且附上来源和一句短理由。
+
+第三步，按预定标准判断「确认」。只说「很满意」是不够的，应该确认正确窗口以及与自身需求有关的准备内容。这里有个陷阱：不能看完结果之后才临时要求逐字背诵。
+
+第四步，两位评阅者可以独立核对关键样本，再区分分歧是来自标准不清、原文含糊，还是来源缺失。这三类分歧的处理方式完全不同。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.6　人工阅卷要留下别人能重复的判断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>人工阅卷留下的四步</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 620, height: 110, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ width: 528, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>先读冻结任务表与判据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>再逐项核对 H1—H4，不从结果往回找理由。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 110, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ width: 528, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>每项写三档结论</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>证据支持 ／ 证据表明不成立 ／ 证据不足，附来源与短理由。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ width: 528, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>按预定标准判断确认</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>只说「很满意」不够，应确认正确窗口及与自身需求有关的准备内容。</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>不能看完结果后临时要求逐字背诵。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ width: 528, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>两位评阅者独立核对关键样本</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>再区分分歧来自标准不清、原文含糊还是来源缺失。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 508, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>阅卷也有边界</Text>
+            <Box style={{ width: 508, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>观察者不能补写消息</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>在「Agent → 选择人物 → 对话／记忆」先定位摘要，再查完整事实。面板未展示的替代关系和消息不能由观察者补写。</Text>
+            </Box>
+            <Box style={{ width: 508, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>人工作答不等于系统执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>人工阅卷不能标成 Runtime 已执行自定义业务 Evaluator，两者不是一回事。</Text>
+            </Box>
+            <Box style={{ width: 508, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>不要给出假精确</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>证据未补齐时报告已证实范围与待判断项，不剔除未知项后给总体效果。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,89 @@
+<Slide notes={`这一步只展示回传已经取得的截图，动作本身不在这一段里。
+
+先看两个标识。previous_response_id 指向上一轮响应，把这次回传接到同一条链上；call_id 必须匹配模型刚才返回的那个动作请求，不能自己编一个。
+
+再看 output 里的内容：类型是 computer_screenshot，图片是一段数据 URL，detail 设为 original。
+
+有一条纪律要守住：response_id、call_id 和截图都必须来自真实运行，自己拼一个看起来像样的值，什么也验证不了。
+
+这套东西不是完整的桌面控制程序，独立环境、坐标映射、页面范围限制和中断处理都要单独做。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.4　计算机工具：从动作请求到真实页面</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>回传截图必须匹配 call_id</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>回传这一步的纪律</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 54, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>接回同一条链</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>previous_response_id 指向上一次响应。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 54, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>动作可能成批返回</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>宿主必须按实际协议逐项处理，不能当一次文本调用。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 54, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>截图用原始细节</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>detail 设为 original，便于逐处比对页面变化。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', marginTop: 4 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>response_id、call_id 与截图均须来自真实运行，不能自行编造。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 772, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#20344B' }}>followup = client.responses.create(</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#276FBF' }}>    model                = computer_model</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#276FBF' }}>    tools                = computer 工具一项</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#276FBF' }}>    previous_response_id = response_id</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#546779' }}>    instructions         = '仅在本次教学页面查看信息；根据真实页面判断结果。'</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#20344B' }}>    input                = 一项 computer_call_output</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#CB6B28' }}>        call_id          = call_id　　匹配原动作请求</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#26816B' }}>        output.type      = computer_screenshot</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#26816B' }}>        output.image_url = screenshot_data_url</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#26816B' }}>        output.detail    = original</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#20344B' }}>)</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>这不是完整的桌面控制程序</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>独立环境、截图、动作处理、坐标映射、页面范围限制与中断处理都要单独做。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 26</Text>
+    </Box>
+
+</Slide>

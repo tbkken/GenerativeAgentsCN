@@ -1,0 +1,76 @@
+<Slide notes={`五类交付物归成三组，每组承担一段证据。
+
+第一组是需求与来源，也就是约束和来源。检查方式是回到原始材料逐条对照，把缺失项列出来，它证明的是我读懂了任务。
+
+第二组是排期与校验：候选及最终排期，加上那份独立报告。检查要看独立命令、退出码和具体错误，它证明的是我算对了规则。
+
+第三组是说明与记录：方案说明和运行记录。说明要和最终排期逐项一致，记录要含模型、输入、响应、工具、版本和日期，它证明的是我能说清这一次是怎么发生的。
+
+我反复强调先落到文件，是因为文件可以被打开、被复跑、被核对。这些文件都是作者材料，进仿真前地图、角色和实验装配仍要按第三章的流程重新建立。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.4　用交付清单明确完成边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三类交付物，各自承担一段证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>需求与来源</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>事实、规则、缺失项；代表交付项是约束与来源，检查时对照原始材料。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>排期与校验</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>schedule 与独立报告；代表交付项是候选及最终排期、校验报告。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>说明与记录</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>plan、请求与工具记录；代表交付项是方案说明、运行记录。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 428, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 200, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>先落到文件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>每一类交付物都对应一个可以打开的文件，或一条可以复跑的命令。检查时先看文件，再看它支持什么结论。</Text>
+            </Box>
+
+            <Box style={{ height: 200, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>进入仿真前仍要重新配置</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>这些文件是作者材料，不是仿真已经运行的证据。地图、角色与实验装配仍须按第三章的流程建立。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 25</Text>
+    </Box>
+
+</Slide>

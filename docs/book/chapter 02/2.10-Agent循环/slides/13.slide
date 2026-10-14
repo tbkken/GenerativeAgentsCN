@@ -1,0 +1,76 @@
+<Slide notes={`写成代码之后，结束规则要一条一条写清楚。我列四条。
+
+第一条，模型结束，而且候选通过了业务校验：保存可追溯的结果，并报告已经验证到什么范围。
+
+第二条，模型结束了，但拿不出有效候选：标记为未完成，不能凭它的一段总结就判成功。这条最容易出错，所以要格外留意。
+
+第三条，达到轮数、工具数或者时间预算：有原因地停止，同时保留已经获得的诊断信息，别把线索一起丢掉。
+
+第四条，同一个调用反复出现、结果没有变化：判断为无进展，停下来，或者请求新的输入。
+
+四条规则的共同点是：都在程序里判断，而不是等模型说「我做完了」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.3　OpenAI API：把停止条件写在程序里</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四条结束规则</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 448, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>结束条件与处理方式</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>每条规则都写在程序里。模型可以结束它的输出，但应用必须自己核对状态，再决定收工还是继续。</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>一次通过的工具结果，{'\n'}不能替代整段循环的结束与文件保存。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 680, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ height: 118, background: '#ECF7F2', borderRadius: 10, padding: '0px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>模型结束且候选通过业务校验</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>保存可追溯的结果，报告已验证范围。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>模型结束但没有有效候选</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>标记未完成，不能凭总结判成功。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>达到轮数、工具数或时间预算</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>有原因地停止，保留已获得的诊断。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>同一调用反复出现、结果没有变化</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>判断无进展，停止或请求新的输入。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

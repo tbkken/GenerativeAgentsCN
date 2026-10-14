@@ -1,0 +1,73 @@
+<Slide notes={`接下来回答一个问题：这些记录是从哪儿来的。
+
+业务处理留在应用里。脚本先读材料，再调用包装过的 OpenAI 客户端，拿到返回后解析候选，做本地确定性校验，最后保存候选、报告与运行记录。
+
+记录则靠埋点交出去。所谓埋点，就是在要观察的操作开始、结束或出错处写入结构化记录。读文件、业务校验、保存产物这些动作，包装器不会替你记录，要由应用明确标记。
+
+这里有个容易产生的误解：以为换掉一个模型客户端，就能自动看到所有 MCP 服务、CLI 子进程和远端工具内部发生的事。不是这样，包装器只负责它支持的模型调用。
+
+短进程退出前要调用 flush，让等待导出的记录有机会发出去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.7　用 Langfuse 观察一次完整排期任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>埋点从哪里来</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 668, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>实线：脚本自己走完的四步</Text>
+                <Box style={{ width: 668, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>读取材料（应用手动建立 span）</Text>
+                </Box>
+                <Box style={{ width: 668, height: 72, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>调用包装后的 OpenAI 客户端（自动记为 generation）</Text>
+                </Box>
+                <Box style={{ width: 668, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>本地确定性校验（span，也是业务评分来源）</Text>
+                </Box>
+                <Box style={{ width: 668, height: 72, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 36, background: '#26816B' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>保存候选、报告与运行记录（span）</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 452, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>虚线：记录交到哪里</Text>
+                <Box style={{ width: 452, height: 100, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>Langfuse SDK</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>收集 generation、span 和 Score</Text>
+                </Box>
+                <Box style={{ width: 452, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>退出前 flush</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>短进程在结束前调用，尝试完成缓冲导出</Text>
+                </Box>
+                <Box style={{ width: 452, height: 100, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>配置的 Langfuse 项目</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>是否已在远端显示，还要按本次 ID 单独核对</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '12px 22px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>包装器只覆盖它支持的模型调用；MCP 服务、CLI 子进程与远端工具内部发生的事，不会自动出现。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>30 / 34</Text>
+    </Box>
+
+</Slide>

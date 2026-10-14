@@ -1,0 +1,56 @@
+<Slide notes={`讲师的职责也需要界定，这一点在设计教学项目时经常被忽略。
+
+讲师当然可以安排学员先猜两种策略的利弊，再一起看证据讨论。好的课堂需要悬念和节奏，这是教学的权利。
+
+但有一条线不能越过：不能为了课堂节奏，只留下最符合预期的片段。教学展示是可以节选的，研究台账仍然应该完整，而且节选依据要说明——你是因为时间关系只讲两项任务，还是因为只有这两项支持你的观点，这两件事完全不同。
+
+说得直白一点，只留下最符合预期的片段，等于把一次实验讲成了一条广告。学员后来看到完整数据的时候，失去的是对整个课程的信任。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.4　三类参与者，三种不同职责</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>讲师的职责也要写清楚</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>教学展示可以节选，研究台账仍应完整</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>讲师可以安排学员先猜测两种策略的利弊，再看证据讨论。悬念和节奏是教学的一部分。</Text>
+        </Box>
+
+        <Box style={{ width: 720, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 720, height: 104, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.5, width: 660 }}>先让学员猜测两种策略的利弊，再用证据展开讨论</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 104, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.5, width: 660 }}>展示可以节选，但研究台账仍应完整</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 104, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.5, width: 660 }}>节选依据需要说明：因为时间，还是因为结论</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 17, color: '#CB6B28', lineHeight: 1.5, width: 660 }}>不能为了课堂节奏，只留下最符合预期的片段</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,64 @@
+<Slide notes={`这里要区分两件很容易混起来的事：校验合同和当前页面的展示粒度。
+
+从接口这一侧看，预检调用的是整个实验包的校验，它不是把四类材料拆成四条分别去查。失败的时候返回状态码 PACKAGE_INVALID 和一段错误文字，在统计上算一个阻断项；成功的时候返回一个通过项。
+
+从页面这一侧看，页面上显示几条、怎么显示，是展示粒度的问题。所以不能把上面讲的四类校验合同，直接写成当前页面必然显示四条独立的统计项，那是把合同当成了界面。
+
+实际遇到阻断的操作很简单：把完整错误记录下来，回到对应的草稿资源把它修好，保存，然后再查一次。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.3　预检检查材料，观察检查行为</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>校验合同不等于页面显示几条</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>接口这一侧的合同</Text>
+
+            <Box style={{ width: 460, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>整包校验</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>当前预检调用的是整个实验包的校验。</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>失败算一个阻断项</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>返回 PACKAGE_INVALID 及错误文字。</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>成功算一个通过项</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>通过不等于逐条列出检查过的项目。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 676, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>页面这一侧的展示</Text>
+
+            <Box style={{ width: 676, height: 124, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不要把合同写成页面条目</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>不能把前面的四类校验合同，写成当前页面必然显示的四条独立统计项。</Text>
+            </Box>
+
+            <Box style={{ width: 676, height: 124, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>出现阻断时的处理</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>记录完整错误，回到对应的草稿资源修正、保存，再重新检查一次。</Text>
+            </Box>
+
+            <Box style={{ width: 676, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>写法上留一层余地</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>合同说得清，页面未必逐条显示；描述时要按实际观察到的粒度写。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

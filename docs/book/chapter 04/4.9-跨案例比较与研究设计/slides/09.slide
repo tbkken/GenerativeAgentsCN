@@ -1,0 +1,65 @@
+<Slide notes={`我用一个极端的反例把权重讲透。
+
+两次 Run：第一次一项任务、成功，1/1；第二次九项任务只成功一项，1/9。合起来十项任务成功两项。
+
+第一条路，每个 Run 同权：先各算比率再平均，100% 加 11.1% 再除以 2，约 55.6%。它回答「平均一场 Run 怎样」，那场只有一项任务的 Run 因此被抬得很重。
+
+第二条路，每项任务同权：合并后两项除以十项，正好 20%。它回答「全部任务里有多少成功」。
+
+两个数都能算对，只是回答的问题不同，不能挑一个好看的报出去。
+
+两组还要有相同的任务构成，否则提升可能只是构成差异。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.3　比率与权重分别说清</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次 1/1，一次 1/9</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 72, background: '#F7F3E8', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>人工反例，不是 Run 结果</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>两个 Run：一个 1/1，一个 1/9；合起来 2/10</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 136, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>每个 Run 同权</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>（100% ＋ 11.1%）÷ 2 ≈ 55.6%</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>回答「平均一场 Run 怎样」</Text>
+            </Box>
+            <Box style={{ width: 564, height: 136, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>每项任务同权</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>（1 ＋ 1）÷（1 ＋ 9）＝ 20%</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>回答「全部任务里多少成功」</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>两个数都能算对，回答的问题不同，不能择高报告。观察单位和权重必须在看结果之前固定下来。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>两组还须有相同的任务构成：若 B 组多的是简单任务，那点提升可能只是构成差异。小组每类只有两人时，直接列原始情况更清楚。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 25</Text>
+    </Box>
+
+</Slide>

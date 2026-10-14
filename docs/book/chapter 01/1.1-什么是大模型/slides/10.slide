@@ -1,0 +1,89 @@
+<Slide notes={`我们用一个汉字来验证刚才这些结论。"紧"这个字。
+
+"安排很紧"，说的是时间紧凑；"把门关紧"，说的是关得严实。同一个字，两种完全不同的意思。如果模型只认这一个字，它就会把两句理解成同一件事。
+
+它能处理得更好，是因为它拿到的不只是一个字的位置，还带着这个字周围的内容。这也是为什么前面要说"表示还受周围内容影响"。
+
+把这一段的三句结论记住。
+
+第一，片段不等于汉字。切分怎么切，是由分词器决定的，用量以分词器或者接口的统计为准，不能自己换算。
+
+第二，编号负责查位置，向量负责参与计算，它们本身都不等于词义。
+
+第三，窗口有上限。四类内容共用同一份容量，放不下就得先筛选或截断。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.2　Token：文字怎样变成可计算的输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>读图三点，和一个"紧"字</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 36 }}>
+
+        <Box style={{ width: 466, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>同一个"紧"，两种含义</Text>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, border: '1px solid #B5C7D8' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>安排很紧</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>说的是时间上排得紧凑</Text>
+            </Box>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, border: '1px solid #B5C7D8' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>把门关紧</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>说的是关得严实、不留缝</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 22, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>只认一个字，判断就会偏。</Text>
+            </Box>
+
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>模型处理语言时，带的是位置和周围内容，不是一个一个孤立的汉字。</Text>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', alignItems: 'flex-start' }}>
+                <Box style={{ width: 30, height: 30, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>片段不等于汉字</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>一个片段可能是字、词的一部分或标点，不能固定换算，实际用量以分词器或接口统计为准。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', alignItems: 'flex-start' }}>
+                <Box style={{ width: 30, height: 30, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>编号查位置，向量做计算</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>编号本身不是词义；一个片段最终表示成什么，还受它周围内容的影响。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', alignItems: 'flex-start' }}>
+                <Box style={{ width: 30, height: 30, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>窗口有上限</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>指令、消息、资料与生成内容共用容量，放不下就要筛选或截断，窗口大也不等于长期记忆。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 26</Text>
+    </Box>
+
+</Slide>

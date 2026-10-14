@@ -1,0 +1,57 @@
+<Slide notes={`接下来划一条特别重要的边界：什么可以变，什么不能变。
+
+Brain 和 Skill 决定的是方法。何时感知、何时咨询、何时比较方案、怎样使用证据、怎样选择动作、什么时候等待或者结束本轮——这些都是方法的自由。
+
+ReAct、反思、排程，都可以作为一种做法，但它们不必成为所有角色必走的系统流水线。
+
+而身份、可用能力、动作校验、提交与恢复这些公共条件，由内核保证。方法框到内核框的那条实线，必须经过身份与能力校验；换一个 Brain，不会多出一条绕过这个入口的通道。
+
+改变 SOP 可以改变角色怎么决策，但不能伪造别人的身份、读取他人私有记忆，也不能在同一 Step 提交第二个动作。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　·　3.14　沿着一次行动理解架构，整理可交付的实验</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>④　　3.14.4　Brain 决定做法，内核守住事实边界</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>方法可变，边界不变</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>换 Brain、换 Skill 都可以；入口只有一处——身份与能力校验，换谁都不新增绕过通道。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+            <Box style={{ width: 255, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>方法</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 68, background: '#FFF4E6', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>身份与能力校验</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 68, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>世界提交与恢复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 68, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>已提交事实可回放</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 29</Text>
+    </Box>
+
+</Slide>

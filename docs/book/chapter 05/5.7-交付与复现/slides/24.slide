@@ -1,0 +1,56 @@
+<Slide notes={`这一节要带走的是三句话。
+
+第一句，说清要做什么。「请帮我看看」不是交付目标。先选检查类型——设计审阅、文件核对、事实回放、结果复算还是重新执行——再按类型准备材料。这五类检查回答五个不同问题，不能相互替代。
+
+第二句，认清文件是什么。普通结果 ZIP 和 config、exp、run 三种正式包是不同的文件合同，改后缀改变不了它的能力。能导入不等于能回放，能回放不等于能重跑。
+
+第三句，把承诺写到能验证。回放通过不等于续跑通过，一次新 Run 成功也不能代替旧 Run 的恢复验证。没做过的就写「尚未验证」，把缺口和下一步写清楚。
+
+一份能接手的交付，是接收者知道该从哪儿继续的交付。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.7　交付与复现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节小结</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>记住三句话</Text>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF', width: 56 }}>一</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>说清要做什么</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>先选检查类型——审设计、核文件、看回放、复算还是重跑，再准备材料。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B', width: 56 }}>二</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>认清文件是什么</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>普通结果 ZIP 与 config／exp／run 是不同的文件合同，改后缀改变不了能力。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28', width: 56 }}>三</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>把承诺写到能验证</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>回放通过不等于续跑通过；没做过的就写「尚未验证」，把缺口写清楚。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>第五章　5.7　交付与复现　·　下一节：演示与评审</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

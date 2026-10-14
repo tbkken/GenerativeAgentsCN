@@ -1,0 +1,54 @@
+<Slide notes={`我们用三个问题收尾。接收者能回答这三个问题，说明这套资料集是可以解释的。
+
+第一个，为什么是五个人、三个对象、七十六步？第二个，为什么两个人的首句相同，却去了不同的窗口？第三个，哪些信息到现在仍然不知道？
+
+第一个问题考的是采用条件有没有写清楚；第二个问题考的是你分得清相同表达背后的不同目的；第三个问题考的恰恰是你的诚实——空白有没有被偷偷补齐。
+
+我要提醒一句：能回答这三个问题，只能说明资料集可解释。它还不能支持你说“系统已配置”或者“咨询策略有效”。那两句话要有实际执行记录和证据才说得出口。
+
+本节就到这里，接下去的一节处理作者资源与信息边界。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#CB6B28' }}>5.2 收尾</Text>
+
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>三个“为什么”</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 940 }}>接收者能回答这三个问题，说明资料集可解释；但还不能据此填写“系统已配置”或“咨询策略有效”。</Text>
+
+        <Box style={{ width: 1152, height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 6 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>为什么是五个人、三个对象、76 步？</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>每一个数字都要能追到本轮采用的固定条件</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>为什么两人首句相同却去不同窗口？</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>相同首句背后是不同的私人目的，不是重复数据</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>哪些信息仍然不知道？</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>空白要留着，不能被擅自补齐成结论</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>下一节：作者资源与信息边界　·　5.2 材料来源、假设与可用范围</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 23</Text>
+    </Box>
+
+</Slide>

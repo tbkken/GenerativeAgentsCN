@@ -1,0 +1,71 @@
+<Slide notes={`会话有了，内容也有了，接下来要看它会落在哪一步。
+
+会话内容什么时候可见，要结合实际调度顺序来判断。这里有一个很容易犯的错：套用「对象回复固定落在下一轮」这类固定规则。实际上双方的两条 SPEAK 未必落在相邻两步，要按真实调度结果去看。
+
+另外，每条消息都随它所属的那个 StepResult 一起持久提交。所以对外引用某句话的时候，必须回到它所属的那一步，看已提交的事实是什么。
+
+读图的时候也要小心：图上画的双向箭头只是消息方向的示意，不代表对话真的发生在那一刻，也不代表双方落在哪一步。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.1　一次 SPEAK 连接两名 Agent</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>消息什么时候才算真的落地</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 300 }}>会话内容什么时候可见，要结合实际调度顺序判断，不能套用固定的落点规则。</Text>
+            <Box style={{ width: 300, height: 126, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>读图时注意</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>读图不预定双方发言落在哪个 Step。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 820, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 200 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>什么时候可见</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>结合实际调度顺序</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>会话双方的两条 SPEAK 未必落在相邻两步。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 200 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>依据什么</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>已提交的 StepResult</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>每条消息随所属的那一步一起持久提交。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ width: 200 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>怎样核对</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>回到消息所属的那一步</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不能只看会话摘要，也不能只按画面顺序下结论。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 31</Text>
+    </Box>
+
+</Slide>

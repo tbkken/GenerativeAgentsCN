@@ -1,0 +1,44 @@
+<Slide notes={`这一块要解决一个很容易搞错的直觉：点一下创建，到底生成了什么。
+
+它不是在我们名下登记了「这张地图、这几个人物」，而是把选中的资源连同它们的依赖整份复制进实验。地图会连着图像、语义和对象 Skill 一起进来；Brain 会连着子 Skill、脚本和模板一起进来；人物连着自身资料和图片；模型连着配置内容。
+
+正因为复制得这么彻底，这份实验从此是独立材料。以后在公共 Agent 里修改许安的目标，已经创建的青禾实验仍旧保留原来的目标。
+
+要改变这一次实验，就进它自己的智能体页面编辑；要让以后的新实验采用新目标，才去改公共作者资源。两者可以相同，也可以故意不同。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>1　　3.8.1　创建的结果是一份独立材料</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>创建的结果是一份独立材料</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 920 }}>创建不是记下几个公共资源链接，而是把选中资源连同依赖复制进实验；复制之后，公共资源的修改不再自动传播。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 340, height: 64, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>公共作者资源</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>实验副本　DRAFT</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>封存　SEALED</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

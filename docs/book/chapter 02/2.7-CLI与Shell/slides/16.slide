@@ -1,0 +1,64 @@
+<Slide notes={`执行器有四条边界，每一条都对应一种容易被忽略的失败。
+
+shell=False 加上参数列表，避免 Shell 再去解释参数里的特殊字符。check=False 是有意为之：方案不合格时返回的退出码要保留下来，让调用者自己去判断，而不是让程序提前抛异常。超时是执行失败，绝对不能写成「未发现冲突」，这两句话的意思完全不同。
+
+capture_output 只是在进程结束前把输出收起来，它不构成沙箱。如果允许运行任意程序，或者输出可能很大，还需要流式限额和进程隔离。
+
+这四条写下来，受控函数才算真的受控。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.4　在 OpenAI 应用中包装受控命令</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>执行器的四条边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 404, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>受控不等于沙箱</Text>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>四条边界，逐条写明</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.8 }}>参数怎么传、退出码要不要抛、超时算哪一类失败、输出怎样收集，这四件事必须在执行器里说清楚。</Text>
+        </Box>
+
+        <Box style={{ width: 716, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14 }}>
+                <Box style={{ width: 351, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>shell=False</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>参数列表避免 Shell 再解释特殊字符</Text>
+                </Box>
+                <Box style={{ width: 351, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>check=False</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>保留业务不合格的退出码供调用者检查</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14 }}>
+                <Box style={{ width: 351, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>超时</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>是执行失败，不能写成「未发现冲突」</Text>
+                </Box>
+                <Box style={{ width: 351, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>capture_output</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>进程结束前收集输出，但它不是沙箱</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px' }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>若允许任意程序或大量输出，还需要额外的流式限额与进程隔离。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,62 @@
+<Slide notes={`四种方式摆在一起，怎么选？有一个顺序，而且顺序不能颠倒。
+
+第一步，先问任务到底能不能完成。这一点必须先确认。如果这件事现在根本做不到，后面比价格、比部署方式都没有意义。
+
+第二步，看数据与部署要求。数据能不能离开本地，有没有合规上的硬约束，环境有没有部署限制。这一步经常直接淘汰掉一批选项。
+
+第三步，才轮到时间和总成本。而且是满足前两步条件的那些选项，才拿来比。比的时候要把账算全：失败重试要花钱，检索要花钱，等工具返回的时间也是成本，长期的维护同样要算进去。
+
+这三步的顺序为什么重要？因为一旦你从第三步开始比，很容易被一个便宜的价格吸引，最后发现它连第一步都过不了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.5　开放权重、本地部署与云服务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>选型的三步顺序</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 18 }}>
+
+            <Box style={{ width: 330, height: 250, background: '#EDF4FC', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#276FBF', lineHeight: 1 }}>01</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>任务能否完成</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>这件事现在做不做得成，是第一道门槛。</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 330, height: 250, background: '#EDF4FC', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#276FBF', lineHeight: 1 }}>02</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>数据与部署要求</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>数据能不能出本地，环境有没有硬约束。</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 330, height: 250, background: '#ECF7F2', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#26816B', lineHeight: 1 }}>03</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>时间与总成本</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>只比已经满足前两步条件的选项。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 3, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>费用中还要计入失败重试、检索、工具等待和维护；本地也不天然更快、更准或更便宜。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 22</Text>
+    </Box>
+
+</Slide>

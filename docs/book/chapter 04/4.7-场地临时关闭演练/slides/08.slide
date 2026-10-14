@@ -1,0 +1,64 @@
+<Slide notes={`这一步的关键，是把改动限制在一个格子里，同时保证其他一切都不动。
+我会先做一份开放布局，两处缺口都开，把它当成基线。然后复制成一份完全独立的草稿，两组使用同一套抽象背景，地面标记只显示通口，不承诺开闭状态。
+接着在草稿里用 Ctrl 编辑目标格，把 8,3 从可走改成阻挡，别的都不碰。存盘、离开、重新打开，核对三件事：上口封住了、下口还开着、邻格没有被误涂。
+最后用路径检查核对东西连接。但心里要清楚，预检不替代运行时对内嵌地图和真实 MOVE 的检查。人物出生坐标一律经空间选择器保存，两组的实际坐标必须一致，不能改文件绕过界面。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.2　五步作者操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从开放草稿到关闭副本</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'stretch' }}>
+
+            <Box style={{ width: 320, height: 340, background: '#F4F7FA', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>1</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>制作开放布局</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>两处缺口都开，作为基线。两组使用同一套抽象背景，地面标记只显示通口。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不额外改外观、公告、视野或引导策略。</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 340, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 340, background: '#FFF4E6', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>2</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>只动一个碰撞格</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先把开放布局复制为独立草稿，在地图的世界到通路界面确认是对照副本。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>Ctrl 编辑目标格，把 (8,3) 从可走改成阻挡。</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 340, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 32, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 340, background: '#ECF7F2', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>3</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>封存并重开核对</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>保存、离开、重新打开，核对上封、下开、邻格没有误涂。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>人物出生经空间选择器保存，两组实际坐标一致。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>用「路径检查」核对东西连接，预检不替代运行事实</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>运行时仍须查内嵌地图与真实 MOVE。两组实际坐标必须一致，不改文件绕过界面。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,56 @@
+<Slide notes={`先把五个职责摆在一起看清楚。
+
+Protocol 管的是合同：文件长什么样、身份怎么写、空间怎么表示、Skill 和事实怎么定义。所有环节都用同一套数据含义交流，才谈得上交接。
+
+Studio 是作者工作的地方，编辑公共资源、组织实验、做预检；Runtime 负责把 Run 装起来、调用能力、提交每一步、监督和恢复；Replay 只读已经提交的事实，生成状态和页面投影。
+
+最上面那层是 CLI 和 Web 适配层，它只把操作请求转成模块公开的 API。
+
+要特别强调的是最后一句：界面不是另一套事实源。谁都不能因为页面上显示了什么，就认为世界里已经发生了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　·　3.14　沿着一次行动理解架构，整理可交付的实验</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>①　　3.14.1　五个职责如何配合</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>五个职责，一条事实链</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>作者资源、实验、运行、回放、适配层各自守一段；这些职责通过自包含文件交接，界面不是另一套事实源。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 24, marginTop: 8 }}>
+            <Box style={{ width: 204, height: 76, background: '#F7F3E8', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Protocol</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>数据含义合同</Text>
+            </Box>
+            <Box style={{ width: 204, height: 76, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>Studio</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>编辑与预检</Text>
+            </Box>
+            <Box style={{ width: 204, height: 76, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>Runtime</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>装配与提交</Text>
+            </Box>
+            <Box style={{ width: 204, height: 76, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>Replay</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只读已提交事实</Text>
+            </Box>
+            <Box style={{ width: 204, height: 76, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>适配层</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>CLI / Web 转公开 API</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 29</Text>
+    </Box>
+
+</Slide>

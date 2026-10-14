@@ -1,0 +1,65 @@
+<Slide notes={`青禾助手至少需要辨认四类内容，我一条一条说它们的用法。
+
+第一类是行为要求，比如不编造预约、提交之前先运行检查。它管的是这次工作用什么方法，不提供事实。
+
+第二类是任务资料，比如活动人数、房间容量、允许时段。它是我们生成候选方案的依据。
+
+第三类是外部查询结果，比如某个日期某个房间已经有预约。这一类的使用方式最讲究：必须按工具来源和查询范围来解释，不能把它当成永久事实。
+
+第四类是工作状态，比如已经提取了约束、方案还没校验。它决定下一步做什么，而不能冒充成已经完成的事实。
+
+把这四条分开，好处是出了问题能定位。是资料本身写错了，是查询范围没覆盖，还是方案压根没校验过，一看就知道。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.1　内容可以放在一起，来源不能混在一起</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类内容，各自怎样使用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 18, alignItems: 'center' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>内容</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>例子</Text></Box>
+            <Box style={{ width: 520 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>应当怎样使用</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>行为要求</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不编造预约；提交前运行检查</Text></Box>
+            <Box style={{ width: 520 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>指导本次工作方法</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>任务资料</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>活动人数、房间容量、允许时间</Text></Box>
+            <Box style={{ width: 520 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>作为生成候选的依据</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>外部查询结果</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>某日期某房间已有预约</Text></Box>
+            <Box style={{ width: 520 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>按工具来源和查询范围解释</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>工作状态</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>已提取约束，方案尚未校验</Text></Box>
+            <Box style={{ width: 520 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>决定下一步，不冒充完成事实</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 25</Text>
+    </Box>
+
+</Slide>

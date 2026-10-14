@@ -1,0 +1,75 @@
+<Slide notes={`有三种说法听起来很顺，实际上会掩盖关键事实。
+
+第一句，"续跑修好了问题"。续跑只是从已提交边界继续往下执行，它不说明旧状态被真正恢复，也不说明问题被修好。
+
+第二句，"原方案又试一次"。如果输入已经改过，这就不是原来的方案，而是新的研究条件，结果不能归到旧的对照上。
+
+第三句，"Attempt 增加了，所以策略出了新版本"。Attempt 说明的是执行尝试变了，不是模型策略产生了一个业务版本。
+
+另外，新尝试也不会抹去旧尝试的成本和质量明细。旧 Run 如果没有闭环，它仍然留在原批次里；新增的 Run 单独登记来源和目的。不能把原来的停止条件改写成"其实原本就准备一直跑到成功"。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.5　用正确身份描述下一项工作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种说法会掩盖什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 460, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>容易说出口</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>"续跑修好了问题"</Text>
+            </Box>
+            <Box style={{ width: 44, height: 118, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 620, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>它没有说明是否真正恢复了旧状态</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>续跑只表示从已提交边界继续执行，不等于问题被修复。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 460, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>容易说出口</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>"原方案又试一次"</Text>
+            </Box>
+            <Box style={{ width: 44, height: 118, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 620, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>输入已经改过，这是新的研究条件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>把新输入叫作原方案重试，会混淆两次对照的含义。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 460, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>容易说出口</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>"Attempt 增加＝策略新版"</Text>
+            </Box>
+            <Box style={{ width: 44, height: 118, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 620, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>执行尝试变化，不是业务版本</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>Attempt 记录的是执行动作，不代表策略产生了新版本。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>新尝试不抹去旧尝试的成本与质量明细；旧 Run 未闭环仍留在原批次，新增 Run 单独登记来源与目的。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 27</Text>
+    </Box>
+
+</Slide>

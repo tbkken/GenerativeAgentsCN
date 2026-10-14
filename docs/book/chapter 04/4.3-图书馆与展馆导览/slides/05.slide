@@ -1,0 +1,70 @@
+<Slide notes={`除了四位访客，场景里还有四个信息持有者，他们各自只掌握自己那一份，谁也不许越界。
+
+甲厅介绍对象掌握的是城市鸟类外形图册和鸟类活动记录；乙厅介绍对象掌握纸艺纹样和制作过程图片，注意这里没有真实的手作器材，所以纸艺厅的活动只能是观看和阅读。导览牌掌握两厅主题、适用活动和真实地址。讲解员温岚掌握的内容和导览牌一样，但她从休息区开始活动，只帮助实际遇到并且主动求助的人，不逐人广播。
+
+还有一条容易做错的边界：讲解员帮助了没有看见牌子的访客并且让他成功，这是合理的补救路径，不能为了让干预看起来有效就把这个结果删掉。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.1　兴趣表给谁看</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁独立掌握什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>四人之外的四个信息持有者</Text>
+            <Box style={{ width: 420, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不能越过的两条线</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>资料只解释自身主题，不泄漏私人目标；缺项先澄清，不编展品、捷径或服务。</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>讲解员从休息区开始，只帮助实际遇到并且求助的人，不逐人广播。</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.6 }}>帮助未见牌者成功，是合理补救，不能为了凸显牌子而删掉这条结果。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>设施／人物</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>独立掌握的资料</Text></Box>
+            </Box>
+
+            <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>甲厅介绍对象</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>城市鸟类外形图册、鸟类活动记录</Text></Box>
+            </Box>
+
+            <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>乙厅介绍对象</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>纸艺纹样、制作过程图片；无真实手作器材</Text></Box>
+            </Box>
+
+            <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 32, background: '#20344B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>导览牌</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>两厅主题、适用活动、真实地址</Text></Box>
+            </Box>
+
+            <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 32, background: '#20344B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>讲解员温岚</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>同导览牌；从休息区开始，只帮实际遇到并求助的人</Text></Box>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, marginTop: 2 }}>按真实请求 ID 回复，不代替人物宣布已决定；介绍对象只解释自身主题。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

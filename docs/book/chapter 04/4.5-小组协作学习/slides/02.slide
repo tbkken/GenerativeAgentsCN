@@ -1,0 +1,85 @@
+<Slide notes={`这一节一共四个知识块，我先交代它们的顺序和分工。
+
+第一块是信息从哪来：共同题面怎么定，四条私有限制为什么必须分别发给持有者。
+
+第二块是信息怎么流动，也就是一次发言到底送给了谁，以及定稿以哪一次发言为准。
+
+第三块把评价口径摊开：主指标是满足条件数除以七，同时还要报四个并列的分母。
+
+第四块回到教师那一侧，看唯一解、看六项满足为什么仍不是完全正确，以及失败时该查哪里。
+
+四块的顺序不能颠倒，因为它们是一层层往下的：先有信息，再有传递，然后才有可判分的结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节地图　4.5</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>四个知识块</Text>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>从题面到判分{'\n'}一层一层往下走</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 300 }}>信息在哪、怎么流动、多了什么、怎么算——四个问题依次回答。</Text>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 18 }}>
+
+            <Box style={{ width: 820, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 52, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>题面与条件分配</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>共同题面怎样定；四条私有限制为什么只能分别发给持有者</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', width: 96 }}>4.5.1 — 4.5.2</Text>
+            </Box>
+
+            <Box style={{ width: 820, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 52, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>交谈、定稿与唯一变化</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一次发言只送达一个人；唯一变化是定稿前显式调用逐项核对子 Skill</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', width: 96 }}>4.5.3 — 4.5.4</Text>
+            </Box>
+
+            <Box style={{ width: 820, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>七项判据与分母</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>主指标＝满足条件数÷7；还要同时报四个量与各自的分母</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', width: 96 }}>4.5.5</Text>
+            </Box>
+
+            <Box style={{ width: 820, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>解答、判分、定位与练习</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>教师唯一解、36 种怎样缩成一种、6/7 为什么仍不是完全正确</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', width: 96 }}>4.5.6 — 4.5.7</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 26</Text>
+    </Box>
+
+</Slide>

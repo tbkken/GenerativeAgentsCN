@@ -1,0 +1,55 @@
+<Slide notes={`第三个知识块开始准备人物。青禾这个案例有四位：林岚是组织者，周宁是志愿者，陈晨是阅读访客，许安是手作访客。
+
+这里有一条写作原则，比字段怎么填更重要：描述动机，不要写死剧情。
+
+人物的资料会向 Brain 提供背景和目标，但它不会直接绕过世界校验。举个书里的例子，「组织者」这个身份文字，并不赋予他任意修改服务台内部状态的权限。同样，「日常计划」也不是由内核机械执行的固定程序，它更像是人物自己的安排。
+
+所以写的时候，应该写他关心什么、想做什么、依据什么做判断；而不是写他第几步一定完成什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.2.3　创建四位人物，描述动机而非强制剧情</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>3.2.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>描述动机，不写死剧情</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>身份和目标写给人物，结果留给世界去发生。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+            <Box style={{ width: 268, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>林岚</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>组织者</Text>
+            </Box>
+            <Box style={{ width: 268, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>周宁</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>志愿者</Text>
+            </Box>
+            <Box style={{ width: 268, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>陈晨</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>阅读访客</Text>
+            </Box>
+            <Box style={{ width: 268, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>许安</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>手作访客</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 22</Text>
+    </Box>
+
+</Slide>

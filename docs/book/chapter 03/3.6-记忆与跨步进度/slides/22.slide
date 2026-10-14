@@ -1,0 +1,60 @@
+<Slide notes={`验收至少回答四个问题。
+
+第一，新的认识是在收到消息之前还是之后产生的——定位相关对话或对象响应的时间位置。
+
+第二，旧节点被合理保留、替代还是失效——查状态与替代关系，必要时核对真实 ID。
+
+第三，默认有效检索是否还把错误认识当作现行信息——用明确名称再检索一次。
+
+第四，下一步行动有没有利用新认识——对照其后的动作选择。
+
+页面显示一条“计划已调整”，并不自动回答这四个问题；显示文字是结果，不是证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.5　在页面上检查一次认识更新</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>验收时至少回答四个问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 480 }}><Text style={{ fontSize: 14, color: '#546779' }}>问题</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>怎么核对</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 90, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 480 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>新的认识，在收到消息之前还是之后产生？</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>定位相关对话或对象响应的时间位置</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 90, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 480 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>旧节点被合理保留、替代还是失效？</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>查看状态与替代关系，必要时核对真实记忆 ID</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 90, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 480 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>默认有效检索，是否还把错误认识当作现行信息？</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>用明确名称再检索一次，看返回什么</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 90, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 480 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B', lineHeight: 1.5 }}>下一步行动有没有利用新认识？</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>对照其后的动作选择，看是否仍按旧计划行动</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center', marginTop: 4 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', flex: 1 }}>页面显示一条“计划已调整”，并不自动回答这四个问题</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

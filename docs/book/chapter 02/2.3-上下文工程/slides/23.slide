@@ -1,0 +1,77 @@
+<Slide notes={`这份两百字的摘要要留住什么，我列成五项，你可以照着检查。
+
+活动日期。三项活动的时长分别多久，这一项最容易在压缩时被丢掉。房间限制，容量多少人。预约状态，是已经查过了，还是待查。最后是待交付物，也就是这个任务最后要交出去的是什么。
+
+写完以后交给一个独立任务，让它根据摘要回答：还需要读取哪些文件才能把方案定下来。
+
+这个动作能暴露很多问题。如果它读完摘要就说不用再看别的了，那说明你的摘要把「待查」写成了「已确认」，完成状态被过度压缩了。
+
+所以不要只看摘要够不够短。要看它有没有留下重新取证的入口：指向文件、指向未完成项。这两样在，第二个任务才知道自己该从哪里接手。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.6　失败诊断与练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>二百字摘要要留住什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 340, flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>五项关键项，一项都不能省</Text>
+                <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>摘要不必复制原文，但它必须让接手的人知道：现在确定了什么，还有什么是没有确定的。</Text>
+            </Box>
+
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 10 }}>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>活动日期</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>这次安排针对哪一天</Text></Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>三项时长</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>每项活动各占多久，压缩时最易丢失</Text></Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>房间限制</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>容量与开放时段</Text></Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                    <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>预约待查状态</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>写明「待查」，不要写成已确认</Text></Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Box style={{ width: 140 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>待交付物</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>最后要交出的是哪几份东西</Text></Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 30, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>让第二个任务根据摘要指出：还需要读取哪些文件才能把方案定下来。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 25</Text>
+    </Box>
+
+</Slide>

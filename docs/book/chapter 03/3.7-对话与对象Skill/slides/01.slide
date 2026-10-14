@@ -1,0 +1,57 @@
+<Slide notes={`我们从第二章的方案继续往前走。方案上写着十点开始手作体验，写着通知来访者，但纸面上的字不等于世界里真的发生了：没有人真的走到手作室，来访者也没有真的听到任何消息。
+
+青禾开放日最值得看的地方，不是四个人最后站在哪里，而是他们怎样一步一步获得不同的信息。服务台掌握已有预约，林岚负责组织安排，公告栏保存当前公开通知，来访者只能靠咨询或交谈来更新认识。
+
+所以要让行为变化能被解释，信息就必须沿真实发生的交互传播：发言的人是真的，接收的人是真的，留下的事实也是真的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.7</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>让信息通过{'\n'}真实交互传播</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>四个人物和两个对象掌握的信息并不相同。只有沿真实渠道发生的发言、请求与回应，才能解释行为怎样改变。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>真实发言者</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>真实请求</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>整步提交</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>事实取证</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Box style={{ width: 560, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>人与人对话　·　SPEAK</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>一条 SPEAK 恰好连接一名其他 Agent</Text>
+            </Box>
+            <Box style={{ width: 560, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>人与对象请求　·　INTERACT</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>选择键取自感知，请求与回复随整步提交</Text>
+            </Box>
+            <Box style={{ width: 560, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 96, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>对象自己的行动</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>每 Step 自主运行，只修改自身状态</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

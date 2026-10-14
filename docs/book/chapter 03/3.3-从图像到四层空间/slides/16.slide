@@ -1,0 +1,145 @@
+<Slide notes={`示意地图上，三个房间在 y=1 到 y=12 之间，公共大厅从 y=13 开始横向铺开。横向隔断位于 y=13，三处门洞分别在 x=5/6、16/17、26/27。
+
+注意两个限定：一，语义范围内仍可能有墙体或物件阻挡，这张图省略了物件碰撞；二，绿色短线标出的是设计门洞，不是已执行的穿门轨迹，不能把它们当作角色已经走过的路。
+
+完整配置以地图资料为准。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.4　画面有门，还要把门设为可走</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>32×24 示意地图与三处门洞</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 28 }}>
+
+        <Box style={{ width: 600, flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+
+            <Box style={{ flexDirection: 'row' }}>
+                <Box style={{ width: 24 }} />
+                <Box style={{ width: 576, height: 18, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>0</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>8</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>16</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>24</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>32　X →</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row' }}>
+                <Box style={{ width: 24, height: 432, flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>0</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>12</Text>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>24</Text>
+                </Box>
+
+                <Box style={{ width: 576, height: 432, background: '#F4F7FA', borderRadius: 4, flexDirection: 'column' }}>
+
+                    <Box style={{ height: 18 }} />
+
+                    <Box style={{ flexDirection: 'row', marginLeft: 18, gap: 18 }}>
+                        <Box style={{ width: 180, height: 198, background: '#EDF4FC', flexDirection: 'column', padding: 8, gap: 3 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>阅读室</Text>
+                            <Text style={{ fontSize: 11, color: '#546779' }}>1,1 · 10×12</Text>
+                            <Box style={{ flex: 1 }} />
+                            <Box style={{ width: 84, height: 32, background: '#FFFFFF', borderRadius: 4, justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <Text style={{ fontSize: 12, color: '#20344B' }}>阅读桌</Text>
+                            </Box>
+                        </Box>
+                        <Box style={{ width: 162, height: 198, background: '#EDF4FC', flexDirection: 'column', padding: 8, gap: 3 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>手作室</Text>
+                            <Text style={{ fontSize: 11, color: '#546779' }}>12,1 · 9×12</Text>
+                            <Box style={{ flex: 1 }} />
+                            <Box style={{ width: 84, height: 32, background: '#FFFFFF', borderRadius: 4, justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <Text style={{ fontSize: 12, color: '#20344B' }}>手作台</Text>
+                            </Box>
+                        </Box>
+                        <Box style={{ width: 162, height: 198, background: '#EDF4FC', flexDirection: 'column', padding: 8, gap: 3 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>交流室</Text>
+                            <Text style={{ fontSize: 11, color: '#546779' }}>22,1 · 9×12</Text>
+                            <Box style={{ flex: 1 }} />
+                            <Box style={{ width: 84, height: 32, background: '#FFFFFF', borderRadius: 4, justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <Text style={{ fontSize: 12, color: '#20344B' }}>交流桌</Text>
+                            </Box>
+                        </Box>
+                    </Box>
+
+                    <Box style={{ flexDirection: 'row', marginLeft: 18, height: 18 }}>
+                        <Box style={{ width: 90, height: 18, background: '#B5C7D8' }} />
+                        <Box style={{ width: 36, height: 18, background: '#26816B' }} />
+                        <Box style={{ width: 162, height: 18, background: '#B5C7D8' }} />
+                        <Box style={{ width: 36, height: 18, background: '#26816B' }} />
+                        <Box style={{ width: 144, height: 18, background: '#B5C7D8' }} />
+                        <Box style={{ width: 36, height: 18, background: '#26816B' }} />
+                        <Box style={{ width: 36, height: 18, background: '#B5C7D8' }} />
+                    </Box>
+
+                    <Box style={{ marginLeft: 18, width: 540, height: 180, background: '#ECF7F2', flexDirection: 'column', padding: 8 }}>
+                        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>公共大厅</Text>
+                            <Text style={{ fontSize: 11, color: '#546779' }}>1,13 · 30×10</Text>
+                            <Box style={{ flex: 1 }} />
+                            <Text style={{ fontSize: 12, color: '#546779' }}>可走空地</Text>
+                        </Box>
+                        <Box style={{ flexDirection: 'row', gap: 10, marginTop: 8 }}>
+                            <Box style={{ width: 88, height: 32, background: '#FFFFFF', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 12, color: '#20344B' }}>公告栏</Text>
+                            </Box>
+                            <Box style={{ width: 88, height: 32, background: '#FFFFFF', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 12, color: '#20344B' }}>服务台</Text>
+                            </Box>
+                        </Box>
+                    </Box>
+
+                    <Box style={{ height: 18 }} />
+
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779', width: 600 }}>横向隔断 y=13；门洞 x=5/6、16/17、26/27（示意，省略物件碰撞，非寻路结果）</Text>
+
+        </Box>
+
+        <Box style={{ width: 524, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: 14, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>图例</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 16, height: 16, background: '#EDF4FC' }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>房间 Arena 语义范围</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 16, height: 16, background: '#ECF7F2' }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>公共大厅语义范围</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 16, height: 16, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>隔断与墙（阻挡）</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 16, height: 16, background: '#26816B' }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>设计门洞（可走）</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#FFFFFF', borderRadius: 10, borderWidth: 1, borderColor: '#B5C7D8', padding: 14, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>先封隔断，再开门洞</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>横向隔断位于 y=13，门洞格在 x=5/6、16/17、26/27。先形成连续隔断，再用「可走」打开这些格；按地图资料标记外墙、房间分隔和物件占用。World 与 Sector 覆盖整张 32×24 地图。</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '12px 16px' }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>绿色门洞是设计门洞，不是已执行的穿门轨迹；语义范围内仍可能有墙体或物件阻挡。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 25</Text>
+    </Box>
+
+</Slide>

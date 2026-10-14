@@ -1,0 +1,97 @@
+<Slide notes={`四个人四种兴趣，评分者手里有唯一的答案，这份答案只用于判分。
+
+安禾的兴趣是辨认城市常见鸟类外形，对应的活动是阅读或者观看鸟类图册，答案落点在甲厅；罗宁要了解鸟类活动记录方法，对应阅读鸟类观察记录，也在甲厅。姚知比较传统纸艺纹样，对应观看或者阅读纹样资料；施远了解纸艺制作步骤，对应查看过程图片或者说明，这两项落在乙厅。
+
+关键在于，访客本人看不到右边这一列。共同 Brain 里没有完整兴趣表，人物只有自己那一条兴趣，再加上入口和休息区这两个初始已知空间。
+
+如果他们提前知道答案，实验就变成了记忆测试，而不是发现测试。这也是为什么公共名称只写甲厅、乙厅，不写主题。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.1　兴趣表给谁看</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四张兴趣，四个答案</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>左三列是人物自己知道的部分，右一列只出现在教师判分材料里。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32, alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 700, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+
+                <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4 }} />
+                    <Box style={{ width: 92 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>访客</Text></Box>
+                    <Box style={{ width: 300 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>本人兴趣</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>匹配活动</Text></Box>
+                </Box>
+
+                <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Box style={{ width: 92 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>安禾 G1</Text></Box>
+                    <Box style={{ width: 300 }}><Text style={{ fontSize: 15, color: '#546779' }}>辨认城市常见鸟类外形</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>阅读／观看鸟类图册</Text></Box>
+                </Box>
+
+                <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Box style={{ width: 92 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>罗宁 G2</Text></Box>
+                    <Box style={{ width: 300 }}><Text style={{ fontSize: 15, color: '#546779' }}>了解鸟类活动记录方法</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>阅读鸟类观察记录</Text></Box>
+                </Box>
+
+                <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                    <Box style={{ width: 92 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>姚知 G3</Text></Box>
+                    <Box style={{ width: 300 }}><Text style={{ fontSize: 15, color: '#546779' }}>比较传统纸艺纹样</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>观看／阅读纹样资料</Text></Box>
+                </Box>
+
+                <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                    <Box style={{ width: 92 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>施远 G4</Text></Box>
+                    <Box style={{ width: 300 }}><Text style={{ fontSize: 15, color: '#546779' }}>了解纸艺制作步骤</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>查看过程图片／说明</Text></Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 420, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+
+                <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>评分者答案（教师用，人物不可见）</Text>
+                </Box>
+
+                <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>甲厅</Text>
+                </Box>
+
+                <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>甲厅</Text>
+                </Box>
+
+                <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>乙厅</Text>
+                </Box>
+
+                <Box style={{ height: 58, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>乙厅</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#CB6B28' }}>访客不得看到右侧主题答案；共同 Brain 没有完整兴趣表，初始已知空间只有入口与休息区。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

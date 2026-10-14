@@ -1,0 +1,38 @@
+<Slide notes={`剩下的时间交给你自己动手。这里准备了五道练习，每一道都对应前面讲过的某一件事。
+
+第一道练证据意识。助手说了三句话，容量十二人、已经预约十点半、你喜欢简短报告，你要分别说出每一句需要什么证据。关键问题是：只在回答里写出这些文字，能证明哪一项已经成立。
+
+第二道练指标计算。十条必需约束，模型输出十条，八条正确、两条不存在，还漏掉两条必需约束。你要算出精确率、召回率和 F1。算完之后还要再想一步：如果漏掉的恰好是预约冲突条件，为什么总体 F1 不能直接代表方案可执行。
+
+第三道练概率与假设。每次独立成功概率零点八，给两次机会，至少成功一次和两次都成功的概率分别是多少，以及现实里哪些因素会破坏独立同分布。
+
+第四道读数据卡，第五道设计自己的小评价。后两道没有唯一答案，重点是你能不能把条件、证据、分母和失败处理写清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 26 }}>
+
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>1.6.7</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>章末练习与参考思路</Text>
+        <Text style={{ fontSize: 17, color: '#546779' }}>把方法落到自己的任务上</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 28, paddingTop: 12 }}>
+
+            <Text style={{ fontSize: 120, fontWeight: 'bold', color: '#276FBF', lineHeight: 1 }}>5</Text>
+
+            <Box style={{ flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>道练习</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>找来源 · 重算指标 · 解释成功率</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>读数据卡 · 设计自己的小评价</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 27</Text>
+    </Box>
+
+</Slide>

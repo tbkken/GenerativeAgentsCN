@@ -1,0 +1,53 @@
+<Slide notes={`三种作业范围的差别，说到底就是证据增加到哪一层。
+
+基础的设计作业，交的是一份完整设计：需求与范围、来源与假设、角色信息表、精确的 Skill 与依赖清单、运行及判分计划。它不需要编造运行结果，最后优先由另一位读者完成纸面接收。一个人学习时可以隔日自查，但要写明这是非独立接收。
+
+实践作业在基础之上增加真实运行，通过界面完成资源、实验和运行，保存所有纳入项目的记录，再做可追溯报告，最后完成双方约定的接收检查。重复次数和预算要在开始前确定；如果只跑得动很少几次，就如实说明它属于小型探索。
+
+扩展作业再往上加一层，由另一台机器上的接收者按已核验入口完成操作。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.1　先选择要交付的范围</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种作业范围，证据逐级增加</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'flex-end', gap: 30 }}>
+
+            <Box style={{ width: 364, height: 292, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>基础作业：设计交付</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>适合尚未获得模型服务、没有运行预算，或正在学习系统的读者</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>· 完整项目设计与来源假设{'\n'}· 角色信息表与依赖清单{'\n'}· 运行及判分计划{'\n'}· 优先由另一人做纸面接收</Text>
+            </Box>
+
+            <Box style={{ width: 364, height: 352, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#26816B' }}>实践作业：运行交付</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>在基础作业之上，要求真实配置、真实运行与真实记录</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>· 通过系统界面完成独立资源、{'\n'}　实验与运行{'\n'}· 保存所有纳入项目的记录{'\n'}· 制作可追溯报告{'\n'}· 完成双方约定的接收检查</Text>
+            </Box>
+
+            <Box style={{ width: 364, height: 412, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>扩展作业：独立环境接收</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>由另一台机器上的接收者检查实际包并完成约定操作</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>· 检查实际包、配置本机凭据{'\n'}· 按可用且已核验的产品入口完成约定操作{'\n'}· 发送成功、压缩包可解开、同机回放通过，都不能替代这一层{'\n'}· 入口未核验就登记限制，不绕过界面伪造验收</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>做得完整的设计作业，不会因为没有运行就被迫填上虚构的 Run</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>实践作业遇到失败，只要记录完整、判断准确，同样体现对系统和方法的掌握</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 31</Text>
+    </Box>
+
+</Slide>

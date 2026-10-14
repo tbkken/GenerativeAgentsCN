@@ -1,0 +1,108 @@
+<Slide notes={`这套 SOP 是条件式的：每一步都写清触发条件，不按时间硬排。
+
+前半段四条针对查询与申报。还没拿到本次正式通知，就接近公告用真实查询键去查；查到原公告先保存当前信念，再真实向沈禾确认；沈禾收齐三份实际确认，才向公告提交依据与完整申请；公告核对请求者身份后修改状态并回复。
+
+后半段六条针对更正与行动。沈禾拿到正式更正确认就逐人发出内容相同的更正；参与者收到来源明确的最终更正才执行本组记忆处理；此前与同伴交换过地点，就按共同规则转告一次，否则不全员广播。
+
+会址行动前固定检索「本次活动当前正式通知与会址地点」，limit=8。候选建议、待确认申请、引用旧消息，都不能当成新的正式地点。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.3　两组共同的条件式 SOP</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从查询到行动：十条条件式 SOP</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 10 }}>
+
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>前半段　查询与申报　①—④</Text>
+
+            <Box style={{ width: 560, height: 100, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45, width: 496 }}>尚未取得本次正式通知：接近公告，使用真实查询键查询。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 100, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45, width: 496 }}>收到原公告：保存当前会址信念，再真实 SPEAK 向沈禾确认。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 100, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45, width: 496 }}>沈禾收到三份实际确认：向公告提交依据和完整更正申请。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 100, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45, width: 496 }}>公告处理真实待办，核对注入的请求者身份，再修改自身状态并回复。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 8 }}>
+
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>后半段　更正与行动　⑤—⑩</Text>
+
+            <Box style={{ width: 560, height: 64, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.4, width: 496 }}>沈禾收到正式更正确认：逐人发出内容相同的正式更正。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 64, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>6</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.4, width: 496 }}>参与者收到来源明确的最终更正：执行本组记忆处理。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 64, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>7</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.4, width: 496 }}>此前与某同伴交换过地点：按共同规则向其转告一次；否则不全员广播。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 64, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>8</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.4, width: 496 }}>会址行动前固定检索「本次活动当前正式通知与会址地点」，limit=8。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 64, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>9</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.4, width: 496 }}>按最新已确认正式通知行动；候选建议、待确认申请、旧消息都不当新正式地点。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 64, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                <Box style={{ width: 26, height: 26, background: '#546779', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>10</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.4, width: 496 }}>成功 world-act 后结束本轮；动作前写待确认便签，下轮据真实反馈核实。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>条件式流程示意，非系统界面截图</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

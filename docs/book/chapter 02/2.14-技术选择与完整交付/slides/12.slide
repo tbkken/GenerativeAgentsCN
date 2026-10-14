@@ -1,0 +1,57 @@
+<Slide notes={`实验一定会做很多次，所以从第一次开始就要把证据留好。
+
+最直接的一条是每次换一个新的输出目录。再跑一遍的时候，不要覆盖上一次的结果。一个目录对应一次尝试，以后回头看，你能说清哪一轮通过、哪一轮失败、中间改了什么。目录混在一起，事后就没法归因。
+
+第二条是关于 Langfuse 的。它观察的是它自己运行的那一次，不会自动把之前的调用补录进去。所以要让 Trace 和业务报告指向同一次尝试，才能互相对照。
+
+还有一件事我想强调：不要一次把命令都跑完，然后只看最后一行。哪一步失败，就先看哪一步的实际输出，再决定改哪里。这个习惯能省掉大量猜测。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.2　一次完整的 API 路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>换新目录，留下这一次的证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 196, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>每次实验换一个新的输出目录</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>再次实验时用新的 --output-dir，把上一轮的证据保留下来。覆盖旧目录会让两次尝试混在一起，之后说不清哪一轮通过、哪一轮失败。</Text>
+            </Box>
+
+            <Box style={{ height: 196, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>Langfuse 观察的是它自己那一次</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>按 2.13.7 单独运行 Langfuse 示例，它不会自动补录此前脚本的调用。Trace 与业务报告都要指向同一次尝试，才能互相对照。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 260, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>一次尝试要留下的东西</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>模型与提示配置</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>输入材料与工具调用</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>输出产物与文件位置</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>校验命令、退出码与结果</Text>
+            </Box>
+
+            <Box style={{ height: 132, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>不要只看最后一行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>任何一步失败，先看这一步的实际输出，再决定改哪里。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 25</Text>
+    </Box>
+
+</Slide>

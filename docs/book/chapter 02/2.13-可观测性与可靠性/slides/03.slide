@@ -1,0 +1,53 @@
+<Slide notes={`在动手测之前，先回答一个问题：这次到底是测谁。
+
+同一个任务里至少有四个层次可以被测。模型生成能力，看它能不能在给定输入下产出可解析、可用的候选；工具选择与参数能力，看它选没选对工具、参数和调用时机对不对；应用控制逻辑，看循环、错误处理、关联和停止条件有没有被正确处理；最终筹备结果，看交付物是不是真的满足全部硬约束。
+
+这四层不能混着测。测模型的时候要把工具和数据固定住，测工具的时候要把模型和任务固定住，否则一次失败你根本说不清是谁的问题。
+
+还有一句必须记住：测试路线的数量，不等于被测层次的个数。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.13.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先确定被测对象</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>测哪一层，就把其他条件固定住；测出来的通过，只能证明那一层。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>路线一　程序规则测试</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>路线二　应用控制测试</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>路线三　端到端任务评价</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 300, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>被限定的结论，换一层就不能照搬</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 34</Text>
+    </Box>
+
+</Slide>

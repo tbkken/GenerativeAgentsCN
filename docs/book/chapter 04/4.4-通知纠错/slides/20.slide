@@ -1,0 +1,58 @@
+<Slide notes={`有几种结果看起来像失败，但需要先分清是什么。
+
+历史导出里仍然能看到旧公告，这不等于替代失败——历史本来就该保留，退出的是有效态，不是把过去删掉。
+
+只看到 SUPERSEDED 这样的标签，也不够。要真正证明纠正成立，还得有新节点、真实的检索，以及之后行动上的变化。
+
+如果消息本身传得没问题，但行动照旧，那就要去查三件事：人物怎么判断消息来源、检索有没有把旧节点取回来、待确认便签的进度走到哪了。
+
+最容易被误判的是最后一种：公告根本没改，那先要报「触发条件未满足」，不能直接说模型遗忘了。条件都没达到，谈不上记忆纠正失败。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.6　人工判分与失败解释</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>常见结果的合理解释</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>看到的情况</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>怎样解释</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>历史导出仍含旧公告</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>保留历史，不等于替代失败。退出的是有效态，不是删掉过去。</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>仅有 SUPERSEDED 标签</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>标签不够，仍需新节点、固定问题的真实检索和后续行动。</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>消息正常，行动仍旧</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>查来源判断、检索是否取回旧节点、待确认便签的进度。</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>公告根本没改</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>先报触发未满足，不叫模型遗忘。条件没达到，谈不上纠错失败。</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

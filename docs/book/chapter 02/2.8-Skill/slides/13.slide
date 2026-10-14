@@ -1,0 +1,60 @@
+<Slide notes={`敢不敢装一个 Skill，取决于你有没有先把它跑一遍。
+
+我建议三件事按顺序做。第一步读配套文件，检查步骤、脚本和资料是不是齐全。第二步在本地执行脚本，确认三件事：它能不能找到 references；Schema 和方案结构是不是一致；有没有偷偷依赖仓库外面的隐含文件。第三步换一次人数或者预约材料再跑，看流程会不会重新读取输入。
+
+还有一条容易被忽略的：教学包里的规则，和示例目录里的规则应该保持一致。配套的离线测试会检查关键副本，就是为了避免出现讲解一套规则、实际执行另一套规则的情况。这种不一致很隐蔽，光看代码看不出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.8.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先验证方法，再安装</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先读配套文件，再在本地跑一遍，最后才谈安装。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 264, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>读配套文件</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>步骤、脚本与资料是否齐全</Text>
+            </Box>
+            <Box style={{ width: 264, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>本地执行脚本</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>找不到材料、Schema 不符</Text>
+            </Box>
+            <Box style={{ width: 264, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>三种方案各跑一遍</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>正确、预约冲突、缺字段</Text>
+            </Box>
+            <Box style={{ width: 264, height: 92, background: '#F7F3E8', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>换一次输入</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>看流程是否重新读取材料</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 264, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>跑通过再装，装完才知道该核对什么</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 27</Text>
+    </Box>
+
+</Slide>

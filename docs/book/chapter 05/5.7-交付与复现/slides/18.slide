@@ -1,0 +1,93 @@
+<Slide notes={`这四种工作，差别最清楚的地方就在输入和身份上。
+
+新跑从封存实验开始，创建新的 Run，run_id 是新的，同时产生第一个 Attempt。续跑拿到同一个 Run 的完整检查点，身份上保留原来的 run_id，只新建一个 Attempt，并从最新完整提交边界的下一个 Step 继续。重跑从旧 Run 的内嵌实验创建新 Run，run_id 也是新的，它复用的是当时的实验，不是当时的执行事实。复算只用既有的事实和判据，不生成任何新的世界事实。
+
+这四行只是对应关系，不是执行顺序。交付承诺以实际接收记录为准；同机回放成功，不等于异机续跑通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.5　正式复现是一项单独工作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>输入不同，身份就不同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 66, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>逐行比较输入来源，以及是否创建新的运行身份</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>只表示对应比较项，不表示执行顺序</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 500, height: 48, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>新跑的输入</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>封存实验</Text>
+            </Box>
+            <Box style={{ width: 64, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 516, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>输出身份</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>新 run_id ＋ 首个 Attempt</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 500, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>续跑的输入</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>Run 的完整检查点</Text>
+            </Box>
+            <Box style={{ width: 64, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 516, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>输出身份</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>同 run_id ＋ 新 Attempt</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 500, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>重跑的输入</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>旧 Run 的内嵌实验</Text>
+            </Box>
+            <Box style={{ width: 64, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 516, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>输出身份</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>新 run_id</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 500, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>复算的输入</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>既有事实与判据</Text>
+            </Box>
+            <Box style={{ width: 64, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 516, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>输出身份</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不生成世界事实</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>交付承诺以实际接收记录为准；同机回放不等于异机续跑通过。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

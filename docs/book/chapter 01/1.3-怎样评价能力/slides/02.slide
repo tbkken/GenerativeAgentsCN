@@ -1,0 +1,128 @@
+<Slide notes={`这一节要处理一个很常见的困境：我们心里其实有一个判断，说得出“这个模型挺聪明”，但这个判断经不起追问。九个知识块就是在把这句话拆开。
+
+先看一条完整的链：目标、样本、输出、判据、指标、边界。指标只是链条的一环，不是终点。
+
+接着认识分母。十道题答对八道是八成，但“报出来的里面有多少是真的”和“应该找到的里面有多少被找到”，是两件不同的事，所以要有精确率和召回率。
+
+再往后是“合格”的层次：逐条要求都通过，不代表整件事完成了；工具调用成功，也不代表任务成功。
+
+剩下几块处理结论的强度：多试几次和次次可靠方向相反；没有唯一答案的写作要靠偏好比较；等待时间、成本、样本量、测试污染，都会决定一个分数能说明多远。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的九件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>这个分数，到底在回答哪句话？</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>九个知识块从“怎么算”走到“能说明多远”：先把目标写成样本与判据，再认分母、分层级、看重复，最后检查偏好、自信、等待与样本量。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一条从目标到边界的评价链</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>目标、样本、输出、判据、指标、边界，指标不是终点</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>准确率在数什么</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>十道事实题答对八道，数的是这份材料和这套判据</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>为什么需要两个分母</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>报出来的有多少是真的，应找到的有没有被找到</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>局部合格，不等于任务完成</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>逐条通过、工具成功、引用贴上，都还不是交付</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>至少一次，与每次都可靠</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>多给机会越来越容易，每次都成功越来越难</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>没有唯一答案时怎样打分</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>配对比较、位置偏差与逐项核对</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>07</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>自信是否可信</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>报出的把握要接受校准与 Brier 分数的检验</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>08</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>等待时间与花费的口径</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>首 Token 与端到端、分位数、每次成功任务成本</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, height: 54, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>09</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>证据能说明多远</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>区间宽度、测试污染与基准饱和</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 31</Text>
+    </Box>
+
+</Slide>

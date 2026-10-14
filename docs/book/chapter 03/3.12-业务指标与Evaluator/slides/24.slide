@@ -1,0 +1,35 @@
+<Slide notes={`把这一节收成三句话。
+第一句，三层分开报。执行状态、行为质量、业务成效回答的是三个不同的问题，它们可以互相解释，但不能互相替代；没执行的评价就保持未执行，不写成通过。
+第二句，指标先定口径。分母是谁、窗口到哪一步、什么算获知，这些都要在运行之前定下来，事后补的口径不叫口径。
+第三句，对照说明改动。保留基线，一次只改变一处；即使统计显示出了差别，也只支持当前的设定和模型条件，推不到真实社区。
+下一节我们去看导出与迁移，区分资源包、实验包、Run 包和普通结果 ZIP。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>三层分开报</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>执行状态、行为质量、业务成效可以互相解释，不能互相替代；未执行就是未执行。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>指标先定口径</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>分母、窗口与获知证据在运行前固定，事后不补。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>对照说明改动</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>保留基线，只改变一处；仿真观察推不到真实社区。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：导出、迁移与离线回放 —— 区分资源包、实验包、Run 包与结果 ZIP</Text>
+
+    </Box>
+
+</Slide>

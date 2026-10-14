@@ -1,0 +1,62 @@
+<Slide notes={`记忆这块当前用的实现叫 file_lexical，也就是基于文件的词法检索。我要提醒一句：选择 Embedding，并不会自动启用向量检索，那只是配置里的一个选项，不等于生效。
+
+整理这件事听起来像在训练模型，其实不是。它不训练模型，也不新增调度器，只改变一件事——以后能被检索到的文本长什么样。这个坐标很重要，因为它决定了收益的来源：不是模型变聪明了，而是它以后能翻到的记录变了。
+
+所以结果可能两头走：整理得好，能减少遗漏，前一晚确认过的事情第二天更容易被想起来；整理得不好，多出来的文字反而会增噪，把不相干的记录推到你面前。
+
+这一节要观察的，正是这种“可能更好、也可能更乱”的净效果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.3　记忆实现与影响范围</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>改变的是以后能检索到什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 400 }}>整理不训练模型、不新增调度器，它只改一处：以后一次检索能翻到什么文本。</Text>
+            <Box style={{ width: 400, height: 130, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>当前实现：file_lexical</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>基于文件的词法检索。另选 Embedding 不等于已经启用向量检索。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 716, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 716, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 88, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>收益侧的假设：减少遗漏</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>把已确认与待证据分开写清，前一日的事实更容易在次日被重新检索到。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 716, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 88, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>代价侧的假设：可能增噪</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>多出的整理文本如果混入推测或冗余，会把无关记录推到检索结果前面。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 716, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 88, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>所以要看净效果，而不是只看整理本身</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>登记生成总结不算数，要看到整理之后的真实检索与使用。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 27</Text>
+    </Box>
+
+</Slide>

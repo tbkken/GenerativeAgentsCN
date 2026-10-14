@@ -1,0 +1,79 @@
+<Slide notes={`我先从一个最容易被跳过的环节讲起。我们评价一次仿真，最常写的一句话是「来访者找到了正确的窗口」。这句话读起来像结论，其实它把五个环节压成了一个短语：谁提出需求、需求怎样被补充、系统给出什么建议、人物实际去了哪里、最后由谁收到并确认。
+
+这五个环节里任何一环没有来源，整句话就站不住。教师答案只能说明什么算正确，它不能证明角色真的收到过信息。所以这一节要把评分表逐项拿出来，一项一项接到来源上，看每一种写法究竟有多少依据。材料分层、主张追问、取材边界、报告落点，这四步是连着的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.6　证据与可复核成果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从原始事实到可复核成果</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>每个结论{'\n'}都能找到出处</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>一句「来访者找到了正确窗口」，要能被拆回五段可复查的记录，逐段指得出它从哪里来。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 6 }}>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>H1—H4 判据</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>2026-10-18</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>76 步窗口</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 600, height: 62, background: '#F7F3E8', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 150 }}>谁提出需求</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 366 }}>冻结的作者任务与人物设定</Text>
+            </Box>
+            <Box style={{ width: 600, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, height: 62, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF', width: 150 }}>怎样补充</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 366 }}>澄清提问与人物真实补充</Text>
+            </Box>
+            <Box style={{ width: 600, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, height: 62, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF', width: 150 }}>得到什么建议</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 366 }}>窗口请求、响应与适配说明</Text>
+            </Box>
+            <Box style={{ width: 600, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, height: 62, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B', width: 150 }}>实际去了哪里</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 366 }}>MOVE 事实与参与者状态</Text>
+            </Box>
+            <Box style={{ width: 600, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, height: 62, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B', width: 150 }}>收到并确认什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', width: 366 }}>人物发言或后续交互记录</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 24</Text>
+    </Box>
+
+</Slide>

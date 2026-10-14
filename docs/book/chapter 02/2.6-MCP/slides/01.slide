@@ -1,0 +1,65 @@
+<Slide notes={`我们从青禾的预约查询说起。把同一个只读服务接进不同的宿主，靠的不是为每个宿主单独写一套对接代码，而是双方都遵守同一套约定：怎样声明能力、怎样描述参数、怎样发起调用、结果怎样传回来。
+
+这份约定就是 Model Context Protocol，简称 MCP。它解决的是连接方式的问题，不解决业务判断。青禾的预约规则仍然写在业务代码里，协议不负责判断某一天某个时段排得合不合理。
+
+把同一份能力接进不同宿主时，能力发现、参数描述、调用与结果传输这几段可以复用，这是 MCP 带来的直接好处。所以整节的落点是：约定统一之后，换宿主不必重写对接代码。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体：技术、OpenAI API 与 WorkBuddy　·　2.6</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>MCP：让工具{'\n'}以共同的方式接入应用</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 600 }}>同一个只读预约查询能力接进不同宿主时，能力发现、参数描述、调用与结果传输可以复用同一套约定。青禾的预约规则仍由业务代码负责。</Text>
+            <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>连接方式统一</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>能力可以被发现</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>业务规则不改</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 500, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>Host 宿主应用</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>应用与 Client，一个服务一条连接</Text>
+            </Box>
+            <Box style={{ width: 500, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#276FBF' }}>↓　协议通信</Text></Box>
+            <Box style={{ width: 500, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>MCP Server 服务端</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>提供能力与合同，校验参数</Text>
+            </Box>
+            <Box style={{ width: 500, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text></Box>
+            <Box style={{ width: 500, flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 160, height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>tools</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>调用能力</Text>
+                </Box>
+                <Box style={{ width: 160, height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>resources</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>读取内容</Text>
+                </Box>
+                <Box style={{ width: 160, height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>prompts</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>交互模板</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 27</Text>
+    </Box>
+
+</Slide>

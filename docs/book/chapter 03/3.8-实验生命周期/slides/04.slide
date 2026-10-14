@@ -1,0 +1,71 @@
+<Slide notes={`这张关系图讲的是复制与封存的边界。
+
+公共作者资源向实验 A 的草稿走一步，这一步是递归的物理复制：整份闭包都搬进来，不是建立一条链接。
+
+实验 A 从草稿到封存，身份始终是同一个。校验通过、确认执行之后它变成 SEALED，内容不可再修改，这样以后才能解释某一次运行到底用了什么材料。
+
+需要调整内容的时候，不是给原实验打补丁，而是向下复制出实验 B。实验 B 有新的 UUID、独立的内容，从此与实验 A 各走各路。
+
+图里的 A 和 B 只是为了讲解方便起的标签，不是真实实验的身份编号。虚线那一头提醒的是：后续对公共资源的修改不会自动传播到既有副本，它不能读成一种持续同步的关系。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.1　创建的结果是一份独立材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>副本与封存边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6, width: 1152 }}>实验 A 从草稿到封存仍是同一身份；需要改内容时，向下复制得到的是独立实验 B。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 140, background: '#F7F3E8', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>公共作者资源</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>地图 · 人物 · Skill · 模型</Text>
+            </Box>
+            <Box style={{ width: 44, height: 140, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 140, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>实验 A　DRAFT</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>可编辑包内副本</Text>
+            </Box>
+            <Box style={{ width: 44, height: 140, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 140, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>实验 A　SEALED</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>内容不可修改</Text>
+            </Box>
+            <Box style={{ width: 44, height: 140, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 140, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>实验 B　DRAFT</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>新 UUID、独立内容</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>复制是递归物理复制</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>地图、Brain、人物与模型连同各自依赖整份进来，不是记几条链接。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>后续公共修改不自动传播</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>保留原实验与原 Run，不建立业务 Revision；虚线不是持续同步关系。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>A、B 是说明标签，不是实验 UUID。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

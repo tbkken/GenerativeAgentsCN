@@ -1,0 +1,49 @@
+<Slide notes={`到了做决定的时候，我想先反对一种做法：不要拿一个综合分去选模型。
+
+综合分的问题在于，它把不同的任务平均在一起。一个模型可能在写文案上很出色，在核对冲突规则上却经常出错。平均下来它的分数也许还不错，但你的任务恰恰是核对冲突，那这个分数对你毫无意义。
+
+所以正确的顺序是相反的。先确定你的任务里哪些条件是不可违反的，把它们作为门槛，看看候选能不能过。过了门槛之后，再看它在你的任务上成功率多高、花费多少、要等多久。
+
+同一个模型，用在起草活动宣传语上可能是合适的，用在自动处理预约状态上就不一定。任务的性质不同，可接受的条件也不同。
+
+选择结论必须绑定任务来描述，而不是宣告某个模型全面更好。这也是为什么我要先写清楚任务，再谈选择。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 24 }}>
+
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>1.6.5　第五步</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>按任务选择，而不是按一个综合分选择</Text>
+        <Text style={{ fontSize: 17, color: '#546779' }}>综合分把不同任务平均在一起，你的任务只有一件</Text>
+
+        <Box style={{ width: 320, height: 80, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center', paddingTop: 8 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一个综合分</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 320, height: 90, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>起草活动宣传语</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>人会在使用前修改</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 90, background: '#FFF4E6', borderRadius: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>自动处理预约状态</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>无依据的完成声明不可接受</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 90, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>核对活动冲突</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>关键约束必须独立检查</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,52 @@
+<Slide notes={`接下来把代价摊开。
+
+我只用一笔账来说明一件事：总投入高，单位成功代价未必也高。
+
+A 组用了 370 次逻辑调用、411 次物理尝试，换来 6 项闭环；B 组用了 480 次逻辑调用、516 次物理尝试，换来 8 项闭环。
+
+所以 B 组的总投入确实更高。
+
+但把总数除以闭环数：A 是 370 除以 6，约 61.67；B 是 480 除以 8，正好 60。物理尝试那边，A 是 68.5，B 是 64.5。
+
+B 反而略低。
+
+这两个事实可以同时成立，一点都不矛盾：多花了一些总量，换来更多的成功，单位代价就下来了。
+
+所以报代价必须两边一起报，只报一边都会误导。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3　　4.9.5</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>③ 代价：总量与单位成功代价一起报</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>多花一些总量、换来更多成功，单位成功代价反而更低；只报一边都会误导。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 320, height: 72, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>总投入</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 320, height: 72, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>已闭环任务数</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 72, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>单位成功代价</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 25</Text>
+    </Box>
+
+</Slide>

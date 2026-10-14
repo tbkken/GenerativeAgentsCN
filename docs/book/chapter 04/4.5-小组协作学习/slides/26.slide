@@ -1,0 +1,56 @@
+<Slide notes={`最后留三个问题，用来检查自己有没有真的看清这个案例。
+
+第一，信息是分散持有，还是全员共享？主持人知道不等于别人知道。这一点决定了最后的方案是怎么来的，是有人真的说出来汇到一处，还是某个人自己猜的。
+
+第二，定稿以哪一次发言为准？是主持人最后一次明确、完整的定稿发言，而不是他脑子里最接近答案的那个候选。没说出口的，不算定稿。
+
+第三，分母报的是哪一层？方案得分、必要信息共享、有效贡献、逻辑调用，这是四个不同的量，不能互相替代，也不能用其中一个去推算另一个。
+
+把这三个问题记住，再看别的协作案例，判断会稳很多。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4.5 小组协作学习　·　收束</Text>
+
+        <Text style={{ fontSize: 48, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>记住三个反问</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ flexDirection: 'row', gap: 24, marginTop: 6 }}>
+
+            <Box style={{ width: 368, height: 200, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>一</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5, flex: 1 }}>信息是分散持有，{'\n'}还是全员共享？</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>主持人知道 ≠ 全员知道</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 200, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>二</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', lineHeight: 1.5, flex: 1 }}>定稿以哪一次发言{'\n'}为准？</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>最佳候选不能顶替定稿</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 200, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>三</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>分母报的是{'\n'}哪一层？</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>方案、共享、贡献、调用不可互换</Text>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>4.5 小组协作学习：把分散条件变成有依据的结论　·　第四章　面向问题的场景化应用</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,48 @@
+<Slide notes={`把这一节收成三个问题，以后遇到工具调用都可以用它来核对。
+
+第一个，谁提出调用。是模型提出的，里面带着工具名、参数和 call_id，提出的只是意图。
+
+第二个，谁实际执行。是应用这一侧执行的。执行之前检查允许列表、参数和预算；执行之后记住，只读查询可以重试，写操作不行。
+
+第三个，谁判定可用。判定在应用里，不在模型的措辞里。只有最后一次候选检查通过，才允许作为交付方案保存。
+
+顺着一轮调用往下走：模型请求、应用检查并执行、结果按 call_id 交回，然后再请求一次。下一节，我们把同一套只读能力接到 MCP 上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.5　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25, textAlign: 'center' }}>一轮工具调用，先问三个问题</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 352, height: 170, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>谁提出调用</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>模型只生成意图：工具名、参数与 call_id 一起过来。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 170, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 352, height: 170, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>谁实际执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>宿主编排执行：先检查允许列表、参数与预算，再调用只读函数。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 170, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text></Box>
+            <Box style={{ width: 352, height: 170, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>谁判定可用</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>应用保存最终判定：只有最后一次检查通过的候选才算交付。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.6　MCP：把同一只读能力接入不同宿主</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 26</Text>
+    </Box>
+
+</Slide>

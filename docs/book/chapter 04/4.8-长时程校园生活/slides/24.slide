@@ -1,0 +1,54 @@
+<Slide notes={`我把停下来重评的条件写成三个阈值，达到其中任何一个就暂停。
+
+第一，单个运行达到两千次物理尝试。第二，累计达到四百万 Token。第三，执行墙钟超过两小时。
+
+这三个条件是事前按负担能力定好的，而且两组完全一致，不能只给其中一组设限。达到阈值时要做三件事：计划暂停、记录当前边界、重新评估要不要继续。
+
+还要强调，这是我作为作者的监控规则，不是界面上会自动执行的硬限额。所以在途的调用和收尾的动作仍然可能继续消耗；它不是一堵墙，只是一条提醒线。
+
+如果 Token 用量缺失，就如实记为未知，不能写成“已经控制住了”。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.6　可选预算草案</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个阈值，谁来叫停</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 368, height: 236, background: '#EDF4FC', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>阈值一 · 物理尝试</Text>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>2000</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>单个运行累计达到两千次物理尝试，就计划暂停。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 236, background: '#FFF4E6', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>阈值二 · 上下文用量</Text>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>400<span style={{ fontSize: 30 }}>万</span></Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>Token 用量达到四百万即触发；缺失时记未知，不称已控。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 236, background: '#ECF7F2', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>阈值三 · 执行墙钟</Text>
+                <Text style={{ fontSize: 76, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>2<span style={{ fontSize: 30 }}>小时</span></Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>真实墙钟两小时为上限，与虚拟时间分开计算。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>作者监控规则，不是 UI 自动硬限额</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>事前按负担能力调整、两组一致；在途与收尾仍可耗费，达到阈值后记边界再评估。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 27</Text>
+    </Box>
+
+</Slide>

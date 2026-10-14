@@ -1,0 +1,70 @@
+<Slide notes={`冲突不止一条，我把手上三条都登记下来，处置方式也一起写清楚。
+
+C01 就是那张便签：S01 规定咨询分工，便签给它加了审批能力，改变的是正确窗口和成功含义。本次处置：便签不纳入当前场景，需要新需求时另议范围。
+
+C02 是清单和原教案不一致。草稿写四名人物，原教案里还有引导员余真；漏掉她，协助渠道就没了。本次处置：按原教案核对为五名 Agent。
+
+C03 更隐蔽：某份整理稿把七十五分钟写成七十五步，听着差不多，其实最后时间点会提前一分钟。本次处置：保留七十六步，注明 Step 1 是九点。
+
+接收者要看的不是结论，而是结论挡住了什么后果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.3　冲突先登记，再决定是否采用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>C01–C03：登记冲突，再决定采用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 140, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 88, height: 96, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>C01</Text>
+            </Box>
+            <Box style={{ width: 660, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>S01 规定咨询分工，便签增加审批能力</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>影响：改变正确窗口与成功含义</Text>
+            </Box>
+            <Box style={{ width: 356, height: 96, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>本次处置</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45 }}>便签不纳入当前场景；需要新需求时另议范围</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 140, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 88, height: 96, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>C02</Text>
+            </Box>
+            <Box style={{ width: 660, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>草稿清单写“四名人物”，原教案另有引导员余真</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>影响：漏掉协助渠道，改变调用规模</Text>
+            </Box>
+            <Box style={{ width: 356, height: 96, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>本次处置</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45 }}>按原教案核对为五名 Agent，不按草稿清单减少</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 140, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 88, height: 96, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>C03</Text>
+            </Box>
+            <Box style={{ width: 660, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>某整理稿把 75 分钟写成 75 步</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>影响：最后时间点提前一分钟</Text>
+            </Box>
+            <Box style={{ width: 356, height: 96, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>本次处置</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45 }}>保留 76 步，注明 Step 1 为 09:00</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 23</Text>
+    </Box>
+
+</Slide>

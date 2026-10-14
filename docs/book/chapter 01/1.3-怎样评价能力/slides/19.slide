@@ -1,0 +1,53 @@
+<Slide notes={`前面讲的准确率、精确率、召回率，都建立在“有标准答案”这个前提上。可是有些任务根本没有唯一答案。
+
+比如写一封开放日邀请函。两份文本摆在那里，哪一份更好？没有人能给出一个标准答案去逐字比对。
+
+这时候常用的办法是配对评价：把模型名称藏起来，让读者在同一份材料下同时看到两份文本，分别就几个方面打分——事实是不是忠实、信息是不是完整、表达是不是清楚、是不是适合这批读者——最后再做一个总体选择。
+
+这样做有道理，因为它测量的是体验，而体验确实不是唯一答案能覆盖的。但它也有代价：读者的群体不同、文字长短不同、两份文本呈现的左右顺序不同，都可能影响判断。
+
+所以偏好评价的结论，永远要带上评价人群和题目分布这两个条件。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.3.6　开放写作为什么需要偏好评价</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>没有唯一答案时怎样打分</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>邀请函很难只有一个标准答案；隐藏模型名称，在相同材料下比较两份文本，再作总体选择。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, marginTop: 8 }}>
+
+            <Box style={{ width: 300, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>文本 A</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>隐藏模型名称{'\n'}与文本 B 使用同一份材料</Text>
+            </Box>
+
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#B5C7D8' }}>↔</Text>
+            </Box>
+
+            <Box style={{ width: 300, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>文本 B</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>逐项评价四个维度{'\n'}再作总体选择</Text>
+            </Box>
+
+            <Box style={{ width: 130 }} />
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 31</Text>
+    </Box>
+
+</Slide>

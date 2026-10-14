@@ -1,0 +1,66 @@
+<Slide notes={`这一节讲完了，最后留下三句话。以后看到任何一个“准确率多少”的说法，都可以拿这三句话过一遍。
+
+第一句，它回答哪句话？这是把目标对准任务。评价之前先说明要解决什么问题，是减少遗漏还是让安排可靠。目标不同，样本和判据就不同。选错了任务，指标算得再精确也答不了原来的问题。
+
+第二句，分母是谁？这是把口径捏住。报出来的里面有多少是真的，应该找到的里面有多少被找到，逐条通过还是整条完成，试一次还是试多次，每一个都是不同的分母，而且要在动手之前定好。
+
+第三句，这个分数有多稳？几道题算出来的，区间有多宽，题目有没有泄漏过，这套题是不是已经太简单。样本越小，能说的话越少。
+
+这三句话就是一条链的收口：目标、口径、边界。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>1.3　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>三个问句带走</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>把“聪明”变成可测量的问题，就是把笼统的印象拆成目标、口径与边界。以后看到任何一个分数，先用这三句话过一遍。</Text>
+        </Box>
+
+        <Box style={{ width: 704, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 118, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>它回答哪句话？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>使用目标是什么，样本与判据是否对得上</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 118, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>分母是谁？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>报出来多少、应找到多少、整条算不算、试了几次</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 118, background: '#FFF4E6', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>这个分数有多稳？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>样本量、区间宽度、是否污染、是否已经饱和</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 6 }}>
+                <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>下一节　1.4　当前大模型有哪些能力：逐项读懂指标</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>31 / 31</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,93 @@
+<Slide notes={`这五行是负责人为两个 Run 事先设好的监控规则。数字只是可替换的教学方案，重点是格式：每一行都要写清登记值，以及到达条件后做什么。
+
+本批范围是两组各一个完整窗口，动作是不因结果不满意自行增加 Run。物理尝试监控阈值是两 Run 合计 4,560 次，到达后暂停检查剩余工作与重试原因。费用复核阈值按假设计价是 13 美元，到达后核对真实计费与后续授权范围。单次墙钟复核点是从启动起两小时，包含暂停，暂停时长另列。数据缺口是当用量或关键过程记录不可获得时，标为未知，改用仍可核对的限制与证据。
+
+这些是项目监控规则，不是已经配置进 Runtime 的自动硬上限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.4　把预算写成能采取行动的表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>到达条件之后做什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 740, flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ width: 740, height: 30, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 12 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779', width: 216 }}>项目</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779', flex: 1 }}>事前登记值　→　到达条件后的动作</Text>
+            </Box>
+
+            <Box style={{ width: 740, height: 88, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 200, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>本批范围</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>两组各一个完整窗口</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.45 }}>不因结果不满意自行增加 Run</Text>
+            </Box>
+
+            <Box style={{ width: 740, height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ width: 200, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>物理尝试监控阈值</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>两 Run 合计 4,560 次</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.45 }}>暂停检查剩余工作与重试原因</Text>
+            </Box>
+
+            <Box style={{ width: 740, height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ width: 200, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>费用复核阈值</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>假设计价下 13 美元</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.45 }}>核对真实计费与后续授权范围</Text>
+            </Box>
+
+            <Box style={{ width: 740, height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 200, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>单次墙钟复核点</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>启动起两小时，含暂停</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.45 }}>区分实际执行与等待，检查在途请求和进展</Text>
+            </Box>
+
+            <Box style={{ width: 740, height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ width: 200, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>数据缺口</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>用量或过程记录不可获得</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.45 }}>标为未知，改用仍可核对的限制与证据</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 16 }}>
+            <Box style={{ width: 380, height: 168, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不是自动硬上限</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>这些是项目写下的监控规则，并没有配置进 Runtime 成为自动停止线。</Text>
+            </Box>
+            <Box style={{ width: 380, height: 168, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>四种机制各管一段</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>调用预算、重试配置、运行槽位与人工停跑决定，作用并不相同。</Text>
+            </Box>
+            <Box style={{ width: 380, height: 152, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>暂停不立即停账</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>发出暂停或取消后，在途请求与安全收尾仍可能产生消耗。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 28</Text>
+    </Box>
+
+</Slide>

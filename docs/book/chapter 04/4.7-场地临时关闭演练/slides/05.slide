@@ -1,0 +1,90 @@
+<Slide notes={`场地上有五个语义区域。三个等候区自北向南各占四列三行；连接区占 x 从 5 到 8 的九行，是四人共同的起始侧；集合区占 x 从 9 到 15 的九行，是演练的目标区。
+另有一个公告对象 B 放在连接区 6,5，占格阻挡，走不过去。
+人物方面，程夏从北等候区出发，沈禾从中等候区，杜衡从南等候区，引导员叶青从连接区开始。三名集合者预先知道集合区的真实地址，但没有教师的完整碰撞表，其余地址要靠已知空间和感知取得。
+两组公告用同一段文字，只说按当前导航结果前往集合区，有问题可以咨询现场引导员，不透露组别信息。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.1　五个 Arena 与四个起点</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>场地对象与谁从这里出发</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 700, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 26 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>Arena 或对象</Text></Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>[x,y,width,height]</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>谁从这里出发</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 34, background: '#B5C7D8' }} />
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>北等候区</Text></Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, color: '#276FBF' }}>[1,1,4,3]</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>程夏从北侧出发</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 34, background: '#B5C7D8' }} />
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>中等候区</Text></Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, color: '#276FBF' }}>[1,4,4,3]</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>沈禾从中部出发</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 34, background: '#B5C7D8' }} />
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>南等候区</Text></Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, color: '#276FBF' }}>[1,7,4,3]</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#CB6B28' }}>杜衡从南侧出发</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>连接区</Text></Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, color: '#276FBF' }}>[5,1,4,9]</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>引导员叶青起点</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>集合区</Text></Box>
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, color: '#276FBF' }}>[9,1,7,9]</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#26816B' }}>三人共同进入的目标</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 424, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 424, height: 176, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>公告对象 B　占格阻挡</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>位于连接区 (6,5)，占一格且挡住通行。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>两组公告同文：「请依据当前导航结果前往集合区；如有具体问题，可咨询现场引导员。」不透露额外组别信息。</Text>
+            </Box>
+
+            <Box style={{ width: 424, height: 176, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>三个起点，一张目标地址</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>三人有真实集合区地址，没有教师的完整碰撞表；其他地址依已知空间与感知取得。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>引导员叶青从连接区开始，不替任何人移动。</Text>
+            </Box>
+
+            <Box style={{ width: 424, height: 120, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>墙与门洞归语义区域</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>整图只有 World 与 Sector 两层，均覆盖全图；坐标从 0 开始，外边框阻挡。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 26</Text>
+    </Box>
+
+</Slide>

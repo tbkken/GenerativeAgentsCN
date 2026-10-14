@@ -1,0 +1,82 @@
+<Slide notes={`先看教师唯一解。读图阅读安排在九点到九点五十，教室是阅览室；纸艺手作十点到十点五十，操作室；合作拼图十一点到十一点五十，讨论室。
+
+我要强调两件事。第一，这份解答只给教师，绝不能进入角色、共同 Brain 或者题面对象，否则角色做的就不是推理，而是抄答案。第二，它不是人物真的排出这份安排的证据，它只是标准答案，用来判分。
+
+时间上也要分清：纸上的活动日是二〇二六年十一月十四日，讨论 Run 是十一月十二日下午两点到三点、六十一步，两者是分开的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.6　教师解答与人工判分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>唯一解：时段、活动、教室逐项可核查</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 58, background: '#FFF4E6', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>以下仅给教师，不得进入角色、共同 Brain 或题面对象</Text>
+            <Box style={{ width: 108, height: 32, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>教师材料</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, height: 48 }}>
+            <Box style={{ width: 320, height: 48, background: '#20344B', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>活动</Text>
+            </Box>
+            <Box style={{ width: 400, height: 48, background: '#20344B', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>开始 — 结束</Text>
+            </Box>
+            <Box style={{ width: 400, height: 48, background: '#20344B', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>教室</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, height: 76 }}>
+            <Box style={{ width: 320, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>读图阅读</Text>
+            </Box>
+            <Box style={{ width: 400, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>09:00 — 09:50</Text>
+            </Box>
+            <Box style={{ width: 400, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>阅览室</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, height: 76 }}>
+            <Box style={{ width: 320, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>纸艺手作</Text>
+            </Box>
+            <Box style={{ width: 400, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>10:00 — 10:50</Text>
+            </Box>
+            <Box style={{ width: 400, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>操作室</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, height: 76 }}>
+            <Box style={{ width: 320, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>合作拼图</Text>
+            </Box>
+            <Box style={{ width: 400, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>11:00 — 11:50</Text>
+            </Box>
+            <Box style={{ width: 400, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>讨论室</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 13, color: '#546779' }}>示意排程表：教师解答，非人物已完成排程的实测证据；纸上活动日 2026-11-14，讨论 Run 2026-11-12 14:00—15:00，61 步</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 26</Text>
+    </Box>
+
+</Slide>

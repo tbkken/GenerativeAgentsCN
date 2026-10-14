@@ -1,0 +1,45 @@
+<Slide notes={`如果我们想说明某一个改动到底有没有帮助，就必须做对照。
+举个例子：我调整了周宁说明开放日安排的方式，然后想说「更清晰的通知改善了访客行为」。这句话要成立，前提是保留基线，并且只改变和这个说法相关的那一个条件。
+地图、起点、观察窗口、模型、预算，这些东西如果同时动了，差异到底来自哪里就说不清楚了。你可能改的是通知方式，但真正起作用的是换了模型。
+还有一点：一次运行的结果不能当成规律。多次运行的时候，要报告分布、失败情况和成本，而不是只挑出最顺畅的那一条，给它配一个故事。
+保留基线、只改一处、报告多次结果，这三件事合起来，才叫用对照说明改动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.7　用对照说明改动是否有帮助</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>保留基线，只改变一处</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+            <Box style={{ width: 518, height: 240, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>基线</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>周宁原来的说明方式</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>地图、起点、观察窗口、模型与预算，这些条件全部保持不动，作为对照的基准。</Text>
+            </Box>
+            <Box style={{ width: 602, height: 240, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>只改变这一处</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B', lineHeight: 1.4 }}>说明方式：更清晰的通知</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>被检验的条件只有一个，其余条件与基线一致；这样差异才有可能归到它身上。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>同时改好几处，差异就无法归因</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>多次运行时，报告分布、失败与成本，而不是只选取一条最顺畅的故事。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,63 @@
+<Slide notes={`最后讲成本口径里最容易被偷换的一处：分母是谁。
+
+全覆盖小时是 H，等于最后提交的步数 k 减一，乘以步长，再除以六十，单位是小时。把全部尝试里三人加咨询台的逻辑调用记作 L，那么单位值就是 L 除以三倍的 H，读作“每人每虚拟小时多少次调用”。
+
+拿例子说：一千四百四十次调用，三人乘二十四小时等于七十二个虚拟人时，于是得到每人每虚拟小时二十次。
+
+关键是那三百六十次对象调用要算进分子，但不能在分母里多算一个人。咨询台不是第四个学习者，把它塞进分母会把单位值压低，看起来就便宜了。
+
+另外，如果只有第一步，H 就是零，这个单位值不可计算，要如实写不可计算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.6　调用单位值的分母</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>对象进分子，不冒充第四个人</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, color: '#546779' }}>调用／人 · 虚拟小时</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}>
+                <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>20</Text>
+                <Text style={{ fontSize: 22, color: '#546779', marginBottom: 14 }}>次</Text>
+            </Box>
+            <Box style={{ width: 380, height: 66, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>L ÷（3 × H）</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 420 }}>H ＝（k−1）× Δ ÷ 60，k 为实际最后提交步数，Δ 为步长分钟数。</Text>
+        </Box>
+
+        <Box style={{ width: 676, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 676, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#546779', width: 130 }}>1440</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.55 }}>全部 Attempt 中三人和咨询台的逻辑调用 L；对象 360 次另列。</Text>
+            </Box>
+
+            <Box style={{ width: 676, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28', width: 130 }}>360</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.55 }}>对象成本进分子，但不增加人物分母，不冒充第四个人。</Text>
+            </Box>
+
+            <Box style={{ width: 676, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', width: 130 }}>1 / 0</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.55 }}>仅 Step1 时 H＝0，单位值不可计算；另报人物／对象／物理尝试。</Text>
+            </Box>
+
+            <Box style={{ width: 676, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.55 }}>失败与恢复前的消耗都保留在成本里，不被清理掉。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 27</Text>
+    </Box>
+
+</Slide>

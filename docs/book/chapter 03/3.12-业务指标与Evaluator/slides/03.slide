@@ -1,0 +1,39 @@
+<Slide notes={`这一块先立结构：同一个 Run，要分成三条独立的报告线来看。
+第一条是执行状态，回答请求的步骤有没有完成、在哪里中断。它看的是 Run 状态、Attempt 和已提交边界。青禾走完四十八步，这条线是通的。
+第二条是行为质量，回答过程中有没有出现空检索、无动作、回退、重复调用，或者偏离了 SOP。它看的是已提交的效果、MCP 调用记录和规则评价。
+第三条是业务成效，回答通知有没有更正、信息有没有传达、参与者有没有按新安排行动。它看的是对象变化、会话、记忆更新、位移和活动事实。
+三条线可以互相解释，但谁也不能代替谁。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>①　　3.12.1</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>三层评价，各回答一个问题</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>同一个 Run 分成三条独立的报告线：执行是否结束、系统诊断发现了什么、研究目标是否达到。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 26, marginTop: 10 }}>
+            <Box style={{ width: 340, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>执行状态</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>Run 状态 · Attempt · 已提交边界</Text>
+            </Box>
+            <Box style={{ width: 340, height: 96, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>行为质量</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>已提交效果 · MCP · 规则与评价记录</Text>
+            </Box>
+            <Box style={{ width: 340, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>业务成效</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>对象变化 · 会话 · 记忆 · 移动与活动</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

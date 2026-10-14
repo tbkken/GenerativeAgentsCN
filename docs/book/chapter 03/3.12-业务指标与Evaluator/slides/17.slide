@@ -1,0 +1,55 @@
+<Slide notes={`这一条我特别想强调，因为它太容易被当成已经发生了。
+Studio 里确实有 Evaluator 资源，实验也可以携带相关内容；Brain 类里另有可调用的质量评价方法，这些都是真的。
+但「有资源」不等于「跑了评价」。资源能打进包，不能证明每次 Run 都执行过它；类里有方法，不能证明这次 Run 调用过它。本次核查的正式结束链用的是确定性质量汇总，它证明的不是自定义业务 Evaluator 被执行过。
+所以青禾的到达率和通知延迟，我先用可检查的人工或外部评分表，标注评分者、规则、来源和时间。它们不是内置 Evaluator 的成绩，也不应手工写回历史 Run，把人工判断伪装成系统结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.5　Evaluator 的资源、方法与实际执行</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>有资源、有方法，都不等于跑过</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+            <Box style={{ width: 518, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>当前确实存在的东西</Text>
+                <Box style={{ width: 518, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>Studio 有 Evaluator 资源，实验也可以携带相关内容</Text>
+                </Box>
+                <Box style={{ width: 518, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>Brain 类另有可调用的质量评价方法</Text>
+                </Box>
+                <Box style={{ width: 518, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>本次核查的正式结束链使用确定性质量汇总</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 602, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>它们各自都不能证明</Text>
+                <Box style={{ width: 602, height: 104, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>资源能入包，不等于每次 Run 都自动执行了该评价</Text>
+                </Box>
+                <Box style={{ width: 602, height: 104, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>类中有方法，不等于这次 Run 调用过它</Text>
+                </Box>
+                <Box style={{ width: 602, height: 104, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>确定性汇总，不等于自定义业务 Evaluator 已被执行</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', flex: 1, lineHeight: 1.65 }}>青禾的到达率与通知延迟，先采用可检查的人工或外部评分表，并标注评分者、规则、来源与时间；它们不是内置 Evaluator 的成绩，也不应手工写回历史 Run，把来源伪装成系统结果。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,94 @@
+<Slide notes={`运行时交给对象四样东西。
+
+第一样是 object_state，当前状态，决定要不要改状态、改成什么。第二样是 last_action，上一次做了什么，用来避免重复。第三样是 interaction_requests，有哪些待处理请求。第四样是近期处理过的幂等活动键，用来判断是不是重复请求。
+
+必须记住：在最终文本里写「已回复」不会发送任何消息。答复要放进本次动作的 responses；同一个动作可以既改状态，又答复请求。
+
+对象也能观察本步的运动事实：感知只给视野内的实际路径片段并带事实 ID。针对已观察到的人物行动时，可填目标人物与证据编号，但证据必须来自真实感知返回，不要求每轮都凑齐。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.3　对象也有独立的轮次</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>对象感知什么、依据什么证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 240 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>object_state</Text>
+            </Box>
+            <Box style={{ width: 300 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>自己的当前状态</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>决定这一轮要不要改状态、改成什么</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 240 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>last_action</Text>
+            </Box>
+            <Box style={{ width: 300 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>上一次做过的动作</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>用来避免原地重复做同一件事</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 240 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>interaction_requests</Text>
+            </Box>
+            <Box style={{ width: 300 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>待处理请求与待处理数量</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>哪些请求需要在这一轮回复</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 240 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>近期幂等活动键</Text>
+            </Box>
+            <Box style={{ width: 300 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>最近处理过的一次性活动</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>判断这次是不是重复请求；键要与请求身份稳定对应</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>在最终文本里写「已回复」不会发送任何消息</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>答复要放进本次动作的 responses；同一个动作可以既改自身状态，又答复请求。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>视野之外的坐标与计划路线不算已观察事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>感知只给视野内的实际路径片段并带事实 ID；证据编号必须来自真实感知返回，且属于所选人物。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 31</Text>
+    </Box>
+
+</Slide>

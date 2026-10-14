@@ -1,0 +1,45 @@
+<Slide notes={`到这里，前面讲的都是"做得对不对"。但组织者面对的还有另一个问题：等不等得起。
+
+一次请求发出去，助手要花多长时间才给出结果？如果要等两分钟，那这个助手能不能用在接待现场就要重新考虑。
+
+所以延迟必须和准确性一起看。一个准确率很高但要等很久的方案，和一个准确率稍低但立刻能用的方案，是两种不同的取舍。
+
+还要注意成本。一次任务可能调用多轮、检索好几次、失败重试好几遍，这些都会花钱。只看单次调用的价格，会严重低估真实开销。
+
+这两件事都属于"能不能用"的门槛：准确率决定了这个结果值不值得信，等待时间和成本决定了它值不值得用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>08</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.3.8　能用，还要等得起、付得起</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>等待时间与花费的口径</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>组织者面对的不是单个分数，而是实际的等待与支出；两者都要先说清口径。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, marginTop: 8 }}>
+            <Box style={{ width: 300, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>等待时间</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>首 Token 与端到端{'\n'}分位数描述长尾的等待</Text>
+            </Box>
+            <Box style={{ width: 300, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>花费</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>必须覆盖失败与重试{'\n'}失败频繁未必省钱</Text>
+            </Box>
+            <Box style={{ width: 130 }} />
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 31</Text>
+    </Box>
+
+</Slide>

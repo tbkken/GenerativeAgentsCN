@@ -1,0 +1,52 @@
+<Slide notes={`把这一节压缩成三句话。
+第一句：干预要能被隔离。两套布局之间只允许差那一个碰撞格，其他条件全部写下来，否则结果无法归因。
+第二句：到达按提交事实判。动作被接受只说明选择合法，只有实际坐标提交进集合区，那个人才算走到了。准备动作是补充，不是必要条件。
+第三句：失败先分层，再处理。没有替代通路、反复询问、被正确拒绝、路径穿阻挡、启动未到达，是五件不同的事，处理方法也不一样。
+把这三句话记住，你就可以拿同一套方法去设计自己的空间对照实验了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>收束</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 48, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ flexDirection: 'row', gap: 36 }}>
+
+            <Box style={{ width: 356, height: 210, background: '#EDF4FC', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>1</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>干预要能被隔离</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>两套布局之间只允许差那一个碰撞格，其余条件全部写下来。</Text>
+            </Box>
+
+            <Box style={{ width: 356, height: 210, background: '#ECF7F2', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>2</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>到达按提交事实判</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>动作被接受只说明选择合法；实际坐标进入集合区才算走到。</Text>
+            </Box>
+
+            <Box style={{ width: 356, height: 210, background: '#FFF4E6', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>3</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>失败先分层再处理</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>五种现象对应五种原因，不是每一种都算 bug。</Text>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>同一个目标，两种可走条件：只封一个缺口，答案在提交的事实里。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 26</Text>
+    </Box>
+
+</Slide>

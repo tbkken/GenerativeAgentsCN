@@ -1,0 +1,39 @@
+<Slide notes={`把这一节收一收，记住三件事。
+
+第一，真实发言者。每条 SPEAK 都需要一个真的说话的人和一个真的接收的人，而且一条 SPEAK 只连一个人。想表达四个人商量，就老老实实拆成多轮双人消息。
+
+第二，真实请求与整步提交。对象的回复必须引用真实的请求 ID，并且通过本次动作提交出去；只写在最终总结里的答复，等于没有发送。
+
+第三，真实到达。只有当答复进入目标人物下一轮的外部观察，才能证明他确实收到了；看到状态变了，不等于读到正文。
+
+带上这三件事，下一节我们去看草稿、副本、预检与封存，学习怎样装配一个独立的实验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.7　对话与对象 Skill：让信息通过真实交互传播</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>真实发言者</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>每条 SPEAK 都需要真实的发言者与接收者，一条只连一个人。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 116, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>真实请求与整步提交</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>回复必须引用真实请求 ID 并随整步提交。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>真实到达</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>下一轮的外部观察，才能证明对方收到了。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：草稿、副本、预检与封存 —— 装配一个独立的实验</Text>
+
+    </Box>
+
+</Slide>

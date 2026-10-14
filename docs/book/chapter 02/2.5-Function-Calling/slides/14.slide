@@ -1,0 +1,72 @@
+<Slide notes={`回路拆开是五步，我按顺序念一遍，每一步都对应脚本里的一行。
+
+第一步，创建请求。模型、指令、历史输入和工具清单一起发出去。
+
+第二步，把完整的响应输出接进历史。这一步是后面所有事的基础。
+
+第三步，从输出里挑出所有类型是 function_call 的条目。注意是"所有"，不是第一条。
+
+第四步，逐条处理。把 arguments 解析成对象，按照工具名分发到对应的函数去执行。
+
+第五步，把结果包成 function_call_output 追加回历史，call_id 原样带上，输出内容序列化成 JSON。
+
+五步走完，历史里就同时有请求、结果和原始输出，下一轮可以直接发出去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.3　完整回路比单次请求重要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>回路里的五步</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>创建请求</Text>
+            <Text style={{ flex: 1, fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace' }}>{'client.responses.create(model, instructions, input=history, tools=TOOLS)'}</Text>
+        </Box>
+
+        <Box style={{ height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>保留完整输出</Text>
+            <Text style={{ flex: 1, fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace' }}>history.extend(response.output)</Text>
+        </Box>
+
+        <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>取出全部调用</Text>
+            <Text style={{ flex: 1, fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace' }}>{'calls = [item for item in response.output if item.type == "function_call"]'}</Text>
+        </Box>
+
+        <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>逐条解析并执行</Text>
+            <Text style={{ flex: 1, fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace' }}>args = json.loads(call.arguments)　result = dispatch_tool(call.name, args)</Text>
+        </Box>
+
+        <Box style={{ height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>回填结果</Text>
+            <Text style={{ flex: 1, fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace' }}>{'history.append({"type": "function_call_output", "call_id": call.call_id, ...})'}</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 26</Text>
+    </Box>
+
+</Slide>

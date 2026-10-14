@@ -1,0 +1,49 @@
+<Slide notes={`到这里，信息要分成两半。
+一半是共同的：场地规则、候选编号和时间，主持人杜宁和三位代表都可以讨论，也可以互相追问。
+另一半是私有的：每个人为什么提出这个要求，以及哪些条件不可调整。这部分只发给本人，其他人初始完全不知道。主持人自己也不知道，他必须真的去问。
+还有一条边界很重要：共同 Brain 里只装表达方法和核对方法，不装任何人的私人理由。
+人物不能为了让故事圆满就把硬条件取消，比如让宋遥忽然不需要提前离开。那样记录会更好看，但实验也就没有意义了。
+教师的那份逐列分析是判分材料，它不能变成所有人共享的答案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>2　　4.6.2</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>私有理由与教师分析分开</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>理由只发给本人，主持人和其他代表初始不知道；教师分析属于判分材料，不能变成共享答案。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 200, height: 96, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>何澄</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只收到 R1</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 200, height: 96, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>秦川</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只收到 R2、R3</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 200, height: 96, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>宋遥</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只收到 R4、R5</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 400, height: 96, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>教师分析　·　不进共同上下文</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只用于判分，不作为共享答案</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,57 @@
+<Slide notes={`工具调用成功，是不是就等于任务做完了？不是，这两件事要分开看。
+
+工具返回真实结果，只说明我们取数据这一步做对了。方案最后能不能交付，还得看候选有没有通过检查。中间隔着模型的判断，也隔着应用的核验。
+
+再看模型停止这件事。它可能停在三种地方：一种是继续发请求，说明它读到了结果，正在调整方案；一种是直接给出最终回答，这时候回答的内容仍然要按检查条件核验；还有一种是停止生成，既没有继续查，也没有给出可核验的结论。
+
+最后一种最需要警觉，它往往意味着提前作答，或者手上的资料不够。停止本身不是完成的证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.3　完整回路比单次请求重要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>工具成功不等于任务成功</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ width: 428, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.5 }}>工具返回后仍须继续请求，模型才会读取结果并调整或结束。</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.3 }}>工具成功{'\n'}≠ 最终答案</Text>
+            <Box style={{ width: 90, height: 4, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>取到数据是过程正确；方案可用要另外证明。</Text>
+        </Box>
+
+        <Box style={{ width: 692, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Box style={{ height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 80, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 5, flex: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>继续发起请求</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>说明结果被读到，方案正在被调整。</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 130, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 80, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 5, flex: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>给出最终回答</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>内容仍要按检查条件逐项核验，自信的措辞不是证据。</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 80, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 5, flex: 1 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>停止生成</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>可能意味着提前作答或资料不足，不等于任务已经完成。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,69 @@
+<Slide notes={`再具体看两个错法，它们指向的是两条不同的规则。
+
+第一个：把候选副本里的手作活动改成 10:00 到 11:00，其他字段保持完整。它满足六十分钟的时长要求，看起来没问题，但是它和 10:00 到 10:30 的已有预约相交，应该由时间重叠规则指出。
+
+第二个：把人数改成十三。手作室的容量是十二，所以这里多出一个容量问题，应该由容量规则指出。
+
+这两个错误必须分别被对应规则点出来，而不是笼统地说一句「方案不合理」。含糊的结论解决不了问题，我也没法知道该改哪里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.3　先手工运行，再让模型调用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两种错法，各自被指出</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 48 }}>
+
+            <Box style={{ width: 552, height: 392, background: '#F4F7FA', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>候选副本 · 错法 一</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.4 }}>时长满足，却与预约重叠</Text>
+                <Box style={{ height: 56, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>手作活动　10:00–11:00</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>满足六十分钟时长，其他字段保持完整；但它与 10:00–10:30 的已有预约相交。</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>应当由哪条规则指出</Text>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>时间重叠规则</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 552, height: 392, background: '#F4F7FA', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>候选副本 · 错法 二</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.4 }}>人数超出房间容量</Text>
+                <Box style={{ height: 56, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>手作活动人数　13</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>手作室的容量是十二。人数改成十三之后，方案另外多出一个容量问题。</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>应当由哪条规则指出</Text>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>容量规则</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>两个错误应由相应的规则分别指出，而不只是笼统地给出「方案不合理」——含糊的结论解决不了问题。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

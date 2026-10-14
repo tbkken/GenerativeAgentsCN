@@ -1,0 +1,63 @@
+<Slide notes={`候选方案一旦改动，就必须重新校验，不能让旧报告继续挂着。
+
+交付的时候要记录三件事：输入摘要，说明这次校验用的是哪个文件、关键字段是什么；执行时间，说明是什么时候跑的；脚本版本，说明用的校验器是哪一版。有了这三样，报告才能对应到具体的这一次文件上。
+
+原因很直接：报告只证明它所针对的那份输入。候选改了，规则改了，旧报告都不再成立。
+
+如果组织者确实修改了业务规则，要单独记录新规则和修改原因，再生成对应的新报告，而不是把旧结论悄悄沿用下去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.4　在 OpenAI 应用中包装受控命令</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>换了候选，就重出一份报告</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 36 }}>
+
+        <Box style={{ width: 372, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>报告要能对应到这一次文件</Text>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>每份报告只证明它的输入</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.8 }}>报告不是一次性的结论，而是一条可以追溯的记录：它要说清检查的是谁、什么时候查的、用哪一版规则查的。</Text>
+        </Box>
+
+        <Box style={{ width: 744, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 118 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>输入摘要</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, width: 540 }}>本次校验用的是哪个文件，关键字段是什么。</Text>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 118 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>执行时间</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, width: 540 }}>什么时候跑的，便于把报告和本次文件对应起来。</Text>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 118 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>脚本版本</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, width: 540 }}>校验器是哪一版；规则若变更，须单独记录新规则与原因。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px' }}>
+                <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>旧报告不能证明新候选通过</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>候选变更后重新校验，再生成与本次文件对应的新报告。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

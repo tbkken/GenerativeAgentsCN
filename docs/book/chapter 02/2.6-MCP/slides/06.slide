@@ -1,0 +1,84 @@
+<Slide notes={`把三个角色放到一张连接图上。
+
+左边是宿主，应用本身和客户端都在这个框里，说明连接归宿主管理。中间这一段是协议通信，客户端和服务端之间来回传的就是协议消息。右边是服务端，它下面挂出三类能力：工具、资源、提示模板。
+
+底部的橙色条标出本节的边界：我们只练两项只读工具，不同宿主对三类能力的支持并不一样。
+
+还有一处要留意：服务端到三类能力之间的连线表示能力分类，不是执行的先后顺序。一次调用不会依次经过工具、资源、模板，而是根据这次请求选择其中一类。
+
+模型拿到的是宿主整理过的工具描述；提出请求之后由宿主去执行，结果再回到上下文里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.1　连接的组成</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次连接里有哪些角色与能力</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 24 }}>
+
+            <Box style={{ width: 540, height: 280, background: '#F4F7FA', borderRadius: 12, padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+                <Box style={{ width: 508, height: 30, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>Host 宿主应用（客户端的归属）</Text>
+                </Box>
+                <Box style={{ width: 508, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>应用 / 宿主程序</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>对话、模型、可用能力与用户交互</Text>
+                </Box>
+                <Box style={{ width: 508, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>Client 客户端</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>维护与一个 MCP 服务的连接</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, height: 280, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 440, height: 280, background: '#F4F7FA', borderRadius: 12, padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Box style={{ width: 408, height: 30, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>MCP Server 服务端</Text>
+                </Box>
+                <Box style={{ width: 408, height: 78, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>提供能力与合同</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>校验参数、读取预约、返回结果</Text>
+                </Box>
+                <Box style={{ width: 408, height: 34, background: '#ECF7F2', borderRadius: 6, padding: '0 12px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ width: 96, fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>tools</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>调用能力</Text>
+                </Box>
+                <Box style={{ width: 408, height: 34, background: '#ECF7F2', borderRadius: 6, padding: '0 12px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ width: 96, fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>resources</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>读取内容</Text>
+                </Box>
+                <Box style={{ width: 408, height: 34, background: '#ECF7F2', borderRadius: 6, padding: '0 12px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ width: 96, fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>prompts</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>交互模板</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>Client 与 Server 之间走协议通信；Server 到三类能力的连线表示能力分类，不是依次执行</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>本节重点：2 个只读工具</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>是否呈现或调用某一类能力取决于宿主支持；工具接通只证明该工具链路可用，资源与提示模板要分别验收。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,84 @@
+<Slide notes={`边界一旦松动，结论就悄悄换了一个，所以有五种拼接方式要明确拒绝。
+
+第一，Step 边界。同一 Run、同一已提交边界，不能拿第 50 步的位置配第 51 步的回复，却声称第 50 步已经闭环。第二，业务窗口。只取本案 76 步范围，不能拿更长实验的后续事实来补算。第三，对象响应。第 76 步提交答复，我们记录的是「对象已响应」，不能直接当成人物已在窗口内收到并确认。第四，历史知识。要用对应的提交事实与一致性取材，不能把后来追加的记忆当成角色早就知道。第五，恢复过程。要合并全部 Attempt，唯一事实只计一次，不能恢复前后重复计数，也不能只挑末次 Attempt。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.3　保持相同的取材边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五种拼接方式不能接受</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>边界一松，结论就换了</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 440 }}>每一种拼接单看都不显眼，合起来却会把「窗口内没发生」写成「窗口内已经完成」。</Text>
+            <Box style={{ width: 440, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>同时写两句话</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>「对象已响应」与「窗口内尚无人物接收／确认事实」，缺一句都会读偏。</Text>
+            </Box>
+            <Box style={{ width: 440, height: 120, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>唯一事实只计一次</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>恢复过程要合并全部 Attempt，不能只取末次成功的那一次。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 688, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ width: 688, height: 94, background: '#F4F7FA', borderRadius: 10, padding: '10px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ width: 640, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Step 边界</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>正确做法：同一 Run、同一已提交边界</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>不能：第 50 步位置配第 51 步回复，声称第 50 步闭环</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 688, height: 94, background: '#F4F7FA', borderRadius: 10, padding: '10px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ width: 640, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>业务窗口</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>正确做法：只取本案 76 步范围</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>不能：用更长实验的后续事实补算</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 688, height: 94, background: '#F4F7FA', borderRadius: 10, padding: '10px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ width: 640, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>对象响应</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>正确做法：记录「第 76 步提交答复，对象已响应」</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>不能：当作人物已在窗口内收到并确认</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 688, height: 94, background: '#F4F7FA', borderRadius: 10, padding: '10px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ width: 640, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>历史知识</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>正确做法：使用对应提交事实与一致性取材</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>不能：把后来追加的记忆当成早已知道</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 688, height: 94, background: '#F4F7FA', borderRadius: 10, padding: '10px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ width: 640, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>恢复过程</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>正确做法：合并全部 Attempt，唯一事实计一次</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>不能：恢复前后重复计数，或只选末次 Attempt</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

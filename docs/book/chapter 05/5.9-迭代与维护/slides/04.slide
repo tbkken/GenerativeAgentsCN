@@ -1,0 +1,71 @@
+<Slide notes={`假设有一天我们看到孟川 H3 最终没有完成 B 窗口咨询。这个观察很具体，但它只告诉我们一件事：有一项需求没有达到事前判据。
+
+它不能告诉我们原因。至少有三种情形会走到同一个结果。第一，来访者本人没有补充私人目的，请求里缺了这项信息。第二，补充真实存在，但咨询台没有使用，仍旧凭印象猜成预约使用。第三，建议本身正确，路径、回复、确认这三个执行环节里的某一个没有走完。
+
+这三条的修复方向完全不同：补提示、改检索、查执行。所以这时候正确的话不是"把提示词再优化一下"，而是先把可能性分开列出，各配一份证据去查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.1　先写问题，再写修改</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个失败结果说明不了改什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>观察到的现象</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>孟川 H3 最终没有完成 B 窗口咨询</Text>
+            </Box>
+            <Box style={{ flex: 1 }} />
+            <Text style={{ fontSize: 15, color: '#546779', width: 420, lineHeight: 1.45 }}>这只说明：有一项需求没有达到事前判据。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, height: 208, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可能原因 一</Text>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>补充环节</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>他没有补充私人目的，请求里本来就缺这项信息。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>要查：请求里有没有</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 208, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可能原因 二</Text>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#26816B' }}>使用环节</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>补充真实存在，咨询台却没有使用，仍旧猜成预约使用。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>要查：后续请求是否带来新事实</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 208, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可能原因 三</Text>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>执行环节</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>建议正确，但路径、回复、确认中的某一环没有走完。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>要查：对象是否检索了自己的记忆</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.5 }}>仅凭一个失败结果，不能直接决定给所有角色增加完整任务答案；那既没有定位，也没有验收条件。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 27</Text>
+    </Box>
+
+</Slide>

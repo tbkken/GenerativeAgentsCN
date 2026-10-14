@@ -1,0 +1,88 @@
+<Slide notes={`暂停这一步，先分清请求和状态。
+
+点下暂停仿真之后，第一件事是把“暂停请求已提交”记成一条控制请求，然后才是等所选 Run 的实际状态变成已暂停。中间这段时间里，运行可能还在把当前这一步收尾。
+
+前端提示里说的安全步骤，含义是以一个一致的已提交边界收尾，而不是保留一幅无法恢复的半步画面。这句话决定了后面从哪里接上。
+
+时机是可以选的。青禾可以挑公告栏状态已经更新、许安还没完成后续行动的时候暂停，这样既能看到变化，又能观察接下来的反应。
+
+有一点要避免：不要为了让剧情好看，把某个动作绑定到固定的步数上；暂停之后应当按实际事实判断信息处在哪一阶段。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.3　暂停后的浏览器检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>暂停请求与实际状态</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 662, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>操作顺序</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 662, height: 106, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>点下「暂停仿真」并记录控制请求</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先把「暂停请求已提交」记为一条控制请求，再往下走。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 662, height: 106, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>等待实际状态变为 PAUSED</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>以所选 Run 的实际状态为准，不看提示文字自行推断。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 662, height: 106, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 34, height: 34, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>看懂「安全步骤」的含义</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>以一个一致的已提交边界收尾，而不是留住半步画面。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 458, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 458, height: 158, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>青禾可以选的暂停时机</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>公告栏状态已经更新、许安尚未完成后续行动。这时既能看到变化，又能观察接下来的反应。</Text>
+            </Box>
+
+            <Box style={{ width: 458, height: 158, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>要记录的三项内容</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>board 的状态、相关请求 ID，以及哪位参与者已经得到回复。</Text>
+            </Box>
+
+            <Box style={{ width: 458, height: 158, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不要绑到固定 Step</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>不要为了让剧情好看把动作绑到固定步数；暂停后按实际事实判断信息处在哪一阶段。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

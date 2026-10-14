@@ -1,0 +1,91 @@
+<Slide notes={`这两种情况必须分成两张问题单，不能让一个模糊的"优化咨询"把原因全都盖住。
+
+第一种，补充从未到达。这时候首先要确认来访者是否真的提交了、对象是否回复了、消息有没有进入下一轮。如果这三条都不成立，那么增加对象记忆检索可能完全无效。
+
+第二种，补充到达了但没有被使用。证据是咨询台保存过那条目的，而后续判断前没有检索。这时候候选修改才是把检索改成判断前必做，验收条件也很明确：下一次应该看到那条目的被真正引用。
+
+记录用变更影响表，写清原内容、拟改内容、支持证据、受影响材料、验证方法和仍不能解决的情况。它是资料管理用的记录，不是系统内新增的发布流程或资源 Revision。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.3　从证据推导一项有限修改</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两种原因，两张问题单</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 296, background: '#EDF4FC', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 524, height: 48, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>问题单 A</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>补充从未到达</Text>
+                </Box>
+                <Box style={{ width: 524, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>确认来访者是否真实提交</Text>
+                </Box>
+                <Box style={{ width: 524, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>确认对象是否回复</Text>
+                </Box>
+                <Box style={{ width: 524, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>确认消息是否进入下一轮</Text>
+                </Box>
+                <Box style={{ width: 524, height: 46, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>此时增加记忆检索可能无效</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 296, background: '#ECF7F2', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 524, height: 48, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>问题单 B</Text>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>到达但未被使用</Text>
+                </Box>
+                <Box style={{ width: 524, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>证据：咨询台保存过该目的</Text>
+                </Box>
+                <Box style={{ width: 524, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>证据：后续判断前没有检索</Text>
+                </Box>
+                <Box style={{ width: 524, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>候选修改：检索改为判断前必做</Text>
+                </Box>
+                <Box style={{ width: 524, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>验收：下一次该目的被真正引用</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>变更影响表要记的六项——它是资料管理用的记录，不是系统内新增的发布流程或资源 Revision。</Text>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 182, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>原内容</Text>
+            </Box>
+            <Box style={{ width: 182, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>拟改内容</Text>
+            </Box>
+            <Box style={{ width: 182, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>支持证据</Text>
+            </Box>
+            <Box style={{ width: 182, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>受影响材料</Text>
+            </Box>
+            <Box style={{ width: 182, height: 62, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>验证方法</Text>
+            </Box>
+            <Box style={{ width: 182, height: 62, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>仍不能解决的情况</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 27</Text>
+    </Box>
+
+</Slide>

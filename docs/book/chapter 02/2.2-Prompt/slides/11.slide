@@ -1,0 +1,40 @@
+<Slide notes={`第三个知识块讲的是少样本提示：在指令之外，给几个输入和期望输出的例子。
+
+为什么要给例子？因为有些边界用文字描述很啰嗦，用两个例子就说明白了。青禾这里最常见的边界是时间区间怎么算重叠。
+
+我们采用半开区间，开始时间算在内，结束时间不算在内。写成方括号加圆括号，左边闭、右边开。有了这个约定，两段时间首尾相接就不算冲突，真正的重叠才不能采用。
+
+要提醒的是，示例教的是判断规则，不是让模型永远照抄例子里的数字。如果预约时间改了，旧例子的时间就不能再当作当前事实。
+
+再往下还有一层：要求给出依据和核对说明，比要求它披露内部逐步思考更适合作为交付合同。读者要的是可检查的来源、计算和结论，不是一段长篇自述。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.2.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>用示例澄清边界</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>少样本提示用少量输入与期望输出，把分类、格式或边界说清楚。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 280, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>[开始　结束)　半开区间</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779' }}>开始算在内，结束不算在内</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

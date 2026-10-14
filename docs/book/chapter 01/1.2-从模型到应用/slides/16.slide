@@ -1,0 +1,62 @@
+<Slide notes={`名字分清以后，还有三条实际的提醒。
+
+第一条，一个模型可以同时出现在多个产品里，一个产品也可能在不同时候采用不同的模型。所以"我在某某软件里用的是某某模型"这句话，只在一个具体时间点上成立。
+
+第二条，产品里那些看起来很像模型自带的能力，比如能访问网页、能保存文件、能记住上次聊过什么，很可能来自产品附加的功能。如果你直接去调用同名的模型接口，未必有这些能力。这一点非常容易被误会。
+
+第三条最实用。很多情况下，你根本拿不到精确的模型版本，页面上只有一个显示名。这时候不要硬写一个看起来精确的版本号，正确的是把显示名和观察日期记下来，同时说明它不是已固定的模型快照。
+
+记录的意义，是让别人能重复你的条件，而不是让记录看起来漂亮。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.4　模型名称、服务与产品不是同一个东西</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>记录不到，也要写清楚记录不到</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>把条件写清楚，别硬凑一个精确</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>记录的目的，是让别人能够重复你当时看到的东西。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px' }}>
+                <Box style={{ width: 4, height: 80, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型与产品是多对多</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>同一模型可以出现在多个产品；同一产品也可以采用多个模型。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px' }}>
+                <Box style={{ width: 4, height: 80, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>附加能力未必自动带上</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>产品中的网页访问、文件保存和记忆可能来自附加能力，直接调用同名模型未必自带这些能力。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px' }}>
+                <Box style={{ width: 4, height: 80, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>只有显示名时怎么记</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>记录显示名与观察日期，不把它写成已固定的模型快照。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 22</Text>
+    </Box>
+
+</Slide>

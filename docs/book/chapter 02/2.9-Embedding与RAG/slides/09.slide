@@ -1,0 +1,68 @@
+<Slide notes={`这段对照表看着简单，但它决定了后面检索的成败。
+
+Markdown 材料按标题和段落切，主题和来源留在同一片里，这样读到片段就知道它在讲哪件事。表格要按一行加字段名切，如果只留数值，看到「12」你不知道是 12 人还是 12 平方米。
+
+预约记录按一条预约切，房间、日期、起止时间三样必须在一起。只留一个日期，复核的时候没法判断它说的是哪间房的哪个时段。
+
+共同的要求只有一句：每个片段至少应能追溯到原文件。真实资料库往往还要记版本或更新时间、有效范围和访问权限，这些是后面判断依据是否还成立的基础。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.2　切分材料时保留能解释证据的上下文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>切分单位与不能丢的字段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 24, paddingLeft: 22 }}>
+                <Text style={{ width: 200, fontSize: 14, color: '#546779' }}>资料</Text>
+                <Text style={{ width: 380, fontSize: 14, color: '#546779' }}>合理切分单位</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>不应丢失</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Text style={{ width: 200, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Markdown</Text>
+                <Text style={{ width: 380, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>标题与段落</Text>
+                <Box style={{ width: 1, height: 56, background: '#B5C7D8' }} />
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>主题与来源</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Text style={{ width: 200, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>表格</Text>
+                <Text style={{ width: 380, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>一行及字段名</Text>
+                <Box style={{ width: 1, height: 56, background: '#B5C7D8' }} />
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>房间身份与容量单位</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Text style={{ width: 200, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>预约记录</Text>
+                <Text style={{ width: 380, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>一条预约</Text>
+                <Box style={{ width: 1, height: 56, background: '#B5C7D8' }} />
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>房间、日期、起止时间</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>每个片段至少应能追溯到原文件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>真实资料库通常还需要版本或更新时间、有效范围和访问权限。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,65 @@
+<Slide notes={`把刚才的思路变成一个可以查的动作：从现象倒推。
+
+第一个现象，任务从头到尾没收到房间表。这时候先查的是资料有没有进入输入，对照方法是同一个模型、一个有规则材料、一个没有，看差别在哪。
+
+第二个现象，它查了，但查的是错误的日期。这说明资料进来了、工具也调了，问题出在参数和调用过程。对照的方法是材料不变，专门核对工具输入。
+
+第三个现象最有意思，资料齐全，还是漏掉了容量。这时候要查的是提示怎么写、约束有没有被整理清楚，以及模型本身的表现。对照方法是工具不动，另外加一道独立的校验。
+
+第四个现象，方案是对的，但没保存下来。那要查执行与交付这一环，去看保存结果和实际文件。
+
+每次尽量只改变一个因素，才能说清改进是从哪里来的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.6　一个有用的反问：换掉哪一层，结果会改变</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从现象倒推要查哪一层</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 11 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 14, color: '#546779' }}>观察到的问题</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>先查哪里</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>可以怎样做对照</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>从未收到房间表</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>资料是否进入输入</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>同模型，有无规则材料</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>查询了错误日期</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>参数与调用过程</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>同材料，核对工具输入</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>资料齐全仍漏容量</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>提示、约束整理与模型表现</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>工具不变，加入独立校验</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 94, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>方案正确但没保存</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>执行与交付</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>查保存结果和实际文件</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', alignItems: 'center' }}>
+            <Box style={{ width: 3, height: 36, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>每次尽量只改变一个因素，才能解释改进来自哪里。下一节把"符合约束""准确""可靠"转成可以计算的指标。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 22</Text>
+    </Box>
+
+</Slide>

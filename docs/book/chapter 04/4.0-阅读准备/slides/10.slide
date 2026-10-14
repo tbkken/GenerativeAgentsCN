@@ -1,0 +1,82 @@
+<Slide notes={`两组之间只允许差一个预登记的因素，而且这个差异必须留档。
+
+第一步，为基线和对照各建一个独立实验，把共同的地图、人物、事实、模型、视野、注意力、窗口和留存设置全部冻结。
+
+第二步，只修改事先登记好的句子或布局，并且把原句和替换句、原坐标和新坐标都存下来。
+
+第三步，封存包要复制成新草稿。公共资源不会自动更新包内的副本，也不建立新的 Revision。
+
+第四步，同一批次里同时安排两种条件，执行次序事先打乱，并记录模型服务或环境有没有变化。
+
+第五步，如果想研究位置和视野的相互作用，必须另作明确的多因素设计。两次随意的改动，不能拼成一个结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.2　为两组保存精确差异</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两组只差一处，差在哪要留档</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>共同条件冻结之后，改动只有一处，而且必须写得出来、存得下来。</Text>
+
+        <Box style={{ flexDirection: 'row', height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>冻结共同条件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>基线、对照各建独立实验；冻结地图、人物、事实、模型、视野、注意力、窗口与留存设置。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>只改预登记项</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>只修改预登记的句子或布局；保存原句／替换句、原坐标／新坐标。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>封存包复制成新草稿</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>公共资源不自动更新包内副本，不建立 Revision。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>打乱次序，记录环境变化</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同一批次安排两种条件，事先打乱执行次序，记录模型服务或环境变化。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 82, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>多因素要另作设计</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>若要研究位置×视野的相互作用，必须另作明确的多因素设计；两次随意改动不能拼成结论。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 20</Text>
+    </Box>
+
+</Slide>

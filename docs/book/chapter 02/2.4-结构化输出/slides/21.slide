@@ -1,0 +1,50 @@
+<Slide notes={`这是一段可以照抄的指令，我在教学空间里用它交给 WorkBuddy。
+
+五句话各管什么？第一句说清产物：生成 output/schedule.json，严格采用那份 Schema 的字段。第二句列出不能改的：原始人数和持续时间。第三句要求跑现成的校验脚本并保存报告。第四句规定失败时怎么办——先列错误，再修正方案，绝不修改校验规则来让结果通过。最后一句要求交代：跑了什么命令、产出了什么文件、还有什么没解决。
+
+第二句和第四句最关键。不限制原始人数，模型可能为了让方案通过而悄悄改数字；不禁止改规则，校验就失去了意义。
+
+跑完以后，在「工作空间文件」里打开方案和报告，用「变更」核对它改了哪些文件。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.5　WorkBuddy：生成文件，再执行相同检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>生成文件，再执行相同检查</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>五句话各有分工</Text>
+            <Text style={{ fontSize: 17, color: '#276FBF', lineHeight: 1.75 }}>产物、不可改的输入、要跑的检查、失败怎么办、最后交代什么。</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>不限制原始人数，模型可能为了让方案通过而悄悄改数字；不禁止改规则，校验就失去意义。</Text>
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 240, background: '#F4F7FA', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.9 }}>依据教学材料生成 output/schedule.json，严格采用</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.9 }}>schemas/schedule.schema.json 的字段，不修改原始人数和持续时间。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.9 }}>然后执行既有 validate_schedule.py 检查这个文件，保存报告。</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.9 }}>若检查失败，先列出错误，再修正方案；不要修改校验规则来使结果通过。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.9 }}>最终说明实际运行的命令、结果文件及仍未解决的问题。</Text>
+            </Box>
+
+            <Box style={{ height: 136, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>产物怎么看</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>在右侧「工作空间文件」打开方案和报告，用「变更」核对它改了哪些文件。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 23</Text>
+    </Box>
+
+</Slide>

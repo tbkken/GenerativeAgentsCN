@@ -1,0 +1,75 @@
+<Slide notes={`这四个分支，对应四类可以立刻上手的检查。
+
+边问边猜检查决策时机：问题问了，建议也给了，但顺序不对。提前写完成检查完成证据：材料里写着「已确认」，可翻遍记录只有一个请求，没有对象的回复，也没有下一轮的接收。
+
+额外加能力检查对照条件：如果只给对照组加一个强模型的审阅子 Skill，即使结果更好，也不能归因于决策段，因为方法和依赖同时变了。停止条件检查循环行为：同一目的已经说明白了，咨询台还在反复追问。
+
+还有一个边界要留住。如果人物被正确地拒绝，那可能只是工具参数不合法，不能为了让案例继续而绕过校验；发现实际系统问题时，按项目约定留证并停止相应验收。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.5　作者与观察者分别审什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类反例</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 64, background: '#20344B', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>四类反例，帮助审阅 SOP</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 276, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 276, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 276, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 276, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 276, height: 182, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>边问边猜</Text>
+                <Box style={{ width: 36, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>尚未收到补充就建议{'\n\n'}偏离预定澄清策略</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 182, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>提前写完成</Text>
+                <Box style={{ width: 36, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>只发请求便记「已确认」{'\n\n'}缺少真实回复</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 182, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>额外加能力</Text>
+                <Box style={{ width: 36, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>只给一组强模型子 Skill{'\n\n'}不再是唯一变量</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 182, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>停止条件</Text>
+                <Box style={{ width: 36, height: 3, background: '#546779' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>同一目的已明仍追问{'\n\n'}需要检查循环行为</Text>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', width: 1152, marginTop: 4 }}>这些是待排除的教学反例，不是本案已经发生的失败记录。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 27</Text>
+    </Box>
+
+</Slide>

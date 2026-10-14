@@ -1,0 +1,70 @@
+<Slide notes={`练习的时候，先复制青禾实验，把新名称标成练习用途，同时记下原件和副本是两个不同的实验身份。这一步是为后面所有判断建立基准。
+
+然后在练习副本里只改一个角色的目标，再把两份实验分别打开，比较目标文字，确认它们之间是隔离的。
+
+接着把练习副本归档，切到已归档范围里找到它，再恢复，确认内容还在。
+
+最后只对确定不需要保留的练习副本执行删除。不要用删除正式材料的方式来演示独立性，那样会损失本来还有用的证据。
+
+完成之后要能分别回答四句话：复制得到了哪个新身份、哪份内容改变了、哪条记录进入归档、删除的是哪一份材料。这四句话写不出来，就说明边界还没看清，还不能进入运行观察。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.5　在练习副本中理解归档、恢复和删除</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习四步：复制、改一处、归档恢复、删除</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>4</Text>
+            <Text style={{ fontSize: 22, color: '#546779' }}>步在练习副本上走完一遍，每一步都留下一条可核对的记录</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 120, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>第一步</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>复制练习副本</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>新名称标注练习用途</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 120, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>第二步</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>只改一个目标</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>重开两份比较文字</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 120, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>第三步</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>归档并恢复</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>在已归档中重新找到</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 255, height: 120, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>第四步</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>删除练习副本</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只删确定不需保留的</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 122, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>分别记录四句话，边界才算看清</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>复制得到哪个新身份　·　哪份内容改变了　·　哪条记录进入归档　·　删除的是哪份材料。{'\n'}不要以删除正式材料来演示独立性。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

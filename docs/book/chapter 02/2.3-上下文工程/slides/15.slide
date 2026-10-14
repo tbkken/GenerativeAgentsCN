@@ -1,0 +1,59 @@
+<Slide notes={`换一个方向看同一件事。前一种做法把历史存在应用自己这一侧，这一种做法把它交给服务端。
+
+需要服务端衔接会话的时候，可以用 previous_response_id 这个参数。第一轮请求正常发出，拿到一个响应对象，它有自己真实的 id；第二轮请求带上这个 id，服务端就知道这一轮要接在哪一轮后面。
+
+这条路线的边界也要说清楚。引用响应 ID 主要改变的是状态传递方式，它不意味着前面那些上下文 Token 变得免费了。还有一点更关键：行为要求不会自动继承，第二轮仍然要显式发送 instructions。
+
+另外，如果对象要跨会话、跨作业长期存在，官方还提供了持久会话的接口。初学阶段不用都上，选定一种就够了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.3.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>另一种方式：引用前一次响应</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#26816B' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>需要服务端衔接会话时，用 previous_response_id 把两轮接起来。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 400, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>上一轮响应　·　真实的 response.id</Text>
+                </Box>
+                <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 460, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>下轮请求　·　previous_response_id</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 400, height: 52, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>行为要求　·　本次仍要显式发送</Text>
+                </Box>
+                <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+                </Box>
+                <Box style={{ width: 460, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>不会自动继承上一轮的 instructions</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 25</Text>
+    </Box>
+
+</Slide>

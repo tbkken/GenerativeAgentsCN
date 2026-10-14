@@ -1,0 +1,51 @@
+<Slide notes={`我留三行练习，大家可以自己按一遍。
+
+第一行：经交接正确到达三项。分子就是三，分母固定是五，所以是 60%。后来宋青独立补回来的 K4，不改变这个主指标，它只进另一个掌握率。
+
+第二行：一共出现四项完成声明，其中「已全面检查」这项缺规定证据，所以是 1/4，也就是 25%。注意分母是全部完成主张，而不是只数缺证据的那一条。
+
+第三行：一共有三次检查。规定的接班复核算一次，有新疑问的追查算一次，剩下那次是在没有新条件下重复追查，所以不必要重复是 1/3，不是 2/3。
+
+如果对第三次有没有新条件有不同看法，就把引用和分歧都保留下来。五栏齐全但内容为空，仍然算遗漏。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.6　人工判分：记录流畅不能补信息分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三行练习，自己算一遍</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+        <Box style={{ height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 46 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>1</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>经交接正确到达三项</Text></Box>
+            <Box style={{ width: 430 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>3/5＝60%；独立补 K4 不改主指标</Text></Box>
+        </Box>
+
+        <Box style={{ height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 46 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>2</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>四项完成声明，「已全面检查」缺证据</Text></Box>
+            <Box style={{ width: 430 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>1/4＝25%</Text></Box>
+        </Box>
+
+        <Box style={{ height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 46 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>3</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>三次检查：规定复核、新疑问追查、无新条件重复追查</Text></Box>
+            <Box style={{ width: 430 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不必要重复 1/3，不是 2/3</Text></Box>
+        </Box>
+
+        <Box style={{ height: 132, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>有分歧就保留分歧</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>若评阅者对第三次有无新条件意见不同，保留引用与分歧；五栏齐全但内容为空，仍然是遗漏。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

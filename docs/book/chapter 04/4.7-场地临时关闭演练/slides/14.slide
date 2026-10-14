@@ -1,0 +1,68 @@
+<Slide notes={`导航这一环有一个很容易做错的地方：明明路线是可达的，却让角色先失败一次、或者先空等一轮，再去走。
+这项演练的正确行为是，导航直接返回下口的可达路线时，可以在同一个 Step 里就选择 MOVE，不需要额外制造一次失败或等待。
+还有两个细节。一分钟的默认移动预算一般是四格，但实际能走多远还受路径长度限制，不是想走多远就走多远。中途进入下一轮的时候，要用实际位置重新查询同一个完整目标，因为返回里的 next_coord 只是下一步的坐标，不是整个目标。
+完整的剩余路径，得由教师去看提交事实，不能假设 Agent 的上下文里已经暴露了整条路径。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.3　可达路线与移动预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>能直接走，就不要制造失败</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>三条要点</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Box style={{ width: 360, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>可达即可同 Step 开始 MOVE</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>不加虚构的失败，也不加等待。</Text>
+            </Box>
+            <Box style={{ width: 360, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>1 分钟默认预算四格</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>实际还受路径长度限制，不是想走多远就走多远。</Text>
+            </Box>
+            <Box style={{ width: 360, height: 118, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>下一轮查同一完整目标</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>用实际位置重新查询，不拿旧坐标继续推算。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 760, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>next_coord 不是整个目标</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>返回里的下一步坐标只描述紧邻的一步。完整剩余路径要由教师查提交事实，不假设 Agent 上下文已暴露整条路径。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>不必先撞墙</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>常用通路关闭而目标仍可达时，导航可以直接返回绕行路线，行为上不需要一次预演式的失败。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 84, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>两组同一套查询方式</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>路线查询与移动选择都不区分组别，差异只能来自布局里的那一个碰撞格。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 26</Text>
+    </Box>
+
+</Slide>

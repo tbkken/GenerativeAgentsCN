@@ -1,0 +1,51 @@
+<Slide notes={`现在进第二个知识块：怎么把提示一步步改好。
+
+第一版通常就是这样一句话——帮我安排开放日。它没有材料、没有产物、也没有验收标准，所以模型只能按自己的理解去填空。
+
+第二版加两样东西：一是材料，明确说根据提供的四份材料；二是产物，要求提出活动时间表，并且把缺失信息列出来。这时候依据和交付清楚了，但验收规则还是没写。
+
+第三版再把验收规则和未知项处理写进任务合同。比如预约状态以查询结果为准，没查到就标成待核对，而不是默认没有预约。
+
+这三版的顺序值得记：先让人看懂你要什么，再让它说清依据，最后让它知道怎么算过。每一次改进只动一处，才能看出是哪一处起了作用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.2.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从模糊提示逐步改进</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>第一版只有一句愿望，第三版把验收规则与未知项处理写进了任务合同。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 330, height: 46, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>一句愿望</Text>
+            </Box>
+            <Box style={{ width: 44, height: 46, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 330, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>材料与产物</Text>
+            </Box>
+            <Box style={{ width: 44, height: 46, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 330, height: 46, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>完整任务合同</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

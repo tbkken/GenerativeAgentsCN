@@ -1,0 +1,44 @@
+<Slide notes={`最后一块讲归档、恢复和删除。这三件事听起来很重，其实都只在展示管理这一层。
+
+实验中心每页固定显示五条，保留负责人、标签、分页和归档范围选择。可以在当前、已归档以及全部这几个范围之间切换。
+
+这里的归档既不把草稿变成封存实验，也不把某个运行变成完成状态。恢复同样只是让它回到默认范围里显示出来。删除也是针对列表里那条记录，不会反过来改写实验内容和运行结果。
+
+所以练习的时候要养成一个习惯：分别记录复制得到了哪个新身份、哪份内容被改了、哪条记录进了归档、删除的是哪一份材料。这四句话写清楚，证据链才站得住。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>5　　3.8.5　在练习副本中理解归档、恢复和删除</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>归档、恢复与删除只是展示管理</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 920 }}>列表固定在每页五条，范围可以在当前、已归档与全部之间切换；这些操作都不改动实验与运行的状态。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 340, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#546779' }}>归档</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#546779' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#546779' }}>恢复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#546779' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>删除其中一份副本</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

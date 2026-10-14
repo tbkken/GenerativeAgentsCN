@@ -1,0 +1,39 @@
+<Slide notes={`把这一节收一收，记住三件事。
+
+信息要走真实渠道：咨询、更新、获知这三段各有各的渠道，谁也不能代替谁。
+
+答案不能提前共享：把预约事实塞进共同记忆，观察就失去意义，角色说对结论也只是重复作者的答案。
+
+观察窗口只证明窗口内的事：48 步走到十点三十七，能看见谁获知、谁移动、谁到达、谁开始，不能宣告活动完整结束。
+
+带上这三件事，下一节我们去看界面和作者资源，把人物、人群和模型准备出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.1　把筹备方案放进一个会发生变化的世界</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>真实渠道</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>咨询、更新、获知各有各的路，谁也不能互相代替。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>信息边界</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>答案提前共享，观察就失去意义。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>观察窗口</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>只证明窗口内的事，结论要标清时间口径。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：界面与作者资源 —— 准备人物、人群与模型</Text>
+
+    </Box>
+
+</Slide>

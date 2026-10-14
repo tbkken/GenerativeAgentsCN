@@ -1,0 +1,67 @@
+<Slide notes={`有一个误区必须点破：以为选了专家角色，权限就自动变大了。
+
+专家角色本身并不会获得额外权限。它能不能读取文件、能不能访问外部服务，仍然取决于实际配置的能力和授权。界面上写着"专家"，不等于它能碰到你的数据。
+
+还有一条边界要说清楚：WorkBuddy 的任务协作，和第三章要讲的仿真角色交互，不是一回事。前者是任务分工，角色之间交接的是文件和意见；后者涉及世界状态、空间、虚拟时间，以及已经提交的动作。
+
+把这两件事混起来，容易高估协作角色能做什么。分清它们的对象，才知道该在哪里核对权限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.5　在 WorkBuddy 中使用专家与专家团</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>专家角色不自动获得权限</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 504, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>权限取决于配置与授权</Text>
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>角色不自动获得额外权限</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>界面上写着专家，不等于它能碰到你的数据</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>能读什么、能连什么要看配置</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>取决于实际配置的能力和授权</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>产品可见的分工不等于角色隔离</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>权限要单独核对，不能从界面推断</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 616, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>它与第三章不是一回事</Text>
+            <Box style={{ flexDirection: 'column', gap: 8, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>WorkBuddy 的任务协作</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>角色之间交接的是文件、意见与汇总产物，围绕一个任务展开。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 8, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>第三章的仿真角色交互</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>涉及世界状态、空间、虚拟时间，以及已经提交的动作。角色的行为会改变共同世界。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>分清对象，才知道该在哪里核对权限。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,58 @@
+<Slide notes={`同一张作者表，交付给不同的人，不能是同一份东西。
+
+作者和评分者要看完整的目的、规定首句、窗口职责和答案表，因为判分需要这些。来访者本人只需要知道自己的目的和第一句话，其他来访者更不该预先拿到别人的目的。咨询台和窗口人员处在中间：他们知道自己负责哪块业务，但不知道谁会来、找哪类问题。
+
+切材料不是按文件大小平均分，而是按用途分。角色资料管「我是谁、我要做什么」，对象知识管「这个设施是什么、能做什么交互」，空间语义管「哪里有路」，评分答案只服务评判。
+
+这四类东西一旦混在一起，实验就不再测澄清策略，而是在测模型能不能照着答案演一遍。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.1　同一张作者表，不等于同一份角色输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ①</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>①</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>同一张作者表，不等于同一份角色输入</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>「每人获得自己的任务」具体指获得自己的目的和首次话语，不是把作者表里的正确窗口答案一起复制。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10, gap: 14 }}>
+            <Box style={{ width: 220, height: 64, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>一张作者表</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>作者／评分者</Text>
+            </Box>
+            <Box style={{ width: 150, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>该来访者本人</Text>
+            </Box>
+            <Box style={{ width: 150, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>其他来访者</Text>
+            </Box>
+            <Box style={{ width: 150, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>咨询台与窗口</Text>
+            </Box>
+            <Box style={{ width: 150, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>教师答案表</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 27</Text>
+    </Box>
+
+</Slide>

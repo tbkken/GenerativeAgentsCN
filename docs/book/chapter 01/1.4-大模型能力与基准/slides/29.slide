@@ -1,0 +1,91 @@
+<Slide notes={`看模型分数，一定要有人类参照。
+
+先看 GPQA Diamond：随便猜是百分之二十五，因为四选一；带着网络、花三十多分钟的非领域专家，反而只有百分之二十二。这个数字低于随机线，是因为 Diamond 本身就按"非专家答错"筛出来的，存在选择效应。而同领域的博士专家能到八成以上。
+
+HLE 这一列：普通人大概只能答对百分之五到十，领域专家在自己熟悉的方向上能到九成左右。
+
+ARC-AGI-2：人类平均约六成六，高分组能到九成以上，测试面板是百分百。这个基准在设计时就要求每道题至少有两个人在两次尝试内解出来。
+
+三列放在一起，结论很清楚：人类基线取决于你问的是哪一组人、在什么条件下答。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑤　1.4.5　领先模型：这些分数是拿谁做参照的</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>对照人类基线</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 368, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>GPQA Diamond</Text>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>随机猜（四选一）</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>25%</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#FFF4E6', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>非领域专家（可联网）</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>22%</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>同领域博士专家</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>81%</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.4 }}>非专家低于随机线，是"按答错筛选"带来的选择效应</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 368, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>HLE</Text>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>一般答题者</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>约 5–10%</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#F7F3E8', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>专家在自身方向</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>60–70%</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>领域专家（参照值）</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>约 90%</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>出题人给的是参考答案，专家参照值来自论文说明</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 368, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>ARC-AGI-2</Text>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>人类平均</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>约 66%</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>人类高分组</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>约 92%</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', background: '#ECF7F2', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>校准测试面板</Text>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>100%</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>入选题要求至少两人在两次尝试内解出；人类基线随抽样变化</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F7F3E8', borderRadius: 10, padding: '12px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>"超过人类专家"这类说法，必须先说清是超过哪一组人、在什么条件下答题</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>29 / 36</Text>
+    </Box>
+
+</Slide>

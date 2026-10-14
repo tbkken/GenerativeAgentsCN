@@ -1,0 +1,84 @@
+<Slide notes={`这四段数字连起来看，逻辑是清楚的。
+
+八个参与者是五名人物加咨询台、A 窗口和 B 窗口。这里有个容易漏的点：咨询台和两个窗口没有来访者时，仍然会自主执行，所以不能只算四名来访者，那样会少算一半。
+
+608 是参与者轮次，不是模型请求数。一个轮次里，人物可能先推理再调用工具，来回几次，所以下一步才是逻辑调用：608 乘 2.5 等于 1,520 次。
+
+再往下一层是物理尝试。请求可能失败要重试，所以物理尝试比逻辑调用多 25%，1,520 乘 1.25 等于 1,900 次。
+
+轮次、逻辑调用、物理尝试，一层比一层更接近真实计费。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.3　先列数量，再计算一份假设预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>轮次、调用与尝试的关系</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>从参与者轮次出发，先得到逻辑调用，再加上重试产生的额外尝试。三次假设分别是 2.5 次／轮与 25%。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 250, height: 216, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>参与者</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>8 × 76</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>五个参与者加三个对象</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>五名人物，加咨询台、A 窗口、B 窗口</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 216, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 250, height: 216, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>参与者轮次</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>608</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>一个 Run 的轮次</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>轮次数不等于模型请求数，每轮可能多次往返</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 216, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 250, height: 216, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>逻辑调用</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>1,520</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>每轮假设 2.5 次</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>608 乘 2.5 得到 1,520 次</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 216, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 250, height: 216, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>物理尝试</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28' }}>1,900</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>按逻辑量加 25%</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>1,520 乘 1.25 得到 1,900 次</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>对象无人咨询时仍可自主执行，所以八个参与者都要计入，不能只算四名来访者。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>物理尝试才是计费口径；1,900 只是假设量，最终以实际记录与账单为准。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 28</Text>
+    </Box>
+
+</Slide>

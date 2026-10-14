@@ -1,0 +1,109 @@
+<Slide notes={`新建模型在基础配置的「模型」页，按钮是「＋ 新建模型」。表单按实际服务填写配置名称、模型 ID、服务地址和 API Key；当前表单还提供超时，聊天配置里还有最大输出 tokens 和 Temperature。
+
+有两点要注意。第一，聊天和 Embedding 是不同用途，可以分别准备配置；实验创建页会要求选择相应项目，不要随手填一个不存在的模型名称来通过表单。第二，密钥由本机凭据设施管理，表单不回显已保存的密钥，换到另一台机器运行需要重新提供环境。
+
+保存之后才可以点「测试连接」，有未保存修改时应先保存。测试会真的访问所配置的服务，它只说明这次配置的一次观察，不代表整场仿真已通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.5　模型配置：可选择不等于已经可用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>「＋ 新建模型」的表单结构</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ width: 1152, height: 48, background: '#276FBF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 18px' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>基础配置　·　模型　·　新建模型</Text>
+                <Box style={{ width: 76, height: 22, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 380, flexDirection: 'row' }}>
+
+                <Box style={{ width: 200, height: 380, background: '#EDF4FC', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>用途</Text>
+                    <Box style={{ width: 176, height: 34, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>聊天</Text>
+                    </Box>
+                    <Box style={{ width: 176, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>Embedding</Text>
+                    </Box>
+                    <Text style={{ fontSize: 12, color: '#546779', marginTop: 4 }}>说明</Text>
+                    <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>两种用途可以分别准备配置。</Text>
+                </Box>
+
+                <Box style={{ width: 952, height: 380, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 10 }}>
+
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>填写连接与聊天参数</Text>
+
+                    <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+                        <Box style={{ width: 440, flexDirection: 'column', gap: 8 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>连接</Text>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 110 }}><Text style={{ fontSize: 13, color: '#546779' }}>配置名称</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>开放日聊天</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 110 }}><Text style={{ fontSize: 13, color: '#546779' }}>模型 ID</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>按网关实际支持填写</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 110 }}><Text style={{ fontSize: 13, color: '#546779' }}>服务地址</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#B5C7D8' }}>填写实际服务地址</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFF4E6', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 110 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>API Key</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>不回显已保存的密钥</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 110 }}><Text style={{ fontSize: 13, color: '#546779' }}>超时</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#B5C7D8' }}>按服务实际情况填写</Text></Box>
+                            </Box>
+                        </Box>
+
+                        <Box style={{ width: 440, flexDirection: 'column', gap: 8 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>聊天参数</Text>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 110 }}><Text style={{ fontSize: 13, color: '#546779' }}>最大输出</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#B5C7D8' }}>tokens 上限</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 110 }}><Text style={{ fontSize: 13, color: '#546779' }}>Temperature</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#B5C7D8' }}>输出风格参数</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 158, background: '#FFFFFF', borderRadius: 6, padding: 14, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>Embedding 是另一种用途</Text>
+                                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>实验创建页会要求选择相应的项目；不要随手填入一个并不存在的模型名称来通过表单。</Text>
+                            </Box>
+                        </Box>
+
+                    </Box>
+
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 64, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>保存后才可「测试连接」；有未保存修改时应先保存</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>连接测试只说明这次配置的一次观察，不代表整场仿真已经通过。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 22</Text>
+    </Box>
+
+</Slide>

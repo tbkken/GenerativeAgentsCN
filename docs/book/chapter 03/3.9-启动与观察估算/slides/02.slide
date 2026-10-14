@@ -1,0 +1,82 @@
+<Slide notes={`这一节分成四块。
+
+第一块是启动前固定输入：点击执行实验，确认预检、参数与预计消耗，Run 创建时会把实验完整复制到自己目录，并记录内嵌实验 ID 与内容哈希。
+
+第二块是状态与窗口：八个状态各自只说明执行走到哪一步；观察窗口由起始时间、步长和请求步数决定，是算得出来的。
+
+第三块是页面里看什么：回放、Agent、诊断、质量、结果与导出，再加上要留意的 Trace 记录。
+
+第四块是估算与费用：公式给的是范围，逻辑调用与物理尝试要分开统计，没有返回用量的时候就记未知。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节地图　3.9</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>从启动到估算，{'\n'}四块内容按顺序推进</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 380 }}>先锁定输入与身份，再学会读状态和窗口，然后看页面上能取到什么证据，最后把调用与费用算清楚。</Text>
+            <Box style={{ width: 380, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center', marginTop: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>数值均为方案推算</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本案例尚未运行，数字不是运行成绩</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 740, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 52, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>启动前固定了哪些输入</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>预检、参数与预计消耗一起确认；Run 复制出创建那一刻的副本　·　3.9.1</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 740, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 52, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>状态与窗口各说明什么</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>八种状态只说执行阶段；窗口只覆盖请求的那几步　·　3.9.2 / 3.9.3</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 740, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 52, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>在页面里能看到什么</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>回放、Agent、诊断、质量、结果与导出，都受已提交事实限制　·　3.9.4</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 740, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 52, height: 52, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>估算、调用与费用</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>公式给的是区间；逻辑调用与物理尝试分开统计　·　3.9.5 / 3.9.6</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,48 @@
+<Slide notes={`更正的对象是当前认识，不是历史本身。“我当前相信手作十点开始”可以被新的认识替代：传入真实 memory_id、新内容和可选理由，旧节点保留并标为 SUPERSEDED，新节点成为有效记忆。
+
+但“九点五十分看见旧公告写着十点开始”是一次历史观察，不应仅因为公告后来更新，就宣布它从未发生——它仍可作为历史证据保留。
+
+两个细节。当前 supersede 主要修改自然语言内容，并继承原节点的附加元数据；如果结构化 SPO 本身已经变化，应另行追加正确事实，避免新内容与旧三元组矛盾。invalidate 则必须说明理由。两种操作都不删除历史。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.2　四个工具组成记忆的生命周期</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>更正当前认识，保留历史观察</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 250, background: '#EDF4FC', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>可被替代的当前认识</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>“我当前相信手作十点开始”</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>supersede 传入真实 memory_id、新内容和可选理由；旧节点保留并标为 SUPERSEDED，新节点成为有效记忆。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 250, background: '#F7F3E8', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>不应消失的历史观察</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>“九点五十分看见旧公告写着十点开始”</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>这是一次真实观察。不能因为公告后来更新，就宣布这次观察从未发生；它仍可作为历史证据保留。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '18px 24px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>supersede 与 invalidate，都不删除历史</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>supersede 主要修改自然语言内容并继承原节点附加元数据；若 SPO 本身已变化，应另行追加正确事实，避免新内容与旧三元组矛盾。invalidate 必须说明理由。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

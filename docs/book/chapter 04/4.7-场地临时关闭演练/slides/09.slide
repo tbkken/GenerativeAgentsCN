@@ -1,0 +1,70 @@
+<Slide notes={`做单因素对照，最容易出问题的地方不是干预本身，而是那些没被写下来的其他条件。
+这项演练里，参与者固定为三名集合者、一名引导员和一个公告对象；时间是 2026 年 10 月 22 日下午两点到两点半，时区上海，一分钟一步，一共 31 步。
+模型、采样方式、Skill、人物设定、注意力设置、视野、实际出生位置和审计设置都要保持一致。唯一的差别写在一行里：上缺口从可走改成阻挡，下缺口不变。
+我建议把这几行单独存成一份干预差异表。固定项写得越具体，越容易发现两组之间混进了不该有的变化；动手之前，也要先在地图的通路界面确认当前打开的是对照副本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.2　固定项与本案值</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两组之间，什么必须一样</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 618, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>参与者</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>3 名集合者 + 1 名引导员 + 1 个公告对象</Text></Box>
+            </Box>
+
+            <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>时间</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>2026-10-22 14:00—14:30　Asia/Shanghai{'\n'}1 分钟／步，共 31 步</Text></Box>
+            </Box>
+
+            <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>其余条件</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>模型、采样、Skill、人物、注意力、视野、实际出生、审计设置一致</Text></Box>
+            </Box>
+
+            <Box style={{ height: 104, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>干预（唯一一行）</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>仅上缺口从可走改为阻挡；下缺口不变</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 506, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 506, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>把差异压到一行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>固定项写得越具体，越容易发现两组之间混进了不该有的变化。差异表里只应留下干预这一行。</Text>
+            </Box>
+
+            <Box style={{ width: 506, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>留一份干预差异表</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>把精确文本或布局差异存档，核对共同条件时直接对照，不靠记忆。</Text>
+            </Box>
+
+            <Box style={{ width: 506, height: 152, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>先确认是对照副本</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>在地图的世界到通路界面里确认当前打开的是对照副本，再编辑目标格。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 26</Text>
+    </Box>
+
+</Slide>

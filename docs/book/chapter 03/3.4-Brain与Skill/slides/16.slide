@@ -1,0 +1,101 @@
+<Slide notes={`开始录入。在资源中心的"技能"入口创建两个子技能和两个对象技能，类型都选择"单个技能"；Brain 不走这个入口，要在"大脑"入口创建 qinghe-open-day-brain。
+
+两个要点：稳定名称必须与配套文档保持一致，否则依赖解析对不上；SKILL.md 要全文放入编辑区域，然后点击"保存内容"。
+
+保存完成不等于录入完成——后面还要重新打开核对识别出的依赖。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.4　在页面中建立和核对依赖</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>创建五份 Skill</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 620, height: 40, background: '#276FBF', borderRadius: 10, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>资源中心　·　技能</Text>
+                <Box style={{ width: 70, height: 20, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 11, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 400, backgroundColor: '#F4F7FA', borderRadius: 10, borderTopLeftRadius: 0, borderTopRightRadius: 0, flexDirection: 'row', padding: 12, gap: 12 }}>
+
+                <Box style={{ width: 140, background: '#EDF4FC', borderRadius: 8, padding: 10, flexDirection: 'column', gap: 6 }}>
+                    <Box style={{ width: 120, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>技能</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>大脑</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>地图</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>智能体</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>模型</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 440, flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ width: 440, height: 38, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 12px', gap: 10 }}>
+                        <Box style={{ width: 72 }}><Text style={{ fontSize: 12, color: '#546779' }}>资源名称</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 12, color: '#20344B' }}>qinghe-compare-options</Text></Box>
+                    </Box>
+                    <Box style={{ width: 440, height: 38, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 12px', gap: 10 }}>
+                        <Box style={{ width: 72 }}><Text style={{ fontSize: 12, color: '#546779' }}>类型</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 12, color: '#20344B' }}>单个技能</Text></Box>
+                    </Box>
+                    <Text style={{ fontSize: 12, color: '#546779', marginTop: 2 }}>SKILL.md 编辑区</Text>
+                    <Box style={{ width: 440, height: 172, background: '#20344B', borderRadius: 6, padding: '12px 14px', flexDirection: 'column', gap: 7 }}>
+                        <Text style={{ fontSize: 12, color: '#B5C7D8' }}>---</Text>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>name: qinghe-compare-options</Text>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>description: 比较开放日现场的候选做法，返回有依据的建议。</Text>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>example_input: 已有两种活动安排，请比较依据和待确认事项。</Text>
+                        <Text style={{ fontSize: 12, color: '#B5C7D8' }}>---</Text>
+                        <Text style={{ fontSize: 12, color: '#B5C7D8' }}>……（SKILL.md 全文）</Text>
+                    </Box>
+                    <Box style={{ width: 110, height: 34, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>保存内容</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5, marginTop: 8 }}>界面为拼装示意，非系统截图；入口名称依据当前页面与前端源码。</Text>
+
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 500, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>「技能」入口创建四个</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>两个子技能与两个对象技能，类型选择"单个技能"。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>「大脑」入口创建 Brain</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>qinghe-open-day-brain 单独在大脑入口创建，不与技能混在一起。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>名称与文档保持一致</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>稳定名称与配套文档一致，SKILL.md 全文放入编辑区域后点击"保存内容"。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 22</Text>
+    </Box>
+
+</Slide>

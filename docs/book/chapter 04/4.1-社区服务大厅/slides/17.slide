@@ -1,0 +1,53 @@
+<Slide notes={`主指标能同时反映分流和理解两件事，但它没法独自告诉我们失败出在哪。
+
+所以除了闭环率，还要一路看四段：有没有被建议、有没有真的抵达、有没有收到回复、有没有完成确认。这四段是一层一层收窄的，越往后越难成立。
+
+另外有一条口径要记住：报告无效率的时候，必须同时给出原始的请求数。因为咨询总次数一变，比率就跟着变，光看一个百分数会误判。
+
+这四段证据和四个指标要一起读，才能判断问题到底卡在哪一环。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.5　主指标之外的分段证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>主指标之外，还要四段证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>四段依次收窄，任何一段断了，闭环就不成立。</Text>
+
+        <Box style={{ width: 1152, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 120 }}>已建议</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>拿到适配窗口的一次建议</Text>
+        </Box>
+
+        <Box style={{ width: 980, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 120 }}>已抵达</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>合法导航之后，实际走到服务区</Text>
+        </Box>
+
+        <Box style={{ width: 808, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', width: 120 }}>已回复</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>取得目标窗口的真实回复</Text>
+        </Box>
+
+        <Box style={{ width: 636, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', width: 120 }}>已确认</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>真实复述正确下一步</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18, marginTop: 4 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>报告无效率须同时给原始请求数：不同总咨询次数会改变比率，只看百分数会误判。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

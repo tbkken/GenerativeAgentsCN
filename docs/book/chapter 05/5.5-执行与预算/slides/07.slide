@@ -1,0 +1,55 @@
+<Slide notes={`项目最常见的一种失误，是按日历宣布完成。到了周五就写“实验已完成”，可材料里还有没保存的配置、没提交的步骤。
+
+这里给出的替代方案是一条可检查的链：材料可审阅、配置已保存、实验输入已固定、运行事实可读、结果可交付。每个阶段完成之后，都要留下一个明确的交接记录，而不是凭印象往下走。
+
+这六道门有一个共同点：它们问的都不是“感觉好不好”，而是“能不能指出来在哪里”。材料在哪里、配置保存在哪、Run 的编号是什么、哪一步已经提交。
+
+答得上来就进下一阶段；答不上来就说明这一步还没做完。这是把项目从口号变成可交接工作的关键一步。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ②</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 80, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>②</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>六道证据门，{'\n'}回答得了才进下一步</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>执行顺序不是日历，而是一条可检查的链。每个阶段完成后再留下一个明确的交接记录。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 172, height: 80, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>材料审阅</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>浏览器配置</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>执行准备</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>运行观察</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>结果收集</Text>
+            </Box>
+            <Box style={{ width: 172, height: 80, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>交付检查</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 28</Text>
+    </Box>
+
+</Slide>

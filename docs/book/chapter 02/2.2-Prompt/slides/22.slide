@@ -1,0 +1,84 @@
+<Slide notes={`把查错的顺序画成三段，每一段问一个问题。
+
+第一段，源文件里有没有这条信息。活动缺少时长，先翻材料，很多时候是源文件里根本没写清楚。
+第二段，它有没有进入这次请求。材料齐全，还要确认内容真的被送进去了。放在目录里和出现在提示里，是两件事。
+第三段，前面两条都成立，才把遗漏归为模型或提示的问题。到这一步，改提示才有意义。
+
+顺序一旦颠倒，最容易出现的情况是：提示改了七八遍，问题其实一直在文件读取那一步。
+
+还有一类错误要单独拎出来，叫作证据越界。模型说“已确认全部房间可用”，但如果查询工具从未执行，这个结论就没有依据。这种情况下不能靠措辞润色把话说圆，必须回到执行记录，看它到底做了什么。
+
+记一句话：先说清证据，再谈结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.6　失败诊断与练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>出错先查源头，再查请求</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>同一个错误现象可能来自完全不同的位置，按顺序排查比反复改提示有效得多。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 230 }}>
+
+            <Box style={{ width: 320, height: 230, background: '#EDF4FC', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>源文件里有没有</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>活动缺少时长，先检查源文件，看这条信息是否写清楚。</Text>
+            </Box>
+
+            <Box style={{ width: 12 }} />
+
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 12 }} />
+
+            <Box style={{ width: 320, height: 230, background: '#EDF4FC', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>有没有进入请求</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>源文件齐全，再确认内容是否真的进入了这一次请求。</Text>
+            </Box>
+
+            <Box style={{ width: 12 }} />
+
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 12 }} />
+
+            <Box style={{ width: 320, height: 230, background: '#FFF4E6', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>才归因模型或提示</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>前面两条都成立，才把遗漏归为模型或提示问题。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 190, background: '#FFF4E6', borderRadius: 12, padding: '22px 26px', flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+            <Box style={{ width: 6, height: 100, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 10, flex: 1 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>证据越界</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>若模型写着“已确认全部房间可用”，而工具并没有执行，这个结论就没有依据，不能用措辞润色掩盖。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

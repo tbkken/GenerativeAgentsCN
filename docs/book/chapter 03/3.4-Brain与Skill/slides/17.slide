@@ -1,0 +1,99 @@
+<Slide notes={`保存之后不是直接开跑，而是核对。重新打开 Brain 的"Scripts 与 MCP"页，核对它识别出的两个子 Skill，以及正文引用的感知、导航、记忆、动作能力。识别列表对不上，多半是名称不一致或正文引用写错。
+
+对象技能的绑定在另一个地方：进入地图编辑器，选中公告栏或服务台，从"对象 Skill"的 Skill 选项中绑定对应技能。
+
+两者检查位置不同的原因要理解：Brain 属于实验运行装配，跟着实验走；对象技能属于地图的 Game Object，跟着地图走。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.4　在页面中建立和核对依赖</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>核对依赖与绑定对象 Skill</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 500, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>重开 Brain 的「Scripts 与 MCP」页</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>核对识别出的两个子 Skill，以及正文引用的感知、导航、记忆、动作能力。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>对象技能在地图编辑器绑定</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>选中公告栏或服务台后，从"对象 Skill"的 Skill 选项中绑定。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>两者的检查位置不同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>Brain 属于实验运行装配，对象技能属于地图的 Game Object。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 620, height: 40, background: '#276FBF', borderRadius: 10, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>Brain　·　Scripts 与 MCP</Text>
+                <Box style={{ width: 70, height: 20, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 11, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 620, height: 250, backgroundColor: '#F4F7FA', borderRadius: 10, borderTopLeftRadius: 0, borderTopRightRadius: 0, padding: 14, flexDirection: 'column', gap: 10, marginTop: -12 }}>
+                <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#20344B' }}>识别出的子 Skill</Text>
+                <Box style={{ width: 592, height: 38, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 12px' }}>
+                    <Text style={{ fontSize: 12, color: '#20344B' }}>qinghe-compare-options</Text>
+                    <Text style={{ fontSize: 12, color: '#26816B' }}>已识别</Text>
+                </Box>
+                <Box style={{ width: 592, height: 38, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 12px' }}>
+                    <Text style={{ fontSize: 12, color: '#20344B' }}>qinghe-memory-review</Text>
+                    <Text style={{ fontSize: 12, color: '#26816B' }}>已识别</Text>
+                </Box>
+                <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#20344B' }}>正文引用的能力</Text>
+                <Box style={{ flexDirection: 'row', gap: 8 }}>
+                    <Box style={{ width: 132, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#276FBF' }}>感知</Text>
+                    </Box>
+                    <Box style={{ width: 132, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#276FBF' }}>导航</Text>
+                    </Box>
+                    <Box style={{ width: 132, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#276FBF' }}>记忆</Text>
+                    </Box>
+                    <Box style={{ width: 132, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#276FBF' }}>动作</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 40, background: '#26816B', borderRadius: 10, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px', marginTop: 12 }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>地图编辑器　·　对象 Skill</Text>
+                <Box style={{ width: 70, height: 20, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 11, color: '#26816B' }}>示意</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 620, height: 128, backgroundColor: '#F7F3E8', borderRadius: 10, borderTopLeftRadius: 0, borderTopRightRadius: 0, padding: 14, flexDirection: 'column', gap: 8, marginTop: -12 }}>
+                <Box style={{ width: 592, height: 38, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 12px', gap: 10 }}>
+                    <Box style={{ width: 84 }}><Text style={{ fontSize: 12, color: '#546779' }}>选中对象</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 12, color: '#20344B' }}>公告栏</Text></Box>
+                </Box>
+                <Box style={{ width: 592, height: 38, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 12px', gap: 10 }}>
+                    <Box style={{ width: 84 }}><Text style={{ fontSize: 12, color: '#546779' }}>Skill 选项</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 12, color: '#26816B' }}>qinghe-notice-board</Text></Box>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>界面为拼装示意，非系统截图；入口名称依据当前页面与前端源码。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 22</Text>
+    </Box>
+
+</Slide>

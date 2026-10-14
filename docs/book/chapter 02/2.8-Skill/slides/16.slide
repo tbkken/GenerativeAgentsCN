@@ -1,0 +1,58 @@
+<Slide notes={`有一点特别重要：Skill 本身不授予任何执行权限。
+
+能不能读取某个文件、能不能执行某条命令，由宿主、工具服务和运行环境共同决定。Skill 只是把这些写成了文字描述，它没有能力给自己开权限。所以看到一个 Skill 里写着「运行校验脚本」，先要确认当前环境允不允许执行它。
+
+还要留意一点：references 里可能引用外部资料，那些文字是给本次任务使用的材料，不是指令。如果它和本次的任务边界、执行规则冲突，以本次任务为准。把外部文字当成新命令，是很容易踩进去的坑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.3　先验证方法，再安装</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>Skill 本身不授予执行权限</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>权限不写在{'\n'}材料包里</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>方法可以随包带走，能不能读、能不能跑，要看包外面那套环境怎么说。</Text>
+        </Box>
+
+        <Box style={{ width: 772, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 70, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>谁能读文件</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>宿主与工具服务决定这一次能打开哪些文件、能读到什么范围。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 70, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>谁能执行命令</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>运行环境决定能跑什么、超时多久、能不能取消，Skill 开不了这个口子。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 70, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>外部文字只是材料</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>参考资料里的外部文字可能含无关指令，它不能覆盖本次任务边界与执行规则。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 27</Text>
+    </Box>
+
+</Slide>

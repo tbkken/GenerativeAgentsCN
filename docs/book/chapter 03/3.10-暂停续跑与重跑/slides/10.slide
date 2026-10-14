@@ -1,0 +1,80 @@
+<Slide notes={`把已提交的事实按步排开，判断就落在边界上。
+
+前面这些帧都已经提交，最后完整提交到第 k 步。第 k 加 1 步还在计算，还没有提交，所以它不在这条已提交的带上。
+
+系统要问的问题是：最新的已提交边界 k，有没有完整且一致的恢复快照。注意问的是最新边界，不是目录里随便一个更早的快照。
+
+如果有，就新建一个 Attempt 从 k 恢复，下一次提交是 k 加 1。如果没有，就给出诊断，说明缺失或者不一致，而不是悄悄退回到更早的边界上继续。
+
+未提交的计算和临时文本不会进入回放事实，也不能被当成已经完成的动作重建出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.2　已提交边界比画面进度更重要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>恢复要对准最新已提交边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 372, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779' }}>已提交事实：Step 1 … k</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 170, height: 76, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>Step 1</Text>
+                </Box>
+                <Box style={{ width: 170, height: 76, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>Step 2</Text>
+                </Box>
+                <Box style={{ width: 170, height: 76, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>……</Text>
+                </Box>
+                <Box style={{ width: 170, height: 76, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>Step k−1</Text>
+                </Box>
+                <Box style={{ width: 170, height: 76, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>Step k　已提交边界</Text>
+                </Box>
+                <Box style={{ width: 170, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>Step k+1　未提交</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1112, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>最新已提交边界 k，有没有完整且一致的恢复快照？</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 40 }}>
+                <Box style={{ width: 536, height: 112, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>有　→　从 k 恢复</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>新 Attempt 从 k 恢复，下一次提交为 k+1。</Text>
+                </Box>
+                <Box style={{ width: 536, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>没有　→　给出诊断</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>记录缺失或不一致，不静默回退到更早边界。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.6 }}>第 k+1 步的计算与临时文本不进入回放事实；判定针对最新已提交边界，不是目录里随便一个较早快照。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

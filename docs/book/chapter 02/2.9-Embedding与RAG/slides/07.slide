@@ -1,0 +1,48 @@
+<Slide notes={`材料找得到之后，下一个问题是怎么切。
+
+切分不是随便按字数切开就行，它要服务于后面的检索和回答。切得太碎，一句话一段，句子里的指代没了，谁在说哪间房也看不出来；切得太整，整篇塞进上下文，无关内容又都回来了。
+
+合适的做法是保留能解释证据的最小语境。Markdown 按标题和段落切，主题和来源留在同一段里；表格按一行加字段名切，房间身份和容量单位不能丢；预约记录按一条预约切，房间、日期、起止时间要在一起。
+
+一句话概括：片段进入上下文以后，读者还要能看出这句话是谁说的、说的是谁。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.9.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>切分材料时保留能解释证据的上下文</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>切得好不好，最后要在答案里看得出来——它能不能解释自己引用的那句话。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 354, height: 124, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>切得太碎</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>一句话一段，指代和来源都丢了，读到片段也不知道它在说哪间房。</Text>
+            </Box>
+            <Box style={{ width: 354, height: 124, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>切得太整</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>整篇塞进上下文，费用上去了，无关内容也一起混进答案的依据里。</Text>
+            </Box>
+            <Box style={{ width: 354, height: 124, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>保留最小语境</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>标题、字段名与房间身份跟着片段一起走，证据才解释得清。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 25</Text>
+    </Box>
+
+</Slide>

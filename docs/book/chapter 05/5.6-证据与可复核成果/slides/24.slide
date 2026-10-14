@@ -1,0 +1,54 @@
+<Slide notes={`这一节要带走的是三句话。
+
+第一句，材料分开存。原始导出、解压副本、派生材料各有各的处理规则，原始导出不重新打包、不改名覆盖、不补写字段。字节还认得出来，后面的核对才有立足点。
+
+第二句，主张问三次。问判据、问事实、问定位，同时把取材边界冻结在同一个已提交窗口内，不拿窗口之外的记录来补窗口之内的结论。
+
+第三句，结论写到位就停。报告写到证据能支持的位置为止，缺口就写在纸上。下一节讲交接与复现，看看这些材料怎样交到另一位接收者手里，以及重新执行的范围该怎样记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.6　证据与可复核成果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节小结</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>记住三句话</Text>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF', width: 56 }}>一</Text>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>材料分开存</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>原始导出不动字节，解压副本只读，派生材料逐项指回原始文件。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B', width: 56 }}>二</Text>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>主张问三次</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>问判据、问事实、问定位；边界冻结在同一个已提交窗口内。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28', width: 56 }}>三</Text>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>结论写到位就停</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>写到证据能支持的位置为止，缺失环节与待判断项留在报告里。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>第五章　5.6　证据与可复核成果　·　下一节：交接与复现</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

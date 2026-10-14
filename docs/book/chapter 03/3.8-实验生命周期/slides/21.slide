@@ -1,0 +1,109 @@
+<Slide notes={`实验中心的列表每页固定显示五条，同时保留负责人、标签、分页和归档范围的选择，这几项在核对身份的时候很有用。
+
+范围可以选择当前、已归档，以及全部。归档之后，它会从默认范围里消失，切到已归档或者全部就能重新找到它，恢复也是在这个位置完成的。
+
+要强调的是，归档只影响展示，它不是状态迁移。归档不会把一份草稿变成封存实验，也不会把某个运行变成完成。删除同理，它针对的是列表里的那条记录。
+
+所以用列表判断事情的时候，先确认三件事：当前在哪个范围、看到的实验是哪一份身份、其他筛选条件有没有影响结果。只看徽标颜色容易出错。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.5　在练习副本中理解归档、恢复和删除</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>归档不改实验状态</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+
+        <Box style={{ width: 698, height: 440, background: '#F4F7FA', borderRadius: 12, flexDirection: 'column' }}>
+            <Box style={{ width: 698, height: 44, background: '#276FBF', borderRadius: 12, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>实验中心　实验列表</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 56, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+            <Box style={{ padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 104, height: 36, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>当前</Text>
+                    </Box>
+                    <Box style={{ width: 104, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>已归档</Text>
+                    </Box>
+                    <Box style={{ width: 104, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>全部</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779', flex: 1 }}>归档范围选择</Text>
+                </Box>
+
+                <Box style={{ width: 662, height: 44, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 196 }}>青禾开放日　正式实验</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', width: 88 }}>负责人 林岚</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Box style={{ width: 72, height: 24, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#276FBF' }}>DRAFT</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 662, height: 44, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 196 }}>青禾开放日　练习副本</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', width: 88 }}>负责人 林岚</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Box style={{ width: 72, height: 24, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#276FBF' }}>DRAFT</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 662, height: 44, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 196 }}>青禾开放日　第一轮运行</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', width: 88 }}>负责人 林岚</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Box style={{ width: 72, height: 24, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#26816B' }}>SEALED</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 662, height: 44, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 196 }}>邻居节　旧方案对照</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', width: 88 }}>负责人 陈晨</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Box style={{ width: 72, height: 24, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>归档中</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 662, height: 44, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', width: 196 }}>春季工作坊　试跑</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', width: 88 }}>负责人 周宁</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Box style={{ width: 72, height: 24, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>归档中</Text>
+                    </Box>
+                </Box>
+
+                <Text style={{ fontSize: 13, color: '#546779' }}>每页固定 5 条，保留负责人、标签与分页。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 432, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 432 }}>列表与归档范围只决定「看不看得见」，不决定状态。</Text>
+            <Box style={{ width: 432, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>三个范围之间切换</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>归档后从对应范围恢复，内容仍然在。</Text>
+            </Box>
+            <Box style={{ width: 432, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>归档不改变状态</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>既不把草稿变成封存实验，也不把某个 Run 变成完成状态。</Text>
+            </Box>
+            <Box style={{ width: 432, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>先确认看到的是哪一份</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>范围、身份与筛选条件都确认过，再判断状态。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,43 @@
+<Slide notes={`时间这条规则之所以能完全交给程序，是因为它已经被写成了精确的形式。
+
+我们约定活动占用是 [开始, 结束) 这样的半开区间：包含开始时刻，不包含结束时刻。两个区间 [a, b) 和 [c, d) 算不算重叠，只看一个条件——a 小于 d，并且 c 小于 b。
+
+这个写法带来两个好处。第一，判断是确定的，同样的输入永远得到同样的结论，不会出现「看情况」。第二，边界是明确的：前一件事 10:00 结束，后一件事 10:00 开始，这两件事不算重叠。
+
+后面所有的冲突检查，都建立在这一条约定上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.7.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>为什么时间边界适合确定性检查</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>活动占用是半开区间，重叠有可以逐条判定的条件。</Text>
+
+        <Box style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 496, height: 84, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>[ 开始, 结束 )</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>包含开始，不包含结束</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 496, height: 84, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>a &lt; d 并且 c &lt; b</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>两个区间重叠的充要条件</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

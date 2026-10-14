@@ -1,0 +1,89 @@
+<Slide notes={`我先说共同事实这一半。
+场地说明牌是四个人都能读到的对象。它写明的时间是亚洲上海时区的十八点到二十一点，人数上限十二人，本次计划九人。最后十分钟是收整时间，所以活动最晚二十点五十结束。可用的模式只有正常交谈和静默共读两种；没有隔音分区，不能远程参加，也不会自动延时。
+再看活动本身。活动日是二零二六年十一月二十一号，在共享活动室体验一次，时长六十分钟。人物上只模拟三位代表和主持人杜宁，九人只是计划人数。
+范围要收窄：不涉及永久政策、收费、资格或者审批。
+最容易出错的地方在这里——符合场地规则，不等于满足个人需求。规则只筛掉不成立的时段，它不会替任何人同意。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.1　共同事实与四个候选</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>共同事实：一次 60 分钟的活动</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16 }}>
+
+        <Box style={{ height: 448, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 470, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>场地说明牌　·　共同规则</Text>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>时间：Asia/Shanghai 的 18:00—21:00 可用</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>人数：最多 12 人，本次计划 9 人</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>收整：最后 10 分钟收整，活动最晚 20:50 结束</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>模式：只有正常交谈、静默共读两种</Text>
+                </Box>
+                <Box style={{ height: 74, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>没有：隔音分区、远程参加、自动延时、噪声物理模型</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 650, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>活动日与参与者</Text>
+                <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>活动日 2026-11-21</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>共享活动室体验一次，时长 60 分钟</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>三位代表＋主持人杜宁</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>何澄、秦川、宋遥；九人是计划人数，不是全部建模对象</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>不涉及的范围</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>永久政策、收费、资格或审批，都不在本次协商之内</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 92, background: '#F7F3E8', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#546779' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>材料性质</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>人物、场地和材料均虚构，尚无 Run，不代表任何现实结果</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 76, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>符合场地规则，不等于满足个人需求；符合规则只说明候选没有被共同规则排除，不能替任何人表示同意。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,72 @@
+<Slide notes={`跑完四条命令只是拿到了文件，还差一步：宣布完成之前，按四项核对一遍。
+
+第一项，三项活动是否齐全，并且独立校验通过。齐全和通过都要由校验器给出，不能由模型自己声明。
+
+第二项，plan.md 和同目录下的 schedule.json 是否一致。说明文件给人看，结构化排期给程序看，两边必须指向同一件事。
+
+第三项，这一次的查询、响应和文件能不能互相对应，也就是这批产物能指认到具体的输入和输出，而不是混着上一次的。
+
+第四项最容易出错：不能出现已经预约成功这类说法。本章里根本没有提交预约的写入工具，任何这类表述都没有执行依据。
+
+前三项是问有没有做到，第四项是问有没有说过头。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.2　一次完整的 API 路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交付前按四项核对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>最后一次校验通过之后，再逐条核对，然后才宣布完成。</Text>
+
+        <Box style={{ height: 86, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>三项活动齐全，独立校验通过</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>齐全与通过与否，都由校验器判定，不由模型声明。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 86, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>plan.md 与同目录 schedule.json 一致</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>说明文件里的每一项，都能在同目录的结构化排期里找到。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 86, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>本次查询、响应与文件相互对应</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>一次尝试的输入、响应与产物能互相指认，不混入上一轮。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 86, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>没有"已经预约成功"这类表述</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>本章没有提交预约的写入工具，任何这类说法都没有执行依据。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 25</Text>
+    </Box>
+
+</Slide>

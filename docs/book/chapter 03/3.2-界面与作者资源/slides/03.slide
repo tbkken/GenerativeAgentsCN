@@ -1,0 +1,48 @@
+<Slide notes={`这一节从最容易出错的地方讲起。很多人打开作者界面，看到「地图」两个字就点进去改，改完保存，以为改的是公共材料，其实动的是某个实验里的副本。
+
+要建立的是定位习惯：动手之前先确认自己站在哪一层范围。基础配置下面是公共作者资源，是各个实验共用的原材料；打开某个实验之后，看到的是这个实验自己的一份副本。
+
+两条范围的关系可以概括成一句话：选入实验的时候递归复制完整内容，之后各改各的，公共配置的修改不会自动同步到已经建好的实验。
+
+所以判断依据不是按钮上的字，而是页面所在的范围和实验名称。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.2.1　先看清正在编辑哪一份内容</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>3.2.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先看清正在编辑哪一份内容</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>名字可以一样，保存的落点不一样。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 500, height: 56, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>基础配置：公共作者资源</Text>
+            </Box>
+            <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 500, height: 56, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>当前实验：实验独立副本</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,64 @@
+<Slide notes={`SKILL.md 的开头是和解析器签的合同。当前系统只认三个字段：name、description，以及可选的 example_input。kind 不写在这里，它由资源类型或对应目录确定。
+
+有个容易踩的坑：第二章介绍过的通用 Skill 材料，不能原样假设具有本系统的全部运行合同。比如自己加上 version、allowed-tools 这些前置字段，当前解析器不支持，会直接遇到问题。
+
+正文往下是给模型读的说明：只依据输入中的事实和共享上下文提出建议，不知道的条件写成待确认项，不补造已发生的行动。这份子 Skill 材料的态度，就是全部建议都落在证据上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.3　当前系统怎样读取 SKILL.md</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>开头只认三个字段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 600, height: 40, background: '#276FBF', borderRadius: 10, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>SKILL.md　·　qinghe-compare-options</Text>
+                <Text style={{ fontSize: 12, color: '#EDF4FC' }}>等宽色块重绘</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 380, background: '#20344B', borderRadius: 10, borderTopLeftRadius: 0, borderTopRightRadius: 0, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#B5C7D8' }}>---</Text>
+                <Box style={{ flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}><Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>name:</Text> qinghe-compare-options</Text>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}><Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>description:</Text> 比较开放日现场的候选做法，返回有依据的建议。</Text>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}><Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>example_input:</Text> 已有两种活动安排，请比较依据和待确认事项。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#B5C7D8' }}>---</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF', marginTop: 6 }}># 比较候选做法</Text>
+                <Text style={{ fontSize: 13, color: '#B5C7D8', lineHeight: 1.6 }}>只依据输入中的事实和共享上下文提出建议。{'\n'}不知道的条件写成待确认项，不补造已发生的行动。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 520, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 520, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>开头只使用三个字段</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>name、description 和可选的 example_input。kind 由资源类型或对应目录确定，不写入 front matter。</Text>
+            </Box>
+
+            <Box style={{ width: 520, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>通用材料不等于运行合同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>第二章介绍的通用 Skill 材料，不能原样假设具有本系统的全部运行合同。</Text>
+            </Box>
+
+            <Box style={{ width: 520, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>自行加字段会出错</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>在这里自行添加 version、allowed-tools 等前置字段，会遇到当前解析器不支持的问题。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 22</Text>
+    </Box>
+
+</Slide>

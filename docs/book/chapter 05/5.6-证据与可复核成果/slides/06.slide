@@ -1,0 +1,70 @@
+<Slide notes={`交接清单要按三组登记，一组对应一个不同的问题。
+
+第一组是文件来源：原文件名、实际来源、取得时间、大小、SHA256。它回答「这份文件从哪来、还是不是原来那一份」。第二组是身份与边界：Experiment、Run、全部 Attempt、状态、最后提交 Step。它回答「这次运行到哪儿为止」。第三组是操作上下文：导出时页面选中的对象、原始归档路径。它回答「当时的人看的是哪一屏」。
+
+三组缺一不可。只有文件来源，无法判断它属于哪次 Run；只有身份，无法核对字节有没有被改过。
+
+登记不出来的字段写「未知」。留空会被读成没检查，随手猜一个值，则会把不确定伪装成事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.1　先把原始文件和分析工作分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交接清单要登记哪三组字段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 620, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 118, background: '#276FBF' }} />
+                <Box style={{ width: 566, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>文件来源</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>原文件名 · 实际来源 · 取得时间 · 大小 · SHA256</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>回答：这份文件从哪来，还是不是原来那一份</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 118, background: '#26816B' }} />
+                <Box style={{ width: 566, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>身份与边界</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>Experiment · Run · 全部 Attempt · 状态 · 最后提交 Step</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>回答：这次运行到哪一步为止，共发生过几次尝试</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 118, background: '#26816B' }} />
+                <Box style={{ width: 566, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>操作上下文</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>导出时页面选中的对象 · 原始归档路径</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>回答：当时的人看的究竟是哪一屏、哪一份归档</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 508, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>三组缺一不可</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 508 }}>只有文件来源，无法判断它属于哪次 Run；只有身份，无法核对字节有没有被改过。</Text>
+            <Box style={{ width: 508, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Attempt 必须写全</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>只写末次 Attempt，会让失败与恢复过程从清单里消失。</Text>
+            </Box>
+            <Box style={{ width: 508, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>无法核实的字段写「未知」</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>留空会被读成没有检查；随手猜一个值，是把不确定伪装成事实。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

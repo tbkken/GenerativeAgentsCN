@@ -1,0 +1,99 @@
+<Slide notes={`空间和窗口是固定的，不构成干预。
+空间一共四层：最外面是青禾社区，往里面是活动中心，再里面分成协商区和资料区，最里面是那块场地说明牌。四位参与者预先知道协商区和资料区这两个地址，他们可以走到那里去谈。
+对象这边只有一个职责：回答共同事实。你问场地规则，它答场地规则；它不会替任何人说出私人理由。
+讨论的 Run 候选窗口是二零二六年十一月二十号十四点到十五点十五分，一分钟一步，一共七十六步。
+要注意：这个窗口讨论的是候选本身，不是等第二天活动真的举办完再回来看结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.2　私有理由与教师分析分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四层空间与讨论窗口</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 616, flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>四层空间　·　自外向内</Text>
+
+            <Box style={{ width: 616, height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>青禾社区</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>最外层，场地说明牌规则来自这里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row' }}>
+                <Box style={{ width: 28 }} />
+                <Box style={{ width: 588, height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>活动中心</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>共享活动室所在，四位参与者在这里碰面</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row' }}>
+                <Box style={{ width: 56 }} />
+                <Box style={{ width: 560, height: 88, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>协商区／资料区</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>四人知道这两区地址；讨论只在这里发生</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row' }}>
+                <Box style={{ width: 84 }} />
+                <Box style={{ width: 532, height: 88, background: '#F7F3E8', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 48, background: '#546779' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>场地说明牌</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>对象只答共同事实，不替任何人表态</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 504, flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>讨论 Run 候选　·　示意</Text>
+
+            <Box style={{ height: 170, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>2026-11-20　14:00 — 15:15</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>1 分钟／步，共 76 步</Text>
+                <Box style={{ width: 468, height: 28, flexDirection: 'row', gap: 2 }}>
+                    <Box style={{ width: 56, height: 28, background: '#276FBF' }} />
+                    <Box style={{ width: 56, height: 28, background: '#EDF4FC' }} />
+                    <Box style={{ width: 56, height: 28, background: '#276FBF' }} />
+                    <Box style={{ width: 56, height: 28, background: '#EDF4FC' }} />
+                    <Box style={{ width: 56, height: 28, background: '#276FBF' }} />
+                    <Box style={{ width: 56, height: 28, background: '#EDF4FC' }} />
+                    <Box style={{ width: 56, height: 28, background: '#276FBF' }} />
+                    <Box style={{ width: 56, height: 28, background: '#EDF4FC' }} />
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>窗口跨度示意，非进度条</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>讨论的是候选本身，不等待次晚活动真的举办</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>对象只答共同事实；私人理由不经过对象转发</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商　·　空间与窗口为示意</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,70 @@
+<Slide notes={`最后一个动作，是把结论写到证据能支持的位置就停下来。
+
+顺序本身有讲究：先写研究条件，再写全体样本与边界，然后才是观察。为什么把观察放在第三步？因为读者要先知道这批材料覆盖了哪次运行、哪个窗口，才知道后面的观察能管多远。
+
+接着写代价。如果少走错窗口的代价是多花轮次和调用，这个取舍要完整写出来，不能只报好的一面。再写未完成，把缺失环节和待判断项摆明。
+
+最后是解释限制。一个小规模教学案例，能说明的是它在给定条件下的表现，不能外推成「行政服务效率提高」。写到这一步就停。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.6　证据与可复核成果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ④</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>④</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>对外结论写到证据能够支持的位置</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 980 }}>报告写到证据能支持的位置就停，不往前多走一步。缺口留在纸上，比补一个好看的结论更有价值。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 155, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>研究条件</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 155, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>样本与边界</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 155, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>观察</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 155, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>代价</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 155, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>未完成</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 155, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>解释限制</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

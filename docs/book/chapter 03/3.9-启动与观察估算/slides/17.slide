@@ -1,0 +1,65 @@
+<Slide notes={`等待和卡死是两回事。
+
+许安因为手作室还没有开放而等待，这属于正常行为：它应该有原因、有截止时间，也有后续的动作条件。条件满足了，它就会继续。
+
+反复查询同一个信息却一直没有进展，是另一种情况，那才是需要检查的对象。
+
+判断的时候别用画面上的印象：人物不移动，可能只是在等待；日志一直在滚动，也不代表业务有进展。要回到请求、错误和提交记录上去看，那些才是能核对的事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.4　在页面中观察什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>等待有理由，卡死没有</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 544, height: 300, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>WAIT · 有理由的等待</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>条件还没满足，角色决定先等一等，这属于正常行为</Text>
+                <Box style={{ width: 504, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>应该有原因</Text>
+                </Box>
+                <Box style={{ width: 504, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>应该有截止时间</Text>
+                </Box>
+                <Box style={{ width: 504, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>应该有后续动作条件</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>许安因手作室尚未开放而等待，条件满足后继续行动</Text>
+            </Box>
+
+            <Box style={{ width: 576, height: 300, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>反复查询却没有进展</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>同一信息反复查询、始终没有新的结果，才是需要检查的对象</Text>
+                <Box style={{ width: 536, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>不能仅凭人物不移动判卡死</Text>
+                </Box>
+                <Box style={{ width: 536, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>不能仅凭日志滚动判有进展</Text>
+                </Box>
+                <Box style={{ width: 536, height: 46, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>要回到请求、错误与提交记录</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>画面是结果，不是依据</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>两种情况的处理不同：等待要看条件是否写清楚，无进展要看请求、错误与重试记录。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 23</Text>
+    </Box>
+
+</Slide>

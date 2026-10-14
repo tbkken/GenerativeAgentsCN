@@ -1,0 +1,75 @@
+<Slide notes={`来源登记就是资料集的主干，这六项我逐条说。
+
+S01 是窗口分工：A 为场地使用咨询，B 为设施问题咨询，只能证明教案规定的分工，不是审批规则。S02 是四项任务与首次话语，证明的是角色初始目的，不是到场后的实测发言。
+
+S03 是地图与出生区域方案，只能证明草图存在，还没证明系统中可达。S04 是两段咨询台决策文本，待写入 Skill，尚未证明实际执行。S05 是时间方案：九点到十点十五、每步一分钟、共七十六步。S06 是咨询闭环条件，它是判据，不是任务已经成功的答案。
+
+每一项都要写清现在能证明什么，不能因为编号整齐就往前多推一步。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.2　建一张能追到原文的来源表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>S01–S06：每一项能证明什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ width: 1152, height: 40, padding: '0 12px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779', width: 88 }}>资料索引</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 488 }}>来源与采用内容</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 232 }}>用途</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 284 }}>当前可证明的范围</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 88 }}>S01</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 488, lineHeight: 1.45 }}>4.1.1 的窗口分工：A 为场地使用咨询，B 为设施问题咨询</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 232, lineHeight: 1.45 }}>编写三个设施及引导员的服务知识</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 284, lineHeight: 1.45 }}>教案规定的分工，不是审批规则</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 88 }}>S02</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 488, lineHeight: 1.45 }}>4.1.1 的四项任务 H1—H4 与首次话语</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 232, lineHeight: 1.45 }}>制作四份独立人物材料</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 284, lineHeight: 1.45 }}>角色初始目的，不是到场后的实测发言</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 88 }}>S03</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 488, lineHeight: 1.45 }}>4.1.2 的地图与出生区域方案</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 232, lineHeight: 1.45 }}>制作图像、语义和碰撞资料</Text>
+            <Text style={{ fontSize: 14, color: '#CB6B28', width: 284, lineHeight: 1.45 }}>空间草图，未证明系统中可达</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 88 }}>S04</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 488, lineHeight: 1.45 }}>4.1.3 的两段咨询台决策文本</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 232, lineHeight: 1.45 }}>保存基线与对照的唯一策略差异</Text>
+            <Text style={{ fontSize: 14, color: '#CB6B28', width: 284, lineHeight: 1.45 }}>待写入 Skill，未证明实际执行</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 88 }}>S05</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 488, lineHeight: 1.45 }}>4.1.2 的时间方案</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 232, lineHeight: 1.45 }}>填写实验装配参数</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 284, lineHeight: 1.45 }}>09:00—10:15、每步一分钟、76 步</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 8, padding: '0 12px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 88 }}>S06</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 488, lineHeight: 1.45 }}>4.1.5 的咨询闭环条件</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 232, lineHeight: 1.45 }}>制作评分材料</Text>
+            <Text style={{ fontSize: 14, color: '#CB6B28', width: 284, lineHeight: 1.45 }}>判据，不是任务已经成功的答案</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 23</Text>
+    </Box>
+
+</Slide>

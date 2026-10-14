@@ -1,0 +1,51 @@
+<Slide notes={`行为这一侧，两组用的是同一套设置。
+我把它写成一段条件式的判断：先读当前坐标、地址和有效进度，再用真实已知的地址去查询路线。
+如果返回可达而且还需要移动，就保留完整目标提交 MOVE；如果已经进入集合区，就记录待核对的到达信息，并在当前位置做一次集合准备动作；如果目标合法但确实不可达，就保存原因，再去咨询实际可交互的公告对象或者看得见的引导员；参数被拒绝的时候，按具体错误修正，不猜地址，也不扩大视野去突破上限。
+两组共享这一套判断，所以后面出现的任何行为差异，都只能来自那一个被改动的碰撞格。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　　4.7.3 两组同一条件式 Brain</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>同一套判断，四条出口</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>先读坐标与进度，再按真实已知地址查路线；四条出口互不先后。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 250, height: 76, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>可达且仍需移动</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>提交 MOVE</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 76, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>已进入集合区</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>集合准备 ACT</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 76, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>合法但不可达</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>保存原因并咨询</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 76, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>参数被拒绝</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>按具体错误修正</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 26</Text>
+    </Box>
+
+</Slide>

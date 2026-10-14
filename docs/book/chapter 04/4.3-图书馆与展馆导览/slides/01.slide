@@ -1,0 +1,92 @@
+<Slide notes={`想找鸟类图册的人，走进的却是纸艺区。遇到这种情况，我们很容易先怀疑文字写得不够清楚，但还有一种可能：他根本没看见导览。
+
+我这次要做的实验非常克制：信息不变，人物的行为规则不变，甲乙两厅的资料对象和通路也都不动，只把同一块导览牌从一个位置挪到另一个位置，再看发现和访问会不会跟着变。
+
+为什么要这么克制？因为只要同时动了别的东西，结果就说不清是哪一项造成的。牌子本身就是立在通道里的一块非阻挡物，它不挡路，只提供语义；它能起作用，靠的是被人真实看见，或者被真实查询。
+
+先把问题收窄成一句话：同一块牌子，换个位置，会怎样。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.3　图书馆与展馆导览</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>同一块牌子，{'\n'}换个位置会怎样</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>青禾主题馆是一个虚构教案，尚未制作资源、上传或运行。保持信息与行为规则相同，只把导览牌移一个位置，看发现与访问会不会改变。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>兴趣私有</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>通路不变</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>只挪牌子</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>发现取证</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 400, height: 304, background: '#20344B', padding: 8, flexDirection: 'column', alignSelf: 'center' }}>
+                <Box style={{ flex: 1, background: '#F4F7FA', flexDirection: 'column' }}>
+
+                    <Box style={{ height: 16, background: '#F4F7FA' }} />
+
+                    <Box style={{ height: 96, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 352, height: 96, background: '#F4F7FA', flexDirection: 'column' }}>
+                            <Box style={{ height: 64, background: '#F4F7FA' }} />
+                            <Box style={{ height: 16, flexDirection: 'row' }}>
+                                <Box style={{ width: 176, background: '#F4F7FA' }} />
+                                <Box style={{ width: 16, background: '#CB6B28' }} />
+                                <Box style={{ width: 160, background: '#F4F7FA' }} />
+                            </Box>
+                            <Box style={{ height: 16, background: '#F4F7FA' }} />
+                        </Box>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                    </Box>
+
+                    <Box style={{ height: 96, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 160, height: 96, background: '#EDF4FC', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#276FBF' }}>甲厅</Text>
+                        </Box>
+                        <Box style={{ width: 192, height: 96, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#26816B' }}>乙厅</Text>
+                        </Box>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                    </Box>
+
+                    <Box style={{ height: 80, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 352, height: 64, background: '#F7F3E8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#546779' }}>休息区</Text>
+                        </Box>
+                    </Box>
+
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, justifyContent: 'center' }}>
+                <Box style={{ width: 16, height: 16, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>网格 24×18　橙色方块＝导览牌（示意）</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览：同一块牌子，换个位置会怎样？</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,55 @@
+<Slide notes={`两类任务要观察的东西确实不一样。
+
+活动筹备助手要能读取文件，把结果整理成结构化的形式，调用查询或检查的工具，并且在资料缺失的时候正确停下来，而不是硬着头皮编一个。它的评价重点是约束是否守住、来源是否清楚、执行是否真实、交付是否完整。
+
+仿真角色的要求更多。它要在多轮过程中理解自己现在在哪里、看得到哪些信息、有哪些只有自己知道的记忆，还要读懂工具返回了什么，然后按照世界合同去选择行动。所以评价重点转向跨步的一致性、动作参数是否合法、信息边界有没有被越过、记忆用得对不对，以及调用成本。
+
+最后这一点特别容易混：这些测试要和内核检查分开看。模型没有提出第二次世界动作，不能据此证明内核一定会拒绝第二次提交；反过来，内核正确拒绝了非法动作，也不说明角色已经完成了业务目标。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.6　为本书的两类任务分别写选择说明</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两类任务，两套要观察的东西</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>模型测试与内核检查要分开：模型没做某件事，不等于系统会拒绝它。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 300, background: '#EDF4FC', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>活动筹备助手　第二章</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>读取文件、形成结构化结果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>调用查询或检查工具</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>缺少资料时正确停下来</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>评价重点：约束、来源、执行、交付</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 300, background: '#ECF7F2', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>仿真角色　第三章</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>多轮理解当前位置、所见信息与私有记忆</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>读懂工具反馈，按世界合同选择行动</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>单次写作表现无法覆盖这些要求</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>评价重点：跨步一致性、动作参数、信息边界、记忆使用与调用成本</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>模型没有提出第二次世界动作，不能据此证明内核一定会拒绝第二次提交；内核正确拒绝非法动作，也不说明角色已完成业务目标。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 27</Text>
+    </Box>
+
+</Slide>

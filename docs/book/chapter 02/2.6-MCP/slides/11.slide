@@ -1,0 +1,78 @@
+<Slide notes={`这份结构要说明的是「规则只有一份」。
+
+容量与冲突规则属于业务，它只维护一份，不管入口有几个。Python 直接调用业务函数时，走的是调用点这一侧；MCP 服务把同一个函数暴露出去时，走的是协议这一侧。
+
+两侧各自要处理的东西并不相同。调用点这一侧处理的是参数怎么给、异常怎么抛；MCP 服务那一侧要处理的是参数描述怎么写、协议消息怎么组织、错误怎么按协议返回。
+
+如果把这套业务规则抄成两份，早晚会不一致：改了一处忘了另一处，两个入口给出不同结论，而且很难被发现。
+
+第三章还会区分决策与有权限边界的执行。这里先记住一点：本节做的只读服务不是仿真 MCP，它不会代替任何真实业务系统。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.2　业务规则只维护一份</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一份业务校验代码，两条路径</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 480, height: 96, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>业务规则：容量与冲突</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>只维护一份，不管入口有几个</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', justifyContent: 'center', gap: 48 }}>
+            <Box style={{ width: 552, height: 28, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 552, height: 28, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 48, justifyContent: 'center' }}>
+
+            <Box style={{ width: 552, height: 230, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>Python 直接调用</Text>
+                <Box style={{ width: 512, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 12px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>参数由调用点直接给出</Text>
+                </Box>
+                <Box style={{ width: 512, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 12px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>异常按 Python 方式抛出</Text>
+                </Box>
+                <Box style={{ width: 512, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 12px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>不经过协议层</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 552, height: 230, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>MCP 服务暴露</Text>
+                <Box style={{ width: 512, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 12px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>参数描述写进工具合同</Text>
+                </Box>
+                <Box style={{ width: 512, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 12px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>组织协议消息与结果转换</Text>
+                </Box>
+                <Box style={{ width: 512, height: 46, background: '#FFFFFF', borderRadius: 6, padding: '0 12px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>错误按协议约定返回</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>抄成两份，早晚会不一致</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>改了一处忘了另一处，两个入口给出不同结论，而且很难被发现。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 27</Text>
+    </Box>
+
+</Slide>

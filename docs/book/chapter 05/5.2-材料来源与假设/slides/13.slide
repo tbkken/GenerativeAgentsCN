@@ -1,0 +1,58 @@
+<Slide notes={`处理冲突之前，先问三句话。
+
+第一，这句话来自哪里：是原教案、草稿，还是别人转述。第二，是否针对同一个用途——同一句“可以审批”，写在真实规定里和写在教学练习里，含义完全不同。第三，作者是否已明确采用；没被采用的材料，不会因为出现次数多就占上风。
+
+还有一条反直觉的提醒：较新的文件不自动更可靠，写得更自信也不是优先依据。
+
+确认不了的业务条件进待办，注明它会影响哪个资源或判断；不要让模型偷偷替团队完成需求决策。
+
+最后是有意保留的差异。H1 和 H3 首句相同、私人目的不同，不是重复数据。若有人把首句“优化”成写明预约或报修，就在配置之前消掉了要观察的问题。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.3　冲突先登记，再决定是否采用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先问三句话，再动材料</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>面对一份新来的材料，先问三句话，再决定动不动它。</Text>
+            <Box style={{ width: 420, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>这句话来自哪里？</Text>
+            </Box>
+            <Box style={{ width: 420, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>是否针对同一用途？</Text>
+            </Box>
+            <Box style={{ width: 420, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>是否已经被作者明确采用？</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>较新的文件不自动更可靠，写得更自信也不是优先依据。</Text>
+        </Box>
+
+        <Box style={{ width: 708, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+
+            <Box style={{ width: 708, height: 190, background: '#ECF7F2', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>无法确认的业务条件</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>进入待办，并注明它会影响哪个资源或判断。</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>不要让模型偷偷替团队完成一次需求决策。</Text>
+            </Box>
+
+            <Box style={{ width: 708, height: 232, background: '#FFF4E6', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>有意保留的差异，不要合并</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>H1 和 H3 的首次话语相同，私人目的不同——这不是重复数据。</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>关键目的暂时没有说出来，正是澄清策略的研究条件；若整理者“优化”首句，就在配置之前消除了原来要观察的问题。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,105 @@
+<Slide notes={`五种接收检查，回答的是五个不同问题，彼此不能替代。
+
+设计审阅回答「知道研究什么」，看的是委托、输入、两组之间唯一的差异和判据。它不需要调用模型，材料说得清楚就能判断设计值不值得做。
+
+文件核对回答「收到哪份材料」，看的是原名、类型、大小、摘要和来源。收到文件本身，不代表协议校验通过，更不代表运行验收通过。
+
+事实回放回答「保存了哪些世界事实」，靠的是 Run 身份、帧和素材；它只读事实，不加载 Brain 重新推理，所以证明不了模型行为。
+
+结果复算回答「按规则能否得到结论」，要能追到原始记录、逐项判分和汇总，并保留未知与未完成。重新执行回答「这个环境能否继续工作」，要另记新事实与消耗。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.1　先约定接收者要完成什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五类检查，回答五个不同问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ width: 1152, height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>检</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>按约定逐项接收，各项不能相互替代</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>目标不同，作者要准备的材料与验证深度也不同</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'flex-start', gap: 10 }}>
+
+            <Box style={{ width: 204, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '16px 14px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>审</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>设计审阅</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>知道研究什么：委托、输入、唯一差异与判据</Text>
+                <Box style={{ width: 176, height: 30, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center', marginTop: 4 }}>
+                    <Text style={{ fontSize: 13, color: '#26816B' }}>无需模型调用</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 204, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '16px 14px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>核</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>文件核对</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>收到哪份材料：原名、类型、大小、摘要与来源</Text>
+                <Box style={{ width: 176, height: 30, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center', marginTop: 4 }}>
+                    <Text style={{ fontSize: 13, color: '#26816B' }}>无需模型调用</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 224, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '16px 14px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>回</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>事实回放</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>保存哪些世界事实：Run 身份、帧与素材</Text>
+                <Box style={{ width: 196, height: 30, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center', marginTop: 4 }}>
+                    <Text style={{ fontSize: 13, color: '#26816B' }}>Replay 不调用模型</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 240, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '16px 14px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>算</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>结果复算</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>按规则能否得到结论：原始记录、逐项判分与汇总</Text>
+                <Box style={{ width: 212, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center', marginTop: 4 }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>保留未知与未完成</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 240, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '16px 14px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>跑</Text>
+                </Box>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>重新执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>此环境能否继续工作：输入、依赖、凭据与预算</Text>
+                <Box style={{ width: 212, height: 30, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center', marginTop: 4 }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>另记新事实与消耗</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 30, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>文件签收、事实回放和重新执行各自留证</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>它们回答的问题不同，任何一种都不能代替另一种。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

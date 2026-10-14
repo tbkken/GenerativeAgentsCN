@@ -1,0 +1,98 @@
+<Slide notes={`一份可复核的异常记录，六个要素缺一不可。
+
+页面入口说明你是从哪儿看到的，别人才能走到同一处。复现动作说明你做了什么，决定这件事能不能被重来一次。预期和实际是两条必须分开写的线：预期是你认为应该发生的，实际是记录里真正发生的，把它们混成一句话，问题就描述不清了。
+
+身份是最容易被漏掉的一项：实验、Run、Attempt、Step，四个层级都要写到。最后是原始记录，也就是对应的截图和事实文件。
+
+为什么这么强调身份和原始记录？因为一份没有身份的异常描述，只能被相信，不能被验证。而这一节的整个思路是把判断交给证据，不是交给叙述。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.6　用最小证据包描述异常</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一份可复核的异常记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>六个要素，缺一不可</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 380 }}>一份可复核的异常记录，至少包括页面入口、复现动作、预期、实际、身份，以及对应截图和原始事实。</Text>
+            <Box style={{ width: 380, height: 168, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>没有身份，就只能被相信</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>实验、Run、Attempt、Step 四个层级都要落到具体值，别人才能复核你的判断。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 748, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 364, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '12px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Box style={{ width: 288, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>页面入口</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>从哪个页面、哪个 Run 看到</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 364, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '12px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Box style={{ width: 288, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>复现动作</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>你具体做了什么操作</Text>
+                    </Box>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 364, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '12px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Box style={{ width: 288, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>预期</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>本应发生什么</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 364, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '12px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 36, height: 36, background: '#546779', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                    </Box>
+                    <Box style={{ width: 288, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>实际</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>记录里真正发生了什么</Text>
+                    </Box>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 364, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '12px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 36, height: 36, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                    </Box>
+                    <Box style={{ width: 288, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>身份</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>实验 · Run · Attempt · Step</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 364, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '12px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 36, height: 36, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                    </Box>
+                    <Box style={{ width: 288, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>原始记录</Text>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>对应截图与原始事实</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,58 @@
+<Slide notes={`比率算出来以后，还有几条口径要交代清楚，否则很容易得出荒唐的结论。
+
+如果某一次运行里没有任务被执行、没有承诺、也没有整理，那么对应的比率就不适用，不能拿零除以零，也不能写成百分之零。更要注意的是，重复率必须和闭环率一起报：只看重复率的话，一个什么都不做的角色反而显得干净，因为他一次重复都没有。
+
+声明也要拆开算。“已经报名，而且罗予同意同行”这句话必须拆成两条声明，因为它们是两件不同的事实，一条成立不代表另一条成立。
+
+还有一条：预测和建议不能混进历史声明。整理里写“预计他会同意”，那是推测，不是已发生的事实，不能算进有证据的那一类。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.5　比率的分母口径</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>零任务、零承诺时怎么说</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>比率不适用时就写不适用</Text>
+
+            <Box style={{ width: 620, height: 152, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>零任务、零承诺、零整理</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>相应比率不适用，不能写成 0%。分母为零的比率没有含义，硬报一个数字只会误导读者。</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>重复率须配闭环率</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>只看重复率，不行动的角色反而最好看。两个数一起报，才看得出是真在办事还是干脆不动。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>声明要拆开、要去推测</Text>
+
+            <Box style={{ width: 500, height: 122, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一句合并的话拆两条</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>“已报名且罗予同意同行”拆成两条声明，分别核验各自来源。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 122, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>预测与建议不进历史声明</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>“预计他会同意”是推测，不混入有证据支持的已发生事实。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>可核验的才算进保真率的分母；不可核验的只能另列。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 27</Text>
+    </Box>
+
+</Slide>

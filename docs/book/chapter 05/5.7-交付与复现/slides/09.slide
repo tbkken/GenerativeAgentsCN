@@ -1,0 +1,53 @@
+<Slide notes={`作者说明里的 H1 到 H4 是教学任务键，用来标记四项教学任务，方便对照判分表；它不是系统生成的身份。
+
+引用一条结论的时候，比如「孟川已获得正确建议」，要指出对应的人物、请求、回复与接收轮次。人物同名并不足以确认它来自哪一次 Run，因为同名角色可能在多个实验里都出现过。
+
+还有一件容易被误解的事：角色的私有记忆隔离，是 Runtime 的参与者权限边界，它不表示交付 Run 时这些记录从文件里消失了。需要对公众分享的讲义，可以制作注明来源的摘录；完整的证据原件另按项目约定保存。绝不能删改原包之后，还继续引用原来的摘要。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.2　用一张清单连接需求、证据与文件</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>教学任务键不是身份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'stretch', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 200, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>作者说明里的写法</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>教学任务键 H1—H4</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>标记四项教学任务，方便对照判分表与需求编号。它由作者命名，不进入系统身份。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 200, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>系统生成的身份</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>实验／Run／Attempt</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>在创建时由系统生成并写入清单，用于确认这条记录到底来自哪一次运行。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 30, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>人物同名，不足以确认它来自哪次 Run</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>引用一条结论时要指出对应人物、请求、回复与接收轮次。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 130, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>私有记忆隔离是 Runtime 的权限边界</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>它不表示交付 Run 时这些记录从文件里消失。需要公开分享的讲义可制作注明来源的摘录；完整证据原件另按项目约定保存，不能删改原包后继续引用原摘要。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

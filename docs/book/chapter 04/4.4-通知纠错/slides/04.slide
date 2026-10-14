@@ -1,0 +1,93 @@
+<Slide notes={`教案叫青禾读写交流，时间 2026 年 11 月 7 日 10:30 到 11:00，计划六位来宾，只模拟协调员沈禾和叶青、吴悠、江辰三人。
+
+原会址是杏厅，教案设定投影检修，所以申请改到杉厅。两间厅都能容纳六人，位置、碰撞、视野、交互距离相同，时间与内容不变，所有人一开始就知道四个场所的准确三层地址——这条把「找不到路」这个干扰因素提前排除了。
+
+Run 候选窗口是当天 09:30 到 10:30，一分钟一步共 61 步，路线准备后校准并冻结。窗口足够长，人物有时间查公告、确认、再收到更正。
+
+这些固定值不是背景装饰，而是把结果归因到记忆处理上的前提。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.1　固定活动与初始知情分布</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>活动、两厅与写死的固定值</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 634, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 24, flexDirection: 'row', padding: '0 16px', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>固定事实</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>教学值</Text></Box>
+            </Box>
+
+            <Box style={{ height: 90, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>活动</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>青禾读写交流　2026-11-07 10:30—11:00　Asia/Shanghai</Text></Box>
+            </Box>
+
+            <Box style={{ height: 90, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>原址／新址</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>杏厅／杉厅；因教案设定的投影检修申请更正</Text></Box>
+            </Box>
+
+            <Box style={{ height: 90, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>人数</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>计划六位来宾；只模拟沈禾与叶青、吴悠、江辰三人</Text></Box>
+            </Box>
+
+            <Box style={{ height: 90, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>Run 候选窗口</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>当天 09:30—10:30，1 分钟／步，共 61 步；准备后校准并冻结</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 486, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 486, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 20, height: 20, background: '#276FBF', borderRadius: 4, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>厅</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>两厅等价条件　—　示意</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 218, height: 104, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', gap: 3, padding: '0 14px' }}>
+                        <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>杏厅</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>原会址　可容纳六人</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>位置／碰撞／视野相同</Text>
+                    </Box>
+                    <Box style={{ width: 218, height: 104, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', gap: 3, padding: '0 14px' }}>
+                        <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>杉厅</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>候选新址　可容纳六人</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>交互距离与杏厅一致</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 446, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', padding: '0 12px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>两厅均有可走连接；时间与内容不变</Text>
+                </Box>
+                <Box style={{ width: 446, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', padding: '0 12px' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>所有人初始知道四个场所的准确三层地址</Text>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779' }}>厅内布局与地址均为示意，非实际地图、非寻路验收</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

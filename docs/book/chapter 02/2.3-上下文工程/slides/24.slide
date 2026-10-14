@@ -1,0 +1,55 @@
+<Slide notes={`那什么样的摘要算好？我给两条判断标准。
+
+第一条，看它减少不减少重复沟通，同时保留重新取证的入口。好的摘要不把所有原文复制一遍，但它会明确告诉你事实出自哪份文件、还有哪些事没有解决。第二个任务拿到它，知道从哪里接、还要读什么。
+
+第二条，看它有没有过度压缩完成状态。如果新任务仅凭摘要就宣称所有安排都已经验证过了，这就是一个明确的信号：要么摘要把「待查」写成了「已确认」，把状态压扁了；要么这个任务根本没有建立证据检查。
+
+这两种情况的处理方式是一样的：去修正摘要和验证流程，而不是继续延长对话、反复追问。因为问题不在沟通次数，而在状态和证据有没有被如实保留。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.6　失败诊断与练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>好摘要省沟通，也留下取证入口</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', height: 150, background: '#ECF7F2', borderRadius: 12, padding: '0 24px', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 92, background: '#26816B' }} />
+            <Box style={{ width: 260 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>好的摘要</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>两端都照顾到</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>减少重复沟通，同时保留重新取证的入口。</Text>
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>它不需要把所有原文复制一遍，但要指向文件与未完成项。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 150, background: '#FFF4E6', borderRadius: 12, padding: '0 24px', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 92, background: '#CB6B28' }} />
+            <Box style={{ width: 260 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>需要警惕的摘要</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>状态被压扁</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>新任务仅凭摘要便宣称所有安排已验证。</Text>
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>说明完成状态被过度压缩，或任务没有建立证据检查。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 34, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.55 }}>修正摘要和验证流程，比继续延长对话更有效。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 25</Text>
+    </Box>
+
+</Slide>

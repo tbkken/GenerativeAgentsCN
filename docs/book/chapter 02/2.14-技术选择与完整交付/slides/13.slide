@@ -1,0 +1,73 @@
+<Slide notes={`每次想往任务里加一样新技术之前，我会先问三个问题。
+
+第一个，它解决哪一类缺口？对应的是输入、事实、执行、方法还是验证？如果一类都对不上，那它只是让流程看起来更完整。
+
+第二个，有可比较的收益吗？同一批任务下，正确率、耗时或者人工复核量有没有变化。只拿一次成功案例说明不了问题。
+
+第三个，代价算进去了吗？多一次检索、多一轮重试、多一个要维护的接口，这些都是成本。
+
+RAG、MCP、多模态和多角色脚本都属于扩展路线。这个小型排期任务不依赖全部扩展才能完成，也不应该为了展示工具数量，去重复查询、重复上传、重复生成文件。
+
+先让它跑通，再让真实瓶颈告诉你该加什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.2　一次完整的 API 路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>加技术之前先问三个问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>扩展路线是可选的</Text>
+            <Text style={{ fontSize: 27, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>小任务不需要把技术堆齐</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.8 }}>RAG、MCP、多模态与多角色脚本是扩展路线。这个排期任务不依赖全部扩展才能完成。</Text>
+        </Box>
+
+        <Box style={{ width: 688, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>它解决哪一类缺口</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>对应输入、事实、执行、方法还是验证</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>有可比较的收益吗</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>同一任务下的正确率、耗时或人工复核有没有变化</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 8, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>代价算进去了吗</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>重试、检索、工具等待与维护都算在总成本里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不为展示工具数量加东西</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不重复查询、上传或生成文件，每一步都应该有它要回答的问题。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 25</Text>
+    </Box>
+
+</Slide>

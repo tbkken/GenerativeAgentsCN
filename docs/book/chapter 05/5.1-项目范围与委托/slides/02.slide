@@ -1,0 +1,91 @@
+<Slide notes={`这一节要看清四件事，它们是一条链，不是四份清单。
+
+第一件，把愿望改写成可回答的问题。委托人说「先问清楚是不是更好」，这里面至少有三个未确定：对谁更好、改善什么、愿意付出多少代价。这三个目标要分别说明。
+
+第二件，建立一页足够具体的项目约定，并且选清交付范围。只交可审阅的设计，还是还要交真实运行与接收记录，这两种范围的完成材料完全不同。
+
+第三件，把需求连到证据。给需求一个简短编号，再说明什么材料支持它。有人交出一个叫「最终报告」的文件，不能由文件名判断项目完成。
+
+第四件，分清三种职责与六个可交接环节，最后让完成条件的名称和手里的证据相称。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>委托要的不是一段演示，而是一份别人能检查、能使用、能维护的成果。四件事依次把一句愿望变成可交接的项目。</Text>
+            <Box style={{ width: 360, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>一句愿望</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>一个可回答的问题</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>一份可交接的成果</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把愿望改写成可回答的问题</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>对谁更好、改善什么、愿意付出多少代价，三个目标要分别说明</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一页项目约定与两种交付范围</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>设计交付验收到「可以开始实施」，运行交付再要求真实配置与全部 Run</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把需求连到证据，而不只连到文件名</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>每个需求配一个验收问题和一种无法替代的证据，缺口要留在表里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>三种职责、六个环节与相称的完成条件</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>作者、复核者、接收者分工；完成条件的名称要与手里的证据相称</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

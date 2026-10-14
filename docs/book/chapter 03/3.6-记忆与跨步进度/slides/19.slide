@@ -1,0 +1,51 @@
+<Slide notes={`便签不必每轮重复追加。同一目标已经存在有效待确认记录时，先检查它是否获得新证据，再决定替代、失效或继续保留。两份配套子 Skill 里，qinghe-memory-review 专门返回这种整理建议，实际写入由根 Brain 完成。
+
+回滚也救不了错误的“已完成”。可恢复的模型错误发生时，Brain 会回滚本轮相关记忆，并放弃已选择但不能安全完成的动作；但它不能让一条错误的“已经完成”便签，自动变成正确的业务判断。
+
+源码里的 begin_iteration、rollback_iteration 展示了这层恢复边界——即使有回滚和检查点，SOP 仍然要把意图与结果分清。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.4　在动作之前写“待确认”</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>便签不重复，回滚不救“已完成”</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>同一目标，{'\n'}一条便签就够</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>已有有效待确认记录时，检查它是否获得新证据，再决定替代、失效或继续保留。</Text>
+            <Box style={{ height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>qinghe-memory-review 给建议　·　根 Brain 写入</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 210, background: '#F4F7FA', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>回滚发生在模型错误这一层</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>可恢复的模型错误发生时，Brain 回滚本轮相关记忆，放弃已选择但不能安全完成的动作。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>begin_iteration / rollback_iteration　展示了这层恢复边界</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '18px 24px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 92, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>回滚不能把错误的“已完成”变成正确判断</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>即使存在回滚和检查点机制，SOP 仍然要把意图与结果分清——恢复机制救的是模型错误，不是业务造假。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

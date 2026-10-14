@@ -1,0 +1,70 @@
+<Slide notes={`现在进入第一个具体的算法口。
+
+我让助手读一份已经确认过的开放日资料，然后回答十道事实题。评分的人事先把标准答案写好，只看事实对不对；"上午九点"和"09:00"算同一个答案。
+
+十道题里答对八道，准确率是百分之八十。这句话本身没有问题，问题在于它经常被读成"这个助手在开放日这件事上有八成靠得住"。这两句话差得很远。
+
+八个对十个，它说明的只是：在这份资料、这十道题、这套判分规则下，助手答对了八道。它没有说明其余所有开放日问题也有八成的成功率。
+
+所以第一个要盯住的词是分母。分母是多少，由我们事先约定，而不是看到结果以后再说。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.3.1　从十道小题开始</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>准确率在数什么</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>同一份材料、十道事实题、预先确定的答案，共同限定 8 / 10 的含义。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginTop: 8 }}>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 14, color: '#546779' }}>十道题</Text></Box>
+            <Box style={{ flexDirection: 'row', gap: 6 }}>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>7</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>8</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>9</Text>
+                </Box>
+                <Box style={{ width: 52, height: 52, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>10</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 120 }}><Text style={{ fontSize: 14, color: '#546779' }}>　对 8　错 2</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 31</Text>
+    </Box>
+
+</Slide>

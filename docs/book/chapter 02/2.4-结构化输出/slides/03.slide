@@ -1,0 +1,63 @@
+<Slide notes={`我们从一个特别常见的误会说起。很多人说「格式不对」，其实把好几件事混成了一件。
+
+响应本身可能是中断的，也可能模型直接拒绝。这时候连内容都没拿到，谈不上格式。拿到了内容，还要看 JSON 语法能不能解析——引号、逗号、括号合不合法。
+
+语法过关了，再看 Schema 结构：字段有没有遗漏，类型对不对，房间 ID 是不是在允许的那几个值里面。
+
+这两步都过了，才轮到业务：人数放不放得下，时长对不对，有没有和别人的预约撞上。最后还有一层是来源：这些数字从哪来，那份预约表是不是本次任务该用的那一份。
+
+四层分开查，出错的时候才知道该回哪一层。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 260, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.4.1　语法、结构、业务、来源是四个不同问题</Text>
+        </Box>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>语法、结构、业务、来源</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.15 }}>是四个不同问题</Text>
+    </Box>
+
+    <Box style={{ height: 380, flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+
+        <Box style={{ width: 256, height: 240, background: '#EDF4FC', borderRadius: 14, padding: 20, flexDirection: 'column', gap: 12, alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: 56, height: 56, background: '#276FBF', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>响</Text>
+            </Box>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>响应可用</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>状态、拒绝与中断</Text>
+        </Box>
+
+        <Box style={{ width: 256, height: 240, background: '#EDF4FC', borderRadius: 14, padding: 20, flexDirection: 'column', gap: 12, alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: 56, height: 56, background: '#276FBF', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>格</Text>
+            </Box>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>格式正确</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>JSON 语法与 Schema</Text>
+        </Box>
+
+        <Box style={{ width: 256, height: 240, background: '#EDF4FC', borderRadius: 14, padding: 20, flexDirection: 'column', gap: 12, alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: 56, height: 56, background: '#276FBF', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>业</Text>
+            </Box>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>业务可行</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>人数、时间、预约</Text>
+        </Box>
+
+        <Box style={{ width: 256, height: 240, background: '#ECF7F2', borderRadius: 14, padding: 20, flexDirection: 'column', gap: 12, alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: 56, height: 56, background: '#26816B', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>源</Text>
+            </Box>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>来源有效</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>日期、文件与范围</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 23</Text>
+    </Box>
+
+</Slide>

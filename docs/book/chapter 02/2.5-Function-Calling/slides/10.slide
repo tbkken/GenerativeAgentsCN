@@ -1,0 +1,64 @@
+<Slide notes={`把一次调用摊开来看，是这样一条链。
+
+每条 function_call 带着名称、参数和 call_id 进来，应用实际执行对应的工具，然后用同一份 call_id 把 function_call_output 送出去。下一轮的输入里，要包含完整的输出项和各条工具结果。
+
+旁边还有一条同样重要的线：保留完整的 response.output。不能只取调用名，也不能只取最后那段给人看的文字。会话需要的其他条目丢掉了，后面的推理就会缺东西，用推理模型时尤其明显。
+
+最后一条规则是给多调用准备的：一次响应里可能有多个调用，必须逐条关联，不能只处理第一个。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.2　一轮调用包含哪些证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>用同一个 call_id 关联结果</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 340, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>每条 function_call</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>name、arguments{'\n'}与 call_id</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>应用实际执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>校验通过后调用{'\n'}对应的只读工具</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 130, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>function_call_output</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>实际 output{'\n'}与同一个 call_id</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 44, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 554, height: 110, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>保留完整 response.output</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不只取调用名或最终文字，其它输出条目同样要留住</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 554, height: 110, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>下一轮的输入</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>完整输出项与各条工具结果一起发出去</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', height: 76 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>一次响应可能含多个调用，逐条关联，不能只处理第一个。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,69 @@
+<Slide notes={`举三种「看起来做完了」的情形。
+
+第一种：孟川的作者卡已经审读过，但图片还没上传。这时候应该写「文稿已备、公共资源待保存」，不能写完成。
+
+第二种：咨询台的公共 Skill 已经改成澄清策略，但实验里还是旧内容，应该写「实验副本未同步」。
+
+第三种：预检通过了，但一次 Run 都没跑，只能记录预检结果，不能填「分流正确」，那要靠运行事实支撑。
+
+还有两条规矩。页面重开以后如果内容不符，先核对是不是打开了公共资源或另一个实验，很多「保存失败」其实是打开错了对象。确认同一对象确实没保存好，就保留身份、前后内容与页面证据，按仓库规则处理，不要为了填完表格从外部改数据库、实验目录或历史 Run。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.6　用状态表避免「文件有了就是完成了」</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种「看起来做完了」</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+            <Box style={{ width: 600, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>作者卡已审读，图片未上传</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>文稿这一栏可以打勾，素材这一栏不行</Text>
+            </Box>
+            <Box style={{ width: 462, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>文稿已备、公共资源待保存</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+            <Box style={{ width: 600, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>公共 Skill 已改，实验仍是旧内容</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>公共侧动了，复制出去的副本不会自动跟着动</Text>
+            </Box>
+            <Box style={{ width: 462, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>实验副本未同步</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+            <Box style={{ width: 600, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>预检通过，但一次 Run 都没有</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>没有运行就没有真实提交事实可定位</Text>
+            </Box>
+            <Box style={{ width: 462, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>只能记预检结果，不能填分流正确</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+            <Box style={{ width: 1076, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>内容登记错误与真实产品缺陷要分开</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>页面重开后内容不符，先核对是不是打开了公共资源或另一个实验；确认未正确保存就留证据按仓库规则处理，不从外部改数据库、实验目录或历史 Run。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 27</Text>
+    </Box>
+
+</Slide>

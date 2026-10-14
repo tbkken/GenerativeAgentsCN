@@ -1,0 +1,97 @@
+<Slide notes={`这四行想说的是：从哪里读、读到什么、能据此做什么，三件事要连起来看。
+资源包给的是资源内容本身和它的附件，能用来交换单项或者多项基础资源。实验包给的是完整资源闭包和装配，能用来执行一个固定实验。运行包在实验之上再带上完整内嵌实验和执行事实，包括 Attempt、帧、快照与质量，能用来回放，也能用于符合条件的恢复或重跑。
+最后一行的意思是：不要按作者资源库里的旧行号去认资源，也不要凭同名去猜绑定关系。清单里的 UUID 和包内嵌的副本才是可核对的身份。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.1　三种包回答三个问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>包内位置决定接收者能做什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>同一个问题的三份材料：包内位置不同，保存的内容不同，接收者能据此做的事也不同。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 18, padding: '0 20px' }}>
+            <Box style={{ width: 154 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>包内位置</Text>
+            </Box>
+            <Box style={{ width: 604 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>保存什么</Text>
+            </Box>
+            <Box style={{ width: 300 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>接收者据此能做什么</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 1152, height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>config 资源包</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>资源内容与自身附件；跨资源依赖可以显式未绑定</Text>
+                </Box>
+                <Box style={{ width: 300 }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>交换单项或多项基础资源</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>exp 实验包</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>完整资源闭包与实验装配，含地图、Brain 与运行参数</Text>
+                </Box>
+                <Box style={{ width: 300 }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>执行一个固定实验</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 82, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ width: 150 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>run 运行包</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>完整内嵌实验，加上 Attempt、帧、快照与质量</Text>
+                </Box>
+                <Box style={{ width: 300 }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>回放、符合条件的恢复或重跑</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 82, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ width: 150 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>读取方式</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>按清单 UUID 与包内嵌副本识别身份</Text>
+                </Box>
+                <Box style={{ width: 300 }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>不按旧行号，也不靠同名资源猜绑定</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+            <Text style={{ fontSize: 15, color: '#26816B' }}>Run 里的 experiment/ 是完整副本：接收者不必知道作者公共资源数据库里的旧行号。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

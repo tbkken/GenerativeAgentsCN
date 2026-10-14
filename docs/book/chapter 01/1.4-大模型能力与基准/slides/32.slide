@@ -1,0 +1,80 @@
+<Slide notes={`Epoch 对 HLE 做过一次审计，方法是随机的：从题集里抽一批题，逐题人工核对题面、参考答案和判分规则。
+
+结果是，在被抽到的那批题目里，有四成六存在会影响最终成绩的错误。这个比例过了它自己定的触发线，也就是抽样里两成以上有问题就算不合格，因此 HLE 被列进了有问题名单。
+
+要注意几点。第一，这是抽样，不是全量，更不能说整个基准都坏了。第二，被判有问题不等于没有用，只是引用分数时必须同时说明已知缺陷。第三，发现问题的主要是题面和参考答案本身的瑕疵，不是模型作弊。
+
+所以正确的说法不是 HLE 不可信，而是它的分数要带保留地读，并且要去看它的审计说明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑥　1.4.6　错题一：题目本身的缺陷</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>HLE：抽查约 46% 有缺陷</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 28, alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 660, flexDirection: 'column', gap: 14 }}>
+
+                <Box style={{ width: 660, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ width: 140, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>审计方法</Text>
+                    <Text style={{ width: 444, fontSize: 14, color: '#546779', lineHeight: 1.45 }}>从题集随机抽样，逐题人工核对题面、参考答案与判分规则</Text>
+                </Box>
+
+                <Box style={{ width: 660, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                    <Text style={{ width: 140, fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>抽查结果</Text>
+                    <Text style={{ width: 444, fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>被抽到的题目里，约 46% 含会影响最终准确率的错误</Text>
+                </Box>
+
+                <Box style={{ width: 660, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#546779' }} />
+                    <Text style={{ width: 140, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>触发线</Text>
+                    <Text style={{ width: 444, fontSize: 14, color: '#546779', lineHeight: 1.45 }}>抽样中两成以上有问题即判不合格，HLE 因此进入名单</Text>
+                </Box>
+
+                <Box style={{ width: 660, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#546779' }} />
+                    <Text style={{ width: 140, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>审计时间</Text>
+                    <Text style={{ width: 444, fontSize: 14, color: '#546779', lineHeight: 1.45 }}>2026 年 8 月公布，属于 Epoch 首批 15 个基准审计之一</Text>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 464, height: 410, background: '#F7F3E8', borderRadius: 12, padding: '20px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>这个结论怎么用</Text>
+
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>这是抽样，不等于全量；不能说整个基准都坏了</Text>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>有问题不等于没用，但引用分数时要一并标注缺陷</Text>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#FFF4E6', borderRadius: 8, padding: '12px 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>问题多在题面与参考答案，属于测量瑕疵，不是模型作弊</Text>
+                </Box>
+
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>正确表述：HLE 的分数要带保留地读，并去看它的审计说明</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>32 / 36</Text>
+    </Box>
+
+</Slide>

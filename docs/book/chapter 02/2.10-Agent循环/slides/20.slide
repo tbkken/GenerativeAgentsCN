@@ -1,0 +1,67 @@
+<Slide notes={`那恢复工作之前，到底要核对什么？我把它压成三个动作。
+
+第一，核查指令的继承规则。新的一次请求里，原来的系统指令有没有被继承、以哪一份为准，这些要写清楚。不管你用的是手工拼历史，还是用 previous_response_id 这类会话状态机制，都要单独核对。
+
+第二，确认外部事实没变。只读查询是可以重跑的，但重跑之前先确认数据还是那一份、时间范围还是那个范围，否则结果不可比。
+
+第三，对副作用另设幂等标识。付款、发信、预约这类动作，要用真实结果去核对，不能依靠记忆。
+
+还有一句要说明：会话状态机制能帮应用延续对话，但它不会替开发者建立业务状态机。业务状态是你自己的责任。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.4　三种「记住」不能混在一起</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>恢复工作前要核对三个事实</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 680, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>核查指令的继承规则</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>新一次请求里，原来的规则有没有被继承、以哪一份为准。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>确认外部事实没有变化</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>只读查询可以重跑，重跑前先确认数据仍是那一份。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>副作用另设幂等标识</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>付款、发信、预约要用真实结果核对，不能靠记忆。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 448, height: 478, background: '#F7F3E8', borderRadius: 12, padding: '24px 24px', flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>为什么必须自己核对</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>无论用手工历史，还是用会话状态机制，应用都应单独保存需要恢复的任务状态。</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>模型知道对话，程序才知道任务做到哪一步。</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px' }}>
+                <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.55 }}>会话状态延续对话，{'\n'}但不建立业务状态机</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,82 @@
+<Slide notes={`这个顺序不是随便排的。先讲方法，因为一个分数好不好用，取决于它怎么被评出来；选择题和开放写作，能证明的东西完全不同。
+
+再讲机构，因为同一个方法，执行的人不同，可信度也不同。有的机构公开全部题干和评分代码，有的只给一个数字。
+
+第三、四步是读样本集和读真题。我把它放在看得分前面，是想让大家先有手感：知道题目有多难、答案长什么样，再去看谁分高，才不会被一个百分比牵着走。
+
+最后两步是看领先模型和看错题。看错题往往比看得分更有收获，因为题目和答案本身的毛病，恰恰暴露了一个基准的边界在哪里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.4　目录</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六步读懂一个基准</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F7F3E8', borderRadius: 10, padding: '12px 22px' }}>
+            <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>先确定"怎么测、谁来测、用什么题"，再看"谁分高、还错在哪"</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 132, background: '#EDF4FC', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#276FBF' }}>①</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>评估方法简介</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>题目、作答与评分三要素；读分数先要补齐的四个条件</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 568, height: 132, background: '#EDF4FC', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#276FBF' }}>②</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>评估机构权威性简介</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>四类机构的差别；权威来自公开、复现、审计与专家背书</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 132, background: '#F7F3E8', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#546779' }}>③</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>样本集简介</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>六套样本集的题量与题型；题量、分层与版本更新</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 568, height: 132, background: '#F7F3E8', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#546779' }}>④</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>具体几条样本与答案展示</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>HLE、GPQA、MMLU-Pro、SWE-bench、ARC 的真实题面与答案</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 132, background: '#ECF7F2', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#26816B' }}>⑤</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>领先模型与得分</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>分数为何不一致；HLE、SWE-bench、FrontierMath 与人类基线</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 568, height: 132, background: '#FFF4E6', borderRadius: 12, padding: '16px 20px', flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Text style={{ fontSize: 32, fontWeight: 'bold', color: '#CB6B28' }}>⑥</Text>
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>尚未解决的错题</Text>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>真不会、题目有错、学过头三类失败；审计给出的缺陷比例</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 36</Text>
+    </Box>
+
+</Slide>

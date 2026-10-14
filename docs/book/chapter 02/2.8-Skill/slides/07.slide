@@ -1,0 +1,64 @@
+<Slide notes={`一个 Skill 到底要写到什么程度才算有效？我在配套文件里看到四个必要条件。
+
+第一是适用条件：什么任务该用它、哪些材料算齐。这一条缺了，宿主要么选不中它，要么在不对的场合用它。第二是执行步骤：先做什么、再做什么、中间可以重复几轮。第三是验收条件：用哪个程序检查、看哪份报告算通过。第四是停止条件：什么情况必须停下来，把阻塞原因说清楚。
+
+验收和停止这两条最容易被漏掉。很多看起来像模像样的 Skill 只写了步骤，没写失败时怎么办，结果循环没有边界，模型会一直改、一直重试，或者干脆绕过规则。
+
+还有一点要提醒：给它一句「你是资深活动策划」这种角色设定，替代不了过程。角色是语气，过程才是方法。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.1　Skill 的几个组成部分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>有效 Skill 写清四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>适用条件、执行步骤、验收条件、停止条件——四件事齐了，方法才真的能被别人照着做。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ width: 160, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>适用条件</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>什么任务该用它、哪些材料算齐。缺了它，宿主选不中，或者用在不对的场合。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ width: 160, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>执行步骤</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>先做什么、再做什么、中间最多重复几轮。缺了它，每一步都靠临场发挥。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ width: 160, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>验收条件</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>用哪个程序检查、读哪份报告算通过。缺了它，「做完」只能凭感觉。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 80, background: '#ECF7F2', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Text style={{ width: 160, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>停止条件</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>什么情况下必须停下来并说明阻塞原因。缺了它，循环没有边界。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>角色设定不能替代过程</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>只写步骤、不写失败处理，也同样约束不住循环——四件事缺一不可。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 27</Text>
+    </Box>
+
+</Slide>

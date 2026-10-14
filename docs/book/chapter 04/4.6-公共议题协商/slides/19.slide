@@ -1,0 +1,78 @@
+<Slide notes={`把三个人和三个指标摆在一起看，差别就出来了。
+理由准确纳入是五条里纳入了四条，百分之八十。明确回应是三个人都有明确态度，百分之百。保留事项记录是一半，因为秦川的保留事项记全了，宋遥的反对原因只写了「反对」，没有写完整理由。
+这里最重要的判断是最后一项：一致意见没有形成。
+为什么要单独说这一句？因为「全员回应」听起来很像「大家都同意」，但两者完全不同。三个人都对候选 D 表了态，不等于三个人都同意 D。
+准确把分歧留下来，本身就可以是一次记录质量很高的实验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.6　人工判分：全员回应，不等于理由完整</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>4/5、3/3、1/2</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ height: 480, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 582, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>三枚指标（人工材料）</Text>
+
+                <Box style={{ width: 582, height: 132, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 20, padding: '0 22px' }}>
+                    <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>理由准确纳入</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>R5 遗漏，R1—R4 保留</Text>
+                    </Box>
+                    <Box style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10 }}>
+                        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF', lineHeight: 1 }}>4/5</Text>
+                        <Text style={{ fontSize: 16, color: '#276FBF' }}>80%</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 582, height: 132, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 20, padding: '0 22px' }}>
+                    <Box style={{ width: 4, height: 76, background: '#26816B' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>明确回应</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>三人都对 D 有明确态度</Text>
+                    </Box>
+                    <Box style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10 }}>
+                        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#26816B', lineHeight: 1 }}>3/3</Text>
+                        <Text style={{ fontSize: 16, color: '#26816B' }}>100%</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 582, height: 132, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 20, padding: '0 22px' }}>
+                    <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>保留事项记录</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>宋遥只写「反对」，未写完整原因</Text>
+                    </Box>
+                    <Box style={{ flex: 1, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', gap: 10 }}>
+                        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1 }}>1/2</Text>
+                        <Text style={{ fontSize: 16, color: '#CB6B28' }}>50%</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 538, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>一致意见：没有形成</Text>
+                <Box style={{ width: 538, height: 240, background: '#FFF4E6', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.1 }}>未形成一致意见</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>三人对同一候选没有全部明确同意：秦川保留，宋遥反对。</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>分歧可以被准确记录；「全员回应」不能改写为「全员同意」。</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>回应完整、理由准确、分歧保留，是三件必须分开报的事。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商　·　人工构造，非 Run 结果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,80 @@
+<Slide notes={`材料是按使用者分的，一共三份。
+
+作者和评阅者手里是完整题目、答案和判据。它们只在评阅时使用：先看证据，再对判据，最后出结论。
+
+角色和对象各自持有自己的事实、目标与进度。它们只能通过真实的请求、消息和感知，取得允许交流的那部分内容。
+
+剩下的是共同材料，比如场所、公开规则和任务方法。共同材料也只是允许共同知道，还必须说明它是从哪次初始输入、哪次感知或哪条消息进入本轮上下文的。
+
+红线只有一条：完整答案不能进入共同的 Brain。还有一句要记住——姓名不同，并不等于信息已经隔离。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.2　同一案例的材料按使用者分三份（示意）</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>材料按使用者分成三份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ height: 50, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>按使用者分配材料　·　示意，非系统截图</Text>
+        </Box>
+
+        <Box style={{ height: 28, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, flexDirection: 'column' }}>
+                <Box style={{ height: 50, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>作者／评阅侧</Text>
+                </Box>
+                <Box style={{ height: 178, background: '#F4F7FA', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>完整题目、答案、判据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>评阅时使用：证据 → 判据 → 结论</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>不实时帮助人物成功</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 373, flexDirection: 'column' }}>
+                <Box style={{ height: 50, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>角色／对象各自持有</Text>
+                </Box>
+                <Box style={{ height: 178, background: '#F4F7FA', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>自己的事实、目标、进度</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>通过真实请求、消息、感知取得允许交流的内容</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>共享 Skill 与总结模板不能泄漏私有内容</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 373, flexDirection: 'column' }}>
+                <Box style={{ height: 50, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>共同材料</Text>
+                </Box>
+                <Box style={{ height: 178, background: '#F4F7FA', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>场所、公开规则、任务方法</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>明确读取后才进入本轮上下文</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>允许共同知道 ≠ 已经在上下文里</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>完整答案不得进入共同 Brain　·　姓名不同，不等于信息已隔离</Text>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>图 4.0-2 语义重绘（示意）：三份材料的持有者与评阅用途。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 20</Text>
+    </Box>
+
+</Slide>

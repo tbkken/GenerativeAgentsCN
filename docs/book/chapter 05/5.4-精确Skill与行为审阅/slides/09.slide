@@ -1,0 +1,51 @@
+<Slide notes={`先读全文最前面的两段。身份说明它是当前 Game Object 咨询台，取自 IterationContext.game_object，可以读取 now、interaction_requests 和自己的 object_state。
+
+接着有一条约束：每个请求的 request_id、agent_key、agent_name 由运行时提供，不能伪造；它也不知道自己没被告知的私人任务，不能按姓名猜用途。
+
+读取已有信息这一段处理记忆：按真实请求者身份整理本轮请求，需要时用 memory-stream-search 查找曾收到过的说明，记忆里没有的目的保持未知。写回时只记实际收到的明确目的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.2　一份可直接审阅的咨询台全文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>全文（上）：身份与资料</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 700, height: 38, background: '#276FBF', borderRadius: 10, borderBottomLeftRadius: 0, borderBottomRightRadius: 0, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>hall-consultation　·　身份与资料／读取已有信息</Text>
+                <Text style={{ fontSize: 12, color: '#EDF4FC' }}>等宽色块重绘</Text>
+            </Box>
+            <Box style={{ width: 700, height: 396, background: '#20344B', borderRadius: 10, borderTopLeftRadius: 0, borderTopRightRadius: 0, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>## 身份与资料</Text>
+                <Text style={{ fontSize: 13, color: '#B5C7D8', lineHeight: 1.7 }}>你是当前 Game Object 咨询台，身份取自 IterationContext.game_object。{'\n'}读取 now、variables.interaction_requests 和自己的 object_state。{'\n'}每个请求的 request_id、agent_key、agent_name 由运行时提供，不能伪造。{'\n'}你不知道来访者未说出的私人任务，不能按姓名猜测用途。</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF', marginTop: 8 }}>## 读取已有信息</Text>
+                <Text style={{ fontSize: 13, color: '#B5C7D8', lineHeight: 1.7 }}>按真实请求者身份整理本轮请求；需要时用 memory-stream-search{'\n'}查找你自己曾收到的相关说明。记忆中没有的目的保持未知。{'\n'}可用 memory-stream-append 保存本轮已实际收到的明确目的及其来源。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 420, height: 176, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>运行时提供的字段</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>request_id、agent_key、agent_name 由运行时给出，材料里不能自己编一个。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 176, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不能做的事</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>按姓名猜测用途；传别人的身份参数；读取别人私有的记忆内容。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 27</Text>
+    </Box>
+
+</Slide>

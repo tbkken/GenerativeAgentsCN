@@ -1,0 +1,67 @@
+<Slide notes={`作者最后留下三样东西：两份最终全文、精确的文本差异，以及内容摘要。
+
+这三样分工不同。摘要帮助确认材料身份，让你知道拿到的到底是哪一份；正文差异才解释实验的含义，因为读者要看到的是真正改变的那几行。
+
+有一件事要提前说清楚。两个包哈希不同，只能说明它们不是同一个文件，不能单独证明它们只差澄清策略。要支持这个说法，还要逐一核对地图、人物、初始知识、工具、模型与窗口是否一致。任何一项在两组之间不同，都会让「唯一变量」这个前提站不住。
+
+所以正式核对时我会按这个清单走一遍，把不一致的地方写进记录，而不是只在结论里说一句条件相同。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.3　对照只替换这一个段落</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>摘要证明身份，差异解释含义</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>作者应保留两份最终全文、精确文本差异和内容摘要，三样各有各的用处。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>内容摘要</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>帮助确认材料身份，说明手里这一份到底是哪一版。</Text>
+            </Box>
+            <Box style={{ width: 560, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>精确文本差异</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>正文差异才解释实验含义，读者要看到真正改变的那几行。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>哈希不同不能单独证明「只差澄清策略」</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>两个包哈希不同只说明它们不是同一个文件；要支持唯一变量的说法，还要核对其余装配项。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 180, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>地图</Text>
+            </Box>
+            <Box style={{ width: 180, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>人物</Text>
+            </Box>
+            <Box style={{ width: 180, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>初始知识</Text>
+            </Box>
+            <Box style={{ width: 180, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>工具</Text>
+            </Box>
+            <Box style={{ width: 180, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>模型</Text>
+            </Box>
+            <Box style={{ width: 180, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>窗口</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', width: 1152 }}>以上六项逐项核对，任一项不同，唯一变量的前提就不成立。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 27</Text>
+    </Box>
+
+</Slide>

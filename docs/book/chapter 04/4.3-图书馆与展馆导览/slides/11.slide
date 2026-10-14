@@ -1,0 +1,83 @@
+<Slide notes={`整条链有四个证据环节：发现、主题匹配、抵达、使用。
+
+发现指人物真的感知到牌子，或者真的和它交互过。主题匹配指他依据真实收到的介绍来选择，不是根据甲厅、乙厅这两个名字去猜。抵达要核对实际坐标和地址。使用才是最后一步，提交一次符合本人兴趣的活动。
+
+讲解员的实际帮助是一条并入匹配的旁路：没有看见牌子的人，也可能因为求助而成功，这是合理补救。
+
+把这条链记住，是因为后面所有指标都要落在这四个环节上。G2 可以没见牌却成功，G3 也可能看见了牌子却没有使用资料，这两件事同时成立，恰恰说明发现和使用不是同一个指标。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.3　相同 SOP，让位置通过真实信息起作用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>发现 → 匹配 → 抵达 → 使用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>四个环节各自要留下证据，缺一环就不能算走到「使用」。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 180, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>发现</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>真实感知或真实交互</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 180, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>查询</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>牌子按主题表答复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 180, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>匹配</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>依据真实介绍选择</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 180, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>抵达</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>坐标与地址符合</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 180, height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>使用</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>符合兴趣的 ACT</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 448 }} />
+            <Box style={{ width: 628, height: 60, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>讲解员实际帮助</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>未见牌者也可能求助成功，这是合理补救</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, marginTop: 4 }}>
+            <Box style={{ width: 560, height: 96, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>可以补救</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不为了凸显牌子而删掉讲解员的帮助结果</Text>
+            </Box>
+            <Box style={{ width: 560, height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不能偷换</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>看见牌 ≠ 读懂介绍 ≠ 用过主题资料</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>概念链示意，非系统截图、非 Run 结果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,102 @@
+<Slide notes={`这一节要讲的六件事，是按一个实际操作顺序排的。
+
+第一件，怎么写：把愿望拆成六个能被回答的问题，也就是目标、输入、约束、输出、假设和验收。
+第二件，怎么改：拿三种写法的提示做对照，固定其他条件，只改任务描述。
+第三件，怎么划边界：用少量示例把判断规则说清楚，而不是让模型去猜。
+第四件，放哪里：行为要求放在 instructions，本次任务和材料放在 input，两个入口分开。
+第五件，凭什么相信：先让它列出读了哪些文件、提取出哪些事实，逐条核对以后再生候选。
+第六件，错了怎么查：先查源文件，再查是否进入请求，这些条件都成立，才把遗漏归为模型或提示问题。
+
+六件事可以当成一份检查表来用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的六件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>从写到查</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.85 }}>六个知识块依次回答：写什么、怎么改、怎么划边界、放在哪里、凭什么相信、错了怎么查。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 16px' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>写完提示不算完，还要能用结果判断它到底有没有变好。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>六个问题构成一份任务说明</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>目标、输入、约束、输出、假设、验收，六项共同约束</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>从模糊提示逐步改进</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>固定材料、模型、工具与评分表，只改变任务描述</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>用示例澄清边界</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>少量输入与期望输出，说明分类、格式或判断规则</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>OpenAI API：把指令与材料分别发送</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>行为要求放 instructions，本次任务与材料放 input</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>WorkBuddy：先检查读到了什么</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>先核对文件名与提取出的事实，再让它生成候选</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>⑥</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>失败诊断与练习</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>先查源文件，再查是否进入请求，最后才归因模型</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

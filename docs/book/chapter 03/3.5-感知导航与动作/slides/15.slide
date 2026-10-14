@@ -1,0 +1,58 @@
+<Slide notes={`终点判定还有两个容易吵起来的地方。
+
+第一，同一个三层区域或四层对象地址，可能覆盖多个可走格，导航可以选择其中任何一个合法终点。你预想人物站在对象左侧，运行时停在另一处可走位置，并不必然是导航错误。要检查的是实际终点是否满足地址、碰撞和交互距离这三条，再下结论。
+
+第二，尺度要分清：三十二像素的 Tile 是画面尺度，不自动表示三十二米；“每分钟四格”描述的是本实验离散空间中的移动预算。
+
+如果研究目标涉及行走速度，需要另行定义空间标尺与实验假设，不能从图片尺寸反推人物的现实速度。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.3　内核怎样决定走了多远</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>终点合法性与三种尺度</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>停的位置和想的不一样，先核对合法性，再谈对错。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>一个地址多个可走格</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>预想站在对象左侧、实停另一处，并不必然意味着导航错误。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>判定终点查三件事</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>实际终点是否满足地址、碰撞和交互距离，再对照教学要求。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>格、像素、米要分清</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>32 像素的 Tile 是画面尺度，不自动表示 32 米；“每分钟四格”是离散空间预算。</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 78, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不能从图片尺寸反推人物的现实速度</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>研究行走速度需另行定义空间标尺与实验假设</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 23</Text>
+    </Box>
+
+</Slide>

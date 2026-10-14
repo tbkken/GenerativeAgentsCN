@@ -1,0 +1,99 @@
+<Slide notes={`结果工作区里的五个入口，各自回答不同的问题。
+
+仿真回放回答「世界里面发生了什么」，看到的是角色移动、对话和对象反馈。Agent 回答「某个角色现在处于什么状态」，包括它掌握的信息。仿真诊断回答「系统实际做了什么」，日志、模型调用和检查点都在这里。行为质量给出质量报告。结果与导出给出结果文件与导出入口。
+
+先明确自己要回答哪个问题，再决定去看哪一块，比在页面里到处点更有效率。
+
+另外，不能只依赖模板文字去找按钮，页面的初始化过程会移除遗留的参数与模型结果页签。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.4　在页面中观察什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>结果工作区里从哪五个地方看</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 608, background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>运行结果工作区</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 6 }}>
+                <Box style={{ width: 108, height: 34, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>仿真回放</Text>
+                </Box>
+                <Box style={{ width: 108, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>Agent</Text>
+                </Box>
+                <Box style={{ width: 108, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>仿真诊断</Text>
+                </Box>
+                <Box style={{ width: 108, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>行为质量</Text>
+                </Box>
+                <Box style={{ width: 108, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>结果导出</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 572, height: 118, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>回放画面：角色、对话与对象反馈</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 281, height: 86, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>时间轴与 Step 控制</Text>
+                </Box>
+                <Box style={{ width: 281, height: 86, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>选中角色与对象</Text>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779' }}>页面初始化会移除遗留的参数与模型结果页签，不要只按模板文字找按钮</Text>
+
+        </Box>
+
+        <Box style={{ width: 512, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 512, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>仿真回放</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>世界里实际发生的过程</Text>
+            </Box>
+
+            <Box style={{ width: 512, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Agent</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>选中角色的状态与它掌握的信息</Text>
+            </Box>
+
+            <Box style={{ width: 512, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>仿真诊断</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>日志、模型调用与检查点</Text>
+            </Box>
+
+            <Box style={{ width: 512, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>行为质量</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>执行完成后的质量报告</Text>
+            </Box>
+
+            <Box style={{ width: 512, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>结果与导出</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>结果文件与导出入口</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 23</Text>
+    </Box>
+
+</Slide>

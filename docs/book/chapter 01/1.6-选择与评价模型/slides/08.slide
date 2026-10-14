@@ -1,0 +1,118 @@
+<Slide notes={`为什么一定要把练习集和评价集分开？因为练习阶段你要改的东西太多了。提示措辞要调，评分规则要调，有时候连题目本身都要重写。这些改动都是必要的，但它们会让题目带上你的偏好。
+
+一旦开始比较候选，二十四项评价任务就要冻结。冻结的意思是：不看结果去改题目，也不因为某个候选答得奇怪就补一条规则。这样二十四这个分母才是固定的，两个候选才是在同一把尺子上量出来的。
+
+二十四项按六组来排，每组四项。六组分别看材料理解、事实与缺失、结构与抽取、时间与数量、工具结果理解、跨轮信息修正。组内要换房间、换数字、换表述，不能只是把同一道题改个名字，否则测到的还是同一种能力。
+
+还要说一句实话：这个数量是入门规模，它不足以支撑广泛的统计结论。它能帮你把自己的任务看清楚，但不能拿来做行业排名。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.2　第二步：准备小而有区分度的任务集</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>八项用来改，二十四项用来比</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+            <Box style={{ width: 500, height: 96, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>8 项练习任务</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>用来检查提示是否清楚、评分规则是否一致，可以反复修改</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 96, background: '#ECF7F2', borderRadius: 12, padding: '0 22px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>24 项评价任务　六组 × 每组四项</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>开始比较之前冻结，不再改动，24 这个分母保持固定</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 21 }}>
+
+            <Box style={{ width: 370, height: 196, background: '#F4F7FA', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>材料理解</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>四项覆盖明示条件、跨段条件、相近房间名与无关信息干扰</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>看是否正确对应到对象</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 196, background: '#F4F7FA', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>事实与缺失</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>四项分别是完整资料、缺容量、缺日期、只有未经证实的说法</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>看是否分清已知、未知和传闻</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 196, background: '#F4F7FA', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>结构与抽取</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>四项覆盖固定字段、多个活动、空值以及字段之间的关系</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>看可读结构是否同时正确</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 21 }}>
+
+            <Box style={{ width: 370, height: 196, background: '#F4F7FA', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>时间与数量</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>四项覆盖容量边界、预约重叠、相邻时间段与持续时间</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>看是否满足明确规则</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 196, background: '#FFF4E6', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>工具结果理解</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>四项包括查询成功、查询失败、错误房间与没有调用证据</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>看是否正确使用并承认边界</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 196, background: '#F4F7FA', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 34, height: 34, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>跨轮信息修正</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>四项包括预约更新、人数更新、旧方案保留与冲突未解决</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>看是否按新证据修正而不伪造进展</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 27</Text>
+    </Box>
+
+</Slide>

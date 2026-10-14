@@ -1,0 +1,59 @@
+<Slide notes={`前八分钟要做两件事。前四分钟介绍四项任务和服务分工，重点是让听众看到：H1 与 H3、H2 与 H4 分别使用相同的首句，私人目的却各不相同。每项任务在基线组和澄清组里的设定完全一样，这一点必须先说清，否则后面的比较就不成立。
+
+这里可以问听众一句：如果不追问，咨询台凭什么区分 H1 和 H3？这个问题能帮他们理解干预的理由，但我不会预先告诉大家澄清一定有收益。
+
+接着四分钟只讲一件事变了，就是咨询台的决策段。直接展示这一段的前后差异，比铺满一页功能名清楚得多。还要补一句：窗口也会核实需求，所以入口分流错了有时能被下游纠正，这正是不能只看最终闭环率的原因。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.2　用一条问题线组织二十分钟</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>前八分钟：问题与唯一差异</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ width: 660, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>先把问题和比较条件交代完整</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 660 }}>前四分钟介绍四项任务与服务分工，让听众看到 H1 与 H3、H2 与 H4 分别使用相同首句，却各有不同的私人目的。每项任务在基线组与澄清组中的设定完全相同。这样听众才知道后面比较的究竟是什么。</Text>
+            <Box style={{ height: 110, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 68, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>可以在这里问一句</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>如果不追问，咨询台凭什么区分 H1 与 H3？这个问题有助于解释干预理由，但不预先告诉大家澄清一定有收益。</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 660 }}>直接展示咨询台决策段的差异，比铺满一页功能名更清楚。窗口也会核实需求，入口分流错误有时能被下游纠正。</Text>
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>所以不能只看最终闭环率</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>下游的核实会把一部分入口错误纠正回来，闭环率会把两种效应混在一起。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 464, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ height: 200, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>0—4 分钟　问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>四项任务与服务分工；H1 与 H3 首句相同、私人目的不同；基线组与澄清组的设定完全一致。</Text>
+            </Box>
+            <Box style={{ height: 200, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>4—8 分钟　唯一差异</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>只讲一件事变了：咨询台的决策段。直接展示差异，比罗列全部功能更清楚。</Text>
+            </Box>
+            <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>时间分配是汇报建议，不是系统运行耗时。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 26</Text>
+    </Box>
+
+</Slide>

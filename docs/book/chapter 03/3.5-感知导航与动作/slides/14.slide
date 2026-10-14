@@ -1,0 +1,69 @@
+<Slide notes={`MOVE 提交成功之后，世界提交会记录三样东西：真实起终点、实际执行路径、剩余路径。
+
+下一轮 Brain 要依据当前坐标和地址继续判断。注意措辞：依据坐标和地址，不是依据人物自己的台词。人物说“我已经到了”，不能替代这些字段；只有实际抵达对应场所，才进行现场活动或进入交互距离。
+
+这句话在排查时特别有用：怀疑人物没到位，先查提交记录里的终点坐标和剩余路径，再决定要不要继续追问。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.3　内核怎样决定走了多远</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>提交记录里才有真实终点</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 22 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>提交之后看什么</Text>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>下一轮 Brain 依据当前坐标和地址继续判断</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>世界提交会记录真实起终点、实际执行路径以及剩余路径。只有实际抵达对应场所，才进行现场活动或进入交互距离。</Text>
+        </Box>
+
+        <Box style={{ width: 670, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>真实起终点</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>起点 0 · 首轮终点 4（示意）</Text></Box>
+            </Box>
+
+            <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>实际执行路径</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>本轮实际走过的格</Text></Box>
+            </Box>
+
+            <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 160 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>剩余路径</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>尚未完成的格，供下一轮继续</Text></Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>人物说“已到达”不能替代这些字段</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>台词不构成抵达证据</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>只有实际抵达，才进行现场活动</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>进入交互距离同样以真实坐标为准</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 23</Text>
+    </Box>
+
+</Slide>

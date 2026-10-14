@@ -1,0 +1,39 @@
+<Slide notes={`把这一节收一收，记住三件事。
+
+第一是身份。暂停以后继续，还是原来那次运行，换的是尝试；从头再做一次，是一次新的运行。这两条路不能互相代替，记录也不能合并。
+
+第二是边界。恢复永远对着最新已提交的边界，画面上的进度不算数。快照缺失或者核验对不上，就给出诊断，不要悄悄退回到更早的步骤上。
+
+第三是证据。取消按钮成功，只证明取消请求被提交了，不等于远端的模型请求已经停下。验收材料要留下连续帧，而不是几张看起来对的截图。
+
+下一节顺着这些记录去看回放和失败诊断：从画面上的一个现象，追到具体的事件、坐标、请求和提交记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.10　暂停、取消、续跑与重跑</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', width: 110 }}>身份</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.6 }}>暂停后继续还是原来那次运行，换的是 Attempt；从头再做是新的一次运行，换的是 Run。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 500, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>边界</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>对准最新已提交边界；快照缺失宁给诊断，不回退到更早步骤。</Text>
+            </Box>
+            <Box style={{ width: 632, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>按钮成功不等于远端停止；留下身份对照表与连续帧，没做的写「待验收」。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节　回放事实与失败诊断 —— 从画面上的现象追到事件、坐标、请求与提交记录</Text>
+
+    </Box>
+
+</Slide>

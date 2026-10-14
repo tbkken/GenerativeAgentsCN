@@ -1,0 +1,100 @@
+<Slide notes={`导入分五步：在「素材」页点「＋ 导入原图」，选择本章背景 PNG；选中原图后点「＋ 新建切片」，为完整背景设 X=0、Y=0、W=32、H=24 并保存；然后回「世界」选根节点，在「显示素材」里选择该切片；再设置节点名称、空间范围和语义；最后保存。
+
+保存之后不要急着往下走，离开再重开一次，检查根节点仍绑定同一素材、尺寸没有改变、画面没有拉伸或裁掉边缘。
+
+另外，整张背景已经画出的桌椅无需再叠一套重复图，建立语义节点即可；公告栏因为要随状态换图，要单独准备视角、像素尺寸、锚点及切片边界相同的外观素材，避免切换时像在地图上跳动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.2　新建地图，导入整张背景</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>导入、切片、绑定、保存</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 6 }}>
+
+            <Box style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>「素材」页：点「＋ 导入原图」，选择本章背景 PNG</Text>
+            </Box>
+            <Box style={{ height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#276FBF' }}>↓</Text></Box>
+
+            <Box style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>选中原图：点「＋ 新建切片」，设 X=0、Y=0、W=32、H=24，保存切片</Text>
+            </Box>
+            <Box style={{ height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#276FBF' }}>↓</Text></Box>
+
+            <Box style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>回「世界」：选根节点，在「显示素材」中选择该切片</Text>
+            </Box>
+            <Box style={{ height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#276FBF' }}>↓</Text></Box>
+
+            <Box style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>设置节点名称、空间范围和语义</Text>
+            </Box>
+            <Box style={{ height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#26816B' }}>↓</Text></Box>
+
+            <Box style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, background: '#26816B', borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>保存；离开再重开，核对绑定与画面</Text>
+            </Box>
+
+            <Box style={{ marginTop: 6, height: 100, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>整张背景已画出的桌椅，无需再叠一套重复图</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>可为它们建立语义节点而不另选显示素材；需要随状态换图的公告栏，单独准备视角、像素尺寸、锚点及切片边界相同的外观素材。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>保存后重开，核对三件事</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 10, height: 10, background: '#26816B', marginTop: 6 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>根节点仍绑定同一素材</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 10, height: 10, background: '#26816B', marginTop: 6 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>尺寸没有改变</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 10, height: 10, background: '#26816B', marginTop: 6 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>画面没有拉伸或裁掉边缘</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 64, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>图片出现在素材列表，只说明原图进入了编辑器；它未必已经作为世界背景显示。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 25</Text>
+    </Box>
+
+</Slide>

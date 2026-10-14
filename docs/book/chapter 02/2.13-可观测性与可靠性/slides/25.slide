@@ -1,0 +1,54 @@
+<Slide notes={`如果某个服务是按每百万 Token 计价的，可以用这个式子来记账：总费用等于未缓存输入费用、缓存输入费用、输出费用，再加上工具、容器、存储这类适用费用。分成哪些子类，按那个服务自己的计费规则来。
+
+这里有两个容易出错的地方。
+
+第一，输入不只是你最后写的那句话。历史消息、工具定义、检索回来的片段和图片都可能计入输入；输出里还可能包含按模型规则计费的推理部分。第二，不要在总量已经包含某一项的时候再重复相加。
+
+关于提示缓存，它通常依赖重复的前缀，所以把稳定指令放在前面、变化材料放在后面，可以为缓存创造条件。但到底有没有命中，要看实际返回的缓存用量，不能凭提示看起来像就推断。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.6　从 usage 理解成本</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>费用记账框架与提示缓存</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 158, background: '#EDF4FC', borderRadius: 10, padding: '18px 28px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>按每百万 Token 计价的服务，可以这样记账</Text>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>总费用 = 未缓存输入费用 + 缓存输入费用 + 输出费用</Text>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>+ 工具 / 容器 / 存储等适用费用</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>输入不只是最后一句话</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>历史消息、工具定义、检索片段和图片都可能计入；输出可能含计费的推理部分。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>已经算过的不要再加一次</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>总量里已经包含某项时，把它当独立子项再相加，费用就会虚高。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 132, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>缓存依赖重复的前缀</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>稳定指令放前面、变化材料放后面；是否命中要看实际返回的缓存用量。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>它不是长期记忆</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>价格、缓存规则和模型支持都会变化，估算要用执行日的账单与官方价格口径。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 34</Text>
+    </Box>
+
+</Slide>

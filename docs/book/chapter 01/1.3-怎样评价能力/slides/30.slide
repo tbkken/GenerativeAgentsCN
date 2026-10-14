@@ -1,0 +1,58 @@
+<Slide notes={`最后说两类扩大样本量也解决不了的问题。
+
+第一类是测试污染。如果测试题、答案或高度相近的内容，在测试之前就进入了训练或调优过程，成绩里可能混进了记忆优势，测的就不再是泛化能力，而是“见过没有”。
+
+判断污染需要看数据来源和去重证据。公开训练数据之外的信息如果不可见，就应该明确写“污染情况未知”，不能默认干净。
+
+第二类是基准饱和。当大量模型都已接近这套题的上限，题目就越来越难区分新的进步。分数都很高，但高分数不再说明谁更强。
+
+解决饱和需要更有区分度、同时仍贴近真实用途的任务。这两种情况都不能仅凭分数断言。一张有用的结果表，要同时回答：测了哪些工作，怎样算成功，失败在哪里，是否重复验证，耗时和成本多少。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.9　分数有多稳，证据能说明多远</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>样本量解决不了的两件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', height: 320, gap: 32 }}>
+
+            <Box style={{ width: 500, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>测试污染</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>测试题、答案或高度相近的内容进入了训练或调优过程，成绩可能混入记忆优势。</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>判断依据：数据来源与去重证据。公开训练数据之外的信息不可见时，应明确污染情况未知。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>测到的可能是“见过”，不是“会做”</Text>
+            </Box>
+
+            <Box style={{ width: 620, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>基准饱和</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>大量模型已接近这套题集的上限，这套题越来越难区分新的进步。</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>需要更有区分度、同时仍贴近真实用途的任务，而不是单纯提高难度。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>分数都很高，但高分数不再说明谁更强</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 140, background: '#F7F3E8', borderRadius: 10, padding: '0 24px' }}>
+            <Box style={{ width: 4, height: 92, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>一张有用的结果表，应同时回答五个问题</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>测试了哪些工作　·　怎样算成功　·　失败在哪里　·　是否重复验证　·　耗时和成本多少</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>30 / 31</Text>
+    </Box>
+
+</Slide>

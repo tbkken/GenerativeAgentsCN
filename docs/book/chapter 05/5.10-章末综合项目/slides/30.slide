@@ -1,0 +1,80 @@
+<Slide notes={`第五章到这里结束。回看十节，我们做的其实是同一件事：把准备的材料组织成一份别人能接手的成果。
+
+5.1 先把愿望改成需求、验收问题和交付范围。5.2 区分设定、假设与观察，处理材料冲突。5.3 把材料分配给正确的接收者，准备资源闭包。5.4 保存完整的咨询台文本和唯一替换段。5.5 估计轮次、调用与费用，登记停止条件。5.6 把每项结论连到判据与已提交事实。5.7 区分文件用途，记录实际接收与重新执行范围。5.8 用清楚的来源和全体结果组织汇报。5.9 依据证据判断变更影响。5.10 完成一次有明确接收者的交付。
+
+贯穿全章的是四条纪律：需求有范围，材料有来源，行为有精确文本，结果有证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第五章　综合实战与交付　·　5.1 — 5.10</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>全章链路</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一条可交接的交付链路</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 8, marginTop: 6 }}>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.1</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>项目范围</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.2</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>来源假设</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.3</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>信息边界</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.4</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>精确文本</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.5</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>执行预算</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.6</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>证据成果</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.7</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>交付复现</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.8</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>演示评审</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>5.9</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>迭代维护</Text>
+            </Box>
+            <Box style={{ width: 108, height: 92, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>5.10</Text>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>综合作业</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>需求有范围 · 材料有来源 · 行为有精确文本 · 结果有证据 · 接收有记录</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>接收者知道哪些检查已经完成、哪些还需要继续，这份工作才真正交了出去</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 2 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.1 — 5.10　完</Text>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>全书最后一节 —— 把成果交给另一位操作者</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>30 / 31</Text>
+    </Box>
+
+</Slide>

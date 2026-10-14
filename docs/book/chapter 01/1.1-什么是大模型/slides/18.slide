@@ -1,0 +1,51 @@
+<Slide notes={`这里只记一句话。
+
+告诉模型一件新事，不等于训练了一个新模型。
+
+这两个说法听起来差不多，但落在不同的阶段。我把今天的房间表交给它，改变的是这一次的上下文；训练一个新模型，改变的是模型自身的参数。前者今天有效，下一次未必还在；后者一旦完成，就会持续影响它以后所有的回答。
+
+还要留一个心眼：后训练的方法有很多种，不是所有方法都能叫强化学习。用示范来教是一种，用人类反馈来改是另一种。它们确实能改善行为，但改善之后模型依然会犯错。
+
+所以判断的落点不在"它是怎么被教出来的"，而在于：这一次，它看到的信息是什么，我们有没有独立核对过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Text style={{ fontSize: 14, color: '#26816B', textAlign: 'center' }}>知识块 04 小结</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 36, marginTop: 10 }}>
+
+            <Box style={{ width: 380, height: 220, background: '#EDF4FC', borderRadius: 12, padding: 24, flexDirection: 'column', justifyContent: 'center', gap: 10, border: '1px solid #B5C7D8' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>告诉模型一件新事</Text>
+                <Box style={{ width: 40, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, color: '#20344B', lineHeight: 1.6 }}>改变的是这一次的上下文</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>今天有效；下一次不提供，就不能假定它仍能用。</Text>
+            </Box>
+
+            <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1 }}>≠</Text>
+
+            <Box style={{ width: 380, height: 220, background: '#FFF4E6', borderRadius: 12, padding: 24, flexDirection: 'column', justifyContent: 'center', gap: 10, border: '1px solid #E5C9A8' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>训练一个新模型</Text>
+                <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 18, color: '#20344B', lineHeight: 1.6 }}>改变的是模型的参数</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>参数一旦更新，会持续影响它之后所有的回答。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 20, marginTop: 26 }}>
+            <Box style={{ background: '#F4F7FA', borderRadius: 8, padding: '12px 20px' }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>后训练方法很多，不能全部叫作强化学习。</Text>
+            </Box>
+            <Box style={{ background: '#F4F7FA', borderRadius: 8, padding: '12px 20px' }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>行为被改善之后，仍然会犯错。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 26</Text>
+    </Box>
+
+</Slide>

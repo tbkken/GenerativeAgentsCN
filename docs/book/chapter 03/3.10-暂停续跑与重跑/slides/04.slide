@@ -1,0 +1,65 @@
+<Slide notes={`三种操作的区别其实很明确。
+
+新跑用封存实验当输入，产生新的 run_id，执行的时候建立第一个 Attempt，从第一步开始。
+
+暂停之后继续，用的是本 Run 内嵌的实验加上最新完整的恢复快照。run_id 保持不变，只是新建一个 attempt_id，从已经提交边界的下一步接着走。
+
+重跑读的是原来那个 Run 内嵌的实验，但它同样产生新的 run_id，也是从第一步开始。它和新跑的区别在输入从哪里来，不在身份上。
+
+所以续跑和从头重跑是两条不同的路，验收也不能互相代替。续跑证明的是恢复准不准，重跑证明的是在相同输入下重新执行会得到什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.1　Run 与 Attempt 为什么需要分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种操作，三种身份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 170 }}><Text style={{ fontSize: 14, color: '#546779' }}>操作</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 14, color: '#546779' }}>输入来源</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 14, color: '#546779' }}>Run 身份</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>Attempt 与 Step</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#B5C7D8' }} />
+            <Box style={{ width: 170 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>新跑</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>封存实验</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.6 }}>新 run_id</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>开始执行时建立首个 Attempt，从 Step 1 开始</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 170 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>暂停后续跑</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>本 Run 的内嵌实验和完整恢复快照</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 16, color: '#26816B', lineHeight: 1.6 }}>保持不变</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>新 attempt_id，从已提交边界的下一步开始</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 170 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>重跑</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>原 Run 的内嵌实验</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>新 run_id</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>新的首个 Attempt，从 Step 1 开始</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.6 }}>续跑与从头重跑不能互相代替验收：一个回答恢复准不准，一个回答相同输入下重新执行会得到什么。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

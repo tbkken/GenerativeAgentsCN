@@ -1,0 +1,56 @@
+<Slide notes={`有些查询任务只有一个网页入口，没有接口可调。这种情况下，我们只能走"截图—动作请求—宿主执行—新截图"这条路。
+
+这里有一条最容易搞混的分界线，我强调一下：模型给出坐标，只证明它提出了一个动作。页面有没有真的变，得看执行之后的新截图。
+
+所以我们把角色分工说清楚。应用或者说宿主，负责取得真实屏幕观察，也负责真正执行点击和输入。模型服务负责根据任务和截图，返回动作请求，以及一个真实的 call_id。
+
+应用在动手之前还要自己检查一遍：这个坐标落在页面范围内吗，这次动作在授权范围内吗。
+
+动作执行完，把新截图作为结果回传，并且要匹配原来那个 call_id。这样才对得上号。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.11.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从动作请求到真实页面</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>模型只负责提出动作，宿主负责真正执行。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 122, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>应用 / 宿主</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>取得观察{'\n'}真正执行动作</Text>
+            </Box>
+            <Box style={{ width: 44, height: 122, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 255, height: 122, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>模型服务</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>给出动作请求{'\n'}与真实 call_id</Text>
+            </Box>
+            <Box style={{ width: 44, height: 122, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 255, height: 122, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>教学页面</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>动作落到页面上{'\n'}再取得新截图</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>页面文字是外部数据，不能扩大操作授权</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 26</Text>
+    </Box>
+
+</Slide>

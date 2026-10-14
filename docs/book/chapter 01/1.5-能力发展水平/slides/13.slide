@@ -1,0 +1,61 @@
+<Slide notes={`把三行一起看，就能读出两个口径之间的距离。
+
+第一行是部分得分：汇总一项任务完成了多少，来源是每个任务加权检查点得分取平均。77.9% 说的是检查点层面完成了多少，不是任务通过率。
+
+第二行是严格通过率：全部检查点都满足才算通过一次，41.7% 才是被完整做对的比例。
+
+两者相距 36.2 个百分点。这个差距体现完整交付更高的要求——遗漏约束、丢失进度、停在半成品都会掉进这里，具体原因必须查任务轨迹，不能只看分数猜。
+
+另外，Fable 5.1 的严格通过率比 Fable 5 高 5.6 个百分点，来自同条件重测；原报告只绘误差线、未给数值区间，我们不做逐题配对检验，不从点估计断言差异必然稳定。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.3　长任务的进步，要看"全部完成"而不只看局部得分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>77.9% 不等于"八成做好了"</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 30, alignItems: 'center', padding: '0 18px' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>口径</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>定义</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>应该怎样读</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 104, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>Partial score</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>一项任务完成了多少：每个任务加权的检查点得分取平均</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>77.9% 说明检查点层面完成了多少，不是任务通过率</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 104, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>Strict pass rate</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>全部检查点都满足才算通过一次任务</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>41.7% 才是这批任务被完整做对的比例</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 104, alignItems: 'center', background: '#FFF4E6', borderRadius: 10, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>相距 36.2 个百分点</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>77.9 − 41.7 的距离，体现完整交付更高的要求</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>遗漏约束、丢失进度、停在半成品都会掉进这里，原因须查轨迹</Text></Box>
+        </Box>
+
+        <Box style={{ height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 54, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>同一条件下重测，Fable 5.1 的严格通过率比 Fable 5 高 5.6 个百分点，说明完整任务能力有所进展；原报告绘有误差线但未给数值区间，本书未做逐题配对检验，不从点估计断言差异必然稳定。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

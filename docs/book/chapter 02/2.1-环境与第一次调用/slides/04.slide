@@ -1,0 +1,85 @@
+<Slide notes={`API 这个词经常被当成"模型本身"，其实它只是接口。我按下这个按钮，你按约定返回一个东西——接口管的是形状，不管内容好不好。
+
+HTTP 和 JSON 分工也很清楚。HTTP 把请求送出去、把响应带回来，中间可能经过代理、可能超时；JSON 描述内容的结构，字段名写错一个字母，服务器就认不出来。
+
+SDK 是封装层，把连接管理、序列化和类型提示都包好了，写起来短。但要特别注意：封装不消除错误。装了 SDK 之后，网络照样会断，认证照样会失败，参数照样会传错。
+
+排查起来就有方向：请求没构造出来，问题在本地；构造出来被拒绝，去核对认证、权限和参数；返回了但内容不合用，回到任务定义与材料上看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.1　先认识本章的学习环境</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>API、HTTP·JSON、SDK 不是一回事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 110 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>API</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>是什么</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>客户端与服务端约定的交互接口</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>会出什么错</Text>
+                    <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.5 }}>请求形状不符合约定，被直接拒绝</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 132 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>HTTP·JSON</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>是什么</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>前者传送请求与响应，后者描述内容</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>会出什么错</Text>
+                    <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.5 }}>连接中断、超时，或字段名写错</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 110 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>SDK</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>是什么</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>封装连接、序列化与类型的程序库</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>会出什么错</Text>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>用了 SDK 仍会发生网络、认证或参数错误</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>分层的用处</Text>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>封装只是少写样板代码，不会消除错误。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>请求没构造出来，先看本地这一段。</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.6 }}>先读错误类型，再决定下一步</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>被拒绝要核对认证与参数；返回内容不合用，要回到任务定义与材料。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

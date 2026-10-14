@@ -1,0 +1,72 @@
+<Slide notes={`预检的结论有明确的范围，把它用过头是最常见的误读。
+
+它能证明的是材料与依赖这一层：空间、附件、装配和 Skill 闭包都对得上，说明这是一份可以运行的材料。
+
+它不能证明行为已经发生。路径检查只能证明指定地图上两个点之间是可达的，角色有没有真的走过去，要去读运行中的 MOVE 事实。同样，Skill 文本里写着更新公告，也不能代替一次真实的公告状态更新以及它的回放记录。
+
+所以正确的做法是：把穿门、交互、回复这些行为证据留给后续的运行验收。不然很容易把「可运行」当成「目标已达成」，报告就会写得比事实更乐观。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.3　预检检查材料，观察检查行为</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>预检不能证明角色穿过了门</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6, width: 1152 }}>同一份检查结果，能覆盖的和不能覆盖的，必须分开说清楚。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 32, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>预检能证明</Text>
+            </Box>
+            <Box style={{ width: 566, height: 32, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>预检不能证明</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+            <Box style={{ width: 566, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>材料、依赖与装配都已就位</Text>
+            </Box>
+            <Box style={{ width: 566, height: 88, background: '#FFFFFF', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>角色真的穿过门、走到该去的地方</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+            <Box style={{ width: 566, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>指定地图上两个点之间的可达性</Text>
+            </Box>
+            <Box style={{ width: 566, height: 88, background: '#FFFFFF', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>角色实际抵达，要读运行中的 MOVE 事实</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+            <Box style={{ width: 566, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>Skill 文本与模板都已随包复制</Text>
+            </Box>
+            <Box style={{ width: 566, height: 88, background: '#FFFFFF', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>真实的 SET_OBJECT_STATE 及其回放</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>把这些行为证据留给后续运行验收，才不会把「可运行」误当成「目标已达成」。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

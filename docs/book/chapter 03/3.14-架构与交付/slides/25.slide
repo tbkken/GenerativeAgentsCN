@@ -1,0 +1,54 @@
+<Slide notes={`最后一块是四道练习，它们看着不一样，练的其实是同一件事：把「已经发生」和「有人这样说」分开。
+
+第一道练判断完成：只有人物自己的描述，没有真实通信环节，就不能说消息已经传到。
+
+第二道练改动的边界：公共 Skill 改了，原来的实验又已经封存，应该复制出一个新的独立草稿来改，而不是拿旧 Run 的成功去证明新 Skill。
+
+第三道练区分执行和质量：Run 完成了，不等于业务目标达成了，评价状态要单独报告。
+
+第四道练承诺：手上只有结果 ZIP，没有正式运行包，也没有在独立环境跑过，就不能写「一键迁移复现」。
+
+每道题都可以先自己想一遍，再对照参考思路。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　·　3.14　沿着一次行动理解架构，整理可交付的实验</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>⑦　　3.14.7　章末练习与参考思路</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>四道练习，同一件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>每道题都要求先找到证据，再下结论；题面看上去不同，判断的方法是一样的。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24, marginTop: 8 }}>
+            <Box style={{ width: 270, height: 88, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>练习一</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>沿证据判断完成</Text>
+            </Box>
+            <Box style={{ width: 270, height: 88, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>练习二</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>判断该复制什么</Text>
+            </Box>
+            <Box style={{ width: 270, height: 88, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>练习三</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>区分执行和质量</Text>
+            </Box>
+            <Box style={{ width: 270, height: 88, background: '#FFF4E6', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>练习四</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>确定迁移承诺</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 29</Text>
+    </Box>
+
+</Slide>

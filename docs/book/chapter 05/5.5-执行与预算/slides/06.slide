@@ -1,0 +1,66 @@
+<Slide notes={`举一个很常见的例子。操作人员在观察时发现 H3 走到了 A 窗口，而按需求它应该对应 B 窗口。
+
+第一步该做的是记录事实：什么时间、哪一次运行、画面里发生了什么。不能做的是顺手把它改成正确窗口，好让交付看起来按时完成。
+
+这条边界为什么重要？因为需求变更和操作纠错是两件不同的事，理由必须分别留下。前者是项目决定改了什么，后者是我们发现了偏差；混在一起，后面任何人都无法判断结果到底反映了什么。
+
+还有一组名字要固定：策略上的两组叫直接建议组和先澄清组，简称基线组与澄清组；窗口叫 A 和 B。H1、H2 的需求对应 A 窗口，H3、H4 对应 B 窗口，组名与窗口名不能互相替代。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.1　项目角色与仿真角色分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个人身兼多职，仍要注明身份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>同一个发现，{'\n'}换一个身份，{'\n'}处理方式就不同</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 420 }}>身兼多职在真实项目里很常见。关键在于记录时要写清楚：这次是以需求负责人的身份改范围，还是以操作人员的身份报告一处偏差。</Text>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 700, height: 176, background: '#FFF4E6', borderRadius: 10, padding: '18px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>一个常见情形</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>操作人员发现 H3 到了 A 窗口</Text>
+                <Box style={{ flexDirection: 'row', gap: 20 }}>
+                    <Box style={{ width: 312, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>应当做</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>先记录事实：时间、Run、画面内容</Text>
+                    </Box>
+                    <Box style={{ width: 312, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不应当做</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>为了按时交付，自己把正确窗口改成 A</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 100, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>需求变更与操作纠错必须留下不同的理由：一个是项目决定改了什么，一个是我们发现了偏差。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 100, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>策略组别叫「直接建议组／先澄清组」，简称基线组与澄清组，不与 A、B 服务窗口混用。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 100, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>H1、H2 的需求对应 A 窗口；H3、H4 对应 B 窗口。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 28</Text>
+    </Box>
+
+</Slide>

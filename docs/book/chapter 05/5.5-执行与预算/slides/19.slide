@@ -1,0 +1,92 @@
+<Slide notes={`四个阈值管的不是同一件事。
+
+物理尝试监控阈值是一道量的问题。3,800 次是两个 Run 的计划量，加 20% 得到 4,560 次；到这之后暂停，先看还剩多少工作、重试是什么原因。
+
+费用复核阈值是一道钱的问题。按假设计价 13 美元，动作是核对真实计费，并确认后续授权范围。
+
+两小时墙钟复核点管的是一段时间，包含暂停在内，所以暂停时长要单列，才能分清哪部分在执行、哪部分在等。
+
+数据缺口这一条最特殊：当用量或关键过程记录根本拿不到时，不要猜一个数，直接标为未知，改用仍然可以核对的限制和证据。
+
+这些是项目里写下的监控规则，不是已经配置进 Runtime 的自动硬上限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.4　把预算写成能采取行动的表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类阈值，四种动作</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>四条刻度分别对应量、钱、时间与数据可得性；到达之后的动作各不相同。</Text>
+
+        <Box style={{ width: 1152, height: 106, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 280, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>物理尝试监控阈值</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>两 Run 合计 4,560 次</Text>
+            </Box>
+            <Box style={{ width: 460, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row' }}>
+                    <Box style={{ width: 383, height: 20, background: '#276FBF' }} />
+                    <Box style={{ width: 77, height: 20, background: '#CB6B28' }} />
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>计划 3,800 次 → 预留后 4,560 次</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>暂停检查剩余工作与重试原因</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 106, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 280, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>费用复核阈值</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>假设计价下 13 美元</Text>
+            </Box>
+            <Box style={{ width: 460, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row' }}>
+                    <Box style={{ width: 436, height: 20, background: '#276FBF' }} />
+                    <Box style={{ width: 24, height: 20, background: '#CB6B28' }} />
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>预算登记 12.32 美元 → 阈值 13 美元</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>核对真实计费与后续授权范围</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 106, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 280, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>单次墙钟复核点</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>从启动起两小时，含暂停</Text>
+            </Box>
+            <Box style={{ width: 460, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row' }}>
+                    <Box style={{ width: 345, height: 20, background: '#276FBF' }} />
+                    <Box style={{ width: 115, height: 20, background: '#B5C7D8' }} />
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>实际执行与等待要分开登记</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>检查在途请求与阶段进展</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 106, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 280, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>数据缺口</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>用量或关键过程记录不可获得</Text>
+            </Box>
+            <Box style={{ width: 460, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ flexDirection: 'row' }}>
+                    <Box style={{ width: 92, height: 20, background: '#CB6B28' }} />
+                    <Box style={{ width: 368, height: 20, background: '#B5C7D8' }} />
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可核对部分与未知部分必须分开写</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.45 }}>标为未知，改用仍可核对的限制与证据</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 28</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,108 @@
+<Slide notes={`这两幅网格请只看一处差异：橙色牌子。
+
+两幅图的外框完全一样，都是封闭边界；内部的通路、甲厅和乙厅的分界、休息区的位置也都一样。左边是基线，牌子在入口区靠左，坐标为 2、2、1、1；右边是对照，牌子在入口区偏中右，坐标为 12、5、1、1。
+
+我要研究的不是牌子挡住了谁，也不是谁因此绕了更远的路。牌子是非阻挡的，它不改变通行难度，只改变被看见、被查询到的机会。
+
+还有一条容易被忽略：纸面距离不等于感知范围。两处位置到底哪一处更容易被发现，取决于人物视野与注意力截断的真实返回，不能只看图纸上离出生点近还是远。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.2　唯一干预：同一块非阻挡牌的位置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一块牌，两个位置</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 552, flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>基线　牌子 [2,2,1,1]</Text>
+            <Box style={{ width: 400, height: 304, background: '#20344B', padding: 8, flexDirection: 'column' }}>
+                <Box style={{ flex: 1, background: '#F4F7FA', flexDirection: 'column' }}>
+                    <Box style={{ height: 16, background: '#F4F7FA' }} />
+                    <Box style={{ height: 96, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 352, height: 96, background: '#F4F7FA', flexDirection: 'column' }}>
+                            <Box style={{ height: 16, background: '#F4F7FA' }} />
+                            <Box style={{ height: 16, flexDirection: 'row' }}>
+                                <Box style={{ width: 16, background: '#F4F7FA' }} />
+                                <Box style={{ width: 16, background: '#CB6B28' }} />
+                                <Box style={{ width: 320, background: '#F4F7FA' }} />
+                            </Box>
+                            <Box style={{ height: 64, background: '#F4F7FA', justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 14, color: '#546779' }}>入口</Text>
+                            </Box>
+                        </Box>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                    </Box>
+                    <Box style={{ height: 96, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 160, height: 96, background: '#EDF4FC', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#276FBF' }}>甲厅</Text>
+                        </Box>
+                        <Box style={{ width: 192, height: 96, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#26816B' }}>乙厅</Text>
+                        </Box>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                    </Box>
+                    <Box style={{ height: 80, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 352, height: 64, background: '#F7F3E8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#546779' }}>休息区</Text>
+                        </Box>
+                    </Box>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779' }}>牌子立在入口区左侧，紧邻入口通道</Text>
+        </Box>
+
+        <Box style={{ width: 552, flexDirection: 'column', alignItems: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>对照　牌子 [12,5,1,1]</Text>
+            <Box style={{ width: 400, height: 304, background: '#20344B', padding: 8, flexDirection: 'column' }}>
+                <Box style={{ flex: 1, background: '#F4F7FA', flexDirection: 'column' }}>
+                    <Box style={{ height: 16, background: '#F4F7FA' }} />
+                    <Box style={{ height: 96, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 352, height: 96, background: '#F4F7FA', flexDirection: 'column' }}>
+                            <Box style={{ height: 48, background: '#F4F7FA' }} />
+                            <Box style={{ height: 16, flexDirection: 'row' }}>
+                                <Box style={{ width: 176, background: '#F4F7FA' }} />
+                                <Box style={{ width: 16, background: '#CB6B28' }} />
+                                <Box style={{ width: 160, background: '#F4F7FA' }} />
+                            </Box>
+                            <Box style={{ height: 32, background: '#F4F7FA', justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 14, color: '#546779' }}>入口</Text>
+                            </Box>
+                        </Box>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                    </Box>
+                    <Box style={{ height: 96, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 160, height: 96, background: '#EDF4FC', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#276FBF' }}>甲厅</Text>
+                        </Box>
+                        <Box style={{ width: 192, height: 96, background: '#ECF7F2', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#26816B' }}>乙厅</Text>
+                        </Box>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                    </Box>
+                    <Box style={{ height: 80, flexDirection: 'row' }}>
+                        <Box style={{ width: 16, background: '#F4F7FA' }} />
+                        <Box style={{ width: 352, height: 64, background: '#F7F3E8', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#546779' }}>休息区</Text>
+                        </Box>
+                    </Box>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779' }}>牌子移到入口区中右，靠近甲乙两厅分界</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 × 18 作者草图　两图均系示意图：非实际出生点、视野或寻路验收</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

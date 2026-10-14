@@ -1,0 +1,68 @@
+<Slide notes={`我先讲一个很现实的问题：听众凭什么相信我。到了汇报阶段，我对角色和规则已经非常熟悉——看到「入口询问两轮后转往 A 窗口」，我能立刻想起前因后果。
+
+可第一次看演示的人不知道咨询台掌握哪些信息，更不知道这条路径有没有比另一种策略更好。所以汇报的任务不是把做过的事摆出来，而是帮别人建立判断所需的背景，再把判断依据交到他们手上。
+
+我们准备一场二十分钟的教学研讨。所有演示片段和数字必须来自各自标明的来源。当前还没有服务大厅的真实运行，可以讲解设计、可以用第四章的人工判分题练习，但不能播放别的案例，再把它说成本案的成功记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.8　演示与评审</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>汇报与质疑</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>让别人听懂，{'\n'}也让别人能够质疑</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>汇报不是展示做过什么。它要帮助第一次看演示的人建立判断所需的背景，并把判断依据交到他们手上。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>材料有身份</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>主张有强度</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>数字有分母</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 600, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>同一份讲义里的材料</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>空间图 · 回放片段 · 人工算例</Text>
+            </Box>
+            <Box style={{ width: 600, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>每份材料带着自己的来源标注</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>Run 与 Step 区间、虚拟时间、取材边界、组别与核对状态</Text>
+            </Box>
+            <Box style={{ width: 600, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 290, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>能解释到哪里</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>证据支持到{'\n'}什么程度就说到什么程度</Text>
+                </Box>
+                <Box style={{ width: 290, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>人工算例</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>人工构造，{'\n'}无对应 Run</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 26</Text>
+    </Box>
+
+</Slide>

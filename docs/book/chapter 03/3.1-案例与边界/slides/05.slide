@@ -1,0 +1,66 @@
+<Slide notes={`沿着这些渠道，一段一段取证据，中间任何一环都不能跳。
+
+第一段是咨询与比较：林岚要真的问过，下一轮真的收到预约反馈，她才有依据判断原来的安排做不做得了。
+
+第二段是公告更新：请求发出去之后，要看公告栏实际提交了什么状态、有没有回复。
+
+第三段是获知与行动：其他人得通过渠道真的知道，更正自己的记忆，然后按自己实际的位置和时间开始活动。
+
+这里的箭头表示的是因果依赖，不是预先排好的时刻表。依赖成立，事情才成立；至于它发生在第几步，那是要观察的结果，不是写死的剧本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.1　一个可以贯穿全章的问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>沿图逐段取证</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>每一段都要有一段成立的事实，跳过中间环节，结论就不成立。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>进展</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>需要成立的事实</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>咨询与比较</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>林岚真实咨询，下一轮收到预约反馈，再比较可行的安排。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>公告更新</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>请求更新之后，要看公告栏实际提交的状态与回复。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>获知与行动</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>其他人物通过渠道获知，更正记忆，再按实际位置与时间开始活动。</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>因果依赖，不是时刻表</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>模型可能多问几个问题，也可能晚一步行动——发生在第几步是观察结果。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

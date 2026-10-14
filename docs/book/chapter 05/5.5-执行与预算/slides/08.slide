@@ -1,0 +1,97 @@
+<Slide notes={`这条链的六段，各自要留下一样东西。
+
+材料审阅过关，说明四项需求、窗口分工和两段咨询策略都完整，也没有泄漏私人目的。浏览器配置过关，说明图片、空间、出生点、Skill 与模型确实保存了，而且重开之后还在。执行准备过关，说明两组除咨询策略之外完全一致，预检和预算都对得上当前草稿。运行观察过关，说明当前 Run、Attempt、已提交 Step 和在途请求都能读出来。结果收集过关，说明四项任务和全部失败都登记了，报告能追到提交事实。交付检查过关，说明接收者拿到了哪类文件、哪些用途已经验证。
+
+注意每一段的关键词都是“可核对”。配置不是我口头说保存了，而是重开之后还在。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.2　按证据推进项目，而不是按日历宣布完成</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一条可检查的执行链</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>材料可审阅，配置已保存，实验输入已固定，运行事实可读，最后结果可交付。每一段都要能指出证据在哪里，而不只是凭印象说做完了。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 154, height: 236, background: '#F4F7FA', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#546779' }}>01</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>材料审阅</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>材料可审阅</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>需求、窗口分工与两段策略完整，不泄漏私人目的</Text>
+            </Box>
+
+            <Box style={{ width: 42, height: 236, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 154, height: 236, background: '#F4F7FA', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#546779' }}>02</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>浏览器配置</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.45 }}>配置已保存</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>图片、空间、出生点、Skill 与模型已保存并重开核对</Text>
+            </Box>
+
+            <Box style={{ width: 42, height: 236, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 154, height: 236, background: '#EDF4FC', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF' }}>03</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>执行准备</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.45 }}>输入已固定</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>两组除咨询策略外一致，预检与预算对应当前草稿</Text>
+            </Box>
+
+            <Box style={{ width: 42, height: 236, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 154, height: 236, background: '#EDF4FC', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF' }}>04</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>运行观察</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.45 }}>事实可读</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>当前 Run、Attempt、已提交 Step 与在途请求都读得到</Text>
+            </Box>
+
+            <Box style={{ width: 42, height: 236, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 154, height: 236, background: '#ECF7F2', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#26816B' }}>05</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>结果收集</Text>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.45 }}>失败也登记</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>四项任务与全部失败登记，报告追得到提交事实</Text>
+            </Box>
+
+            <Box style={{ width: 42, height: 236, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 154, height: 236, background: '#ECF7F2', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#26816B' }}>06</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>交付检查</Text>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.45 }}>结果可交付</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45, flex: 1 }}>接收者拿到哪类文件，哪些用途已经验证</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>每一段留下的都不是感觉，而是一个能被别人指出来、翻出来的位置或编号。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 28</Text>
+    </Box>
+
+</Slide>

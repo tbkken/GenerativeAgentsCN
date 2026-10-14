@@ -1,0 +1,103 @@
+<Slide notes={`调用这条命令的时候，有六项信息需要一起记下来，否则后面复现不了。
+
+工作目录决定相对路径从哪里开始解析，本练习固定在本章的 examples 目录。参数是程序真正收到的那一份，包括脚本名、输入文件，还有 --output 后面的输出路径。标准输出是主要结果通道，我们约定它写校验报告；标准错误专门装诊断信息，比如文件读不到或者 JSON 解析失败。
+
+退出码是进程结束时的状态标记，本教材只定义三个值。超时不是退出码，它由外层执行器设置，指的是允许进程运行的最长时间。
+
+把这六项记齐，一次运行才算留下了证据，后面的对照才有东西可比。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.1　读懂一条命令的六个部分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六项要素，各自记录什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+            <Box style={{ height: 28 }}><Text style={{ fontSize: 14, color: '#546779' }}>要素</Text></Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>工作目录</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>cwd</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>参数</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>argv</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>标准输出</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>stdout</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>标准错误</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>stderr</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 68, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>退出码</Text>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>本程序合同</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>超时</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>外层设置</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+            <Box style={{ height: 28, flexDirection: 'row', gap: 16, padding: '0 16px' }}>
+                <Box style={{ width: 432 }}><Text style={{ fontSize: 14, color: '#546779' }}>含义</Text></Box>
+                <Box style={{ width: 340 }}><Text style={{ fontSize: 14, color: '#546779' }}>本练习要记录什么</Text></Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 432 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>相对路径从哪里开始解析</Text></Box>
+                <Box style={{ width: 340 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>本章的 examples 目录</Text></Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 432 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>程序接收到的独立参数</Text></Box>
+                <Box style={{ width: 340 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>脚本、输入文件、输出选项</Text></Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 432 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>主要结果通道</Text></Box>
+                <Box style={{ width: 340 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>校验报告或结果摘要</Text></Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 432 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>诊断信息通道</Text></Box>
+                <Box style={{ width: 340 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>文件读取或执行异常</Text></Box>
+            </Box>
+            <Box style={{ height: 68, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 432 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>进程结束的状态标记</Text></Box>
+                <Box style={{ width: 340 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>本教材定义的 0、1、2</Text></Box>
+            </Box>
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 432 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>允许进程运行的最长时间</Text></Box>
+                <Box style={{ width: 340 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>由外层执行器设置</Text></Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

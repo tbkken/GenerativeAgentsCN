@@ -1,0 +1,40 @@
+<Slide notes={`命令行在这里的作用是帮助理解协议，以及在后续的独立环境里使用。本次教材案例的配置、运行和验收都还是走浏览器完成的，不能用这些命令绕过缺失的页面步骤。
+我把命令按实验、运行、回放三组摆出来，重点在区分它们各自管什么：谁只创建、谁创建并执行，谁保留身份、谁新建身份，谁读事实、谁真的执行。
+把这三组分清楚，你在独立环境里操作时就不容易把「看」当成「跑」，也不会误以为命令存在就等于界面上有对应按钮。最后再把交付清单说清楚：交付的是证据和边界。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>④　　3.13.6 — 3.13.7</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>命令速查与交付证据</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>实验、运行、回放三组命令各管一件事；交付时要说清哪些是证据，哪些还只是结论。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginTop: 10 }}>
+            <Box style={{ width: 340, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>ga experiment</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>ga run</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B', fontFamily: 'Consolas, monospace' }}>ga replay</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

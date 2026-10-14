@@ -1,0 +1,61 @@
+<Slide notes={`接下来换一个任务，指标也跟着换了。
+
+前面那道题是回答问题，对错分明。现在让助手整理报名材料：材料里实际有十二项报名，助手报出十项，其中八项是对的，两项是误读，另外还漏掉了四项。
+
+这时候如果还只算一个准确率，就会把两类完全不同的错误糊在一起。多报出来的那两项，和漏掉的那四项，对组织者的影响是不一样的。
+
+所以要把"应该找出多少"和"实际报出来多少"分成两个分母。这两个分母各自回答一句话：报出来的里面有多少是真的，应该找出来的里面有多少真的被找到了。
+
+一旦有两个分母，后面所有讨论都要先问一句：这个分数用的是哪个分母。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.3.2　少报和误报</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>为什么需要两个分母</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>真实 12 项、输出 10 项、正确 8 项：应找出来多少，与报出来多少，各是一个分母。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 8 }}>
+            <Box style={{ width: 210 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>真实报名　12 项</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 0 }}>
+                <Box style={{ width: 200, height: 40, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#FFFFFF' }}>找到 8 项</Text>
+                </Box>
+                <Box style={{ width: 100, height: 40, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#FFFFFF' }}>漏 4</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 210 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>模型输出　10 项</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 0 }}>
+                <Box style={{ width: 200, height: 40, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#FFFFFF' }}>找到 8 项</Text>
+                </Box>
+                <Box style={{ width: 100, height: 40, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#FFFFFF' }}>误报 2</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 31</Text>
+    </Box>
+
+</Slide>

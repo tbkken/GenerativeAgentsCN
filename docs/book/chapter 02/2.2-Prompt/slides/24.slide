@@ -1,0 +1,68 @@
+<Slide notes={`这一节讲完了，最后把方法收成三个问题。以后你写任何一段提示，都可以拿它们检查一遍。
+
+第一个问题，依据什么？材料在哪里，从哪里取，来源有没有标明。答不出来，模型就只能靠印象填。
+第二个问题，完成什么？要交付哪些文件或字段，格式是什么，边界在哪里，哪些事明确不做。
+第三个问题，怎样验收？用什么判断它通过了，由谁检查，没确认的部分要怎么标注出来。
+
+写作的顺序可以反着来：先想清楚怎么验收，再回头写要交付什么，最后补上依据。这样写出来的提示，天然就是可以核对的。
+
+再提醒一句，提示写得长、语气更强，并不等于质量更高。它有没有变好，要靠任务结果和评分表来判断。
+
+下一节我们讲上下文工程，讨论不同的信息怎么组织进上下文，以及跨轮对话里的事实怎么维护。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.2　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>把愿望写成可以检查的任务</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>提示写得好不好，不看句子长不长、语气强不强，看它有没有把依据、交付和验收讲清楚。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>依据什么？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>材料在哪里、从哪里取，来源有没有标明</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>完成什么？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>交付哪些字段或文件，格式与边界是什么</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#FFF4E6', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>怎样验收？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>用什么判通过，没确认的部分怎样标出来</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 6 }}>
+                <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.3　上下文工程与跨轮状态</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

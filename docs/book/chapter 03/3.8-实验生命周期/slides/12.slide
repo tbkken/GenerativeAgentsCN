@@ -1,0 +1,97 @@
+<Slide notes={`在实验概览点击执行实验之后，当前实现会先等草稿保存，再打开执行对话框，取出预检结果和规模估算。
+
+这里有一条容易踩的边界：打开对话框和点击确认执行是两个不同阶段。只在对话框里看一眼预检结果，并不证明已经创建了运行。如果只想查看预检，可以直接把对话框关掉；但要清楚，之前的草稿修改很可能已经被自动保存了。
+
+预检失败时返回的是一段错误文字，回去改的应该是草稿里对应的那份材料。改完保存，再重新检查一遍。
+
+看到预检通过，也只说明材料可以运行，不代表目标已经达成。行为证据要留给运行验收去找。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.3　预检检查材料，观察检查行为</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>打开对话框不等于确认执行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 700, height: 340, background: '#F4F7FA', borderRadius: 12, flexDirection: 'column' }}>
+                <Box style={{ width: 700, height: 44, background: '#276FBF', borderRadius: 12, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>执行实验　对话框</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Box style={{ width: 56, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>示意</Text>
+                    </Box>
+                </Box>
+                <Box style={{ padding: 18, flexDirection: 'column', gap: 12 }}>
+                    <Box style={{ width: 664, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 96 }}>预检结果</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>整包校验，失败时返回错误文字</Text>
+                        <Box style={{ width: 72, height: 30, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>通过</Text>
+                        </Box>
+                        <Box style={{ width: 150, height: 30, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#CB6B28' }}>失败：PACKAGE_INVALID</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 664, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 96 }}>规模估算</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>人物数、时长与预计调用量</Text>
+                        <Box style={{ width: 150, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, color: '#276FBF' }}>4 名人物 + 2 个对象</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ width: 664, height: 74, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                        <Box style={{ width: 220, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, color: '#546779' }}>关闭对话框</Text>
+                        </Box>
+                        <Box style={{ width: 220, height: 46, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>确认执行</Text>
+                        </Box>
+                        <Text style={{ fontSize: 13, color: '#546779', flex: 1, lineHeight: 1.45 }}>两个动作的结果完全不同</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 432, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 432 }}>先等待草稿保存，再打开对话框，取得预检与规模估算。</Text>
+                <Box style={{ width: 432, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>查看预检不证明已创建 Run</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>打开对话框还在确认之前，此时没有任何运行被创建。</Text>
+                </Box>
+                <Box style={{ width: 432, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>关闭之前修改可能已保存</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>退出对话框不等于回退草稿，检查前先确认当前内容。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>阶段一　等待草稿保存</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>保存的是草稿的最新内容</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 566, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>阶段二　取得预检与规模估算</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>对话框只是展示检查结果</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

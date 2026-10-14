@@ -1,0 +1,75 @@
+<Slide notes={`我把四个候选逐条读一遍。
+A 是十八点到十九点，正常交谈，满足场地规则。B 是十九点到二十点，正常交谈，也满足。C 是十九点五十到二十点五十，它正好在二十点五十结束，仍然满足场地规则，只是后面要留出收整时间。D 是十九点到二十点，模式换成静默共读，同样满足。
+四条候选在共同规则这一层全部通过。判断标准必须说清楚：三个人对同一个候选都明确同意，才记一致意见。
+保留、反对、未回应都要如实记录下来，主持人也不能事后临时把它改成多数通过——那样做等于替别人表态。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.1　共同事实与四个候选</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个候选，逐条核对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ height: 382, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+
+            <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>候选</Text></Box>
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>时间</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>模式</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>场地规则</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>A</Text></Box>
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 16, color: '#20344B' }}>18:00 — 19:00</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, color: '#546779' }}>正常交谈</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>满足</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>B</Text></Box>
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 16, color: '#20344B' }}>19:00 — 20:00</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, color: '#546779' }}>正常交谈</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>满足</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>C</Text></Box>
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 16, color: '#20344B' }}>19:50 — 20:50</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, color: '#546779' }}>正常交谈</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>满足，余 10 分钟收整</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>D</Text></Box>
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 16, color: '#20344B' }}>19:00 — 20:00</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, color: '#546779' }}>静默共读</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>满足</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>三人对同一候选均明确同意，才记一致</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>保留、反对、未回应都如实对应到人；主持人不能临时改成多数通过，也不能替谁声明态度。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

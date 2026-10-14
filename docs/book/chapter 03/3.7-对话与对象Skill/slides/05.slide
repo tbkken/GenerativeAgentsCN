@@ -1,0 +1,79 @@
+<Slide notes={`接下来处理会话本身的身份，这件事很容易出错。
+
+如果这是一次新会话，可以省略 conversation_id，由运行时去建立或者复用一个合适的会话，不必自己指定。
+
+如果要继续已经存在的会话，就必须使用运行时真实返回、而且确实属于这两名参与者的那个 ID。不要自己拼一个 UUID 填进去，看起来像那么回事，但后续的可见性和事实核对都会对不上。
+
+需要结束的时候，可以提交 end_conversation，标记这次会话可以收尾。
+
+还有一点：不要为每一句回复都另开一个线程。同一段对话就沿同一个会话走，否则读者根本看不出这是一来一回，证据也被切碎了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.1　一次 SPEAK 连接两名 Agent</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>会话身份：建立、续用与结束</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 660, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 660, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 130 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>新会话</Text>
+                </Box>
+                <Box style={{ width: 250, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>可以省略 conversation_id</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>由运行时建立或复用</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 660, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ width: 130 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>续用已有会话</Text>
+                </Box>
+                <Box style={{ width: 250, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>用真实返回的 ID</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>属于这两名参与者，不自行编一个</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 660, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                <Box style={{ width: 130 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>需要结束</Text>
+                </Box>
+                <Box style={{ width: 250, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>提交 end_conversation</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不为每一句回复另开线程</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 460, height: 168, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>为什么不能自己编一个 ID</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>会话身份来自运行时真实返回值。自己拼一个 UUID，看起来像那么回事，但后续的可见性与事实核对都会对不上。</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>源码定位</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>SimulationMCPServer._plan_action{'\n'}Game.record_conversation_message</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 31</Text>
+    </Box>
+
+</Slide>

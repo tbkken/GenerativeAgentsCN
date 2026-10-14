@@ -1,0 +1,77 @@
+<Slide notes={`GPQA Diamond 的题我们看两道，都是论文里公开过的。
+
+第一道是物理。它说有两个量子态，寿命分别是十的负九次方秒和十的负八次方秒，问它们的能量差取哪个值才能被清楚分辨。答案是十的负四次方电子伏。要答对，得知道能量和时间的不确定性关系，算出能级的自然线宽，再比较哪个差值足够大。
+
+第二道是化学。甲基环戊二烯和甲基异戊基酮，用催化量的吡咯烷反应，生成一种交叉共轭多烯烃，问不计立体异构，最终产物有多少种化学上不同的异构体。答案是十六种。要答对，得先明白甲基环戊二烯本身就以三种异构体互变，再乘上二烯体靠近的四个方向。
+
+判分还要求答案以固定格式结尾，格式不对，推理再对也计零分。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>④　1.4.4　样本展示：需要推导、不能靠搜的两道题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>GPQA Diamond：两道真题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 568, height: 380, background: '#F7F3E8', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 60, height: 28, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>物理</Text></Box>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>GPQA Diamond 样题 1</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>两个量子态的能量分别为 E1 和 E2，寿命分别为 10⁻⁹ 秒和 10⁻⁸ 秒。要清楚区分这两个能级，下列哪个可能是它们的能量差？</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 254, height: 40, background: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>A　10⁻⁴ eV</Text></Box>
+                    <Box style={{ width: 254, height: 40, background: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>B　10⁻⁹ eV</Text></Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 254, height: 40, background: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>C　10⁻⁸ eV</Text></Box>
+                    <Box style={{ width: 254, height: 40, background: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>D　10⁻¹¹ eV</Text></Box>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#ECF7F2', borderRadius: 8, padding: '10px 14px' }}>
+                    <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.45 }}>答案：10⁻⁴ eV。要先算出能级的自然线宽，再比较差值</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 568, height: 380, background: '#F7F3E8', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                    <Box style={{ width: 60, height: 28, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>化学</Text></Box>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>GPQA Diamond 样题 2</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>甲基环戊二烯与甲基异戊基酮、催化量吡咯烷反应，生成一种亮黄色的交叉共轭多烯烃产物。不计立体异构，最终产物由多少种化学上不同的异构体组成？</Text>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 254, height: 40, background: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>A　2 种</Text></Box>
+                    <Box style={{ width: 254, height: 40, background: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>B　16 种</Text></Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 254, height: 40, background: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>C　8 种</Text></Box>
+                    <Box style={{ width: 254, height: 40, background: '#FFFFFF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 15, color: '#546779' }}>D　4 种</Text></Box>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#ECF7F2', borderRadius: 8, padding: '10px 14px' }}>
+                    <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.45 }}>答案：16 种。前体本身以 3 种异构体互变，再乘上 4 个接近方向</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.55 }}>判分要求答案以固定格式结尾；格式不对，推理再正确也计零分——这就是"评分契约"</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 36</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,86 @@
+<Slide notes={`完整 Skill 至少要有七项。身份从 IterationContext.game_object 取当前对象；可读信息列出 now、interaction_requests 和自己的 object_state；适用条件写清两个窗口各自固定的服务范围。
+
+往下是处理步骤、工具边界、停止条件和异常处理：按真实请求者身份整理本轮请求；明确记忆检索、记忆写入与 world-act 的调用范围；一次 world-act 成功后立即结束；工具拒绝时按原因修正，不伪造请求 ID。
+
+要提醒一句：正文可编辑，不等于行为已经通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.1　交付全文，不只交付一句差异</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>完整 Skill 至少写全七项</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+
+            <Box style={{ width: 700, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 130 }}>身份</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 510 }}>取自 IterationContext.game_object 的当前对象</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 130 }}>可读信息</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 510 }}>now、interaction_requests 与自己的 object_state</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 130 }}>适用条件</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 510 }}>两个窗口各自已固定的服务范围</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 130 }}>处理步骤</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 510 }}>按真实请求者身份整理本轮待处理的请求</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 130 }}>工具边界</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 510 }}>记忆检索、记忆写入与 world-act 的调用范围</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 130 }}>停止条件</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 510 }}>一次 world-act 成功后立即结束本轮</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 130 }}>异常处理</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 510 }}>工具拒绝时按具体原因修正，不伪造请求 ID</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 420, height: 256, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>只保存一句话不够</Text>
+                <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>「先问清楚再推荐」没有说明：</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>问什么{'\n'}答复如何关联{'\n'}何时停止询问{'\n'}谁有权知道完整任务</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 148, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>材料还在纸面</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>本节只给出可审阅文字，四份资源尚未在 Studio 创建；正文可编辑不等于行为已经通过。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 27</Text>
+    </Box>
+
+</Slide>

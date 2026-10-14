@@ -1,0 +1,41 @@
+<Slide notes={`接下来把镜头拉远，看人和消息在哪儿。
+
+先纠正一个常见误会：接班员不是消息发出去的时候才被创建出来的。三个人从运行开始就都在场——交班员虞诚、接班员宋青、复核员韩平，各自有自己的位置和记忆。
+
+也正因为这样，每条消息都必须走真实渠道。虞诚要知道设备情况，就得真的去问；宋青要知道交接内容，就得真的去读。
+
+地图上给三块地方：值班室用来交流，设备间放 T-17，资料区放记录台。三个人一开始就知道这三个地址，但陌生对象的地址要靠感知取得，写在文字里的地址不会自动变成导航知识。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>②　　4.2.2</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>空间与角色：三人一直都在</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>接班不动态创建人物。消息必须走真实渠道，独立查询可以补救遗漏，但不能回填交接主指标。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, marginTop: 10 }}>
+            <Box style={{ height: 76, background: '#EDF4FC', borderRadius: 8, padding: '0 24px', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>虞诚　交班员</Text>
+            </Box>
+            <Box style={{ height: 76, background: '#F7F3E8', borderRadius: 8, padding: '0 24px', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>设备间 T-17</Text>
+            </Box>
+            <Box style={{ height: 76, background: '#ECF7F2', borderRadius: 8, padding: '0 24px', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>资料区记录台</Text>
+            </Box>
+            <Box style={{ height: 76, background: '#EDF4FC', borderRadius: 8, padding: '0 24px', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>宋青　接班员</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

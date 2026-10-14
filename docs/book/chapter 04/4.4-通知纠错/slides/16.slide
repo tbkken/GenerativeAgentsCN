@@ -1,0 +1,95 @@
+<Slide notes={`这条链有八个节点。
+
+前四个是查询和申报：他真实查询得到的原回复、他保存下来的原信念、他分别发出去的三份真实确认、沈禾提交的更正请求。后四个是更正落地：公告对象实际提交了 revised，他个人真实接收到更正，他执行的记忆处理，最后才是相关行动。
+
+第六个节点最关键，个人窗口就从这里起算：从更正进入他可读消息或观察的那一次决策输入开始，计那次决策以及之后的相关动作。同一个 Step 里有先后，不能把更早的动作当成已经受新消息影响。
+
+还有一条纪律：发信者便签上写「已通知」不能代替接收证据。SPEAK 一次只对一名其他 Agent，所以三份通知必须三次发言，每次都要有真实的接收记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.5　按个人接收边界计数</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一条证据链，八个节点</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>证据链：原回复 › 原信念 › 三份确认 › 更正请求 › 对象提交 › 个人接收 › 记忆处理 › 相关行动</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 250, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>1　原回复</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>公告对象真实回复内容</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>2　原信念</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>存入的当前会址信念</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>3　三份确认</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>三人各自真实 SPEAK</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>4　更正请求</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>沈禾提交的依据与申请</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 250, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>5　对象提交</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>revised 与被采纳请求 ID</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>6　个人实际接收</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>更正进入其可读输入</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>7　记忆处理</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>本组的追加或替代</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>8　相关行动</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只算三类相关动作</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, marginTop: 4 }}>
+            <Box style={{ width: 560, height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>便签不能代替接收证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>发信者便签上的「已通知」不算接收；SPEAK 一次只向一名其他 Agent</Text>
+            </Box>
+            <Box style={{ width: 560, height: 96, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>个人窗口从这里起算</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>从更正的决策输入开始，计该决策及以后的相关动作</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>证据链示意，非系统截图、非 Run 结果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

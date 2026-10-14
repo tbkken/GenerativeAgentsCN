@@ -1,0 +1,60 @@
+<Slide notes={`我们从回放里最常见的一幕说起。画面上许安站在手作室附近，看起来像是已经到达。但看到这一幕，其实还分不清两种完全不同的情况：他真的走到了，还是只是路过。公告栏旁边写着「通知已更新」，也一样，文字更新了不代表对象状态真的发生变化，更不代表该知道的人已经知道。
+
+所以这一节要立一条规矩：画面和活动文字只是线索，不是结论。能证明世界发生改变的，只有提交到持久边界的事实，也就是实际坐标、已执行路径、位置语义，以及对象事件的结构化前后状态。
+
+带着这条规矩，我们去看一条动作怎样一步步成为可回放的已提交事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.11</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>回放事实与{'\n'}失败诊断</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>看到许安站在手作室附近，可能意味着已经到达，也可能只是路过。要解释系统行为，必须把画面、活动文字与已提交事实连接起来。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>提交事实</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>只读回放</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>证据口径</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>四类诊断</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 560, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>画面上看到的</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>许安站在手作室附近{'\n'}公告栏旁写着「通知已更新」</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>这些都不能直接当作结论</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 216, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>已提交的事实</Text>
+                <Box style={{ width: 520, height: 40, background: '#FFFFFF', borderRadius: 8, paddingLeft: 14, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>实际坐标 · 已执行路径 · 位置语义</Text>
+                </Box>
+                <Box style={{ width: 520, height: 40, background: '#FFFFFF', borderRadius: 8, paddingLeft: 14, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>对象状态事件及结构化前后状态</Text>
+                </Box>
+                <Box style={{ width: 520, height: 40, background: '#FFFFFF', borderRadius: 8, paddingLeft: 14, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>请求 ID 与回复事实、接收者</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

@@ -1,0 +1,78 @@
+<Slide notes={`这一节有四个知识块，回答的是同一个问题：一次工具调用，凭什么算真的取到了依据。
+
+第一个先把工具做小：只做一个只读查询，输入只有房间编号和日期。小到能一眼看出它有没有越界。
+
+第二个看证据。模型返回的条目带着工具名、JSON 参数和 call_id。call_id 是把结果认回原来那次调用的凭证，不能换成房间编号，也不能拿别的工具的结果来顶。
+
+第三个讲回路。工具返回后还要继续发起请求，模型才会读到结果、调整或结束。先把完整的输出保留下来，再追加结果。
+
+第四个讲失败和无进展：参数错了回传诊断，未知工具不执行，预算耗尽或者反复没有新进展就停下。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次工具调用留下了什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>先做小工具，再谈回路</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>四个知识块从"工具怎么定义"走到"什么时候必须停"：先固定一个只读查询，再看一轮调用留下的凭证，然后接上完整回路，最后处理参数错误、工具失败和无进展。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先定义一个清楚且有限的工具</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>输入 room_id 与 date，只读本章材料；模型无需猜测手作教室是不是 craft</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一轮调用包含哪些证据</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>名称、JSON 参数与 call_id 怎样关联，多个调用为什么要逐条处理</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>完整回路比单次请求重要</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>先保留完整输出再回填结果，然后继续请求；成功条件放在应用里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>参数错误、工具失败与无进展</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>三种去向、两种"空"的区别，八轮十六条与第三次重复的拦截</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 26</Text>
+    </Box>
+
+</Slide>

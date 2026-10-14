@@ -1,0 +1,59 @@
+<Slide notes={`行为质量页上出现的告警，绝大多数都需要人去解释一遍。
+先看几个具体的例子。一个角色第一次去检索记忆，取到空的结果，这很可能是合理的，因为他本来就没有历史记忆。一次权限被拒绝，也可能是完全正确的，甚至正是边界对照想要看到的结果。
+但合理不等于可以把告警删掉。原记录必须留着，否则以后没法复现；我们另外在分析表里写清这条告警在这一轮里的用途。
+还有一条容易被忽略的去重陷阱：同一段文字出现在不同人物身上，或者出现在不同 Step 上，那是两个不同的问题，不能因为文字一样就直接合并成一条。
+所以处理告警的纪律是：保留、解释、不要顺手合并。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.4　当前行为质量页面包含什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>合理，不等于把告警删掉</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 460 }}>投影给出的告警需要解释，但解释写在记录之外，不能反过来改动原记录。</Text>
+            <Box style={{ width: 460, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>保留原记录</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>删掉就无法复现，也无法核对</Text>
+            </Box>
+            <Box style={{ width: 460, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>说明用途</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>在分析表里写清这条告警在这轮里的作用</Text>
+            </Box>
+            <Box style={{ width: 460, height: 110, background: '#FFF4E6', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>相同文字不去重</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>出现在不同人物、不同 Step，是两个不同的问题</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 660, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'row', height: 28, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 222 }}><Text style={{ fontSize: 14, color: '#546779' }}>出现的告警</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>为什么可能是合理的</Text></Box>
+            </Box>
+            <Box style={{ width: 660, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 222 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>首次检索无历史记忆</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>新角色第一次检索，本来就可能没有历史</Text></Box>
+            </Box>
+            <Box style={{ width: 660, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 222 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>权限拒绝</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>一次正确的拒绝，可能正是边界对照的预期结果</Text></Box>
+            </Box>
+            <Box style={{ width: 660, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 222 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>同一段文字</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>出现在不同人物、不同 Step，是两个问题</Text></Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

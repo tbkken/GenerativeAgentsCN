@@ -1,0 +1,87 @@
+<Slide notes={`第四章到这里就结束了。回看整章，我们做的其实是同一件事：每次只改一处，其余条件全部冻结。
+
+4.0 先把问题缩到能被结果推翻；4.1 到 4.8 分别改了咨询策略、交接清单、导览牌位置、信念更新方式、子 Skill 核对、理由确认、通路开放和跨日整理，每一节都盯住一个观察对象。
+
+4.9 把八个案例拉到一起比：分母怎么定、未完成怎么算、调用代价怎么报、结论能走多远。
+
+贯穿始终的是四条纪律。第一，一次只改一处。第二，分母在跑之前就固定。第三，失败、重试和没闭环的任务都进分子。第四，结论停在证据能支持的位置。
+
+下一章，我们把这些落成可交付的资源。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.0 — 4.9</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>全章对照</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>九个环节，就差一处</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 18 }}>
+            <Box style={{ width: 216, height: 72, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>4.0</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>先定能被推翻的问题</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4.1</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>先澄清，还是先建议</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4.2</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>五项整理进清单</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4.3</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>导览牌放哪个位置</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4.4</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>追加还是替代旧信念</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 18 }}>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4.5</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>显式核对子 Skill</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4.6</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>逐人确认理由</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4.7</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>关闭一条通路（选修）</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>4.8</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>额外跨日整理（选修）</Text>
+            </Box>
+            <Box style={{ width: 216, height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>4.9</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>分母、代价与范围</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>九个环节共用同一套证据纪律</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>唯一变化　·　分母事前固定　·　失败与代价进入分子　·　结论停在证据能支持的位置</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第四章　4.0 — 4.9　完</Text>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>下一章　综合实战与交付 —— 把这一套纪律落成可交付的资源</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,59 @@
+<Slide notes={`这段代码最值得讲的是倒数几行：按 index 还原对应关系。
+
+请求里，问题和全部片段放在同一个列表里一次提交，返回的数据是按顺序排的。稳妥的做法是用每一条返回项的 index 建一个字典，再按位置把向量取回来。这样即使返回顺序和输入顺序不一致，也不会把片段和向量错配。错配了，后面排序再准也没有意义。
+
+问题与片段必须用相容的向量模型和维度。这一点在换模型时最容易踩：文本模型换了没关系，向量模型一换，之前存下来的向量就全都不能用了。
+
+还有一处不能省：空输入、异常向量、请求失败都要有明确处理，不能一律当成「没有相关资料」——那是两种完全不同的结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.3　做一个看得见每一步的小型检索器</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>向量请求的关键形式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 600, flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>一次提交问题与全部片段</Text>
+            <Box style={{ width: 600, height: 300, background: '#F4F7FA', borderRadius: 8, padding: 18, flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>embedded = client.embeddings.create(</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.5, paddingLeft: 20 }}>model=os.environ["OPENAI_EMBEDDING_MODEL"],</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.5, paddingLeft: 20 }}>input=[question] + [chunk["text"] for chunk in chunks],</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>)</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>{'by_index = '}{'{'}{'item.index: item.embedding for item in embedded.data'}{'}'}</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>query_vector = by_index[0]</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>document_vectors = [by_index[i + 1] for i in range(len(chunks))]</Text>
+            </Box>
+            <Text style={{ fontSize: 13, color: '#546779' }}>代码片段为教学重绘，与配套脚本一致。</Text>
+        </Box>
+
+        <Box style={{ width: 504, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 504, height: 120, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>按 index 还原对应关系</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>根据返回的序号把向量取回来，避免把片段与向量错配。</Text>
+            </Box>
+
+            <Box style={{ width: 504, height: 120, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>向量模型与维度必须相容</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>问题与片段用同一套向量设置；换了向量模型，旧向量就不再可用。</Text>
+            </Box>
+
+            <Box style={{ width: 504, height: 120, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>异常不能被读成「没有资料」</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>空输入、异常向量与请求失败都要单独处理，这是两类不同的结论。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 25</Text>
+    </Box>
+
+</Slide>

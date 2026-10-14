@@ -1,0 +1,58 @@
+<Slide notes={`从读图转向语音，要处理的其实是同一类问题：这段输入能证明什么。
+
+录音和图片不一样，它是时间的、连续的，机器要先把它变成文字才能进入后面的流程。这一步叫转写。转写完成不等于事情办完，它只是把声音换了一种形式。
+
+负责人说"手作体验十个人，十点半开始"，转写出来是一句话。这句话里有几个数字和时点，恰恰是最容易出错的地方。
+
+后面还有两条不同的路线：把已经确认的方案读出来，属于语音合成；要实时双向对话，还要处理会话、流式音频、打断和延迟。
+
+音频任务不能用一个文本模型配置全部套上去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.11.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先转写，再确认关键事实</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>转写把声音变成文字，核对仍然要人来做。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>文件转写</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>录音变成文本</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>语音合成</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>把确认的方案读出来</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>实时会话</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>还要处理打断与延迟</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 300, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>数字、时间、否定词与人名，回听原音频核对</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 26</Text>
+    </Box>
+
+</Slide>

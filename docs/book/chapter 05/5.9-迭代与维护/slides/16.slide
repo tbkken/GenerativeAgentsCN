@@ -1,0 +1,79 @@
+<Slide notes={`同样是改咨询台的目的检索，实验处在不同状态，做法完全不同。
+
+如果这个实验还是 DRAFT，你可以在它自己的包内副本上编辑，改完保存、重新打开核对一遍，再跑预检。改的还是同一个实验草稿。
+
+如果实验已经 SEALED，情况就变了。封存意味着当前输入不可修改，原件不会解锁。你要做的是把它复制成一个新的独立草稿，在新草稿里改内容，并记录新的实验身份和这次人工变更的说明。
+
+两种做法都不能建立"自动跟随最新版"的关系。旧实验继续对应它自己的旧输入，新草稿是另一件材料。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.4　选对副本，才能改对地方</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>草稿里改，还是另建草稿</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 352, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 520, height: 52, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>实验仍是草稿</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>在包内副本上就地改</Text>
+                </Box>
+                <Box style={{ width: 520, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>在该草稿的包内副本中编辑内容</Text>
+                </Box>
+                <Box style={{ width: 520, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>保存后重新打开，核对内容确实生效</Text>
+                </Box>
+                <Box style={{ width: 520, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>再执行预检，确认资源闭包完整</Text>
+                </Box>
+                <Box style={{ width: 520, height: 44, borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>改的仍是同一个实验草稿。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 352, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 520, height: 52, flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>实验已经封存</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>复制成新的独立草稿</Text>
+                </Box>
+                <Box style={{ width: 520, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>封存原件不解锁，也不被改写</Text>
+                </Box>
+                <Box style={{ width: 520, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>在新草稿里修改需要变化的内容</Text>
+                </Box>
+                <Box style={{ width: 520, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>记录新实验身份与人工变更说明</Text>
+                </Box>
+                <Box style={{ width: 520, height: 44, borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>封存原件与旧 Run 继续对应旧输入。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>两种做法都不建立"自动跟随最新版"的关系：明确修改了哪份内容，旧结果仍然对应旧输入。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 27</Text>
+    </Box>
+
+</Slide>

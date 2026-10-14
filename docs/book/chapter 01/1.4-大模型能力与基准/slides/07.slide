@@ -1,0 +1,82 @@
+<Slide notes={`Epoch AI 在 2026 年办了一个叫 Benchmark Reviews 的审计项目，专门审查别人的基准，把常见的毛病归成六类。
+
+第一类无效题，题目本身就没法做，缺条件、缺文件。第二类假阴，模型答对了却被判错，常见于判分规则太死。第三类假阳，答错了却被放过，常见于判分太松，或者环境里本来就能抄到答案。
+
+第四类诱导不足，给的预算和轮次不够，模型没机会展示真实水平。第五类设置偏置，不同模型拿到的算力或工具有差别，等于不是同一场比赛。第六类静默改版，悄悄改了评分规则或参考答案却不动版本号，让前后两批成绩根本不可比。
+
+这六类里，前两类压低分数，第三类抬高分，后三类让分数的含义变得含糊。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>①　1.4.1　评估方法：分数失真的常见原因</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六类误差</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 146, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>无效题</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>题目按字面无法完成：缺少必要条件或文件，谁都做不出来</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 568, height: 146, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>假阴</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>答对了却被判错：判分规则太死、参考答案过期、沙箱出错</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 146, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>假阳</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>答错了却被放过：判分过松，或答案能从环境里直接抄到</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 568, height: 146, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>诱导不足</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>给的轮次、时间或预算不够，模型根本没机会展示这项能力</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 146, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>设置偏置</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不同模型拿到的算力或工具不一致，等于不是同一场比赛</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 568, height: 146, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>静默改版</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>改了评分规则或答案却不更新版本号，前后成绩混在一张榜上</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F7F3E8', borderRadius: 10, padding: '12px 22px' }}>
+            <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>判断触发线：抽样中若有两成以上的题目含影响准确率的错误，Epoch 就判定该基准有问题</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 36</Text>
+    </Box>
+
+</Slide>

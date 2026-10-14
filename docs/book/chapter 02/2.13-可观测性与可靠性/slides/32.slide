@@ -1,0 +1,68 @@
+<Slide notes={`还有一件必须说清楚的事：可观测范围是有边界的。
+
+WorkBuddy 运行你能修改的 Python 脚本，再读取本地产物；可观测的范围就以脚本实际埋的点为界。
+
+第一样是教材里的 Python 代码。在允许执行本地命令的环境里让 WorkBuddy 跑它，得到脚本自己的模型请求、校验过程与输出记录。
+
+第二样是自己编写的 MCP 服务。在服务真正处理请求的地方埋点，需要端到端关联还要另实现上下文传递；能看到的是这个服务处理了哪些请求。
+
+第三样，如果只有产品界面，就保存产品实际提供的执行记录、文件和用量，没暴露出来的字段老实标成「未知」。
+
+范围之外的部分不要硬说成已观测到。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.7　用 Langfuse 观察一次完整排期任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>只观察自己控制的部分</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 260 }}><Text style={{ fontSize: 14, color: '#546779' }}>你能控制的部分</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779' }}>可采用的练习</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>得到什么证据</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 260, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>教材 Python 代码</Text>
+            </Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>在允许执行本地命令的环境中，由 WorkBuddy 运行该脚本</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>脚本的模型请求、校验过程与输出记录</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 260, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>自己编写的 MCP 服务</Text>
+            </Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>在服务实际处理请求处埋点；端到端关联要另实现上下文传递</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>该服务处理的请求；不是所有宿主的内部推理</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 260, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>仅有产品任务界面</Text>
+            </Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>保存产品实际提供的执行记录、文件和用量</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>可见部分；未暴露的字段标为「未知」</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '12px 22px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>WorkBuddy 内部的模型调用与积分为本例未观测部分，不得把这些记录说成内部全部调用，也不得换算成产品积分。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>32 / 34</Text>
+    </Box>
+
+</Slide>

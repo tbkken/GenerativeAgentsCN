@@ -1,0 +1,73 @@
+<Slide notes={`沿着 Step 轴看这两条线。
+
+Run A 这条线里，run_id 一直不变。第一段 Attempt 走到第 k 步，留下一个已提交边界和完整恢复快照；核对通过之后，系统新建一个 Attempt，从 k 加 1 继续往下提交。
+
+Run B 这条线是重跑：它去读原 Run 内嵌的实验，然后建立新的 run_id 和新的首个 Attempt，从第一步重新开始。
+
+两条线的分叉点在于是否沿用原来的 run_id。我在验收的时候会把 run_id、attempt_id 和恢复边界这三个值写进一张对照表，暂停前后各填一次。这样续跑和重跑有没有被混在一起，一眼就能看出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.1　Run 与 Attempt 为什么需要分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两条身份线</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 158, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>Run A　·　run_id 保持不变　·　沿已提交边界往下走</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 300, height: 52, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>Attempt 1　Step 1 … k</Text>
+                </Box>
+                <Box style={{ width: 44, height: 52, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 260, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>已提交边界 k　完整快照</Text>
+                </Box>
+                <Box style={{ width: 44, height: 52, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 300, height: 52, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>新 Attempt 2　Step k+1 …</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>Run B　·　新的 run_id　·　从 Step 1 重新执行</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 300, height: 52, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>读原 Run 内嵌实验</Text>
+                </Box>
+                <Box style={{ width: 44, height: 52, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#CB6B28' }}>›</Text>
+                </Box>
+                <Box style={{ width: 320, height: 52, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#FFFFFF' }}>新的 Run 与新的首个 Attempt</Text>
+                </Box>
+                <Box style={{ width: 44, height: 52, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#CB6B28' }}>›</Text>
+                </Box>
+                <Box style={{ width: 300, height: 52, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>从 Step 1 走到新边界</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#ECF7F2', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1, lineHeight: 1.6 }}>分叉点在 run_id：沿用原 run_id 的是续跑，新建 run_id 的是重跑。run_id、attempt_id、恢复边界三个值，暂停前后各记一次。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,44 @@
+<Slide notes={`先解决第一个问题：凭什么说设备真的知道些什么。
+
+这一案里，设备手里的资料只有五条，我把它记成 K1 到 K5。它们分别是一条现象、一个数值、一条前史记录、一处缺项和一处未确认。五条都很具体，但没有一条能直接支撑诊断。
+
+我要提醒的是，做资源时最容易多写一步：看到橙色灯就在资料里补一句「某部件损坏」。这句话一旦写进去，后面所有结论都会被污染。
+
+所以这一块的任务很朴素——把事实照原样固定住，剩下的全部说不知道。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>①　　4.2.1</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>五条有限事实</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>不要补造诊断。设备按真实请求提供事实，未知的阈值、原因、零件与修法一律说未知。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 24, marginTop: 10 }}>
+            <Box style={{ width: 154, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>K1　指示灯现象</Text>
+            </Box>
+            <Box style={{ width: 154, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>K2　数值 7</Text>
+            </Box>
+            <Box style={{ width: 154, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>K3　前史 E-17</Text>
+            </Box>
+            <Box style={{ width: 154, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>K4　缺内部核查</Text>
+            </Box>
+            <Box style={{ width: 154, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>K5　未确认恢复</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

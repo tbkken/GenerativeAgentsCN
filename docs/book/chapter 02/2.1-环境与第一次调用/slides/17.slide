@@ -1,0 +1,53 @@
+<Slide notes={`错误一定会来，关键是怎么读它。我建议养成一个顺序：先判断这次失败发生在哪一层，再决定动手改什么。
+
+最里面一层是本地。解释器找不到、文件路径写错、依赖没装上，都发生在这里。它们的特征是请求可能连构造都没构造出来。
+
+中间一层是服务。认证失败、权限不足、模型或参数不被支持、限流、额度用完，都发生在这里。特征是请求发出去了，被对方拒绝了。
+
+最外面一层是任务。请求成功了、模型也返回了，但内容缺事实、违反约束。这一层不能靠改网络参数或者重试解决，只能回到任务定义上去改进。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.1.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>出错时先分清发生在哪一层</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#26816B' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先读错误类型，再决定重试、改配置还是改任务定义。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 320, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>本地层</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>解释器、文件、依赖</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>请求可能根本没构造出来</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 130, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>服务层</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>认证、权限、配额</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>发出去了，但被拒绝</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 130, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>任务层</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>缺事实、违反约束</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>返回了，但事情没做完</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

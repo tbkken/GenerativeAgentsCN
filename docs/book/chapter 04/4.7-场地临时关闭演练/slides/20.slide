@@ -1,0 +1,79 @@
+<Slide notes={`这三根柱子来自一次人工评分，不是 Run 的实测结果。
+参与者 1 走了 12 格，参与者 2 走了 18 格，两个人都到达了；参与者 3 只走了 9 格，中途停下，没有到达。
+判断谁效率高的时候，要先看到达状态，再看走了多少格。那根最短的柱子并不表示效率最高，它表示这个人还没走到。
+三根柱子加起来是 39 格，全部计入移动成本，因为不管到没到，路都是走掉的；但到达分子里只有标着「已到达」的两个人。
+两个公式的分母都是同样三个人。所以结果是：到达率 2 除以 3，大约 66.7%；人均移动负担 39 除以 3，等于 13 格每人。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.5　三人的已执行移动边数</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>短柱不等于高效率</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 28 }}>
+            <Box style={{ width: 84, height: 28, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>人工评分</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779' }}>纵轴为已执行移动边数（格），满刻度 20；先看到达状态，再看柱高。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'flex-end', height: 320 }}>
+
+            <Box style={{ width: 300, height: 320, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 160, height: 126, background: '#26816B', borderRadius: 8, justifyContent: 'flex-start', alignItems: 'center', paddingTop: 10 }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>12</Text>
+                </Box>
+                <Box style={{ width: 220, height: 40, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>参与者 1 · 已到达</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 300, height: 320, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 160, height: 189, background: '#26816B', borderRadius: 8, justifyContent: 'flex-start', alignItems: 'center', paddingTop: 10 }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>18</Text>
+                </Box>
+                <Box style={{ width: 220, height: 40, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>参与者 2 · 已到达</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 300, height: 320, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 160, height: 95, background: '#CB6B28', borderRadius: 8, justifyContent: 'flex-start', alignItems: 'center', paddingTop: 10 }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>9</Text>
+                </Box>
+                <Box style={{ width: 220, height: 40, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>参与者 3 · 未到达</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 568, height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>到达 2 / 3 ≈ 66.7%</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>只有标「已到达」的两人进分子</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 568, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>移动 39 / 3 = 13 格／人</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>三柱之和 39 全部计入成本</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,60 @@
+<Slide notes={`把愿望拆开之后，会看到三个必须分别说明的目标。
+
+第一个是对谁更好。对来访者来说，更少走错可能有益；对咨询台来说，多一轮询问要花时间和调用。同一句「更好」，站的位置不同，含义就不同。
+
+第二个是改善什么。我们要看的是咨询闭环、错误窗口请求和咨询负担这三项。它们的方向并不一致，很可能一个变好、另一个变差。
+
+第三个是愿意付出多少代价。多一轮澄清会增加调用与等待，这笔代价要单独写清楚。
+
+还有一个容易被忽略的地方：项目不以证明预设观点为完成条件。我讲这个案例时反复提醒学员，展示依据什么规则、遗漏了哪些结果，比结论好不好看更重要。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.1　将一句愿望改写成可回答的问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一句愿望里，藏着三个未确定</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 74, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>委托人的原话</Text>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>让大家看看，先问清楚是不是比直接指路好。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 370, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>对谁更好</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>来访者可能少走错一次；咨询台要多一轮询问的时间与调用。</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>改善什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>咨询闭环、错误窗口请求、咨询负担，三个指标的方向并不一致。</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 152, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>愿意付出多少代价</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>多一轮澄清会增加调用与等待，这笔代价要单独说清。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1060 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>三个目标要分别说明，不能合成一句「更好」</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>项目不以证明预设观点为完成条件，也不要求每个角色都成功。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

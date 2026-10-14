@@ -1,0 +1,66 @@
+<Slide notes={`成功选择 world-act 之后，本轮立即结束。这意味着“移动后再调用记忆工具记录抵达”不是同一轮可以依赖的流程——动作一旦被接受，就没有“再补一条完成记忆”的机会了。
+
+正确的衔接是三步：动作前记录必要的意图；下一轮用实际坐标、活动、对象状态或答复核实结果；核实之后再更新进度。
+
+还要区分两件事：accepted 只是动作被成功接受，不等于世界已经执行、整步已经持久提交。可核对的已提交事实，要等这层提交完成后才存在。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.4　在动作之前写“待确认”</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>成功选择动作，本轮立即结束</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ height: 300, background: '#EDF4FC', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>本轮的硬边界</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>成功选择 world-act 后，根 Skill 的本轮执行立即结束。</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>“移动后再调用记忆工具记录抵达”，不是同一轮可以依赖的流程。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 708, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 190, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>正确的进度衔接</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 200, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>动作前记录必要意图</Text>
+                    </Box>
+                    <Box style={{ width: 40, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 210, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>下轮核实实际结果</Text>
+                    </Box>
+                    <Box style={{ width: 40, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 176, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>再更新进度</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>核实依据：实际坐标、活动、对象状态或答复</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>accepted 不等于结果</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>世界执行与整步持久提交之后，才有可核对的已提交事实；不能拿“动作被接受”当作“事情已发生”。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

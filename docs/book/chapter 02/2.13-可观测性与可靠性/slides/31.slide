@@ -1,0 +1,104 @@
+<Slide notes={`记录有了还要会读。
+
+第一步，按本地记录的 trace_id 或 Trace 链接打开对应项；标题相同不代表是同一次。
+
+第二步，展开根操作下面的材料、generation、校验与保存步骤。子操作缺失要查埋点、异常与导出，不能补造执行事实。
+
+第三步，检查模型返回名称、输入输出、响应状态和 usage。输出被截断或未完成时不能宣布成功。
+
+第四步，查 business_valid 和同一份本地校验报告；HTTP 成功与 span 结束都不代表硬约束通过。
+
+第五步，看时间与成本，注意父 span 包含子 span，不能把整棵树的耗时直接相加。
+
+第六步，用同一份材料与判据再跑一次。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.7　用 Langfuse 观察一次完整排期任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>页面里怎样读这次记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 258 }}><Text style={{ fontSize: 14, color: '#546779' }}>检查顺序</Text></Box>
+            <Box style={{ width: 360 }}><Text style={{ fontSize: 14, color: '#546779' }}>查看什么</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>正确判断</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 258, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>找对尝试</Text>
+            </Box>
+            <Box style={{ width: 360 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>按本地记录的 trace_id 或 Trace 链接打开对应项</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>相同标题不表示同一次尝试</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 258, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>看调用结构</Text>
+            </Box>
+            <Box style={{ width: 360 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>展开根操作下的材料、generation、校验与保存步骤</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>子操作缺失要查埋点、异常与导出，不补造执行事实</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 258, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>看模型调用</Text>
+            </Box>
+            <Box style={{ width: 360 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>检查模型返回名称、输入输出、响应状态与 usage</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>输出被截断、拒绝或未完成时，不能据半份 JSON 宣布成功</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 78, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 258, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>看业务评分</Text>
+            </Box>
+            <Box style={{ width: 360 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>查 business_valid 及同一份本地校验报告</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>HTTP 成功与 span 结束不表示硬约束通过</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 258, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>看时间与成本</Text>
+            </Box>
+            <Box style={{ width: 360 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>比较耗时最长的步骤、实际 usage 和费用来源</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>父 span 包含子 span，不能把整棵树的耗时直接相加</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 78, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 258, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>保留改进前后</Text>
+            </Box>
+            <Box style={{ width: 360 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>用同一材料与判据，再创建一次新的尝试</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>保留失败 Trace；材料变化时同步修改期望结果</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>31 / 34</Text>
+    </Box>
+
+</Slide>

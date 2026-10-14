@@ -1,0 +1,80 @@
+<Slide notes={`在宿主里接同一个服务，配置文件是入口。
+
+WorkBuddy 里从插件到 MCP 服务器，再进配置，然后选一个适合教学用的配置范围。官方文档给了用户级和项目级两种：用户级的配置文件在家目录下，项目级放在项目目录里。这里用项目级，练习服务就不会跑到其他项目里去。
+
+配置有三个要点。第一，命令和参数要分开写，命令只写解释器，脚本路径放进参数数组。第二，路径里用正斜杠，避免反斜杠的转义问题。第三，路径要换成自己机器上的实际安装位置，不要照抄书里的示例。
+
+保存之后，还要在界面上核对连接状态和实际工具列表。这两项都对上了，才叫接上了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.6　在 WorkBuddy 中连接同一服务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>命令与参数分开写</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 40 }}>
+
+            <Box style={{ width: 620, height: 314, background: '#20344B', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>项目级配置　.workbuddy/mcp.json</Text>
+                <Text style={{ fontFamily: 'Consolas', fontSize: 14, color: '#FFFFFF', lineHeight: 1.55 }}>{`{
+  "mcpServers": {
+    "qinghe-open-day": {
+      "command": "E:/…/.venv/Scripts/python.exe",
+      "args": [
+        "E:/…/examples/mcp_server.py"
+      ]
+    }
+  }
+}`}</Text>
+            </Box>
+
+            <Box style={{ width: 492, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+                <Box style={{ width: 492, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>命令与参数分开</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>command 只写解释器，脚本路径放进 args</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 492, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>路径用正斜杠</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>避免反斜杠在 JSON 中的转义问题</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 492, height: 92, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>换成实际安装位置</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>不要把示例路径原样照抄</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>选项目级，而不是用户级</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>练习服务只出现在这个项目里，不会出现在无关项目中；用户级配置放在家目录下。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 27</Text>
+    </Box>
+
+</Slide>

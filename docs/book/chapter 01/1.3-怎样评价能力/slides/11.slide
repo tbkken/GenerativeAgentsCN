@@ -1,0 +1,90 @@
+<Slide notes={`多类信息放在一起汇总，结论还可能再变一次。
+
+普通报名的计数还是刚才那组，另外一类是无障碍协助需求，它的 TP 是 2、FP 是 0、FN 是 2，单独算 F1 约六成七。
+
+宏平均先算每一类的 F1，再平等地平均，得到约六成九七，每一类权重相同。微平均先合并计数得到 TP 十、FP 二、FN 六，再算一次，得到约七成一四，项目多的类别影响更大。
+
+所以报“F1 是多少”时必须交代平均方式；宏 F1 也不是把宏精确率和宏召回率再代进 F1 公式。
+
+零分母也要提前约定。没有输出任何项目时精确率分母为零；某一类在真实材料里完全不存在时召回率分母为零；三个数都是零时 F1 也没有定义。但真实有项目而全部漏掉时 F1 就是零，不能按“不适用”隐藏失败。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.2　少报和误报</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>宏平均、微平均与零分母</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>两类平均，两个结论</Text>
+
+            <Box style={{ height: 175, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>宏平均　先算每类 F1 再平均</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>( 72.73% + 66.67% ) / 2 ≈ 69.70%</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>每一类权重相同，不受项目数量影响</Text>
+            </Box>
+
+            <Box style={{ height: 175, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>微平均　先合并计数再计算</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>TP=10、FP=2、FN=6{'\n'}20 / 28 ≈ 71.43%</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>项目多的类别产生更大影响</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, height: 60, background: '#F4F7FA', borderRadius: 10, padding: '0 18px' }}>
+                <Box style={{ width: 3, height: 30, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>报“F1 为多少”时，必须交代平均方式；宏 F1 也不是把宏精确率、宏召回率再代入 F1 公式。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>分母为零的三种情形</Text>
+
+            <Box style={{ flexDirection: 'row', height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>没有输出任何项目</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>精确率的分母为零</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>某类在真实材料中完全不存在</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>召回率的分母为零</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>TP、FP、FN 都为零</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>F1 也未定义</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>提前约定显示“不适用”、按指定值计分或从汇总中排除，并公布有效类别数。</Text>
+            </Box>
+
+            <Box style={{ height: 76, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>真实有项目却全部漏掉时，F1 为 0</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不能按“不适用”隐藏失败</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 31</Text>
+    </Box>
+
+</Slide>

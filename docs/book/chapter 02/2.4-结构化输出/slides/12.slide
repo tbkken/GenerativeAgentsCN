@@ -1,0 +1,69 @@
+<Slide notes={`时间字段是合同里最容易偷懒的地方。
+
+首先，时间必须带完整日期和时区偏移。写成 2026-10-17T10:00:00+08:00，这一串里包含日期、时刻，以及它属于东八区。程序拿到它，换算到任何时区都不会错。
+
+其次要提醒的是：字符串类型检查不能替代业务解析。Schema 说这个字段是 string，它只说明这是一段文字，不说明这段文字是个合法时间。
+
+所以还要再做四项检查：活动的日期对不对，时区对不对，开始时间是不是早于结束时间，持续时长是不是准确。
+
+这四条都不能靠「类型对了」推出来。类型检查只是入口，业务解析才是真正的核对。少了后者，一个格式漂亮但时间颠倒的记录，照样能一路通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.2　设计适合程序使用的合同</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>时间不能只做字符串检查</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ height: 108, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 300 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>必须含完整日期与时区偏移</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>只写「十点」，程序不知道是哪一天、哪个时区。</Text>
+                <Box style={{ width: 300, height: 40, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#276FBF' }}>"2026-10-17T10:00:00+08:00"</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ width: 300 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>类型检查不能替代业务解析</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>Schema 说这个字段是 string，只说明它是一段文字，不说明它是合法时间。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 108, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+            <Box style={{ width: 300 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>还要逐项解析这四件事</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>活动日期、时区、开始早于结束、准确时长。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 120, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>类型对了，不代表时间可用</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>格式漂亮但开始晚于结束的记录，仍要靠业务解析才能拦住；只做类型检查会把它放过去。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 23</Text>
+    </Box>
+
+</Slide>

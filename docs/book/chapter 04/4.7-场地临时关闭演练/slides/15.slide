@@ -1,0 +1,59 @@
+<Slide notes={`接下来是这一节最容易被含糊过去的部分：一个人到底有没有走到。
+我要把两件事分开。第一件是动作被接受，也就是系统接受了这次 MOVE 的选择；第二件是世界里真的发生了位移，实际坐标提交出来之后，人确实进入了集合区的语义范围。
+这两件事不一样。动作被接受，只能说明这一步的选择是合法的；只有实际坐标提交进 StepResult，它才成为可以回放的运行事实。
+所以后面讨论到达率的时候，判据始终是提交出来的坐标，而不是某一步返回里的 accepted 字段。分不清这两件事，评价就会整个跑偏。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>④　　4.7.4 实际移动与真实到达</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>走了几步，走到了没有</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>动作被接受只说明选择合法；实际坐标提交后才是回放事实。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 150, height: 76, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>点0</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 76, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>点1</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 76, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>点2</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 76, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>点3</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#546779' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 76, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>点4</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#546779' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 76, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>点5</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 26</Text>
+    </Box>
+
+</Slide>

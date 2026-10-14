@@ -1,0 +1,50 @@
+<Slide notes={`这一节讲完了，我把要带走的东西收成三个问题。
+
+第一个，拆分换来了什么。是减少了遗漏，隔离了上下文，还是缩短了独立等待？如果一条都对不上，那就先别拆。
+
+第二个，交接带了什么证据。范围、来源、适用时段、未解决项，有没有跟着一起走？只有摘要，就会在传递中被悄悄放大。
+
+第三个，协作值不值得留。用同一任务集比较正确率、漏检、误报、Token、耗时和人工复核；不要只挑一次成功案例，也要小心"一致但错误"。
+
+这三个问题没有标准答案，但它们能帮你在动手之前，先判断这次分工有没有必要。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 26 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.12　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25, textAlign: 'center' }}>记住三个问题</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 330, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>拆分换来了什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>减少遗漏、隔离上下文，还是缩短独立等待？都没有就先别拆</Text>
+            </Box>
+            <Box style={{ width: 44, height: 148, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 330, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>交接带了什么证据</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>结论、来源、适用时段、未解决项跟着走了吗？只有摘要会被放大</Text>
+            </Box>
+            <Box style={{ width: 44, height: 148, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 330, height: 148, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>协作值不值得留</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>同一任务集比正确率、漏检、误报、Token 与耗时，小心一致但错误</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.13　可观测性、评估、可靠性与成本</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 25</Text>
+    </Box>
+
+</Slide>

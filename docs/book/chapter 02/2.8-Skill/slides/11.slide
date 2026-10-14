@@ -1,0 +1,68 @@
+<Slide notes={`「方法要完整」和「依赖要齐全」是两件不同的事，但缺了任何一件，Skill 都跑不起来。
+
+第一件事是方法完整。输入要写清读哪几份材料；操作要写清步骤，包括按错误修正最多三轮、并且不允许修改规则来绕过错误；验收要写清运行哪个校验器、读哪份报告；停止要写清规则冲突、输入缺失或校验仍失败时该怎么办。这四段合起来，才是一个别人照着就能执行的过程。
+
+第二件事是依赖齐全。脚本要按自身位置去找 references，不能假定运行它的人正好站在 Skill 根目录下。正文引用文件时也要说明路径基准。这两条看起来琐碎，但它决定了这个包换个目录还能不能跑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.2　渐进读取怎样节省上下文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>方法要完整，依赖要齐全</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>一条管「写得够不够」，一条管「换个目录还能不能跑」。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 500, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 500, height: 52, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>方法要完整</Text>
+                </Box>
+                <Box style={{ width: 500, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>输入：读 brief、房间表、规则、活动请求与预约材料</Text>
+                </Box>
+                <Box style={{ width: 500, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>操作：最多修正三轮，不修改规则来绕过错误</Text>
+                </Box>
+                <Box style={{ width: 500, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>验收：运行 scripts 中的校验器，读取完整报告</Text>
+                </Box>
+                <Box style={{ width: 500, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>停止：规则冲突或输入缺失时，保留结果并说明原因</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 612, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 612, height: 52, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 26, background: '#26816B' }} />
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>依赖要齐全</Text>
+                </Box>
+                <Box style={{ width: 612, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>references/：教学规则与输入材料，教学包与示例目录保持一致</Text>
+                </Box>
+                <Box style={{ width: 612, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>scripts/：校验脚本及其辅助模块，按自身位置发现材料</Text>
+                </Box>
+                <Box style={{ width: 612, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>assets/：schedule.schema.json 规定方案的数据结构</Text>
+                </Box>
+                <Box style={{ width: 612, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>路径基准：不假定宿主已切换到 Skill 根目录，也不依赖仓库外的隐含文件</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 27</Text>
+    </Box>
+
+</Slide>

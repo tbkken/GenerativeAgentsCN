@@ -1,0 +1,84 @@
+<Slide notes={`六道门各自有一个必须回答的问题，而且答案必须是事实，不是态度。
+
+材料审阅要回答：四项需求、窗口分工和两段咨询策略是否完整，是否泄漏了私人目的。浏览器配置要回答：图片、空间、出生点、Skill 与模型是不是真的保存了，重开之后还在不在。执行准备要回答：两组除咨询策略之外是否一致，预检和预算对不对得上当前草稿。运行观察要回答：当前 Run、Attempt、已提交 Step 与在途请求分别是什么。结果收集要回答：四项任务和全部失败是否登记，报告能不能追到提交事实。交付检查要回答：接收者拿到了哪类文件，哪些用途已经被验证。
+
+答不上来，就说明这一步还没有完成，不需要争论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.2　按证据推进项目，而不是按日历宣布完成</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>进入下一阶段前必须回答什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 690, flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ width: 690, height: 34, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779', width: 150 }}>阶段</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779', flex: 1 }}>进入下一阶段前必须回答的问题</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 72, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#546779' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 132 }}>材料审阅</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.4 }}>四项需求、窗口分工和两段咨询策略是否完整且不泄漏私人目的？</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 72, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 132 }}>浏览器配置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.4 }}>图片、空间、出生点、Skill 与模型是否实际保存并重开核对？</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 72, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 132 }}>执行准备</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.4 }}>两组除咨询策略外是否一致，预检与预算是否对应当前草稿？</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 72, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 132 }}>运行观察</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.4 }}>当前 Run、Attempt、已提交 Step 与在途请求是什么？</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 132 }}>结果收集</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.4 }}>四项任务与全部失败是否登记，报告能否追到提交事实？</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 132 }}>交付检查</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.4 }}>接收者拿到了哪类文件，哪些用途已经验证？</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 430, flexDirection: 'column', gap: 16 }}>
+            <Box style={{ width: 430, height: 184, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>答不上来就是没完成</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>这些问题问的都是「能不能指出来在哪里」，没有一个问「感觉好不好」。</Text>
+            </Box>
+            <Box style={{ width: 430, height: 184, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>仍然走第三章的流程</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>配置和执行都在浏览器界面里完成，本节不另设一条捷径。</Text>
+            </Box>
+            <Box style={{ width: 430, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>每段都留交接记录</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>阶段完成之后再往下走，记录里要写清判断依据。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 28</Text>
+    </Box>
+
+</Slide>

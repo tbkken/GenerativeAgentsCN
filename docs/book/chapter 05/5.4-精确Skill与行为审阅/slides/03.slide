@@ -1,0 +1,50 @@
+<Slide notes={`先把这一段的边界划清楚。两组咨询台材料里，唯一允许变化的位置是中间的咨询决策段，也就是用两个标记框住的那几行。身份、服务范围、回复方式和停止条件，两边必须逐字保持一致。
+
+要做到这一点有个前提：先得有一份完整全文。完整至少包括身份、可读信息、适用条件、处理步骤、工具边界、停止条件和异常处理。缺了其中任何一项，接手者就无法判断两组到底差在哪里。
+
+这也是我不建议只保存一句「先问清楚再推荐」的原因。一句话看不出问什么、答复之间怎样关联、什么时候停止询问，也看不出谁知道完整任务。对照的价值来自「只有一段不同」，而不是来自结论听起来更合理。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.4　精确 Skill 与行为审阅</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ①</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>①</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>交付全文，不只交付一句差异</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>先看两组全文中唯一允许变化的位置：中间的咨询决策段。身份、服务范围、回复和停止条件保持相同。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 300, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#20344B' }}>一句差异</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>唯一变化段</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>其余全文一致</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 27</Text>
+    </Box>
+
+</Slide>

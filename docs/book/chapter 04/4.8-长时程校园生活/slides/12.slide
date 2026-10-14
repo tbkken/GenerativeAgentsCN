@@ -1,0 +1,66 @@
+<Slide notes={`我把两组共同遵守的规则收成三步，再把差异单独拎出来。
+
+第一步，动作之前只记“待确认”，不提前写成完成。第二步，等到下一轮真的出现了提交事实，或者目标对象有了回复，才把状态更新成完成。第三步，一旦成功选择了世界动作，这一轮就结束，不在一轮里叠加第二件事。
+
+配套还有两条记录纪律：一次性任务和按日期重复的活动要分开记；没有真实接受，就不写成双方已经约定，更不能把对方的承诺记成自己的。
+
+差异只有一处：对照在第一次发现当地日期变化、而且当天还没有成功整理的时候，额外调用一次事实整理子技能。它的输入是现有记忆和真实来源，要求把已确认完成、待证据、未来承诺和下一周期活动分开，但不允许新增历史事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.3　共同 Brain 与唯一差异</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两组共同做什么，差在哪里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 336, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>动作前只记待确认</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>依据虚拟日期、位置、进度与真实消息决定下一件事。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 112, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 336, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>据事实更新为完成</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>下一轮有提交事实或目标回复支持时才改状态。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 112, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 336, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>成功世界动作后结束本轮</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一轮只落一件世界动作，不叠加第二件。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>一次性与按日期重复分开记</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>没有真实接受，不写成双方已约定；不把对方的承诺记成自己的。</Text>
+            </Box>
+            <Box style={{ width: 568, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>两组声明同一个依赖，文字相同</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>包内原子依赖校园事实整理，两组复制同文，仅对照启用。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>唯一差异：首次跨日且本日未成功整理时，额外调用一次事实整理子 Skill</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>整理不训练模型、不推进虚拟时间，也不给对照更多权限或更好的事实来源。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 27</Text>
+    </Box>
+
+</Slide>

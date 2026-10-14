@@ -1,0 +1,57 @@
+<Slide notes={`前面十三节我们一门一门地把技术装进来了：请求怎么写、材料怎么管、输出怎么约束、工具怎么调、资料怎么找、循环怎么停。到收尾这一步，我要换一个问法。
+
+不再问"还有哪些技术没学"，而是问"这个任务到底缺什么"。缺材料就补输入，缺当前事实就补工具，缺可复现就补命令行，缺复用就补方法，缺证据就补校验。
+
+两条路线各跑一遍：OpenAI API 那条把请求、执行和结果连起来；WorkBuddy 那条把文件、任务和工具放在工作空间里看。两条路线用的是同一组教学材料，所以可以互相核对。
+
+最后用一张交付清单把"完成"说清楚。清单之外的东西，宁可写清楚还没有做到。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体：技术、OpenAI API 与 WorkBuddy　·　2.14</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>技术选择与完整交付</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 600 }}>前面各节把请求、材料、工具、检索与校验逐层展开。收尾只回答一件事：面对一个真实任务，该用哪些、为什么用、怎样证明它确实起作用。</Text>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 200, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>缺什么补什么</Text>
+                </Box>
+                <Box style={{ width: 200, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>两条路线各留证据</Text>
+                </Box>
+                <Box style={{ width: 200, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>没跑的不能写通过</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 500, height: 76, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>先找缺口</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>输入、事实、执行、方法、验证</Text>
+            </Box>
+            <Box style={{ width: 500, height: 24, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 500, height: 76, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>再选技术</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>Prompt、Schema、检索、CLI、Skill、循环</Text>
+            </Box>
+            <Box style={{ width: 500, height: 24, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 500, height: 76, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>跑通两条路线</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>OpenAI API 主线 · WorkBuddy 主线</Text>
+            </Box>
+            <Box style={{ width: 500, height: 24, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+            <Box style={{ width: 500, height: 76, background: '#ECF7F2', borderRadius: 8, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>用清单收口</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>需求来源、排期校验、说明记录</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

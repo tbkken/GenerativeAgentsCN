@@ -1,0 +1,54 @@
+<Slide notes={`公共 Agent 的核心定义里是没有出生坐标的。这一点很重要，因为出生位置取决于这次实验怎么装配，而不是这个人物本身是谁。选入实验之后，四位来访者装配到入口，余真装配到等候区，然后要记录空间选择器实际保存下来的位置，不能凭印象写。
+
+还有一件事容易走偏：初始经历来自作者设定，不需要伪造一条声称在某个 Step 发生过的记忆记录。人物一开始就知道灯坏了，这是作者给的设定，不是他跑出来的结果。
+
+真正的记忆证据，是角色进入运行以后，通过真实的工具调用写入和更新的。这条界线划清了，我们才知道哪些内容是设计，哪些是运行事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.3　把人物初态与对象知识分别核对</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>出生坐标不在公共核心</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.3　人物初态</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>位置在装配时{'\n'}才被确定</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 460 }}>公共 Agent 核心不含出生坐标。选入实验后，四位来访者装配到入口，余真装配到等候区，再记录空间选择器实际保存的位置。</Text>
+            <Box style={{ width: 460, height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>初始经历来自作者设定</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>不是运行中自己长出来的</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ width: 620, height: 160, background: '#F4F7FA', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>出生坐标</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 564 }}>身份定义里不写位置；位置由本次实验的装配决定，并记录实际保存的结果。</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 160, background: '#FFF4E6', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不伪造记忆记录</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 564 }}>不需要造一条声称在某个 Step 发生过的记忆记录来充当初始经历。</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 160, background: '#ECF7F2', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>运行之后才形成证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, width: 564 }}>角色进入运行以后如何写入与更新记忆，由真实工具调用形成证据。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 27</Text>
+    </Box>
+
+</Slide>

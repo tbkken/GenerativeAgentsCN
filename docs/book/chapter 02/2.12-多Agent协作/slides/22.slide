@@ -1,0 +1,67 @@
+<Slide notes={`比较单 Agent 和多 Agent，我建议至少记录六个指标。
+
+前三个看质量：最终正确率，代表整体做对的比例；漏检数，代表真正的问题被漏掉多少；误报数，代表本来没问题却被判成问题。漏检和误报要分开数，因为它们对使用者的代价完全不同。
+
+后三个看成本：总 Token，注意两个审阅加一次汇总的开销要相加；总耗时，并行只缩短了独立任务的等待部分，不是所有环节都变快；还有人工复核时间，多人输出反而可能让复核变重。
+
+把这六个放在一起，才能判断协作到底是把问题减少了，还是只是把成本换了个地方。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.6　如何判断协作值得保留</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六个要一起记录的指标</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 24, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>用相同任务集比较单 Agent 与多 Agent，质量与成本一起看</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 18 }}>
+            <Box style={{ width: 372, height: 168, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>最终正确率</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>整体做对的比例，是最粗的一层判断</Text>
+            </Box>
+            <Box style={{ width: 372, height: 168, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>漏检数</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>真正的问题没被发现的数量</Text>
+            </Box>
+            <Box style={{ width: 372, height: 168, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>误报数</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>本来没问题却被判成问题；与漏检分开数</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 18 }}>
+            <Box style={{ width: 372, height: 168, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>总 Token</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>两个审阅加一次汇总，开销要相加</Text>
+            </Box>
+            <Box style={{ width: 372, height: 168, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>总耗时</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>并行只缩短独立任务的等待部分</Text>
+            </Box>
+            <Box style={{ width: 372, height: 168, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>人工复核时间</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>多份输出可能让复核变重，也要计入</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 25</Text>
+    </Box>
+
+</Slide>

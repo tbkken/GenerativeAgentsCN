@@ -1,0 +1,98 @@
+<Slide notes={`做完对照，还有两件事必须做扎实：固定和记录。
+
+先说固定。比较不同提示的时候，除了任务描述，其他都不能动。材料是同一份，模型是同一个版本，工具和权限一样，评分表和校验器也一模一样。哪一项偷偷换了，结论就不成立。
+
+再说记录。每次运行的结果都要存，而且要记具体的错误类型：有没有遗漏活动、有没有改动人数、有没有出现预约冲突、有没有把缺失的资料标出来。只记一个总分，是看不出问题在哪里的。
+
+还有一条态度上的要求。样本很少的时候，我们只能说这是一次练习观察，不能说这个写法更好。特别不能做的事，是从多次尝试里挑出最好的一次，然后拿它去归因。
+
+修改提示本质上是一次干预。它有没有效果，要通过任务结果来判断，而不是看句子变长、语气变强。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.2　从模糊提示逐步改进</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>对照要固定，错误要记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 440 }}>
+
+            <Box style={{ width: 480, background: '#EDF4FC', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 5, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>必须固定（不变量）</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 26, height: 26, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>料</Text>
+                        </Box>
+                        <Text style={{ fontSize: 16, color: '#20344B' }}>输入材料与文件版本</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 26, height: 26, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>模</Text>
+                        </Box>
+                        <Text style={{ fontSize: 16, color: '#20344B' }}>模型标识与参数</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 26, height: 26, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>具</Text>
+                        </Box>
+                        <Text style={{ fontSize: 16, color: '#20344B' }}>工具、权限与运行环境</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 26, height: 26, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>评</Text>
+                        </Box>
+                        <Text style={{ fontSize: 16, color: '#20344B' }}>评分表与独立校验器</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 640, background: '#F4F7FA', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 5, height: 28, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>每次都要记录的错误</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-around' }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 4, height: 26, background: '#CB6B28' }} />
+                        <Text style={{ fontSize: 16, color: '#20344B' }}>遗漏了本该安排的活动</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 4, height: 26, background: '#CB6B28' }} />
+                        <Text style={{ fontSize: 16, color: '#20344B' }}>改动了原始人数或时长</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 4, height: 26, background: '#CB6B28' }} />
+                        <Text style={{ fontSize: 16, color: '#20344B' }}>与已有预约发生冲突</Text>
+                    </Box>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 4, height: 26, background: '#CB6B28' }} />
+                        <Text style={{ fontSize: 16, color: '#20344B' }}>缺失资料没有标注出来</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 5, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>少量样本只称练习观察</Text>
+            <Text style={{ fontSize: 16, color: '#546779' }}>不挑最好的一次归因；修改提示是一种干预，效果要通过任务结果判断。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

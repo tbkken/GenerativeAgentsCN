@@ -1,0 +1,85 @@
+<Slide notes={`我们手上拿到的是一叠教案材料：一页服务分工、四份人物任务、一张空间草图、两段咨询策略，还有一张评分表。
+
+把它们放进同一个文件夹交出去，接收者其实什么也判断不了。他不知道哪一句是本次采用的条件，哪一句只是候选建议；哪里两份材料互相打架，哪里还空着。
+
+所以这一节要做的第一件事，是给材料标性质。业务约定、作者假设、尚未核实的图片、运行中的行为，这四类东西来源完全不同，写法也不能混。
+
+它们都可以进入项目资料，但不能合并成一列所谓已验证事实。顺序很重要：先分类，再登记出处，最后才谈怎么使用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第五章　综合实战与交付　·　5.2　材料来源、假设与可用范围</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>材料先说清性质，{'\n'}再谈怎么用</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>同一批教案材料里，业务约定、作者选择、尚未核实的图片和运行中的行为，来源完全不同。接收者拿到文件夹，仍然不知道哪些是本次采用的条件，哪些只是候选建议。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 156, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>四类性质</Text>
+                </Box>
+                <Box style={{ width: 156, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>来源与冲突</Text>
+                </Box>
+                <Box style={{ width: 156, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>假设与空白</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 600, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>材料包里的一句话</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>“B 窗口也能审批场地预约。”</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 290, flexDirection: 'column', gap: 12 }}>
+                    <Box style={{ width: 290, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>场景设定</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>本案约定的业务范围</Text>
+                    </Box>
+                    <Box style={{ width: 290, height: 74, background: '#FFF4E6', borderRadius: 10, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>待核实</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>图片与路径尚未验收</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 290, flexDirection: 'column', gap: 12 }}>
+                    <Box style={{ width: 290, height: 74, background: '#ECF7F2', borderRadius: 10, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>作者假设</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>本案不研究排队</Text>
+                    </Box>
+                    <Box style={{ width: 290, height: 74, background: '#F7F3E8', borderRadius: 10, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>实际观察</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>需真实 Run 与记录</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 600, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>没有性质标注的材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不能直接变成本轮实验的采用条件</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 23</Text>
+    </Box>
+
+</Slide>

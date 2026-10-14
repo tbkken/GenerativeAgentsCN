@@ -1,0 +1,92 @@
+<Slide notes={`现在动手重算，五个值都要算出来。
+
+总闭环率：A 是 6/12 等于 50%，B 是 8/12 约 66.7%。
+
+每 Run 比率：A 是 50%、75%、25%，B 是 75%、75%、50%。
+
+已闭环时延中位数：A 是 9.5 分钟，B 是 13.5 分钟。
+
+逻辑调用除以闭环数：A 约 61.67，B 是 60。
+
+物理尝试除以闭环数：A 是 68.5，B 是 64.5。
+
+算完停一下，问自己三句话：三次重复太少；两组进入中位数的是不同成功子集；六行数据没有经过任何现实校准。
+
+所以这些数只能说明算术怎么算，不能推出普遍优越。计算脚本只核算算术，不验证现实结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.9　综合练习与参考</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习一：重算六行人工数据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 652, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 652, flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 26 }}>
+                <Box style={{ width: 300 }}><Text style={{ fontSize: 14, color: '#546779' }}>要算的量</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>参考值</Text></Box>
+            </Box>
+
+            <Box style={{ width: 652, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>总闭环率 A ／ B</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>50% ／ 66.7%</Text></Box>
+            </Box>
+
+            <Box style={{ width: 652, height: 80, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>每 Run 比率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B' }}>A 50%／75%／25%　B 75%／75%／50%</Text></Box>
+            </Box>
+
+            <Box style={{ width: 652, height: 80, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>已闭环时延中位数</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>9.5 分钟 ／ 13.5 分钟</Text></Box>
+            </Box>
+
+            <Box style={{ width: 652, height: 80, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>逻辑调用／闭环</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>≈ 61.67 ／ 60</Text></Box>
+            </Box>
+
+            <Box style={{ width: 652, height: 80, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>物理尝试／闭环</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>68.5 ／ 64.5</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 464, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 464, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>重复太少</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>每组只有三次 Run，换一批结果就会变，不能当成稳定结论来引用。</Text>
+            </Box>
+
+            <Box style={{ width: 464, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>成功子集不同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>A 与 B 进入中位数的那批任务可能不是同一批，比的是两组不同的任务。</Text>
+            </Box>
+
+            <Box style={{ width: 464, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>没有现实校准</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>六行数据是人工编的，模型、计价与真实场景都没有校准过，推不出普遍优越。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 25</Text>
+    </Box>
+
+</Slide>

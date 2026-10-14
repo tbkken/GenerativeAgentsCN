@@ -1,0 +1,62 @@
+<Slide notes={`四层资料各记各的，不要混在一份文档里。
+
+当前项目说明，记接手任务、负责人、状态和推荐材料的位置，它是给下一个人看的入口。
+变更与验证记录，追加理由、影响、检查方法和真实结论，未解决的事项也要保留在这一层。
+精确输入与原始导出，保持当时的内容和摘要，只引用它的原始位置，不搬动、不改写。
+解释与出版材料，可以修订文字或增补图表，但要注明依据和适用批次。
+
+这样分层以后，文档里可以用变更日期和问题单号来组织，但它们只是资料管理的标签，不是系统新增的 Revision，也不是新的包身份。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.6　维护说明与历史事实分别保存</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四层资料各自保存什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 700, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>当前项目说明</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>更新接手任务、负责人、状态与推荐材料位置</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>变更与验证记录</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>追加理由、影响、检查方法和真实结论，保留未解决项</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 88, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>精确输入与原始导出</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>保持当时内容及摘要，引用其原始位置</Text>
+            </Box>
+
+            <Box style={{ width: 580, height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>解释与出版材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可修订文字或增补图表，注明依据与适用批次</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16 }}>
+            <Box style={{ width: 420, height: 190, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>标签不是系统身份</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>变更日期和问题单号只是人工文档的组织方式，不是系统新增的 Revision 或资源包身份。</Text>
+            </Box>
+            <Box style={{ width: 420, height: 190, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>分层以后的好处</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>改一层不牵动另一层。更新当前说明，不会让历史结论跟着变。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 27</Text>
+    </Box>
+
+</Slide>

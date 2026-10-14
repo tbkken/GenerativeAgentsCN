@@ -1,0 +1,78 @@
+<Slide notes={`最后一块要解决「怎么数」的问题。
+
+我先把一句容易被忽略的话说清楚：没有真实接收，就没有个人纠错窗口。公告对象提交了正式更正，不等于某个人已经知道；甚至沈禾发出了那条更正，也不等于对方真的读到了。
+
+所以整条证据链要从个人的角度看：他自己查询得到的原回复、他保存的原信念、他向沈禾发出的确认、沈禾提交的更正请求、对象实际提交的状态、他个人真实接收到更正、他执行的记忆处理，最后才是相关行动。
+
+这条链上任何一环断了，后面的动作就不能算在个人纠错窗口里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4　　4.4.5 — 4.4.6</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>没有真实接收，就没有个人窗口</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>更正何时才算落到某一个人身上：从他真的能读到那条消息的那次决策输入开始计。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 12, marginTop: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 250, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#276FBF' }}>原回复</Text>
+                </Box>
+                <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 250, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#276FBF' }}>原信念</Text>
+                </Box>
+                <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 250, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#276FBF' }}>三份确认</Text>
+                </Box>
+                <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 250, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#276FBF' }}>更正请求</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 250, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#26816B' }}>对象提交</Text>
+                </Box>
+                <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 250, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#26816B' }}>个人实际接收</Text>
+                </Box>
+                <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 250, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#26816B' }}>记忆处理</Text>
+                </Box>
+                <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 250, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#26816B' }}>相关行动</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

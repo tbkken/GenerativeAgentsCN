@@ -1,0 +1,73 @@
+<Slide notes={`地图、人物和 Skill 三样东西，各有自己的完成条件，不能用一句「按第三章配置」带过去。
+
+地图的完成条件是真实的语义边界、碰撞区域和可走站位。咨询台与两个窗口都要留下可走的邻格，否则人物根本走不到。人物需要完整资料和实验用的出生位置，出生点要在实际配置、保存、重开之后核对。Skill 需要完整正文和闭包，缺一段依赖就装不起来。
+
+完成状态也要分层写。纸面作业把这三样标成待制作，不要写成已经完成；实践作业则通过界面保存后重开核对，用实际保存结果证明它们存在。
+
+这一节反复出现的写法是：不要用一句通用说明跳过本案的具体内容。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.2　第一份交付：问题和材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>地图、人物与 Skill 的准备条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 706, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 706, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 640, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>地图：语义边界要真实</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>需要真实语义边界、碰撞与可走站位；咨询台与两个窗口都要留可走邻格</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 706, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 640, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>人物：资料与出生位置</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>四名来访者与余真都要完整资料；出生点由实际配置、保存和重开核对确定</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 706, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 640, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>Skill：完整正文与闭包</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>咨询台与两个窗口各绑定一个根 Skill，依赖必须齐全才能装起来</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 414, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>两类作业的状态写法</Text>
+
+            <Box style={{ width: 414, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>纸面作业</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>这三样一律标为待制作</Text>
+            </Box>
+
+            <Box style={{ width: 414, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>实践作业</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>通过界面保存后重开核对</Text>
+            </Box>
+
+            <Box style={{ width: 414, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>不要用「按第三章配置即可」跳过本案的具体内容。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 31</Text>
+    </Box>
+
+</Slide>

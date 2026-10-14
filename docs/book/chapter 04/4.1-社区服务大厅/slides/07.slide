@@ -1,0 +1,62 @@
+<Slide notes={`接下来把“谁知道什么”定下来，这一步决定观察有没有意义。
+
+引导员余真知道服务分工和咨询台在哪，但她不知道每个人私人要办什么事。她只帮助实际遇到并且真的求助的人，不预先替人分类，也不挨个去索要需求。
+
+咨询台知道 A 管未来的场地使用、B 管现有的设施问题，并且必须按真实的请求编号回复。A、B 两个窗口各自知道自己的职责和对方的职责，但只解释下一步，不能声称事情已经办好。
+
+三个对象各有独立的请求和记忆，不能跨身份去读来访者的资料。作者手里的完整表，不能进入角色的共同上下文。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.1　角色与职责边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁知道什么，谁不能替谁知道</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 420 }}>引导员、咨询台和两个窗口，各自握着一部分信息。任何一方越过边界，观察就不再反映真实交流。</Text>
+            <Box style={{ width: 420, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>作者知道 ≠ 角色知道</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>完整表只供作者与评分者；窗口分工与四人真实目的都不许预塞。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 700, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>余真{'\n'}引导员</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>知道服务分工与咨询台位置，不知道私人任务；只帮助实际求助者，不预先分类。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>咨询台{'\n'}对象</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>知道 A 管未来场地使用、B 管现有设施问题；按真实请求 ID 回复。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>A、B 窗口{'\n'}对象</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>各知自身与另一窗口职责；只解释下一步，不声称已办结。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>三个{'\n'}对象</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>各有独立请求与记忆，不能跨身份读取来访者资料。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

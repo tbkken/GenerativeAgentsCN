@@ -1,0 +1,67 @@
+<Slide notes={`把三个记账单位摆在一起，关系就清楚了。
+
+左边是逻辑调用，就是我在应用里发起的那一次请求。中间是物理尝试，也就是真正发到网络上的请求，中间可能是一对多的关系。右边是实际用量，它来自每次响应带回来的 usage，最终对应的是账单。
+
+这两个数字经常不一致，原因就是 SDK 内部的重试。如果只看逻辑调用次数，你会低估真实的网络请求量。
+
+时间也一样要分开记：模型执行的时间、本地命令执行的时间、以及等待用户审阅的时间，是三个不同的量。费用也是，API 账单和平台积分属于不同口径。
+
+最后提醒一句：按服务的计费口径拆 Token 子类，注意不要重复累计。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.6　从 usage 理解成本</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个记账单位</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 344, height: 210, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>单位一</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>逻辑调用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>应用发起的一次模型请求。这是你主动写下的那一次。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 210, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 344, height: 210, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>单位二　可能一对多</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>物理尝试</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>真正发到网络上的请求。SDK 内部重试会产生多次。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 210, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 344, height: 210, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>单位三</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>实际用量</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>每次响应返回的 usage，对应账单，是费用的唯一依据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>时间分别记录</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>模型执行、本地命令与用户等待是三个不同的量，不要合成一个数字。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>费用分别记录</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>外接服务的 API 账单与 WorkBuddy 积分属于不同口径，各记各的。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不重复累计</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>按服务口径拆分 Token 子类；这里没有任何真实价格、吞吐或用量数据。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 34</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,119 @@
+<Slide notes={`把十二项和十项并排摆开，两个分母就看得见了。
+
+上面一条是真实情况：材料里确实有十二项报名，助手找到了八项，漏掉四项。下面一条是模型输出：一共报出十项，其中八项是对的，两项是它读错了。
+
+两条绿段长度一样，因为那是同一批八项正确报名。上面多出来的是漏掉的，下面多出来的是误报的。
+
+精确率问的是报出来的里面有多少是真的，八项对十项，八成。召回率问的是应该找出来的里面有多少被找到，八项对十二项，约六成七。F1 用调和平均把两者合起来，十六除以二十二，约七成三；只要有一项很低，总分就被拉下来。
+
+但这两个错误的代价并不一样。漏掉一条无障碍协助需求，可能比多交给人工复核一条候选严重得多。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.2　少报和误报</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>12 项真实报名，10 项输出</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 88 }}>
+            <Box style={{ width: 140, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>真实报名</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>共 12 项</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 600, flexDirection: 'row', height: 44 }}>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>1</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>2</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>3</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>4</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>5</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>6</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>7</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>8</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>9</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>10</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>11</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>12</Text></Box>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>找到 8 项（TP）</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>遗漏 4 项（FN）</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 88 }}>
+            <Box style={{ width: 140, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>模型输出</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>共 10 项</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 600, flexDirection: 'row', height: 44 }}>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>1</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>2</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>3</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>4</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>5</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>6</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>7</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>8</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>9</Text></Box>
+                <Box style={{ width: 50, height: 44, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>10</Text></Box>
+                <Box style={{ width: 100 }} />
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>正确 8 项（TP）</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>误报 2 项（FP）</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <Box style={{ width: 3, height: 20, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>两处绿色是同一批 8 项正确报名；上面多出的是遗漏，下面多出的是误报。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 124 }}>
+
+            <Box style={{ width: 340, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>Precision　精确率</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>TP / (TP + FP) = 8 / 10</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>= 80%</Text>
+            </Box>
+
+            <Box style={{ width: 340, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>Recall　召回率</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>TP / (TP + FN) = 8 / 12</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>≈ 66.67%</Text>
+            </Box>
+
+            <Box style={{ width: 340, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>F1　调和平均</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>2TP / (2TP + FP + FN) = 16 / 22</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>≈ 72.73%</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>F1 不会替组织者决定错误的代价</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>漏掉无障碍协助需求，可能比多交给人工复核一条候选严重得多；此时仍要单独报告召回率，并据业务代价设定验收门槛。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 31</Text>
+    </Box>
+
+</Slide>

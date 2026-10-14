@@ -1,0 +1,40 @@
+<Slide notes={`最后一块讲实践怎么组织，以及动手之前要先固定什么。
+
+整章分两半：前半段建立可行动的世界，后半段处理可恢复、可解释的实验。
+
+每一步都要保留与问题相匹配的证据，动手之前还要把环境、问题和停止条件先固定下来。
+
+另外还会说明两个历史案例的用法：它们保留的是历史含义，不能和新案例拼成一次已经完成的运行。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4　　3.1.6 — 3.1.7</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先建世界，再管实验</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>前半章建立可行动的世界，后半章处理可恢复、可解释的实验；每一步都要留下对得上的证据。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 540, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>前半章 · 可行动的世界</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>资源 · 空间 · Brain 与 Skill · 观察反馈</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 540, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>后半章 · 可解释的实验</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>草稿 · 封存 · 运行控制 · 回放 · 导出与复现</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

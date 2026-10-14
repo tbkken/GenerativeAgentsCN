@@ -1,0 +1,40 @@
+<Slide notes={`这一块讲的是整节里最需要判断的地方：封存这件事发生在哪一刻。
+
+实验本身只有两个状态，草稿和封存。封存意味着这份实验的内容不可再改，这样以后才能解释清楚某一次运行到底用了什么材料。完成、失败、暂停这些说法属于运行，与实验有没有封存是两条不同的信息。
+
+当前界面上，草稿的执行对话框里点确认执行之后，程序先等待保存，然后把实验封存，再创建运行。要提醒的是，本次没有核验过一个独立的、只做封存的前端按钮，所以不能把它写成一条已经完成的点击流程。
+
+在本次操作这一步上会分成两路：关掉对话框不会因此创建运行，但是此前的修改可能已经被保存；只有确认执行才会继续往下走。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4　　3.8.4　确认执行跨过封存边界</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>确认执行才跨过封存边界</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 920 }}>关闭对话框只是一次查看，确认执行才先封存实验、再创建新的运行；两者不能混为一谈。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 484, height: 76, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#546779' }}>仅查看后关闭</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>不因此创建 Run</Text>
+            </Box>
+            <Box style={{ width: 44, height: 76, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 484, height: 76, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>确认执行</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>封存实验 → 创建 Run</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

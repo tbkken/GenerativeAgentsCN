@@ -1,0 +1,75 @@
+<Slide notes={`有人会担心：既然模型可以灵活决定下一步，那它是不是也能绕过规则？答案是不能，因为规则根本不在模型手里。
+
+有四件事始终由程序掌握。第一是工具白名单——允许调用哪些工具，是程序声明的，模型只能在名单里挑。第二是参数校验——房间 ID、时间段这些参数进来先校验，非法输入不进入执行。
+
+第三是调用预算——轮数、工具数、时间上限，都由程序计数和截断。第四是文件保存条件——什么情况下允许写交付文件、写到哪里，也是程序说了算，不是模型要求写就能写。
+
+所以模型的灵活只体现在「决定下一步」，不体现在「改变规则」。灵活地决定步骤，不能覆盖执行规则。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.1　从一次回答到一个闭环</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>执行边界由程序掌握</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 430, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>模型改不了的四条规则</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>灵活决定步骤，只发生在程序允许的范围内。模型可以请求，程序才决定要不要真的执行。</Text>
+            <Box style={{ background: '#F4F7FA', borderRadius: 8, padding: '12px 16px' }}>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace' }}>validate_schedule(schedule.json)</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>灵活决定步骤{'\n'}不能覆盖执行规则</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 698, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>工具白名单</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>允许调用哪些工具由程序声明，模型只能在名单里挑选。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>参数校验</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>房间 ID、时间段等参数先校验，非法输入不进入执行。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>调用预算</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>轮数、工具数、时间上限由程序计数与截断，模型无权加预算。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#ECF7F2', borderRadius: 10, padding: '0px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>文件保存条件</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>什么情况允许写交付文件、写到哪里，由程序决定。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

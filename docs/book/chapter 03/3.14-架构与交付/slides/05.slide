@@ -1,0 +1,111 @@
+<Slide notes={`现在看这条链上东西是怎么交接的。
+
+公共资源是大家一起用的地图、人物、Skill 和模型。把它们拿去做实验时，做的是一次物理复制：地图的图、Skill 的文本、模型的参数，都变成实验草稿里的独立副本。
+
+草稿校验通过以后封存，状态从 DRAFT 变成 SEALED。封存之后的实验不会再被后来编辑的公共 Skill 追着更新；公共资源后续改动也不会自动传播进来。
+
+Run 再把执行所需的实验内容完整嵌进去，连同 Attempt、帧和检查点，成为分析那次执行的依据。
+
+Replay 读取的只有已提交事实，它不会重新执行模型或 Skill——所以历史看得再多，也不会改变历史。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.1　五个职责如何配合</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>公共资源、实验与运行事实的交接</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 720, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 720, height: 74, background: '#F7F3E8', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 42, background: '#546779' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>公共资源</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>地图、人物、Skill、模型</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 26, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 0 0 40px' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>物理复制</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 74, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 42, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>实验草稿</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>完整资源及依赖副本</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 26, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 0 0 40px' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>校验并封存</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 42, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>封存实验　DRAFT → SEALED</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>封存后调整须建立新的独立实验</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 26, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 0 0 40px' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>完整嵌入</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 42, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Run</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>完整内嵌实验；Attempt、帧、检查点</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 26, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 0 0 40px' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>读取提交边界</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 74, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 42, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Replay</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>只读已提交事实；重建状态与画面</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 412, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 412, height: 158, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>公共后续修改不自动传播</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>公共资源改了，已封存的实验不会跟着变；要调整就建一个新的独立实验。</Text>
+            </Box>
+
+            <Box style={{ width: 412, height: 158, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>回放不再次执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>Replay 只读已提交事实，重建状态与画面，不会再调用一次模型或 Skill。</Text>
+            </Box>
+
+            <Box style={{ width: 412, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, flex: 1 }}>复制是物理内容复制，不是引用；Run 内嵌的是那次执行当时的副本。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 29</Text>
+    </Box>
+
+</Slide>

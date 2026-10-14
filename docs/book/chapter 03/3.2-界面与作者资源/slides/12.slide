@@ -1,0 +1,74 @@
+<Slide notes={`四位人物怎么写，书里给了明确的方向。
+
+林岚是组织者，要核对开放信息，再和服务台确认调整；不要写成「第 5 步一定宣布完成」，那是把剧情当成事实。周宁是志愿者，了解公开安排，帮访客找到合适的场所；不要默认他知道所有人的私有记忆。陈晨是阅读访客，查明阅读活动的位置和当前安排；不要在他还没移动时就写「已经坐在阅读桌旁」。许安是手作访客，核实场地信息后前往手作区域；不要让他无条件相信过期通知。
+
+这些内容向 Brain 提供背景和目标，不会直接绕过世界校验。身份文字不等于权限，日常计划也不是内核机械执行的固定程序。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.3　创建四位人物，描述动机而非强制剧情</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四位人物的目标与应避免的写法</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>写动机与目标，不写结果</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>这些内容向 Brain 提供人物背景和目标，不会直接绕过世界校验。</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 4 }}>
+                <Box style={{ width: 3, height: 34, background: '#26816B' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>身份文字不等于权限，日常计划也不是固定程序</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 812, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 116, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 92 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>林岚</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>组织者，核对开放信息并与服务台确认调整</Text></Box>
+                <Box style={{ width: 300, height: 88, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', padding: '0 12px' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.5 }}>「第 5 步一定宣布完成」，把剧情当作事实</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 116, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 92 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>周宁</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>志愿者，了解公开安排，帮助访客找到合适场所</Text></Box>
+                <Box style={{ width: 300, height: 88, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', padding: '0 12px' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.5 }}>默认知道所有人的私有记忆</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 116, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 92 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>陈晨</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>阅读访客，查明阅读活动位置和当前安排</Text></Box>
+                <Box style={{ width: 300, height: 88, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', padding: '0 12px' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.5 }}>尚未移动就写「已经坐在阅读桌旁」</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 116, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 92 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>许安</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>手作访客，核实场地信息后前往手作区域</Text></Box>
+                <Box style={{ width: 300, height: 88, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', padding: '0 12px' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.5 }}>无条件相信过期通知，不允许依据新信息调整</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 22</Text>
+    </Box>
+
+</Slide>

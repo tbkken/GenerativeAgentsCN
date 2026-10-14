@@ -1,0 +1,72 @@
+<Slide notes={`六个主要判断，各有各的证据入口。
+
+抵达和绕行，看已执行的移动动作、实际坐标和地址。
+
+咨询是否正确，要同时看三段：请求、对象答复、人物实际接收与确认，缺一段都不算闭环。
+
+认识是否更正，看来源消息、有效记忆、替代关系和真实检索。
+
+共同结论，看双人消息、指定的最终陈述和条件核对。对象是否变化，看对象动作、状态补丁和已提交事实。
+
+调用代价最容易被漏掉：要看同一个 Run 里全部 Attempt 的逻辑调用、物理尝试、用量和失败。主要指标回答业务问题；时延、错误和成本用来解释取舍，不要把所有权重硬揉成一个总分。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.3　每个主要指标都要有证据入口</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六个主要判断，六个证据入口</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 14, color: '#546779' }}>判断</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>主要证据</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>抵达、绕行</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>已执行 MOVE、实际坐标与地址</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>咨询正确</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>请求、对象答复、人物实际接收与确认</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>认识更正</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>来源消息、有效记忆、替代关系、真实检索</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>共同结论</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>双人消息、指定最终陈述、条件核对</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>对象变化</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>对象动作、状态补丁、已提交事实</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 72, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>调用代价</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>同一 Run 全部 Attempt 的逻辑调用、物理尝试、用量与失败</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 20</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,93 @@
+<Slide notes={`把两种做法放在一起看，差别很直接。
+
+上面这一组只改了一处：其余条件完全一样，差异点用颜色标出来，跑完之后结果之间的差别可以归到这一处上。
+
+下面这一组改了两处以上，两个条件同时变。即使最后结果不同，你也说不清是哪一处造成的，这就是"拼不成结论"。
+
+区组化和随机化能降低组别与运行时间重合带来的风险，但它们不消除所有变化，也不保证远端模型完全复现。所以记录里要写清：这一次到底改了什么，有没有别的变化同时发生。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.2　区组、随机化与单因素对照（示意）</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两次随意改动，拼不成一个结论</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>一次只改一个因素</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>区组与随机化降低组别和运行时间重合的风险，但不消除所有变化，也不保证远端模型完全复现。</Text>
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>记录要写清：这一次改了什么，有没有别的变化同时发生。</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>参考：NIST 随机区组设计</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 656, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>单因素对照：只差一处</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 120, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#26816B' }}>基线 A</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>其余条件完全相同</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#B5C7D8' }}>—</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 120, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#26816B' }}>对照 B</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#20344B' }}>只替换一个预登记因素</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>改</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>结果之间的差别，可以归到这一处上。</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>多因素混杂：说不清是哪一处</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 120, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#CB6B28' }}>条件 A</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 44, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>同时改了位置和视野</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>①②</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 120, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#CB6B28' }}>条件 B</Text>
+                    </Box>
+                    <Box style={{ flex: 1, height: 44, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>同时改了停留与步长</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>③④</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>两个条件同时变，即使结果不同，也归因不到任何一处。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 20</Text>
+    </Box>
+
+</Slide>

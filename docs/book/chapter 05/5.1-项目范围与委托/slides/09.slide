@@ -1,0 +1,66 @@
+<Slide notes={`一页项目约定先于地图制作。它不需要冗长的管理术语，但要让参加者对同一件事有共同理解。
+
+我把要回答的问题收成七个。谁使用成果——是组织研讨的讲师，以及接手材料的另一位操作者。用来做什么——讨论信息不足时立即建议和先行澄清的取舍。观察什么——四项任务的咨询闭环、无效窗口访问、重复说明、首次有效回应时延和模型调用。改变什么——只动咨询台 Skill 里的那一段决策方法。保持什么——地图、五名 Agent、三个对象、任务、模型、窗口规则、时间和判分口径都不变。
+
+最后一条最容易被人含糊过去：谁决定完成。本章的约定是作者自查之后，由没有参与配置的接收者按约定检查；如果是同一个人兼任，必须在材料里写明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.2　建立一页足够具体的项目约定</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一页约定要回答的七个问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 1152 }}>约定先于地图制作，不必长篇，但要让参加者对同一件事有共同理解。</Text>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 14, color: '#546779' }}>项目问题</Text></Box>
+            <Box style={{ width: 880 }}><Text style={{ fontSize: 14, color: '#546779' }}>本章采用的约定</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 220 }}>谁使用成果</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 880 }}>组织研讨的讲师，以及接手材料的另一位操作者</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 220 }}>用来做什么</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 880 }}>讨论信息不足时立即建议与先行澄清的取舍</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 220 }}>观察什么</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 880 }}>四项任务的咨询闭环、无效窗口访问、重复说明、首次有效回应时延和模型调用</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 220 }}>改变什么</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 880 }}>咨询台 Skill 中的一段决策方法</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 220 }}>保持什么</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 880 }}>地图、五名 Agent、三个对象、任务、模型、窗口规则、时间和判分口径</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 220 }}>交什么</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 880 }}>作者材料、方法与差异说明、完整运行索引、可追溯报告、实际取得的导出及接收记录</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 220 }}>谁决定完成</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 880 }}>作者自查后，由未参与配置的接收者按约定检查；同一人兼任时写明</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

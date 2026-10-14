@@ -1,0 +1,65 @@
+<Slide notes={`这是 HLE 目前的分数分布，取自 2026 年 9 月末的几个聚合站点。
+
+排在最上面的是 Claude Opus 5.5，在允许使用工具的最高配置下拿到 67.7%。紧随其后是 Fable 5.1 的 65.0% 和 Opus 5 的 63.6%。注意这几行都写着带工具。
+
+作为参照，人类领域专家大约能到九成。但这个参照不能直接比：专家面对的是自己熟悉的方向，也有条件查资料。
+
+再看协议差异。同一个模型 Fable 5.1，不带工具是 60.9%，带上工具是 65.0%，差了四个多百分点。所以看到 HLE 的分数，第一件事就是问它带不带工具。
+
+这几个数字两三周内还会变，引用务必带日期。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑤　1.4.5　领先模型：HLE 头名与人类参照（2026-09 快照）</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>HLE：约 65% 到 67.7%</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 340, fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>Claude Opus 5.5（带工具）</Text>
+            <Box style={{ width: 668, height: 30, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 452, height: 30, background: '#276FBF', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 100, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>67.7</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 340, fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>Claude Fable 5.1（带工具）</Text>
+            <Box style={{ width: 668, height: 30, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 434, height: 30, background: '#276FBF', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 100, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>65.0</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 340, fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>Claude Opus 5（带工具）</Text>
+            <Box style={{ width: 668, height: 30, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 425, height: 30, background: '#276FBF', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 100, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>63.6</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 340, fontSize: 15, fontWeight: 'bold', color: '#546779' }}>人类领域专家（参照）</Text>
+            <Box style={{ width: 668, height: 30, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 601, height: 30, background: '#546779', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 100, fontSize: 17, fontWeight: 'bold', color: '#546779' }}>约 90</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>协议一变分数就变：同一模型 Fable 5.1，不带工具 60.9%，带上工具 65.0%。人类参照的答题条件与模型不同，只能当方向看</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 36</Text>
+    </Box>
+
+</Slide>

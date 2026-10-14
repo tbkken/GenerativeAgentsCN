@@ -1,0 +1,65 @@
+<Slide notes={`把任务成功率写成这个分数，是为了让每一个数字都有出处。
+
+分子写得很细：通过全部硬约束，并且交付了所需文件。这两条不能拆开。业务校验过了、但最终说明文件没生成，这一次仍然不算成功。
+
+分母是全部尝试任务数。这里最容易含糊：超时的那一次算不算？被限流拒绝的那一次算不算？工具报错的那一次算不算？我的做法是先记录，再按层归类，而且要在跑之前就把口径写清楚。
+
+最忌讳的是跑完以后回头删分母。把失败样本从分母里拿掉，分数会变好看，但你已经失去了测量能力。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.3　指标与分母要对应</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>分子写细，分母先说清</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+            <Box style={{ width: 470 }}>
+                <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>任务成功率</Text>
+            </Box>
+            <Box style={{ width: 650, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, color: '#20344B', lineHeight: 1.6 }}>通过全部硬约束、并交付所需文件的任务数，</Text>
+                <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.6 }}>除以全部尝试任务数。两半都要写明口径。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+            <Box style={{ width: 720, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>通过全部硬约束且交付所需文件</Text>
+            </Box>
+            <Box style={{ width: 720, height: 4, background: '#276FBF' }} />
+            <Box style={{ width: 720, height: 76, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>全部尝试任务数</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 86, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>失败也要记录</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>超时、拒绝和工具失败都记录，并标清它属于哪一层的分母。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 86, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>完成定义写在指标里</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>按「排期和说明均齐全」来定义完成，成功率就不会虚高。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>分母不能事后删改</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>是否计入某个子指标的分母，要提前说明，不能为了提高分数临时删去难看的样本。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 34</Text>
+    </Box>
+
+</Slide>

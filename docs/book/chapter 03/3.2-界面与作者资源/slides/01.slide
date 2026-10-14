@@ -1,0 +1,94 @@
+<Slide notes={`这一节我们第一次打开作者工作台。开场先建立一个判断习惯：看清楚自己正在改的是哪一份内容，比急着点按钮重要得多。
+
+工作台里的作者材料有四类：地图描述场地，Agent 描述人物，Skill 描述方法，模型配置提供推理服务。Studio 要做的事，就是把这些材料组织成一个可以单独运行的实验。
+
+这里有两条范围要分清。基础配置里放的是公共作者资源，是各个实验共用的原材料；打开某个实验以后，看到的是这个实验自己的副本。名字可能一模一样，保存却落在不同地方。
+
+所以进入编辑器之前，先读一眼实验名称和范围提示；改完保存，再从同一个入口重开核对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动　·　3.2</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 552, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>认识界面与作者资源</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>地图描述场地，Agent 描述人物，Skill 描述方法，模型配置提供推理服务。这一节先认清编辑范围，再把四位人物和一份模型配置准备好。</Text>
+            <Box style={{ flexDirection: 'row', gap: 14, marginTop: 6 }}>
+                <Box style={{ width: 172, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>公共作者资源</Text>
+                </Box>
+                <Box style={{ width: 172, height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>实验独立副本</Text>
+                </Box>
+                <Box style={{ width: 172, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>别混在一起</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 568, flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ width: 568, height: 44, background: '#276FBF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>青禾开放日　·　作者工作台</Text>
+                <Box style={{ width: 76, height: 22, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 568, height: 316, flexDirection: 'row' }}>
+
+                <Box style={{ width: 152, height: 316, background: '#EDF4FC', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>实验</Text>
+                    <Box style={{ width: 128, height: 28, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>实验概览</Text>
+                    </Box>
+                    <Box style={{ width: 128, height: 28, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>实验结果</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779', marginTop: 2 }}>基础配置</Text>
+                    <Box style={{ width: 128, height: 28, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>地图</Text>
+                    </Box>
+                    <Box style={{ width: 128, height: 28, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>智能体</Text>
+                    </Box>
+                    <Box style={{ width: 128, height: 28, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>技能 / 模型</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 416, height: 316, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 10 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>当前实验　·　实验独立副本</Text>
+
+                    <Box style={{ width: 388, height: 46, background: '#ECF7F2', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 12 }}>
+                        <Box style={{ width: 92 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>地图副本</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>已保存</Text></Box>
+                    </Box>
+
+                    <Box style={{ width: 388, height: 46, background: '#ECF7F2', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 12 }}>
+                        <Box style={{ width: 92 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>人物副本</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>四位人物</Text></Box>
+                    </Box>
+
+                    <Box style={{ width: 388, height: 46, background: '#FFF4E6', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 12 }}>
+                        <Box style={{ width: 92 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>范围提示</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>确认后再改</Text></Box>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 22</Text>
+    </Box>
+
+</Slide>

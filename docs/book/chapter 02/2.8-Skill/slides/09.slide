@@ -1,0 +1,70 @@
+<Slide notes={`假设你装了一百个 Skill，最直接的做法是把一百份说明、脚本和表格全部送进模型。这样做有三个代价。
+
+第一是上下文被占满。上下文是有限的，塞进去一百份无关材料，真正需要的规则反而容易被挤掉。第二是干扰。模型会看到很多与当前任务无关的约束，可能认真遵守其中一条其实不该适用的规则。第三是成本。每多装一个 Skill，每一次任务都要多付一份开销。
+
+渐进读取走的是另一条路：先只给名称和描述，判断相关之后再读方法，方法里引用到的文件才展开。区别不在功能多少，而在每一次任务搬进上下文的东西有多少。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.2　渐进读取怎样节省上下文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>全量送入与渐进读取的代价</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 320, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>差别不在功能{'\n'}在每次搬多少</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>上百个 Skill 同时存在时，决定体验的不是谁功能多，而是一次任务要把多少东西搬进上下文。</Text>
+        </Box>
+
+        <Box style={{ width: 792, flexDirection: 'row', gap: 32, justifyContent: 'center' }}>
+
+            <Box style={{ width: 380, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 380, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>做法 A　全部送进去</Text>
+                </Box>
+                <Box style={{ width: 380, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>脚本、表格与说明全文一起进来，上下文被大量占用。</Text>
+                </Box>
+                <Box style={{ width: 380, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>无关规则干扰当前任务，模型可能遵守不该适用的约束。</Text>
+                </Box>
+                <Box style={{ width: 380, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>每多装一个 Skill，每一次任务都多付一份开销。</Text>
+                </Box>
+                <Box style={{ width: 380, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>真正需要的规则容易被挤掉，也更难指出依据在哪。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 380, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 380, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>做法 B　渐进读取</Text>
+                </Box>
+                <Box style={{ width: 380, height: 72, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>先只提供名称与描述，用来判断这个方法是否相关。</Text>
+                </Box>
+                <Box style={{ width: 380, height: 72, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>选中相关 Skill 之后，再读它的 SKILL.md 操作说明。</Text>
+                </Box>
+                <Box style={{ width: 380, height: 72, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>方法里引用的文件再按需展开，不一次全搬进来。</Text>
+                </Box>
+                <Box style={{ width: 380, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>描述写得准，就选得准；选得准，才谈得上省上下文。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,59 @@
+<Slide notes={`把三种「记住」并排放在一起，差别就很清楚了。
+
+会话上下文里是上一轮的查询结果和模型提出的候选方案。它的边界是：只在实际传入上下文的时候可用，而且旧结果可能已经过期。
+
+应用任务状态记的是哪份候选通过了校验、还缺什么、剩余预算有多少。它由程序记录，恢复的时候仍然要检查输入有没有变化。
+
+长期记忆可以跨任务检索，比如记住「用户偏好用中文表格汇报」。但要记住：偏好不能覆盖当次规则。
+
+最危险的是把查询事实当偏好存起来。把「10:00 手作室空闲」长期保存，却不带日期和来源、不设有效期，系统在下一个开放日就可能复用一条早就过期的预约。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.4　三种「记住」不能混在一起</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种记忆各能信到什么程度</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>同样是「记得」，可用的范围却完全不同。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 126, background: '#EDF4FC', borderRadius: 10, padding: '0px 20px', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 180 }}>会话上下文</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>上轮查询结果、模型提出的候选方案</Text>
+            <Box style={{ width: 356, height: 84, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0px 16px' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>只在实际传入上下文时可用；旧结果可能过期</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 126, background: '#ECF7F2', borderRadius: 10, padding: '0px 20px', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', width: 180 }}>应用任务状态</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>哪份候选通过校验、还缺什么、剩余预算</Text>
+            <Box style={{ width: 356, height: 84, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0px 16px' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>由程序记录；恢复时仍要检查输入是否变化</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 126, background: '#FFF4E6', borderRadius: 10, padding: '0px 20px', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 180 }}>长期记忆</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>用户偏好，例如用中文表格汇报</Text>
+            <Box style={{ width: 356, height: 84, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0px 16px' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>可以跨任务检索；偏好不能覆盖当次规则</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F7F3E8', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 42, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.55 }}>把「10:00 手作室空闲」长期保存却不带日期与来源，系统可能在下一次开放日复用旧预约。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,116 @@
+<Slide notes={`五份 Skill 的关系一张图看清。
+
+左边是实验装配：四名 Agent 共用同一个 qinghe-open-day-brain，这是实验里唯一的 Brain。Brain 的两条出线表示它可以按需求助两个子 Skill——一个比较候选做法，一个整理记忆，用完把建议带回来。
+
+右边是地图绑定：公告栏和服务台各有一份根 Skill，绑在自己的 Game Object 上，各自运行，不接在 Brain 依赖后面，不是必经步骤。
+
+两条边界：子 Skill 不能提交世界动作，本案例里连记忆都不写；对象 Skill 只能修改自身状态。依赖表示可以调用，不表示必须先走。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.1　先分清"是什么类型"和"在哪里使用"</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五份 Skill：依赖与绑定</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 660, height: 396, background: '#F4F7FA', borderRadius: 12, padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>实验装配：唯一的 Brain</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>4 名 Agent　·　人物资料、位置、私有记忆各自不同</Text>
+                <Box style={{ flexDirection: 'row', gap: 8 }}>
+                    <Box style={{ width: 126, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>林岚</Text>
+                    </Box>
+                    <Box style={{ width: 126, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>周宁</Text>
+                    </Box>
+                    <Box style={{ width: 126, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>陈晨</Text>
+                    </Box>
+                    <Box style={{ width: 126, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>许安</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 628, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+                </Box>
+                <Box style={{ width: 628, height: 62, background: '#276FBF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>qinghe-open-day-brain</Text>
+                    <Text style={{ fontSize: 14, color: '#FFFFFF' }}>类型 brain</Text>
+                </Box>
+                <Box style={{ width: 628, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 308, height: 78, background: '#ECF7F2', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>qinghe-compare-options</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>类型 atomic　·　按需调用，返回建议</Text>
+                    </Box>
+                    <Box style={{ width: 308, height: 78, background: '#ECF7F2', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>qinghe-memory-review</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>类型 atomic　·　按需调用，返回建议</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 460, height: 396, background: '#F7F3E8', borderRadius: 12, padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>地图 Game Object 的独立根 Skill</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 96, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>公告栏</Text>
+                    </Box>
+                    <Box style={{ width: 36, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 296, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>qinghe-notice-board</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 96, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>服务台</Text>
+                    </Box>
+                    <Box style={{ width: 36, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 296, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>qinghe-helpdesk</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 428, height: 66, background: '#FFFFFF', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>各有对象身份</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>只能修改自身状态；不接在 Brain 依赖后面，不是必经步骤</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 96, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>子 Skill 不能 world-act</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>本案例两个子 Skill 也不写记忆，保持纯建议角色</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 560, height: 96, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>依赖表示可调用关系，不是固定顺序</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>公告栏与服务台各自运行，不构成 Brain 的必经步骤</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 22</Text>
+    </Box>
+
+</Slide>

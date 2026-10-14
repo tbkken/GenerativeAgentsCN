@@ -1,0 +1,104 @@
+<Slide notes={`这一节要回答的问题可以压成一句话：目标和信息都不变，只关掉一条通路，集合是否还可达，每个人多走多少。
+六个知识块沿这条线排开。先看场地本身，说明唯一被改动的就是上面那个缺口；再讲这次干预在作者操作上怎么被隔离出来，保证两套布局只差一格。
+接着是两组共用的条件式行为。可达就移动；已经进入集合区就做一次准备动作；确实不可达就保存原因并咨询；参数被拒就按具体错误修正，不猜地址、不扩大视野。
+最后落到怎么按提交事实判定到达，以及四个指标的口径和五层失败归因。全篇要把「动作被接受」和「人真的到了」这两件事分开。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节地图　4.7.1 — 4.7.6</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的六件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>一条主线</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 360 }}>目标和信息都不变，只封掉一个缺口，观察集合是否仍可达、每个人多走多少。</Text>
+            <Box style={{ width: 360, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>两层对照</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>开放布局 与 关闭上缺口{'\n'}同一套条件式行为，只有一处碰撞格不同</Text>
+            </Box>
+            <Box style={{ width: 360, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>两条纪律</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>按提交事实判到达{'\n'}失败先分层归因，不自动报错</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 370, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 30, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                        </Box>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>用地图说明唯一干预</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 338 }}>只把 (8,3) 改成阻挡，下口 (8,8) 不动。先把两套平面并排看清，再谈差别。</Text>
+                </Box>
+                <Box style={{ width: 370, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 30, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                        </Box>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>只动一个碰撞格</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 338 }}>开放草稿复制成独立副本，Ctrl 编辑目标格，保存离开重开，核对邻格没误涂。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 370, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 30, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                        </Box>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>两组同一条件式</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 338 }}>同一个目标，四条判断分支。可达就直接走，不制造一次虚构失败或等待。</Text>
+                </Box>
+                <Box style={{ width: 370, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 30, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                        </Box>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>实际移动与真实到达</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 338 }}>四个路径点、三条移动边；把点数当格数会多计一格。accepted 不是到达。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 370, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 30, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+                        </Box>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>指标与人工判分</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 338 }}>到达率、移动负担、启动时延、无效请求率四项口径，以及一次三人演算。</Text>
+                </Box>
+                <Box style={{ width: 370, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                        <Box style={{ width: 30, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>⑥</Text>
+                        </Box>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>失败分层与练习</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 338 }}>五种现象分别对应哪种原因，哪些属于合同边界，不能一律当成 bug。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 26</Text>
+    </Box>
+
+</Slide>

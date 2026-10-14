@@ -1,0 +1,77 @@
+<Slide notes={`判分表按四个任务逐行展开。每个任务至少要能定位五样东西：首次入口请求、实际得到的建议、窗口请求、适配回复，以及是否完成确认。缺少哪一环，就在表里写缺哪一环，不要留空。
+
+四个任务里有两个设计上的陷阱。周澈和孟川的首次话语完全相同，都是问活动室照明和使用；谭悦和邱禾的首次话语也完全相同。可是前两人的真实目的是场地使用，后两人的真实目的是设施报修，对应的是两个不同的窗口。只看首句根本判断不出目的，这就是必须逐环定位的原因。
+
+计数上还有两条口径：无效访问按真实的错误窗口请求计数；首次有效回应与最终闭环要分开处理。解释人物动作时使用世界事实，解释调用代价时保留全部相关的物理尝试。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.4　第三份交付：运行和结果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>判分表按 H1—H4 逐行展开</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>一个任务至少要能定位以下五个环节；缺哪一环就写哪一环，不留空</Text>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 10 }}>
+            <Box style={{ width: 222, height: 64, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>① 首次入口请求</Text>
+            </Box>
+            <Box style={{ width: 222, height: 64, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>② 实际得到的建议</Text>
+            </Box>
+            <Box style={{ width: 222, height: 64, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>③ 窗口请求</Text>
+            </Box>
+            <Box style={{ width: 222, height: 64, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>④ 适配回复</Text>
+            </Box>
+            <Box style={{ width: 222, height: 64, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>⑤ 是否完成确认</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 150 }}>H1　周澈</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 420 }}>下周借活动室办读书会，需确认照明条件</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 120 }}>窗口 A</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 370 }}>首次话语：我想问活动室照明和使用的事。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', width: 150 }}>H2　谭悦</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 420 }}>预约手工作品展示，需确认桌面照明安排</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 120 }}>窗口 A</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 370 }}>首次话语：我想问活动室灯具的安排。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', width: 150 }}>H3　孟川</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 420 }}>今天发现活动室东侧一盏灯不亮，了解如何报告</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 120 }}>窗口 B</Text>
+            <Text style={{ fontSize: 14, color: '#CB6B28', width: 370 }}>首次话语与 H1 完全相同</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', width: 150 }}>H4　邱禾</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 420 }}>今天发现活动室入口灯持续闪烁，了解如何报告</Text>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 120 }}>窗口 B</Text>
+            <Text style={{ fontSize: 14, color: '#CB6B28', width: 370 }}>首次话语与 H2 完全相同</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>无效访问按真实错误窗口请求计数，首次有效回应与最终闭环分别处理</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>解释人物动作时使用世界事实；解释调用代价时保留全部相关物理尝试</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 31</Text>
+    </Box>
+
+</Slide>

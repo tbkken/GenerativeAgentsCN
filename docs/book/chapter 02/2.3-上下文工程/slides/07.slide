@@ -1,0 +1,43 @@
+<Slide notes={`第二块讲容量。上下文窗口限制的是单次请求能够处理的 Token 规模，而且这个窗口不是全部给输入的——输出要有位置，模型自己做推理也有开销。
+
+所以把全部聊天记录、全部文件、全部工具结果一直往下追加，是会出问题的。它可能直接超限，也可能没超，但费用上去了，无关信息也掺了进来，反而干扰判断。
+
+这里要强调一句：具体窗口多大、输出限制多少，要查你选的那个模型，不能把某一个模型的数值当成所有模型共有的属性。
+
+知道了容量有限，下一步的动作自然就是筛选和压缩。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.3.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>长上下文不是无限记忆</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>全部聊天、全部文件、全部工具结果一直追加，会超限，也会变贵。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 0 }}>
+            <Box style={{ width: 700, height: 52, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>不断追加的历史、文件与工具结果</Text>
+            </Box>
+            <Box style={{ width: 220, height: 52, background: '#FFF4E6', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>另为输出预留空间</Text>
+            </Box>
+            <Box style={{ width: 180, height: 52, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>超出即不可用</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 25</Text>
+    </Box>
+
+</Slide>

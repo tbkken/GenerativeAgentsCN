@@ -1,0 +1,56 @@
+<Slide notes={`后两道练习：一道关于少，一道关于下一步。
+
+练习三：只有三个短文件、没有外部变化，要不要上向量数据库、MCP 和多个 Agent？
+
+参考思路：普通文件读取、一次模型调用和确定性校验可能就够了。加别的技术要有明确理由，比如复用工具接口或分工带来可测收益。
+
+练习四是准备第三章，列出哪些资料可以复用、哪些必须重新配置。
+
+参考思路：活动主题、人物描述和需求可作为作者材料；地图、坐标、Agent、Brain、Skill、模型用途与实验装配仍须按系统流程建立。筹备文件没有 run_id 和回放事实，不能证明仿真跑过。
+
+到了第三章，安排了一个活动和角色真的走到房间，是两件不同的事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.6　章末练习与参考思路</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>章末练习：最小组合，准备第三章</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 340, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>练习三　选择最小技术组合</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>只有三个短文件、没有外部变化，是否需要向量数据库、MCP 和多个 Agent？</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>参考思路：普通文件读取、一次模型调用和确定性校验可能足够。引入其他技术应有明确理由，例如复用工具接口、资料规模增大或分工带来可测收益。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 340, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>练习四　准备第三章</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>列出本章可以复用的资料，以及必须在仿真系统重新配置的内容。</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>参考思路：活动主题、人物描述和需求可以作为作者材料；地图、坐标、Agent、Brain、Skill、模型用途以及实验装配仍须通过系统规定的流程建立。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>第三章将把同一个开放日放进可感知、可行动、可回放的世界</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>"安排了一个活动"与"角色已经走到房间并实施活动"之间的区别，会成为新的学习重点。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,68 @@
+<Slide notes={`把常见结论摊开来看，取证要求其实很固定。
+
+许安是否抵达，要看实际目标坐标、四层地址、已执行路径和目标对应关系；计划路径、导航首格和活动描述都不能单独证明他到了。
+
+公告是否从旧安排变成新安排，要看对象状态变化事件里的对象身份和结构化前后状态；林岚说一句「已经通知」不算，普通的动作文本也不算。预约查询是否得到回复，要看请求 ID、目标对象、回复事实，以及接收者下一轮的上下文；服务台声称「已回答所有人」同样不算。
+
+周宁是否完成一次交流，要看稳定的会话标识、参与者和实际消息，而不是两个人看上去站在一起。
+
+每一项都要落到具体字段，而不是感觉。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.4　对 MOVE、公告更新和回复分别取证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>每一条结论都要落到具体字段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 260 }}><Text style={{ fontSize: 14, color: '#546779' }}>要证明的结论</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#546779' }}>必须查看的事实</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>不能独立作为证明的内容</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 98, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 260 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>许安已经抵达</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>实际 to_coord、地址、已执行路径、目标对应关系</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>计划路径、导航首格、活动描述</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 98, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 260 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>公告从旧安排变成新安排</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>状态变化事件的对象身份与结构化前后状态</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>林岚说「已经通知」、普通 ACT 文本</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 98, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+            <Box style={{ width: 260 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>预约查询得到回复</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>请求 ID、目标对象、回复事实、接收者下一轮上下文</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>服务台声称「已回答所有人」</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 98, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+            <Box style={{ width: 260 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>周宁完成一次交流</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55 }}>稳定的会话标识、参与者与实际消息</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55 }}>两个人物看上去站在一起</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>取证要求固定：先找到对应事实，再回到页面核对表现；顺序不能反。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 27</Text>
+    </Box>
+
+</Slide>

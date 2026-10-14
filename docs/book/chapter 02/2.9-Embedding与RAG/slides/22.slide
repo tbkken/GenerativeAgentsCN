@@ -1,0 +1,58 @@
+<Slide notes={`最后一块要解决的问题是：怎么证明这套方法真的有用。
+
+最容易犯的错是拿一个指标代替全部。检索命中了，就以为答案是对的；答案读起来顺，就以为方案能通过。
+
+实际上这里有三把不同的尺子。检索命中，看的是需要的相关片段回来了多少。引用支持，看的是每条结论有没有依据。业务通过，看的是最终的排期是不是真的满足人数、时长、房间和开放时间这些规则。
+
+三把尺子量的是三个环节，各打各的分，谁也不能替谁下结论。测对了环节，才知道该改哪里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.9.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>检索命中、引用支持、最终正确分别测量</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>三个环节，三把尺子。测对了环节，才知道下一步该改哪一段。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'row', alignItems: 'flex-end', gap: 44, height: 236 }}>
+
+            <Box style={{ width: 354, flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 180, height: 150, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>检索命中</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779' }}>需要的相关片段找回多少</Text>
+            </Box>
+
+            <Box style={{ width: 354, flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 180, height: 120, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>引用支持</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779' }}>每条结论是否有依据</Text>
+            </Box>
+
+            <Box style={{ width: 354, flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 180, height: 170, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>业务通过</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779' }}>最终排期是否满足规则</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 25</Text>
+    </Box>
+
+</Slide>

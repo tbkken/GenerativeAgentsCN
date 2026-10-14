@@ -1,0 +1,56 @@
+<Slide notes={`读图的边界划清之后，接下来的问题是：这张图怎么送进模型。
+
+Responses 接口可以在支持视觉输入的模型上同时接收文本和图片两种内容。文本那一项承载我们的要求，图片那一项承载要看的画面，两者放在同一条消息里。
+
+提供图片有三种方式：一个模型服务可以访问的 URL，一段 Base64 数据 URL，或者文档支持的文件方式。三种方式适用的场合不一样，选哪一种取决于图片放在哪里、能不能被外部访问。
+
+要特别注意一点：不能直接把本机的文件路径填进去，指望远端服务去读你电脑上的磁盘。路径必须由我们的脚本读成内容，再编码后发送出去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.11.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把图片作为输入内容</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>文本与图片放在同一条消息里，一起交给支持视觉输入的模型。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>可访问 URL</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>图片已在公网可读</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>Base64 数据 URL</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>由脚本编码后随请求发送</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>文档支持的文件方式</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>按执行时的文档核对</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 300, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>input_text 提要求，input_image 给画面</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 26</Text>
+    </Box>
+
+</Slide>

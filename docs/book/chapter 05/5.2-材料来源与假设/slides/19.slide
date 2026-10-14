@@ -1,0 +1,65 @@
+<Slide notes={`整理完材料，别急着交，先按四类关键信息再过一遍。
+
+第一类，数字与时间。七十五分钟和七十五步差一个字，结果差一分钟。第二类，否定词。“未确认恢复”缩成“恢复”，意思完全反过来。第三类，条件。“可咨询”写成“已办理”，把询问变成了办成。第四类，信息来源：这句话是谁写的、写在哪。
+
+这四类我建议手工核，不要全交给助手。用第二章的助手整理资料也一样，生成结果要人工核对关键变化，流畅不等于忠实。
+
+边界也说清楚：本项目不需要真实来访者的姓名、电话、证件或住址，沿用虚构人物就够。收到来源不明的图片或资料时，记录来源与使用限制；说不清的继续标为待处理。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.5　整理信息时保留原意与空白</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>逐项复看：数字、时间、否定词、条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 452, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>整理完不要急着交，按四类关键信息再过一遍。</Text>
+
+            <Box style={{ width: 452, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>数字与时间</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>75 分钟不等于 75 步</Text>
+            </Box>
+
+            <Box style={{ width: 452, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>否定词</Text>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>“未确认恢复”不能缩成“恢复”</Text>
+            </Box>
+
+            <Box style={{ width: 452, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>条件</Text>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>“可咨询”不能写成“已办理”</Text>
+            </Box>
+
+            <Box style={{ width: 452, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>信息来源</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>这一句是谁写的、写在哪</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 676, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+
+            <Box style={{ width: 676, height: 180, background: '#EDF4FC', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>用助手整理也一样</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>使用第二章的助手整理资料时，也要人工核对这些关键变化——不能拿流畅程度代替忠实程度。</Text>
+            </Box>
+
+            <Box style={{ width: 676, height: 180, background: '#F7F3E8', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>本项目不需要的信息</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>真实来访者的姓名、电话、证件或住址一律不需要，沿用虚构人物即可。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>收到来源不明的图片或资料时，记录来源与使用限制；说不清的继续标为待处理。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 23</Text>
+    </Box>
+
+</Slide>

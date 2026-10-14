@@ -1,0 +1,67 @@
+<Slide notes={`口径要先定下来，否则算出来的比率再精确也没有意义。
+
+业务观察单位是任务、访客、关键事实这些，它们充当各个指标的分母。
+
+独立重复指的是新的 Run。恢复是同一个 run_id 下的新 attempt_id，它不增加独立样本量。
+
+时间跨度的公式是末时刻等于起时刻加上步数减一乘步长，61 步、1 分钟正好覆盖 60 分钟。
+
+活动时长要按案例事实核对：ACT 出现，不等于它自动持续了完整的一个步长。
+
+教学探索可以先给每组预留三次独立 Run 的预算，用来认识变异，但这不是统计显著性的样本量建议。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.2　观察单位、时间点与独立重复分别计数</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>要数什么，先把口径定下来</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 430, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>分母和重复单位是两件事</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>业务观察单位用来当分母，独立重复决定样本量。两者混用，比率就会算错。</Text>
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.65 }}>教学探索可先给每组预留三次独立 Run 的预算，用来认识变异；这不是统计显著性的样本量建议。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 686, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>业务观察单位</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>任务、访客、关键事实等，用于各指标分母</Text>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>独立重复</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>新 Run；同 Run 的角色会互相影响</Text>
+            </Box>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>恢复</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同一 run_id、新 attempt_id；不增加独立样本量</Text>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>时间跨度</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>T末 = T始 + (N−1)×Δ；61 步、1 分钟覆盖 60 分钟</Text>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>活动时长</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>ACT 出现不等于自动持续完整步长，按案例事实核对</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 20</Text>
+    </Box>
+
+</Slide>

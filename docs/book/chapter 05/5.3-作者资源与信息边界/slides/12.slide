@@ -1,0 +1,93 @@
+<Slide notes={`五名 Agent 分别是周澈、谭悦、孟川、邱禾和引导员余真。四位来访者各有一条独立的 Agent 身份，余真是引导员。
+
+周澈要借活动室办读书会，得先确认照明；谭悦想预约手工作品展示，关心桌面照明。孟川发现东侧一盏灯不亮，邱禾发现入口灯持续闪烁，他们想知道怎么报告。这四件事分属两类：一类是安排以后怎么用，一类是报告现在坏了什么。
+
+最容易出错的是把 H1 到 H4 当成人物。它们只是任务标签，是对着作者表说话的编号。真正保存进系统的是五条身份，余真也在其中，不能因为她不求助就漏掉。
+
+Crowd 只是一个把五个人选进来的集合，不是第六位角色；三个设施也不进公共人物目录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.3　把人物初态与对象知识分别核对</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五名 Agent，不是一个 Crowd</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 18 }}>
+
+            <Box style={{ width: 216, height: 300, background: '#F4F7FA', borderRadius: 12, padding: '22px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>H1</Text>
+                </Box>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>周澈</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>来访者</Text>
+                <Box style={{ width: 40, height: 3, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>初始可见</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, width: 180 }}>下周借活动室办读书会，需确认照明</Text>
+            </Box>
+
+            <Box style={{ width: 216, height: 300, background: '#F4F7FA', borderRadius: 12, padding: '22px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>H2</Text>
+                </Box>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>谭悦</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>来访者</Text>
+                <Box style={{ width: 40, height: 3, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>初始可见</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, width: 180 }}>想预约手工作品展示，需确认桌面照明</Text>
+            </Box>
+
+            <Box style={{ width: 216, height: 300, background: '#F4F7FA', borderRadius: 12, padding: '22px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>H3</Text>
+                </Box>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>孟川</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>来访者</Text>
+                <Box style={{ width: 40, height: 3, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>初始经历</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, width: 180 }}>东侧一盏灯不亮，想了解如何报告</Text>
+            </Box>
+
+            <Box style={{ width: 216, height: 300, background: '#F4F7FA', borderRadius: 12, padding: '22px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>H4</Text>
+                </Box>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>邱禾</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>来访者</Text>
+                <Box style={{ width: 40, height: 3, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>初始经历</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, width: 180 }}>入口灯持续闪烁，想了解如何报告</Text>
+            </Box>
+
+            <Box style={{ width: 216, height: 300, background: '#ECF7F2', borderRadius: 12, padding: '22px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>引</Text>
+                </Box>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>余真</Text>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>引导员</Text>
+                <Box style={{ width: 40, height: 3, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>初始已知</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, width: 180 }}>服务分工与咨询台位置；不知四项具体任务</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#FFF4E6', borderRadius: 12, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+            <Box style={{ width: 1076, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>Crowd 只是五人选择集，不是第六位角色</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>H1—H4 是任务标签，不能代替实际保存后的 Agent 身份；三个绑定 Skill 的设施也不加入公共人物目录。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 27</Text>
+    </Box>
+
+</Slide>

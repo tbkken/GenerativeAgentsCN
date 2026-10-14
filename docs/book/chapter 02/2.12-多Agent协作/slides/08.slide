@@ -1,0 +1,47 @@
+<Slide notes={`现在把这三个角色真正跑起来。
+
+好消息是不需要额外安装协作框架。配套脚本直接使用多次 Responses 调用：先用本地校验器检查给定的排期，再把同一份输入分别交给两个角色，最后由一个调用汇总。
+
+这里用的排期是人工编写的参考排期，目的只有一个，就是把"协作审阅"这个变量单独隔离出来。它绝不表示模型已经成功生成了排期，这一点千万别读错。
+
+脚本会进行两次独立审阅和一次汇总，总共三次真实调用，会产生费用。角色之间没有隐式的共享聊天记录，各自保存各自的输出。
+
+先写清角色合同，再去选框架。框架的名字，替代不了权限、错误处理和验收规则。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.12.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>用 OpenAI API 实现最小分工</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>普通 Responses 调用就够组织固定分工，先明确角色合同，再选择框架。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 330, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>两次独立审阅</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>一个输入包</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>一次统一汇总</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 25</Text>
+    </Box>
+
+</Slide>

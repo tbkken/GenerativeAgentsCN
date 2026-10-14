@@ -1,0 +1,71 @@
+<Slide notes={`把两条路并排看，四个比较项。
+
+一，写进去的新内容两组完全一样：本次正式会址改为杉厅，写明来源和生效时间。二，原有当前信念：基线保留其有效态，还能被检索取回；对照用新内容替代它，退出默认有效检索。三，工具不同，一个是 append，一个是 supersede。四，记忆 ID：基线新增一条不引用旧 ID，对照必须用旧信念的真实记忆 ID。
+
+两组都保留历史观察：09:30 曾读到杏厅旧公告这种经历，不会因为后来改了而变成假的。
+
+替代的是「目前在哪里举行」，不是「09:30 曾经看过什么」。纠错不需要删除过去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.4　唯一变化：追加还是替代当前信念</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一新内容，两种旧信念处理</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>写进去的新内容完全相同；差别只在旧「当前信念」是否仍在有效态。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16, padding: '0 16px', alignItems: 'center' }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 15, color: '#546779' }}>比较项</Text></Box>
+            <Box style={{ width: 434 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>基线　append 追加</Text></Box>
+            <Box style={{ width: 434 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>对照　supersede 替代</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>写入的新内容</Text></Box>
+            <Box style={{ width: 434 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>本次正式会址改为杉厅，写明来源与生效时间</Text></Box>
+            <Box style={{ width: 434 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>与基线完全相同</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>原有当前信念</Text></Box>
+            <Box style={{ width: 434 }}>
+                <Box style={{ width: 434, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>仍在有效态，可被检索取回</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 434 }}>
+                <Box style={{ width: 434, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>被替代，退出默认有效检索</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>使用的写入操作</Text></Box>
+            <Box style={{ width: 434 }}><Text style={{ fontSize: 15, color: '#276FBF', lineHeight: 1.5 }}>memory-stream-append</Text></Box>
+            <Box style={{ width: 434 }}><Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5 }}>memory-stream-supersede</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>记忆 ID</Text></Box>
+            <Box style={{ width: 434 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>新增一条，不引用旧 ID</Text></Box>
+            <Box style={{ width: 434 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>使用旧信念的真实记忆 ID</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 70, background: '#F7F3E8', borderRadius: 10, padding: '0 16px', gap: 16 }}>
+            <Box style={{ width: 220 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>历史观察</Text></Box>
+            <Box style={{ width: 884 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>两组均保留历史观察与消息证据（09:30 是观察示例）：后来变化不使这段经历变假。</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>记忆状态示意图，非系统截图、非 Run 结果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

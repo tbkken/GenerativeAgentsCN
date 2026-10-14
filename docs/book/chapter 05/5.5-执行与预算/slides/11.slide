@@ -1,0 +1,85 @@
+<Slide notes={`排程这件事，最容易把两件事混成一件：虚拟时间和真实时间。
+
+按候选时间 2026 年 10 月 18 日 09:00 起算，每步一分钟，共 76 步。第一步落在 09:00，最后一步落在 10:15，中间覆盖 75 个虚拟分钟。注意 76 步只跨 75 分钟，因为第一步并不消耗时间。
+
+但这 75 个虚拟分钟完全不代表真实耗时。真实世界里，模型调用要等，浏览器要渲染，操作人员可能中途暂停。所以排程表里必须把三样东西分开登记：实际操作时间、模型耗时、暂停时间。
+
+最不能写的一句话是“上午安排两小时操作”。那是我们安排的时间，不是系统保证两小时内一定完成。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.2　按证据推进项目，而不是按日历宣布完成</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>76 步覆盖 75 个虚拟分钟</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ height: 44, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>候选时间　2026-10-18T09:00:00+08:00</Text>
+            </Box>
+            <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>每步一分钟　·　共 76 步</Text>
+            </Box>
+            <Box style={{ height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>覆盖 75 个虚拟分钟</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 192, height: 88, background: '#EDF4FC', flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>09:00</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>Step 1 · 起点</Text>
+            </Box>
+            <Box style={{ width: 192, height: 88, background: '#EDF4FC', flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>09:15</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 16 步</Text>
+            </Box>
+            <Box style={{ width: 192, height: 88, background: '#EDF4FC', flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>09:30</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 31 步</Text>
+            </Box>
+            <Box style={{ width: 192, height: 88, background: '#EDF4FC', flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>09:45</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 46 步</Text>
+            </Box>
+            <Box style={{ width: 192, height: 88, background: '#ECF7F2', flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>10:00</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 61 步</Text>
+            </Box>
+            <Box style={{ width: 192, height: 88, background: '#ECF7F2', flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 20px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>10:15</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>Step 76 · 终点</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 373, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>实际操作时间</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>我们坐在屏幕前实际花了多久</Text>
+            </Box>
+            <Box style={{ width: 373, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>模型耗时</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>每次请求从发出到返回的等待</Text>
+            </Box>
+            <Box style={{ width: 374, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>暂停时间</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>中途停下、复核与等待决定的时间</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>不能把“上午安排两小时操作”写成“系统保证两小时内完成”。前者是我们的安排，后者是系统的承诺。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 28</Text>
+    </Box>
+
+</Slide>

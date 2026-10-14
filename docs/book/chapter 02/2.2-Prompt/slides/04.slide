@@ -1,0 +1,85 @@
+<Slide notes={`把这六个问题摆出来，就是一份任务合同。
+
+目标回答交付什么。为青禾开放日写提示，这一句是：整理约束，提出三个活动的可行时间安排。
+输入回答依据哪些材料。四份文件要在提示里点名，预约状态要说明另行查询，而不是当作已经知道。
+约束回答必须满足什么。日期、开放时间、容量、活动时长、允许房间、已有预约，这几项是判定候选可行性的依据。
+输出回答文件与格式。要求它分别给出约束清单、候选方案、各项依据和未解决事项，而不是一段笼统的描述。
+假设回答未知项怎么处理。要写清楚：未查询不等于没有预约，没有资料不等于没有限制。
+验收回答用什么判通过。先和原始材料逐条核对，再由独立于生成过程的校验器检查候选。
+
+前四项把任务说清楚，后两项把边界守住。这六格任何一格空着，模型就只能自己替你猜。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.1　六个问题构成一份任务说明</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六个问题，组成一份任务合同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>六项共同约束缺一项，任务就要靠猜。前四项定义任务，后两项界定边界。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 180 }}>
+            <Box style={{ width: 370, background: '#EDF4FC', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>目标</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>交付什么</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>整理约束，提出三个活动的可行时间安排</Text>
+            </Box>
+            <Box style={{ width: 370, background: '#EDF4FC', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>输入</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>依据哪些材料</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>brief.md、rooms.csv、rules.md、requests.csv，预约另行查询</Text>
+            </Box>
+            <Box style={{ width: 370, background: '#EDF4FC', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>约束</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>必须满足什么</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>日期、开放时间、容量、活动时长、允许房间、已有预约</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 180 }}>
+            <Box style={{ width: 370, background: '#ECF7F2', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>输出</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>文件与格式</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>约束清单、候选方案、依据和未解决事项</Text>
+            </Box>
+            <Box style={{ width: 370, background: '#ECF7F2', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>假设</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>未知项如何处理</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>未查询不等于无预约；没有资料不等于没有限制</Text>
+            </Box>
+            <Box style={{ width: 370, background: '#ECF7F2', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>验收</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>用什么判通过</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>和原始材料核对，再由独立校验器检查候选</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

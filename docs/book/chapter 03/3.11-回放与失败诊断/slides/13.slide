@@ -1,0 +1,59 @@
+<Slide notes={`把画面看成两种视角会更省力：地图概览和近景，它们各管一段。
+
+地图概览用来看空间关系，也就是谁在哪个区域、彼此是不是相邻、路径大概怎么走。它回答的是「关系对不对」。近景用来看细节，比如人物比例是否正常、脚底锚点有没有落在地上、有没有被遮挡、状态图有没有正确切换。它回答的是「表现对不对」。
+
+千万不要只保留一张全场截图。全场图既能看关系又能看表现，但两边都不够准。要核对某个对象的状态，就单独截它更新前后的近景；要核对某个人有没有走到，就单独看他的坐标和四层地址。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.3　在页面中沿一条事件检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>概览看关系，近景看细节</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 496, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>两种视角，各管一段</Text>
+            <Box style={{ width: 496, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>地图概览 —— 看关系</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>解释空间关系：谁在哪个区域、彼此是否相邻、路径大概怎样走。它回答「关系对不对」。</Text>
+            </Box>
+            <Box style={{ width: 496, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>近景 —— 看细节</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>核对人物比例、脚底锚点、遮挡，以及状态图是否随事实正确切换。它回答「表现对不对」。</Text>
+            </Box>
+            <Box style={{ width: 496, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不要只保留全场截图</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一张全图两边都不够准，分开取景才能复核。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 632, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ width: 632, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>公告栏状态更新前后的近景</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>对象外观有没有跟着状态事件切换</Text>
+            </Box>
+            <Box style={{ width: 632, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>许安移动前后的坐标与四层地址</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>位移事实是否与画面表现一致</Text>
+            </Box>
+            <Box style={{ width: 632, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>林岚与周宁的相关会话</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>参与者、实际消息与对话轮次</Text>
+            </Box>
+            <Box style={{ width: 632, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>对象回复到达目标人物的轮次</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>谁在下一轮真的拿到了这条回复</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 27</Text>
+    </Box>
+
+</Slide>

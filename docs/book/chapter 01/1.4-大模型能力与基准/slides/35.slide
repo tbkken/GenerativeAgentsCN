@@ -1,0 +1,63 @@
+<Slide notes={`最后一个案例，是当前最大的一个未解决缺口。
+
+ARC-AGI-3 在 2026 年 3 月发布，人类平均能到七成一，但当时最强的系统只有百分之四点五，中间差了六十多个百分点。具体到模型，Gemini 3.1 Pro 是零点三七，GPT-5.5 是一点八，Opus 4.7 是二点一。模型在这个基准上基本等于没做出来。
+
+为什么这么低？第三版加了两样东西：多步骤的交互，模型要在过程中不断行动和修正；跨实例的泛化，同一规则要能用到看似完全不同的场景上。这两样正好是当前系统的弱项。
+
+这个例子说明，错题里最大的一类其实是真不会，不是题目错。题目有错要修题，能力不够就得等能力涨。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑥　1.4.6　错题四：目前最大的一个缺口</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>ARC-AGI-3：人类 71%，模型 4.5%</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 300, fontSize: 15, fontWeight: 'bold', color: '#546779' }}>人类平均</Text>
+            <Box style={{ width: 672, height: 32, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 477, height: 32, background: '#546779', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 96, fontSize: 17, fontWeight: 'bold', color: '#546779' }}>约 71</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 300, fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>当时最强系统</Text>
+            <Box style={{ width: 672, height: 32, background: '#F4F7FA', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 30, height: 32, background: '#CB6B28', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 96, fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>4.5</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', padding: '0 4px' }}>
+            <Box style={{ width: 88, height: 32, background: '#FFF4E6', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>0.37</Text></Box>
+            <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>Gemini 3.1 Pro</Text>
+            <Box style={{ width: 88, height: 32, background: '#FFF4E6', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>1.8</Text></Box>
+            <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>GPT-5.5</Text>
+            <Box style={{ width: 88, height: 32, background: '#FFF4E6', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>2.1</Text></Box>
+            <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>Opus 4.7</Text>
+            <Text style={{ fontSize: 13, color: '#546779' }}>（2026 年 3–5 月首轮结果）</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 168, background: '#EDF4FC', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>为什么这么低</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>第三版加了两样东西：多步骤的交互，模型要在过程中不断行动和修正；跨实例的泛化，同一规则要能用到看上去完全不同的场景。</Text>
+            </Box>
+            <Box style={{ width: 568, height: 168, background: '#F7F3E8', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>它属于哪一类错题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>属于第一类，真不会——题目对人类完全可解，对模型却几乎不可解。这类缺口只能靠能力进步来填，修题没用。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>35 / 36</Text>
+    </Box>
+
+</Slide>

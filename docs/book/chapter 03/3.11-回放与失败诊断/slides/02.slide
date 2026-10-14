@@ -1,0 +1,80 @@
+<Slide notes={`这一节把回放从「看画面」变成「查证据」。
+
+第一块讲事实的来源。模型提出行动、校验通过、动作选择被接受，这些都还没有改变世界；真正形成变化的是世界提交，再由 StepResult 统一记录，并由持久边界推进可见状态。
+
+第二块讲怎么在页面里追。先记下可用 Step 上限和当前 Step，用时间线定位事件，再核对人物、会话和对象状态，始终确认自己看的是哪一个 Run、哪一个 Step。
+
+第三块把常见问题分成四类：正确的边界处理、行为问题、执行问题、页面展示问题。分类不同，处理方式完全不同。
+
+第四块讲怎么写下来。一份能复核的异常记录必须有固定的几个要素，缺证据就标「待复现」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11　回放事实与失败诊断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 18 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 300 }}>把回放从「看画面」变成「查证据」：先弄清什么算事实，再学会在页面里定位，最后把异常写成可复核的记录。</Text>
+            <Box style={{ width: 300, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>判断顺序</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>先核对事实与身份，再判断属于哪一类问题，不加判断地改画面只会丢掉证据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>事实从哪里来</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>动作选择被接受不等于世界已经发生；回放只读已提交边界。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>在页面里沿一条事件取证</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>先记 Step 上限，用时间线定位事件，再核对人物、会话与对象状态。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>分清四类问题再处理</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>边界处理、行为问题、执行问题、页面展示问题，处理方式完全不同。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>用最小证据包描述异常</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>入口、动作、预期、实际、身份与原始记录，缺一不可。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 27</Text>
+    </Box>
+
+</Slide>

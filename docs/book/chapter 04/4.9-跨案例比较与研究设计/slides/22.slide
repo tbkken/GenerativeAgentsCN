@@ -1,0 +1,82 @@
+<Slide notes={`实验做完，交什么上去？我按书稿里的三条纪律来说。
+
+第一，每个案例的作者材料各自独立保存，界面上的操作按第三章的流程走，不要混在一起。
+
+第二，想调参数就另开一个新的独立实验，既有的 Run 和原始导出保持不动。这一点很重要，改了参数又去覆盖旧数据，后面谁也复查不了。
+
+第三，交上去的不只是一张跑得顺的回放。方法、全部结果、解释和局限，四样都要给。
+
+方法里写条件、模型、窗口、评分口径和版本变化；全部结果包括失败、未触发的条件和未完成的样本；解释要分清哪些是证据支持的、哪些只是推断；局限要写清外推到哪里为止、还需要什么才能再进一步。
+
+只挑一次顺利的记录交上去，别人无法复查你排除了什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.8　交付口径</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交方法、全部结果、解释与局限</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 444, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 444, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>作者材料各案独立保存</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>每个案例各自保存自己的作者材料，界面操作按第三章的流程走，不与其他案例混放。</Text>
+            </Box>
+
+            <Box style={{ width: 444, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>参数调整另立实验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>想改参数就开一个新的独立实验，既有的 Run 与原始导出保持不动。</Text>
+            </Box>
+
+            <Box style={{ width: 444, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不只交一张顺利回放</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>只挑一次跑得顺的记录交上去，别人无法复查你排除了什么、改过什么。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 672, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 672, flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 26 }}>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 14, color: '#546779' }}>交付项</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>里面要写清什么</Text></Box>
+            </Box>
+
+            <Box style={{ width: 672, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 120 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>方法</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>条件、模型、窗口、评分口径与版本变化</Text></Box>
+            </Box>
+
+            <Box style={{ width: 672, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 120 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>全部结果</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>包括失败、未触发的条件与未完成的样本</Text></Box>
+            </Box>
+
+            <Box style={{ width: 672, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 120 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>解释</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>哪些结论由证据支持，哪些只是推断</Text></Box>
+            </Box>
+
+            <Box style={{ width: 672, height: 88, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ width: 120 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>局限</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>外推到哪里为止，还需要什么才能再进一步</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 25</Text>
+    </Box>
+
+</Slide>

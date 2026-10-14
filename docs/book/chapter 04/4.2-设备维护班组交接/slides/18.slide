@@ -1,0 +1,62 @@
+<Slide notes={`这个案例的主指标叫关键交接信息到达率，我把它拆成一眼能记住的形状。
+
+分子上，一项事实要同时满足两个条件：宋青经交接渠道实际收到了，而且他能正确复述或使用。中间是 AND，缺一个就不算。
+
+分母固定是五，因为事实就五项，每项只计一次，来源还要能追溯回去。时间范围也是固定的：从首次交接开始，到窗口结束为止。
+
+有几个情形要排除。凭猜测说对的，没有交接来源，不计。先自查、后来才收到的，标成「交接前已知」，不算新增到达。来源混合、分不清是哪条路径的，单列出来，分母仍然按五项算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.5　收到与正确使用，缺一不可</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>关键交接信息到达率</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ width: 400, height: 400, background: '#EDF4FC', borderRadius: 12, flexDirection: 'column', gap: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>分母固定</Text>
+            <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>÷ 5</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>K1—K5 五项事实</Text>
+            <Box style={{ width: 240, height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>每项事实只计一次，来源必须可追；窗口自首次交接开始至 W 结束。</Text>
+        </Box>
+
+        <Box style={{ width: 720, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ flex: 1, height: 130, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>经交接渠道实际收到</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', textAlign: 'center' }}>在记录台读到已提交的正文</Text>
+                </Box>
+                <Box style={{ width: 80, height: 130, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>AND</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 130, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', gap: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>正确复述或使用</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', textAlign: 'center' }}>能说清，也能用对</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 110, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>这些不计入分子</Text>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>正确猜测但没有交接来源；先自查、后收到者标「交接前已知」，不是新增到达。</Text>
+            </Box>
+
+            <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>分不清的情形单列</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>来源混合或无法判断时单独列出，分母仍是五项；交接未开始仍报 0/5 并标「未形成交接」。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

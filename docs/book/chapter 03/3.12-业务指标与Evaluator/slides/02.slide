@@ -1,0 +1,76 @@
+<Slide notes={`这一节要看清的东西摆出来，一共四块。
+第一块是分层：执行状态、行为质量、业务成效各回答一个问题。同一个 Run 可以是 COMPLETED，同时带着行为告警；也可以没有基础告警，但业务评价根本没执行。
+第二块是定口径：指标的分母、观察窗口和延迟算法都要在运行前写清楚。到达率的分母只有陈晨和许安两个人，窗口从 09:50 到第四十八步的十点三十七。
+第三块是看系统到底评了什么。行为质量页的告警需要解释，但不能删；资源和方法存在，也不等于每次运行都真的执行了评价。
+第四块是动手核对：页面、报告和导出三处要能对上，改动要用单因素对照来说明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12　业务指标、行为质量与 Evaluator</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', gap: 18 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 300 }}>这一节回答一个问题：一次跑完的实验，凭什么算有用。四块内容依次是分层、定口径、看系统评了什么，最后动手核对与对照。</Text>
+            <Box style={{ width: 300, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>未执行就是未执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>没检查过的内容，不能计入成功；没定义的指标，事后也补不回来。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>三层评价各自回答一个问题</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>执行状态、行为质量与业务成效分开报告；完成状态不自动推出业务通过。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先定义分母，再计时</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>到达率的分母是两名访客，窗口到 Step 48 的 10:37；传播延迟另设起止事实。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>行为质量页与 Evaluator 的执行</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>告警要解释但不能删；资源与方法存在，不等于每次 Run 都执行了评价。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 820, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>核对一致，再做对照</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>页面、报告与导出要能对上；三种统计单位不能相加，改动要用单因素对照。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

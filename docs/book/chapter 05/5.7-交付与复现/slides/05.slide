@@ -1,0 +1,57 @@
+<Slide notes={`「请帮我看看」不是充分的交付目标。
+
+更清楚的请求长这样：请确认两组只改变了咨询台的澄清策略，并检查 H1 到 H4 的判分是否能追到证据。这句话给了接收者三样东西——范围、对象和判据。它还隐含两条边界：不要求接收者运行模型，也不要求把公共作者资源全部导入自己的工作区。
+
+如果目标不是审阅而是继续实验，那就还要交代下一项工作。检查尚未投递的窗口回复，需要的是一条可恢复边界；调整一段 SOP，需要准备新草稿；从相同封存输入增加独立重复，需要创建新 Run。这三件事的前置材料完全不同，不能只写成「继续跑一下」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.1　先约定接收者要完成什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把「看看」改成可执行的请求</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'stretch', gap: 32 }}>
+
+            <Box style={{ width: 430, height: 190, background: '#F7F3E8', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不够的写法</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>「请帮我看看」</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>没有说清看什么、看到什么程度、要不要运行模型，接收者只能自己猜。</Text>
+            </Box>
+
+            <Box style={{ width: 690, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可执行的写法</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>请确认两组只改变了咨询台的澄清策略，并检查 H1—H4 的判分是否能追到证据。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>它不要求接收者运行模型，也不要求把所有公共作者资源导入自己的工作区。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 200, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>如果目标是继续实验，还要交代下一项工作</Text>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 26 }}>
+                <Box style={{ width: 4, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>检查尚未投递的窗口回复 —— 需要的是一条可恢复边界</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 26 }}>
+                <Box style={{ width: 4, height: 22, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>调整一段 SOP —— 需要准备一份新草稿</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 26 }}>
+                <Box style={{ width: 4, height: 22, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>从相同封存输入增加独立重复 —— 需要创建一个新 Run</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

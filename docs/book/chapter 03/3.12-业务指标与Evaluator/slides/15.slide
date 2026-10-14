@@ -1,0 +1,83 @@
+<Slide notes={`进入当前 Run 的行为质量页签，读的顺序是先总体、后明细。
+先看总体状态：有没有确定性问题，是 WARNING 还是干净。这一步只看结论，先不下判断。
+然后展开告警。每一条都会给出参与者或对象、所在的 Step、错误代码和具体证据；我们带着身份和 Step 一起看，而不是只看那一行文字。
+页面上还有定位 Step 的入口，点进去能看到当时发生了什么。但定位之后仍要确认当前 Run 没有切换，否则看到的可能是另一个 Run 的现场。
+这份明细的来源是确定性投影，从所有已提交的 StepResult 重建，不是某一次尝试的临时结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.4　当前行为质量页面包含什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先读总体状态，再展开告警</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 348, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', flexDirection: 'column', gap: 8 }}>
+            <Box style={{ width: 1120, height: 40, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>行为质量　Run 状态与告警明细</Text>
+                <Box style={{ width: 56, height: 26, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#FFFFFF' }}>示意</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 1120, height: 36, flexDirection: 'row', gap: 10, alignItems: 'center' }}>
+                <Box style={{ width: 120, height: 32, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>行为质量</Text>
+                </Box>
+                <Box style={{ width: 120, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>其他页签</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 1120, height: 40, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>总体状态</Text>
+                <Box style={{ width: 96, height: 26, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>WARNING</Text>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>有确定性问题，但不改变 Run 是否完成</Text>
+            </Box>
+            <Box style={{ width: 1120, height: 26, padding: '0 16px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 13, color: '#546779' }}>参与者 / 对象</Text></Box>
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#546779' }}>Step</Text></Box>
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 13, color: '#546779' }}>错误代码</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>具体证据</Text></Box>
+            </Box>
+            <Box style={{ width: 1120, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 13, color: '#20344B' }}>参与者 A</Text></Box>
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#20344B' }}>Step ···</Text></Box>
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>EMPTY_RETRIEVAL</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>首次检索没有历史记忆</Text></Box>
+            </Box>
+            <Box style={{ width: 1120, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 13, color: '#20344B' }}>参与者 B</Text></Box>
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#20344B' }}>Step ···</Text></Box>
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>NO_ACTION</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>本轮没有动作可提交</Text></Box>
+            </Box>
+            <Box style={{ width: 1120, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 140 }}><Text style={{ fontSize: 13, color: '#20344B' }}>对象 A</Text></Box>
+                <Box style={{ width: 90 }}><Text style={{ fontSize: 13, color: '#20344B' }}>Step ···</Text></Box>
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 13, color: '#CB6B28' }}>FALLBACK</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>主路径失败后走回退分支</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>明细从哪里来</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>从所有已提交 StepResult 中提取 Brain 与对象 Skill 的执行记录，按事实身份生成问题标识，覆盖多个 Attempt</Text>
+            </Box>
+            <Box style={{ width: 566, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>定位之后仍要确认</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>页面提供定位 Step 的入口；定位之后仍要确认当前 Run 没有切换，否则看到的可能是另一个现场</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

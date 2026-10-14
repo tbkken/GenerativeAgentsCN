@@ -1,0 +1,77 @@
+<Slide notes={`项目交付以后，真正的维护工作往往和直觉不一样。很多人一听到反馈，第一反应是回去把提示词再优化一遍，把所有问题都归到同一个原因上。这样做的直接后果，是实验条件、历史证据和真实的软件故障混在一起，谁也说不清哪一次结果对应哪一版输入。
+
+所以这一节要分开两件事：下一次要用的输入可以改，而这一次已经发生过的证据必须原样留下。
+
+服务大厅项目此刻还没有真实运行结果，所以我用明确标为假设的情形来演示方法：先根据证据提出变更，把影响交代给接手者，再在新的独立输入上验证。这里不提供一份已经改善效果的维护报告。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.9　迭代与维护</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>改变下一次输入，保留这一次证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 516, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>改变下一次输入{'\n'}保留这一次证据</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 516 }}>收到评阅意见时，先判断修改落在哪一层。改动可以进入下一轮，旧输入的原始结果不动。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 164, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>先写问题单</Text>
+                </Box>
+                <Box style={{ width: 164, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>再定修改层</Text>
+                </Box>
+                <Box style={{ width: 164, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>只改一处</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ width: 600, flexDirection: 'row', gap: 28 }}>
+
+                <Box style={{ width: 286, height: 316, background: '#ECF7F2', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 10 }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>这一次</Text>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>证据保留原样</Text>
+                    <Box style={{ width: 250, height: 44, background: '#FFFFFF', borderRadius: 8, padding: '0 12px', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>原始输入与导出</Text>
+                    </Box>
+                    <Box style={{ width: 250, height: 44, background: '#FFFFFF', borderRadius: 8, padding: '0 12px', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>已提交的对话事实</Text>
+                    </Box>
+                    <Box style={{ width: 250, height: 44, background: '#FFFFFF', borderRadius: 8, padding: '0 12px', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>运行与评分记录</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 250 }}>旧结果仍对应旧输入，不能写回覆盖。</Text>
+                </Box>
+
+                <Box style={{ width: 286, height: 316, background: '#EDF4FC', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 10 }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>下一次</Text>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>输入可以修改</Text>
+                    <Box style={{ width: 250, height: 44, background: '#FFFFFF', borderRadius: 8, padding: '0 12px', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>精确 Skill 文本</Text>
+                    </Box>
+                    <Box style={{ width: 250, height: 44, background: '#FFFFFF', borderRadius: 8, padding: '0 12px', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#20344B' }}>记忆检索条件</Text>
+                    </Box>
+                    <Box style={{ width: 250, height: 44, background: '#FFF4E6', borderRadius: 8, padding: '0 12px', justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>改完必须重新验证</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 250 }}>新结果不再属于原来那次对照。</Text>
+                </Box>
+
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 27</Text>
+    </Box>
+
+</Slide>

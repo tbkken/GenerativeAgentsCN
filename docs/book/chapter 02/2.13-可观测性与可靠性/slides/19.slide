@@ -1,0 +1,75 @@
+<Slide notes={`记录写完，还要决定哪些内容可以出去。
+
+本书的示例把 API 原始响应和业务产物分开保存，这样检查起来比较方便。但要意识到一件事：那些原始响应里可能既含输入资料，也含模型生成的内容。它们不是两份干净的数据，而是一份混着来龙去脉的原文。
+
+所以，共享一份运行记录之前，先确认材料本身适不适合共享。这一步常常被跳过，因为有人的直觉是「脱敏了就行」。其实脱敏是第二层，第一层是先判断这份材料能不能出去。
+
+好在教学场景下压力小一些：本章的材料都是虚构的，可以放心用来练习。真实项目就不是这样了，必须逐项确认。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.4　调试时从结果倒查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>保留什么，隐藏什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 450, background: '#ECF7F2', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>保留下来</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                    <Text style={{ width: 500, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>API 原始响应与业务产物分开保存，便于逐项检查</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                    <Text style={{ width: 500, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>失败样本连同原始结果一起留档，供改进前后对照</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                    <Text style={{ width: 500, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>模型返回名称、请求序号、工具参数与响应 ID</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                    <Text style={{ width: 500, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>材料摘要、提示版本、运行模式与结束状态</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, height: 450, background: '#FFF4E6', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>要控制住</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                    <Text style={{ width: 500, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>密钥、认证头与可复用令牌，任何产物里都不出现</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                    <Text style={{ width: 500, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>原始响应里可能含输入资料和生成内容，共享前先确认</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                    <Text style={{ width: 500, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>本地文件即使远端已脱敏，也可能留着完整内容</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                    <Text style={{ width: 500, fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>模型可见的简要理由不是内部推理的完整还原</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#EDF4FC', borderRadius: 10, padding: '12px 22px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>本章材料为教学虚构，可以用于练习；真实项目要先确定允许记录的字段和接收位置。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 34</Text>
+    </Box>
+
+</Slide>

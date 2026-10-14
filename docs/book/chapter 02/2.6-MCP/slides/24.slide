@@ -1,0 +1,57 @@
+<Slide notes={`这是远程接入的最小交互。运行之前要先有一个可访问的 MCP HTTPS 地址，三个环境变量也要准备好。
+
+构造工具描述时，把工具范围限定在查询这一项，审批设为每次询问。指令里明确写清楚：只查询教学预约，工具失败就说明失败，不要推测空闲时间。
+
+请求发出去之后，返回里可能出现审批请求项。要遍历输出，把这些审批项找出来，逐条打印服务标签、工具名和参数，让人看清楚将要发送什么，然后才决定批准还是拒绝。
+
+决定完之后，把审批结果连同审批请求的编号一起送回去，并带上上一次响应的编号继续这一段对话。
+
+如果一直是审批请求，说明没有推进。练习里给了一个上限，达到上限就保存记录并停下来，不要无限往下试。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.5　远程接入的最小交互</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>审批项与后续请求怎样接上</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 374, background: '#20344B', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>远程工具配置与审批续接</Text>
+            <Text style={{ fontFamily: 'Consolas', fontSize: 14, color: '#FFFFFF', lineHeight: 1.5 }}>{`tools = [{
+    "type": "mcp",
+    "server_label": "qinghe",
+    "server_url": os.environ["OPEN_DAY_MCP_URL"],
+    "allowed_tools": ["get_room_availability"],
+    "require_approval": "always",
+}]
+# 保留审批返回项，再针对真实请求 ID 作出决定
+approvals = [x for x in response.output
+             if x.type == "mcp_approval_request"]
+answers.append({"type": "mcp_approval_response",
+                "approval_request_id": item.id,
+                "approve": approved})`}</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 126, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 88, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>审批项 → 关联后续请求，是唯一表示真实时序的一条</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>把审批结果连同 approval_request_id 回传，并带上 previous_response_id 继续这一段对话。</Text>
+            </Box>
+            <Box style={{ width: 300, height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>上限 4 轮</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>达到上限就保存记录并停止</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 27</Text>
+    </Box>
+
+</Slide>

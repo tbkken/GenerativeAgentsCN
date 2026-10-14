@@ -1,0 +1,67 @@
+<Slide notes={`最后这个练习很实际：三种回应必须分开登记，不能合成一类。
+有人可能说「同意 D，但希望将来能交流」，这是同意加上一个额外期望，两件事都要写下来。有人可能说「对 D 仍保留」，这是保留，不是同意。还有人干脆没有回答，那就记未回答，不能算作默认接受。
+也不能把偏好和担忧混成错误事实。比如「更喜欢交流」是偏好，「担心太晚影响休息」是理由和担忧，它们和「说场地能容纳三十人」这种事实性错误不一样。
+再练一个改写：把何澄的「二十点后需要安静」写成「不愿参加」，就同时丢掉了时间范围和真实意愿——他的原话是不反对二十点以前的交谈或静默活动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.7　失败解释与练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习：三种回应不能合成一类</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ height: 380, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 452, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 452, height: 40, background: '#20344B', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 16px' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>发言记录　·　原样</Text>
+                    <Text style={{ fontSize: 13, color: '#B5C7D8' }}>示意</Text>
+                </Box>
+                <Box style={{ height: 100, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>「同意 D，但希望将来能交流」</Text>
+                </Box>
+                <Box style={{ height: 100, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>「对 D 仍保留」</Text>
+                </Box>
+                <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 56, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>（未回答）</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>分开登记的三条要求</Text>
+                <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>同意与附带期望分两处写，不能只留一句「同意」</Text>
+                </Box>
+                <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>未回答记为未回应，不推断为默认接受</Text>
+                </Box>
+                <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>偏好与担忧不判为错误事实，事实性错误另算一类</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>把何澄「20 点后需要安静」写成「不愿参加」，同时丢掉了时间范围与真实意愿；他的原话是不反对 20 点前的交谈或静默活动。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商　·　发言记录为示意</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

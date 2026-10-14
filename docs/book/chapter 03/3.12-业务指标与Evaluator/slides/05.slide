@@ -1,0 +1,57 @@
+<Slide notes={`把三个层次拆成提问和证据两栏，就一目了然了。
+执行状态问的是：请求的步骤有没有完成，在哪里中断。它拿的证据是 Run 状态、Attempt 和已提交边界。
+确定性诊断与 Brain 合规问的是：过程中有没有出现空检索、无动作、回退、重复调用，或者偏离了 SOP。它拿的是已提交效果、MCP 调用、规则，以及必要的专门评价。
+业务评价问的是：通知是不是更正了、信息是不是传达出去了、参与者是不是按新安排行动。它拿的是对象变化、会话内容、记忆更新、位移和活动事实。
+我想强调的是，这三层可以互相解释，但不能互相替代。还有一个容易犯的错误：没跑的评价就保持未执行，不能顺手记成通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.1　三层评价各回答一个问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三层各自看什么、拿什么证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 30 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 206 }}><Text style={{ fontSize: 14, color: '#546779' }}>层次</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>核心问题</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 14, color: '#546779' }}>主要证据</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 118, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 206 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>执行状态</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>请求的步骤是否完成，在哪里中断</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>Run 状态、Attempt、已提交边界</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 206 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>确定性诊断与 Brain 合规</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>是否出现空检索、无动作、回退、重复调用或偏离 SOP</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>已提交效果、MCP 调用、规则与必要的专门评价</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 118, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+            <Box style={{ width: 206 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>业务评价</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>通知是否更正、信息是否传达、参与者是否按新安排行动</Text></Box>
+            <Box style={{ width: 376 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>对象变化、会话、记忆更新、位移与活动事实</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 64, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', flex: 1, lineHeight: 1.6 }}>三层互相解释，但不能互相替代；未执行的评价保持未执行，也不能被写成通过。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

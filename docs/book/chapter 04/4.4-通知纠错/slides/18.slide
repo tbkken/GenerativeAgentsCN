@@ -1,0 +1,68 @@
+<Slide notes={`相关动作只有三类，我把边界说清楚。
+
+第一类，以正式会址为目标的已提交 MOVE。第二类，在会址等候，或者参加会址对应的 ACT。第三类，向别人断言当前正式会址的 SPEAK。这三类动作才会进入分母。
+
+计数规则是：一次 MOVE 计一个动作，不按走了多少格去扩分母。否则路程长的角色天然就占了更大的权重。
+
+那什么不算过期？书稿里列了五种：普通问句、导航查询、拿遗落物、途经杏厅，以及在正式更正之前遵照原通知的行动，都不算过期。途经杏厅尤其要注意，他只是路过，不等于他认定会址还在杏厅。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.5　按个人接收边界计数</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>哪些动作算过期，哪些不算</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>相关动作只含三类；其他行为一律不进分母。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 373, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>移</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>以正式会址为目标的 MOVE</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>已提交的移动动作。一次 MOVE 只计一个动作，不按走了多少格去扩分母。</Text>
+            </Box>
+            <Box style={{ width: 373, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>参</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>在会址等候或参加 ACT</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>在会址停留等候，以及提交与本次活动对应的 ACT 动作。</Text>
+            </Box>
+            <Box style={{ width: 374, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#FFFFFF' }}>言</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>断言正式会址的 SPEAK</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>向别人断言「当前正式会址是哪里」。若说的是旧会址，即计入过期。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 62, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>一次 MOVE 计一个动作，不按格扩分母</Text>
+        </Box>
+
+        <Box style={{ height: 132, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 8, padding: '0 22px' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>不算过期的五种情形</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>普通问句、导航查询、拿遗落物、途经杏厅、更正前遵照原通知的行动。途经杏厅只是路过，不等于认定会址仍是杏厅。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

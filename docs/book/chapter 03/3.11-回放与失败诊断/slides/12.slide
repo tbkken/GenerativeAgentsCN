@@ -1,0 +1,70 @@
+<Slide notes={`时间线上的标记不是装饰，它们解决的是「这件事属于哪一类」的问题。
+
+检查点代表一个完整状态边界，从它开始回放，页面才可能带上此前已经提交的状态。对话标记对应的是一段会话和其中的消息轮次。事件标记对应对象状态的变化。Attempt 边界则把重跑和恢复分成不同段落，它提醒我们：同样的一步，在不同尝试里是两件事。
+
+用标记的时候要有一个意识：它只说明类别，不说明质量。看到一个事件标记，不等于这个事件一定正确，也不等于画面一定同步。它只是告诉我该去哪里找对应的事实。
+
+所以先用标记定位，再用右侧这些事实去核对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.3　在页面中沿一条事件检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>标记用来定位，不用来判断</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先把事件落到某一步</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 400 }}>时间线标记会区分检查点、对话、事件和 Attempt 边界。它们回答的是「属于哪一类」，不回答「对不对」。</Text>
+            <Box style={{ width: 400, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>类别不等于结论</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>标记只告诉我该去哪里找对应的事实，画面和标记都不能互相作证。</Text>
+            </Box>
+            <Box style={{ width: 400, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>一次只追一件事</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同时追多个对象，很容易把两个 Step 的证据混在一起。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 728, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ width: 728, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>检查点</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>完整状态边界；从中段起播时，页面应带上此前已提交的状态。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 728, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>对话</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>会话与消息轮次；用于核对参与者、实际消息和回复的到达。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 728, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>事件</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>对象状态变化；用于核对对象身份与结构化前后值。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 728, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>Attempt 边界</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>重跑与恢复的分段；同样一步在不同尝试里是两件事。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 27</Text>
+    </Box>
+
+</Slide>

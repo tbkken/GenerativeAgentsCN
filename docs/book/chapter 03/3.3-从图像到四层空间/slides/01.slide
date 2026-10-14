@@ -1,0 +1,94 @@
+<Slide notes={`一张画着房间和门的图片，看起来已经很完整，但它还不是仿真地图。人可以从图上猜出哪里能走、哪个物体是服务台；系统却需要明确的语义、几何范围与碰撞配置。
+
+所以把青禾的教学场景分成三个可以分别核对的部分：画面长什么样，地点叫什么，角色实际可以走到哪里。
+
+还要说明：这里的尺寸与位置是本章的新设计，尚未成为已运行实验；全部素材和待验收项以地图资料为准，制作过程不修改晨间或穿门阅读的历史地图。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.3</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>从图像到{'\n'}四层空间</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>一张画着房间和门的图片，尚未构成仿真地图。系统需要明确的语义、几何范围与碰撞配置；画面、名称与可走，要分别核对。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 122, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>尺度与层级</Text>
+                </Box>
+                <Box style={{ width: 122, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>语义地址</Text>
+                </Box>
+                <Box style={{ width: 122, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>通路与门洞</Text>
+                </Box>
+                <Box style={{ width: 122, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>出生装配</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 560, height: 236, background: '#F7F3E8', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>一张图片（示意）</Text>
+                <Box style={{ width: 528, height: 148, background: '#FFFFFF', borderRadius: 8, padding: 10, flexDirection: 'column', gap: 6 }}>
+                    <Box style={{ flexDirection: 'row', gap: 10 }}>
+                        <Box style={{ width: 160, height: 62, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#276FBF' }}>阅读室</Text>
+                        </Box>
+                        <Box style={{ width: 140, height: 62, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#276FBF' }}>手作室</Text>
+                        </Box>
+                        <Box style={{ width: 160, height: 62, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, color: '#276FBF' }}>交流室</Text>
+                        </Box>
+                    </Box>
+                    <Box style={{ flexDirection: 'row' }}>
+                        <Box style={{ width: 186, height: 10, background: '#B5C7D8' }} />
+                        <Box style={{ width: 28, height: 10, background: '#CB6B28' }} />
+                        <Box style={{ width: 144, height: 10, background: '#B5C7D8' }} />
+                        <Box style={{ width: 28, height: 10, background: '#CB6B28' }} />
+                        <Box style={{ width: 114, height: 10, background: '#B5C7D8' }} />
+                    </Box>
+                    <Box style={{ width: 500, height: 44, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>公共大厅</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>橙色缺口＝「画出的门」，不等于可走</Text>
+            </Box>
+
+            <Box style={{ height: 36, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>系统需要</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'column', gap: 6 }}>
+                <Box style={{ width: 560, height: 44, background: '#276FBF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>World　青禾社区</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>覆盖整张 32×24 地图</Text>
+                </Box>
+                <Box style={{ width: 560, height: 44, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Sector　学习中心</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Text style={{ fontSize: 13, color: '#546779' }}>同样覆盖整张地图</Text>
+                </Box>
+                <Box style={{ width: 560, height: 44, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>Arena　阅读室 · 手作室 · 交流室 · 公共大厅</Text>
+                </Box>
+                <Box style={{ width: 560, height: 44, background: '#26816B', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>Game Object　公告栏 · 服务台</Text>
+                    <Box style={{ flex: 1 }} />
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>绑定对象根 Skill</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

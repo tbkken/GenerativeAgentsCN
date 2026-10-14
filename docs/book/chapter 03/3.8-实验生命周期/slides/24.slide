@@ -1,0 +1,39 @@
+<Slide notes={`把这一节收一收，记住三件事。
+
+创建实验得到的是一份独立材料：选中的地图、人物、Brain 和模型配置连同依赖整份复制进来，公共资源以后再改，也不会传播到这份副本。要改，就复制成一份新实验。
+
+预检检查的是材料和依赖：空间、附件、装配和 Skill 闭包。它不证明角色穿过了门、完成了交互或者收到了回复，这些行为证据要留给运行验收。
+
+封存之后内容不可再改。实验只有草稿和封存两个状态，完成还是失败属于运行，是另一条信息。
+
+带上这三件事，下一节我们去看启动之后的状态、三种时间口径和实际发生的调用与费用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.8　草稿、副本、预检与封存</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>独立副本</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>创建复制的是整份闭包；公共资源的修改不再传播到已有实验。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>预检只查材料</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>材料与依赖齐全，不等于角色真的穿过了门。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>封存不可改</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>DRAFT 可以改，SEALED 不能改；运行状态是另一条信息。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：启动、观察与估算 —— 识别状态、三种时间与实际调用</Text>
+
+    </Box>
+
+</Slide>

@@ -1,0 +1,67 @@
+<Slide notes={`我们从第二章的方案继续往下走。那份筹备方案写在纸上，写着十点去手作室、写着通知来访者。但纸上的字不等于世界里真的发生了：没有人真的走到手作室，来访者也没有真的听到消息。
+
+这一章要做的，就是让有位置、有记忆、有不同目标的角色，在同一个世界里行动，再拿真实发生的事来评价结果。
+
+主题还是青禾社区学习中心的开放日，场所与活动数据都延续第二章。新的学习目标是四件事：观察行动、观察信息怎么传播、观察对象给出什么反馈、观察运行中真实留下的记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.1</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>把筹备方案放进{'\n'}一个会发生变化的世界</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>第二章的方案写在纸上。这一章让有位置、有记忆、有不同目标的角色在同一个世界里行动，再按真实发生的事情评价结果。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>真实渠道</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>信息边界</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>观察窗口</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>事实取证</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 560, height: 128, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>原排期——纸面安排</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>09:50 晨间阅读　·　10:00 手作体验{'\n'}10:30 待定　·　计划人数 24 / 10 / 16</Text>
+            </Box>
+            <Box style={{ width: 560, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 212, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>世界里实际发生的</Text>
+                <Box style={{ flexDirection: 'row', gap: 8 }}>
+                    <Box style={{ width: 120, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>林岚</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>周宁</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>陈晨</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>许安</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 520, height: 62, background: '#FFF4E6', borderRadius: 8, padding: '8px 14px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>10:00 手作室已有预约</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>原消息需要经真实渠道修正，而不是被谁提前知道</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

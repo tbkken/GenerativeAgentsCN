@@ -1,0 +1,102 @@
+<Slide notes={`四个人物选入实验后，进入该实验的「智能体」，编辑「初始位置与空间」，点击「选择空间」。当前选择器会取所选场所或对象中心附近的可走格，并显示自动坐标，X、Y 是只读的。
+
+四个人分别配在公共大厅、手作室、交流室和阅读室。这是教学初始选择，本章不教读者绕开页面填入预定坐标——实际坐标以选择器结果为准。
+
+保存后重开，核对实际坐标、层级地址和可用空间；对象的私有状态不进入人物的初始知识。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.5　人物图片与出生装配一起检查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个人物的出生装配</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 36, justifyContent: 'center' }}>
+            <Box style={{ width: 260, height: 108, background: '#EDF4FC', borderRadius: 10, padding: 14, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>林岚</Text>
+                <Box style={{ width: 118, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>公共大厅</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 260, height: 108, background: '#EDF4FC', borderRadius: 10, padding: 14, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>周宁</Text>
+                <Box style={{ width: 118, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>手作室</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 260, height: 108, background: '#EDF4FC', borderRadius: 10, padding: 14, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>陈晨</Text>
+                <Box style={{ width: 118, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>交流室</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 260, height: 108, background: '#EDF4FC', borderRadius: 10, padding: 14, flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>许安</Text>
+                <Box style={{ width: 118, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>阅读室</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 22, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 860, height: 122, background: '#EDF4FC', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 72, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>实验</Text>
+                    </Box>
+                    <Box style={{ width: 32, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 88, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>智能体</Text>
+                    </Box>
+                    <Box style={{ width: 32, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 148, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>初始位置与空间</Text>
+                    </Box>
+                    <Box style={{ width: 32, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 104, height: 32, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>选择空间</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>空间选择器：取所选场所或对象中心附近的可走格，显示自动坐标；X／Y 只读。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 20, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text>
+        </Box>
+
+        <Box style={{ height: 62, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>保存后重开：核对实际坐标、层级地址、可用空间</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, justifyContent: 'center' }}>
+            <Box style={{ width: 420, height: 48, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>教学初始选择，不硬写出生坐标</Text>
+            </Box>
+            <Box style={{ width: 420, height: 48, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>对象私有状态不进入初始知识</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 25</Text>
+    </Box>
+
+</Slide>

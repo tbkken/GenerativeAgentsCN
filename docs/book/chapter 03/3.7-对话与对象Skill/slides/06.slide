@@ -1,0 +1,51 @@
+<Slide notes={`有一个东西特别容易被当成「听到了」，就是会话摘要。
+
+active_conversations 给的是会话身份、消息计数、开放状态这一类摘要。它能告诉你存在这么一个会话，参与范围大概是谁，对话还在不在继续。
+
+但它不含完整消息。它不会告诉你周宁到底说了哪句话，也不会告诉你林岚答了什么。所以不能从「会话存在」直接推断「对方已经理解」。
+
+要判断内容，必须另查实际返回的现场行动、事件，以及已经提交的会话事实。这三处才是可以引用的证据。
+
+记住这条：会话存在，和对方真的听懂，是两件事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.1　一次 SPEAK 连接两名 Agent</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>会话摘要里有什么、没有什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>active_conversations 提供的是会话身份、计数与开放状态这类摘要。它说明「有这么一个会话」，并不说明「他们到底说了什么」。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 288, background: '#EDF4FC', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>摘要告诉你什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>·　会话身份与参与范围，以真实返回值为准{'\n'}·　当前消息计数{'\n'}·　会话是否仍然开放</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>用来确认会话存在、会话范围与会话是否还在继续。</Text>
+            </Box>
+
+            <Box style={{ width: 566, height: 288, background: '#FFF4E6', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>它不告诉你什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>·　不含完整消息{'\n'}·　不能从会话存在推断对方已经理解</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>发言内容要另查实际返回的现场行动、事件与已提交的会话事实。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>会话存在　≠　对方已经理解；内容要回到实际提交的事实里去找</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 31</Text>
+    </Box>
+
+</Slide>

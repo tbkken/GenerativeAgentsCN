@@ -1,0 +1,92 @@
+<Slide notes={`先看一条 Trace 内部怎么组织。
+
+最外面是 Session，它把同一项筹备工作的多次尝试放在一起。新尝试不会覆盖旧产物，它也不会自动把历史注入模型。
+
+里面是 Trace，一次尝试对应一条，用 trace_id 和本地运行记录关联。
+
+Trace 下面是根操作 qinghe-schedule-attempt，再挂四个子操作：读取材料、模型请求、业务校验、保存产物。一般处理用 span，模型调用用 generation。
+
+最后是 Score，business_valid 用 trace_id 关联到这次 Trace，它不是时间轴上的一个步骤。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.7　用 Langfuse 观察一次完整排期任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一条 Trace 内部的组织</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 900, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Session：同一项筹备工作　qinghe-practice-01</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 300, height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 68, background: '#EDF4FC', borderRadius: 8, padding: '10px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Trace A：一次尝试</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>用 trace_id 关联本地 execution.json</Text>
+            </Box>
+            <Box style={{ width: 564, height: 68, background: '#F4F7FA', borderRadius: 8, padding: '10px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>Trace B：另一次尝试</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>新的 trace_id 与输出目录，不覆盖旧产物</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 564, height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 588 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 700, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>根 Observation　qinghe-schedule-attempt</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 700, height: 22, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 273, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>span</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>读取材料</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>load-materials</Text>
+            </Box>
+            <Box style={{ width: 273, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>generation</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>模型请求</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>generate-open-day-schedule</Text>
+            </Box>
+            <Box style={{ width: 273, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>span</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>业务校验</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>validate-schedule</Text>
+            </Box>
+            <Box style={{ width: 273, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>span</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>保存产物</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>save-artifacts</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#ECF7F2', borderRadius: 8, padding: '12px 22px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#26816B' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>Score：business_valid（BOOLEAN）按 trace_id 关联到 Trace A，是确定性校验的结论，不是时间轴上的步骤。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>29 / 34</Text>
+    </Box>
+
+</Slide>

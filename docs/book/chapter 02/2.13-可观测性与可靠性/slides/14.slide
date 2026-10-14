@@ -1,0 +1,84 @@
+<Slide notes={`用一组具体的数字走一遍，会看得更清楚。
+
+假设做了十次尝试。十次的输出都符合指定的 Schema，所以格式通过率是一百。除了预约这一项，其他硬约束也都通过了。在这十次里，七次避开了预约冲突，三次撞上了，所以业务通过率是百分之七十。
+
+接下来是关键：如果其中还有两次没有生成最终的说明文件，那么按「排期和说明均齐全」这个完成定义，任务成功率最多只能是百分之七十，甚至还可能更低。
+
+三个数字，三个不同的分母，说的完全不是一件事。它们放在一起才有意义：格式都对，业务七成，交付更少。这就是为什么不能只报一个「通过率」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.3　指标与分母要对应</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>十次尝试，三个数字</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 560, height: 482, background: '#F4F7FA', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>十次尝试里发生的事</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 28, height: 28, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>十次输出都符合指定 Schema</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 28, height: 28, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>除预约外，全部硬约束都通过</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 28, height: 28, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>七次避开预约冲突，三次发生冲突</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 28, height: 28, borderRadius: 6, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5 }}>其中两次没有生成最终说明文件</Text>
+            </Box>
+            <Box style={{ width: 512, height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>三个数字各有各的分母，说的不是同一件事。</Text>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 560, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Box style={{ width: 272 }}><Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>100%</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>格式通过率</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>十次输出全部可解析</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Box style={{ width: 272 }}><Text style={{ fontSize: 88, fontWeight: 'bold', color: '#20344B', lineHeight: 1.0 }}>70%</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>业务通过率</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>十次里七次避开预约冲突</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+                <Box style={{ width: 272 }}><Text style={{ fontSize: 88, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>≤70%</Text></Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>任务成功率</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>两次没交说明文件，还会更低</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 34</Text>
+    </Box>
+
+</Slide>

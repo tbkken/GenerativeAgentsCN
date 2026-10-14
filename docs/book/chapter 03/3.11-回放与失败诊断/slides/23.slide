@@ -1,0 +1,53 @@
+<Slide notes={`用一句话说明什么叫做「可复核」。像「许安没有到达」这样的描述太含糊，它没有 Step、没有路径、没有画面，别人拿到这句话什么也做不了。
+
+同样的现象应该写成：在实际的某一步，导航返回的目标是什么；本步执行路径的终点在哪里，剩余路径有多少；画面当时显示的是什么。这些空位都留着，采集之后再填真实值。
+
+如果问题出在移动上，还要补感知范围、导航输入与输出、实际路径和最终坐标。如果出在对象上，还要补对象键、请求 ID、状态前后值和接收者是谁。
+
+最后一条纪律：没有证据就写「待复现」。为了读起来流畅而先编一个步骤号，会让整份记录失去价值。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.6　用最小证据包描述异常</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把含糊描述改成可复核记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>反例</Text>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>「许安没有到达」</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>没有 Step、没有路径、没有画面，别人无法复核。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 34, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>改写：留下空位，采集后填真实值</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.75 }}>「在实际 Step ……，导航返回目标 ……；本步执行路径终点 ……，剩余路径 ……；画面显示 ……。」</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>按问题类型再补充</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>移动问题：感知范围、导航输入与输出、实际路径与最终坐标。对象问题：对象键、请求 ID、状态前后值与接收者。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>没有证据时标「待复现」，不能为了叙事连贯补出一个步骤号。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,47 @@
+<Slide notes={`最后一步，是把结论和材料对上。
+
+前面定了问题、资料和计数方式，接下来要给每一个主要判断配一个证据入口。说到抵达和绕行，就要拿已执行的移动和实际坐标作证；说到认识是否更正，就要有来源消息、有效记忆和真实检索；说到调用代价，就要翻出同一个 Run 里全部 Attempt 的记录。
+
+没有入口的判断，哪怕听起来再合理，也只能写在讨论里，不能写进结果。
+
+这一节最后还要把教案落实成可以独立复用的作者材料，让下一个人拿到就能装配。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　4.0.3 让每个结论都有证据入口</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>让每个结论都有证据入口</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>没有证据入口的判断，只能进讨论，不能进结果；教案也要落实成别人拿得走的作者材料。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 12, marginTop: 10 }}>
+            <Box style={{ width: 170, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>抵达、绕行</Text>
+            </Box>
+            <Box style={{ width: 170, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>咨询正确</Text>
+            </Box>
+            <Box style={{ width: 170, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>认识更正</Text>
+            </Box>
+            <Box style={{ width: 170, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>共同结论</Text>
+            </Box>
+            <Box style={{ width: 170, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>对象变化</Text>
+            </Box>
+            <Box style={{ width: 170, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>调用代价</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 20</Text>
+    </Box>
+
+</Slide>

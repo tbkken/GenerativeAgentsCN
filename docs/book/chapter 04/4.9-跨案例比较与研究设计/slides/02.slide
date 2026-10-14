@@ -1,0 +1,82 @@
+<Slide notes={`这一节的四个动作是层层递进的，我按顺序说。
+
+第一，把事实接成结果：一次 Run 里所有 Attempt 都要收齐，每项预登记任务单独占一行，闭环要逐条核对，不能拿一句描述当答复。
+
+第二，先定分母再读百分比：每个 Run 同权和每项任务同权，算出来的是两个不同的数。
+
+第三，代价要两面一起报：总量高和单位成功代价低可以同时成立，只报一个会误导。
+
+第四，把上面这些写成别人能判分的一页计划。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B', lineHeight: 1.3 }}>四个递进的{'\n'}比较动作</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 340 }}>先把事实接成结果，再定分母与权重，然后一起报总量与单位代价，最后写成一页能被别人判分的研究计划。</Text>
+        </Box>
+
+        <Box style={{ width: 776, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 776, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 56, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>①</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>把事实接成结果</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>按 Run 收齐 Attempt，每项预登记任务一行，闭环逐条核对</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 776, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 56, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>②</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>先定分母，再读百分比</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>每 Run 同权与每项任务同权，是两道不同的问题</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 776, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 56, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>③</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>总量与单位代价一起报</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>分子含失败、重试与未闭环任务；调用数不等于费用</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 776, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+                <Box style={{ width: 56, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>④</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>写成一页能被判分的计划</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>独立重复、统一尺度、六个问题、全部结果与局限</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 25</Text>
+    </Box>
+
+</Slide>

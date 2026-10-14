@@ -1,0 +1,56 @@
+<Slide notes={`先说信息边界，这是整个实验能不能成立的前提。
+
+四位访客各自的兴趣不同：安禾要辨认城市常见鸟类的外形，罗宁想了解鸟类活动的记录方法，姚知比较传统纸艺纹样，施远要了解纸艺制作步骤。他们自己只知道自己的兴趣，不知道哪一厅对应哪一类主题。
+
+公共名称里我只写甲厅和乙厅，绝不提前写成鸟类厅或者纸艺厅。原因很直接：一旦名称泄漏了主题，人物不用看见导览牌也能猜对答案，后面所有关于发现的测量就都失去意义。
+
+真实介绍只能来自两处：导览牌按包内主题表答复，介绍对象只解释自身主题。评分者手里的答案留给教师判分，不进入人物的共同上下文。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>①　　4.3.1　兴趣表给谁看</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>访客只有自己的兴趣</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 980 }}>公共名称只写甲厅、乙厅，不提前泄漏主题；真实介绍来自导览牌与介绍对象，评分者答案留给教师。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+            <Box style={{ width: 196, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>辨认常见鸟类外形</Text>
+            </Box>
+            <Box style={{ width: 196, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>了解活动记录方法</Text>
+            </Box>
+            <Box style={{ width: 196, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>比较传统纸艺纹样</Text>
+            </Box>
+            <Box style={{ width: 196, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>了解纸艺制作步骤</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 44, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 22, color: '#546779' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+            <Box style={{ width: 396, height: 72, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>甲厅</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>安禾 · 罗宁——四项兴趣里的前两项</Text>
+            </Box>
+            <Box style={{ width: 396, height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>乙厅</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>姚知 · 施远——四项兴趣里的后两项</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

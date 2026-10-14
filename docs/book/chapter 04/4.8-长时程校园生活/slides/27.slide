@@ -1,0 +1,39 @@
+<Slide notes={`把这一节收一收，记住三件事。
+
+第一，身份先分清。一次性任务、周期活动、自愿承诺，它们对“结束”和“重复”的定义完全不同；承诺还要先有人明确接受，邀请本身不算数。
+
+第二，证据链跨日不能断。生成一份总结不等于它影响了决策，要看到整理之后的真实检索与使用，链条才算接上；日期和偏移也不能随手缩写成有歧义的“八点半”。
+
+第三，预算不因为跑得久就放宽。停下来的条件是开跑之前定好的，两组一致，达到阈值就记边界、再评估，而不是事后挑一个好看的口径。
+
+下一节我们把跨案例的比率、未完成任务和调用代价放在一起比较，看看哪些结论能站得住、哪些只能留在限定条件里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>4.8　长时程校园生活</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>身份先分清</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>一次性、周期、承诺各有各的“结束”；承诺要先有明确接受。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>证据链跨日不断</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>生成总结不算数，要看到整理之后的真实检索与使用。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>预算不因跑得久放宽</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>阈值事前定好、两组一致，达到就记边界再评估。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：跨案例比较 —— 汇总比率、未完成任务与调用代价</Text>
+
+    </Box>
+
+</Slide>

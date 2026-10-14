@@ -1,0 +1,45 @@
+<Slide notes={`题目准备好了，接下来要固定比较的条件。这一条做不好，前面两步都白费。
+
+原因很简单：如果两个候选拿到的材料不一样、提示不一样、可用的工具不一样、允许的尝试次数也不一样，那么最后分数的差异，就说不清是谁带来的。可能是模型本身的差别，也可能是条件松紧的差别。
+
+所以我要固定的东西有一串。材料和提示要一样，可用的工具要一样，输出的限制要一样，采样设置要一样，连每项任务允许尝试几次都要一样。
+
+对于多轮任务，还要规定每项评价都从相同的初始状态开始。不能让后一项任务无意中继承了前一项的答案，也不能让第二个候选额外看到第一个候选的错误分析。
+
+需要持续记忆的任务，要明确哪些信息应当保留，哪些应当隔离。这些看起来很琐碎，但它们决定了后面的数字能不能被解释。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 26 }}>
+
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>1.6.3　第三步</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>固定比较条件</Text>
+        <Text style={{ fontSize: 17, color: '#546779' }}>条件不固定，差异就说不清是谁带来的</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24, paddingTop: 12 }}>
+
+            <Box style={{ width: 320, height: 110, background: '#EDF4FC', borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>材料与提示</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>同一份输入、同一版提示</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 110, background: '#EDF4FC', borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>工具与设置</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可用工具、输出限制、采样设置</Text>
+            </Box>
+
+            <Box style={{ width: 320, height: 110, background: '#ECF7F2', borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>尝试与初态</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>允许尝试次数、每项同一初始状态</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 27</Text>
+    </Box>
+
+</Slide>

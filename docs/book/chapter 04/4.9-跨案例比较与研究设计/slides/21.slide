@@ -1,0 +1,61 @@
+<Slide notes={`在真正建实验之前，有一个动作花的力气最少、收益最大：请另一个人按你的评分规则，先判一段现成的示例。
+
+他判得下来，说明量表清楚，可以开工；判不下来，就先改量表，别急着跑实验。很多时候不是设计得不好，而是规则写得含糊，两个人看同一段记录会得出不同结论。
+
+还有一种情况要提前识别：如果你的问题需要真实库存锁、动态通路，或者物理故障会在场景里传播，这些能力在当前条件里可能并不具备。
+
+这时不要硬撑，缩小问题，或者把它列成系统需求单独处理。
+
+最后一句：把 Skill 的名字写进研究计划，不等于这个依赖已经具备。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.8　判分示例与能力边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先让别人判一段示例</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 240, background: '#F4F7FA', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>创建实验之前</Text>
+
+            <Box style={{ width: 1104, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>请另一读者，按规则判一段示例</Text>
+            </Box>
+
+            <Box style={{ width: 1104, flexDirection: 'row', gap: 24 }}>
+                <Box style={{ width: 540, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#26816B' }}>能判：实验可以开工</Text>
+                </Box>
+                <Box style={{ width: 540, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#CB6B28' }}>不能判：先改量表</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>Skill 写名称不构成实现</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>把 Skill 名字写进计划，不等于依赖、工具与身份条件已经具备；名称只是名称。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>需要真实系统的能力，先缩小问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>需要真实库存锁、动态通路或物理故障传播时，缩小问题，或单独列为系统需求。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 25</Text>
+    </Box>
+
+</Slide>

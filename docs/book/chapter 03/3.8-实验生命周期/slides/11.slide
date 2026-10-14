@@ -1,0 +1,41 @@
+<Slide notes={`这一块讲的是执行之前的检查。要点很清楚：预检回答的是材料和依赖这两件事。
+
+点击执行实验之后，当前实现会先等待草稿保存，再打开执行对话框，取得预检结果和规模估算。打开对话框和点击确认执行是两个不同阶段，仅仅看一眼预检结果，并不证明已经创建了运行。
+
+预检要检查的是空间、附件、装配和 Skill 闭包四类材料。它们能说明这次实验是不是一份可以运行的材料。
+
+但它们不能说明角色已经穿过了门、看到了公告、收到了回复。路径检查只能证明地图上两个点可达，角色有没有实际抵达，要读运行中的移动事实；Skill 文本写着更新公告，也代替不了真实的公告状态更新和它的回放。这些证据要留给后续的运行验收。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3　　3.8.3　预检检查材料，观察检查行为</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>预检检查材料，不检查行为</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 920 }}>四类材料与依赖在一次校验里过一遍；角色有没有真的走过去，属于运行时的事实，不在这道检查的范围里。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 264, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>空间</Text>
+            </Box>
+            <Box style={{ width: 264, height: 64, background: '#EDF4FC', borderRadius: 8, marginLeft: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>附件</Text>
+            </Box>
+            <Box style={{ width: 264, height: 64, background: '#EDF4FC', borderRadius: 8, marginLeft: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>装配</Text>
+            </Box>
+            <Box style={{ width: 264, height: 64, background: '#ECF7F2', borderRadius: 8, marginLeft: 16, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>Skill 闭包</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

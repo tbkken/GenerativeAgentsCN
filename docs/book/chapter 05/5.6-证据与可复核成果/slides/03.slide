@@ -1,0 +1,53 @@
+<Slide notes={`先处理一件看起来琐碎、实际上决定成败的事：原始文件要和分析工作分开存放。
+
+我见过不少交付材料，作者把下载的结果包解压出来，顺手把里面几个文件改了名字、删掉几个字段，再打包成一个「整理版」。这样做在当下很省事，可是等到要核对「这份材料是不是当时那一份」的时候，已经没有任何办法证明。
+
+原始导出保留原名和字节内容，是最终依据；解压出来的副本只用来只读查阅；清洗、筛选、标注、判分这些派生材料必须以原始文件为参照，并写清它指向哪里。层次分清楚，字节还认得出来，后面所有核对才有立足点。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.6　证据与可复核成果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ①</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>①</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先把原始文件和分析工作分开</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>材料分层不是整理癖。原始导出一旦被重新打包或补写字段，它就不再能证明自己是当时那一份。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 340, height: 96, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>原始导出</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>原名与字节内容，只读留档</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 96, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>解压副本</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>只读查阅，不反向写回</Text>
+            </Box>
+            <Box style={{ width: 44, height: 96, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 96, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>派生材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>清洗与判分，指回原始位置</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

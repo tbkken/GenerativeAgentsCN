@@ -1,0 +1,48 @@
+<Slide notes={`接下来要管三件容易被糊在一起的东西：资料放在谁手里，两组的差异到底差在哪，以及计数的时候我数的究竟是什么。
+
+资料分不清，角色就可能在没有任何真实交流的情况下说出正确答案，那整个实验就什么都没证明。差异没有留档，两组之间就不止差一处，结果也就归因不到任何东西上。计数单位定错，算出来的比率再精确也没有意义。
+
+这三件事都有一个共同点：它们都在跑之前完成。跑起来之后改不动，一旦改了，就必须重新登记正式比较的范围。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>②　4.0.2 把资料、差异和计数单位管住</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把资料、差异和计数单位管住</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>资料放谁手里、两组差在哪、数的是什么——都在跑之前定好，跑起来就改不动了。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 14, marginTop: 10 }}>
+
+            <Box style={{ width: 420, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>开始跑之前，把三件事定下来</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 360, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#276FBF' }}>资料放谁手里</Text>
+                </Box>
+                <Box style={{ width: 360, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#26816B' }}>两组差在哪</Text>
+                </Box>
+                <Box style={{ width: 360, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#CB6B28' }}>数的是什么</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 20</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,77 @@
+<Slide notes={`光看不行，要动手走一遍。四步，每步都有要观察的东西。
+
+第一步，在 Ask 里引用活动材料，问完成筹备还需要哪些材料，然后检查它有没有遗漏预约事实。这一步看的是提问能不能暴露缺口。
+
+第二步，切换到 Plan，要求它给出输入、步骤、产物和验收条件，并且把「校验通过后才能交付」这句话写进计划。这一步看的是方案的验收标准清不清楚。
+
+第三步，审阅之后开始执行，让它读取材料、生成候选，再运行校验器。这一步要盯的是真实的工具调用和文件变化，不是它说了什么。
+
+第四步，如果失败，把实际的错误报告给它，要求只修正相关的安排，然后再次运行校验。千万不要用聊天里的一句「已修复」当结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.5　在 WorkBuddy 中体验三种任务模式</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四步练习：从提问到重新校验</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20, alignItems: 'center' }}>
+            <Box style={{ width: 508, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', padding: '0px 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>做什么</Text>
+            </Box>
+            <Box style={{ width: 620, height: 40, background: '#26816B', borderRadius: 8, justifyContent: 'center', padding: '0px 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>观察什么真实变化</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 508, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>在 Ask 中引用 data/brief.md，{'\n'}问还缺哪些材料</Text>
+            </Box>
+            <Box style={{ width: 620, height: 104, background: '#F4F7FA', borderRadius: 8, padding: '0px 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>检查它的回答是否遗漏了预约事实。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 508, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>02</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>切换 Plan，要求给出输入、步骤、{'\n'}产物与验收条件</Text>
+            </Box>
+            <Box style={{ width: 620, height: 104, background: '#F4F7FA', borderRadius: 8, padding: '0px 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>计划里是否写入了「校验通过后才能交付」。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 508, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>03</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>审阅后开始执行，生成候选{'\n'}再运行校验器</Text>
+            </Box>
+            <Box style={{ width: 620, height: 104, background: '#F4F7FA', borderRadius: 8, padding: '0px 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>真实工具被调用了吗？文件真的变化了吗？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 508, height: 104, background: '#FFF4E6', borderRadius: 8, padding: '0px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>04</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>给出实际错误报告，{'\n'}要求只修正相关安排</Text>
+            </Box>
+            <Box style={{ width: 620, height: 104, background: '#FFF4E6', borderRadius: 8, padding: '0px 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>不用聊天里的「已修复」作结论，再次运行校验。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

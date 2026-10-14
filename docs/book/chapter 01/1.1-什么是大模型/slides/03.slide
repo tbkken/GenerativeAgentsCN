@@ -1,0 +1,36 @@
+<Slide notes={`第一个问题看起来很基础，却最容易含糊过去：我们今天说的大模型，到底属于什么。
+
+先把范围摆清楚。人工智能是一个很大的领域，识别、预测、规划、行动都在里面。机器学习是它的一个子集，做法是从数据里调整参数；深度学习又是机器学习的一个子集，用多层神经网络来做这件事；我们现在说的大语言模型，属于深度学习之中的一类。
+
+再提醒一句：你还会听到"基础模型""多模态"这样的说法。这些是命名的角度，不是大语言模型下面互斥的子类。一个模型可以既是大语言模型，又被称为基础模型，还可能具备多模态能力，它们可以重叠。
+
+最后是"大"这个字。参数规模、训练数据量、训练计算量，是三个不同的量。`} style={{ width: 1280, height: 720, background: '#F4F7FA', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 240, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>知识块 01</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从人工智能到大语言模型</Text>
+        <Box style={{ width: 72, height: 3, background: '#276FBF' }} />
+        <Text style={{ fontSize: 20, color: '#546779' }}>先弄清归属，再看"大"究竟由哪些量描述</Text>
+    </Box>
+
+    <Box style={{ height: 400, justifyContent: 'center', alignItems: 'center' }}>
+        <Box style={{ width: 620, height: 300, borderRadius: 12, border: '1px solid #B5C7D8', background: '#FFFFFF', padding: 20, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 16, color: '#546779' }}>人工智能　AI</Text>
+            <Box style={{ width: '100%', height: 200, borderRadius: 10, background: '#EDF4FC', padding: 18, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 16, color: '#546779' }}>机器学习　ML</Text>
+                <Box style={{ width: '100%', height: 130, borderRadius: 8, background: '#D9E8F8', padding: 16, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>深度学习　DL</Text>
+                    <Box style={{ width: '100%', height: 62, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>大语言模型 LLM</Text>
+                    </Box>
+                </Box>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 26</Text>
+    </Box>
+
+</Slide>

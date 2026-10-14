@@ -1,0 +1,75 @@
+<Slide notes={`把三类错误放到一起对照，处理方向就清楚了。
+
+网络暂时失败、遇到部分限流，这一类可以重试，但要在预算之内做有限次退避。所谓预算，是次数、总时长和资源的边界，不是「重试到成功为止」。
+
+参数写错、房间不存在，这一类属于输入的问题。修正输入，然后重新跑一次，重试原请求没有意义。
+
+权限被拒绝，或者经过检索确认根本没有可行时段，这一类要说明原因，调整条件或者直接停止。把这一类也当成网络问题去重试，只会白耗时间和额度。
+
+还有一条练习上的提醒：本章的示例客户端把 SDK 自动重试设成零，并设置请求超时，目的是先让你看清失败发生在哪一层。生产应用可以按错误类型做有限退避，但那些尝试必须计入预算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.5　可靠性来自有边界的处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>按错误性质决定是否重试</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 20 }}>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 14, color: '#546779' }}>情况</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>处理方向</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 420, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>暂时网络失败、部分限流</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>请求本身没有错，只是没能送达</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>在预算内有限退避</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>限次数、限总时长，尝试要计入时间和资源</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 420, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>参数错误、未知房间</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>请求送出去了，但内容不对</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>修正输入</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>重跑原请求没有意义，先改条件再执行</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 420, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>权限拒绝、没有可行时段</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不是送达问题，是条件问题</Text>
+                </Box>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>说明原因，调整条件或停止</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>继续重试只会白耗时间和额度</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 34</Text>
+    </Box>
+
+</Slide>

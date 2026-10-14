@@ -1,0 +1,92 @@
+<Slide notes={`这四行按"能利用什么"和"必须验什么"拆开。
+
+第一类，阅读活动资料与场地图。可以利用文本与视觉理解、综合信息；必须验的是引用出来的内容是否支持结论，位置和容量有没有读对。
+
+第二类，生成方案并检查冲突。可以利用知识推理和工具计算；必须验全部约束是否通过，以及工具到底有没有被实际执行，而不只是被提到。
+
+第三类，连续推进筹备任务。可以利用长上下文和 Agent 操作；必须验待办有没有遗漏、停止条件是否正确、最终文件是否完整。
+
+第四类，驱动仿真角色。可以利用感知之后的决策、工具选择和跨轮记忆；必须验权限、坐标、动作提交和记忆来源是否成立。
+
+"可以利用"那一列和读到的成绩对得上；"必须验"那一列，对着那些失手方式。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.6　把发展水平翻译成可用的判断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类工作：能用什么，还要验什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 30, alignItems: 'center' }}>
+            <Box style={{ width: 330, padding: '0 20px' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>计划交给模型的工作</Text></Box>
+            <Box style={{ flex: 1, padding: '0 20px' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>可以利用的能力</Text></Box>
+            <Box style={{ flex: 1, padding: '0 20px' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>应额外核验的结果</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 98 }}>
+            <Box style={{ width: 330, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>阅读活动资料与场地图</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 98, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>文本和视觉理解、综合信息</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 98, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5 }}>引用是否支持结论，位置与容量是否读对</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 98 }}>
+            <Box style={{ width: 330, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>生成方案并检查冲突</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 98, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>知识推理、工具计算</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 98, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5 }}>全部约束是否通过，工具是否实际执行</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 98 }}>
+            <Box style={{ width: 330, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>连续推进筹备任务</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 98, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>长上下文、Agent 操作</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 98, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5 }}>待办是否遗漏，停止条件是否正确，最终文件是否完整</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 98 }}>
+            <Box style={{ width: 330, height: 98, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>驱动仿真角色</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 98, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>感知后的决策、工具选择、跨轮记忆</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 98, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5 }}>权限、坐标、动作提交及记忆来源是否成立</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,68 @@
+<Slide notes={`我把两种做法并排放一下，你就能看出差别。
+
+只播放 H1 一次闭环，画面里每一步都通，过程显得顺畅；H2 没收到答复这件事根本不进画面，听众也就无法判断这个策略的边界在哪里。
+
+按规则选择就不同：一个典型闭环加一个未完成或者判分有争议的任务。如果某一类样本确实不存在，就明确记为未观察到，而不是找一个相似的 Run 来补位。还要在报告里写清选择方法，并保留全体运行和任务索引。
+
+理由很简单：我选片段的时候当然知道全部情况，但听众只看到我选出来的那两段。把选择过程写下来，他们的判断才跟我站在同一层信息上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.3　选择片段也需要规则</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>只播顺利的一次，会遮住什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16 }}>
+
+        <Box style={{ height: 32, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#546779' }}>同一个运行里的两段记录，摆在一起才看得出策略的边界。</Text>
+        </Box>
+
+        <Box style={{ height: 312, flexDirection: 'row', gap: 48 }}>
+
+            <Box style={{ width: 552, height: 312, background: '#FFF4E6', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>只播放 H1 一次闭环</Text>
+                <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>画面里每一步都通，过程显得顺畅</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>H2 没收到答复，根本不进画面</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>听众无法判断策略的边界在哪里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 552, height: 312, background: '#ECF7F2', borderRadius: 12, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>按规则选择片段</Text>
+                <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>一个典型闭环</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>一个未完成或判分有争议的任务</Text>
+                </Box>
+                <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>类别不存在就记为未观察到</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 104, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>写下选择方法，保留全体运行与任务索引</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>听众只看到选出来的片段，把选择过程写下来，他们的判断才与我站在同一层信息上。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 26</Text>
+    </Box>
+
+</Slide>

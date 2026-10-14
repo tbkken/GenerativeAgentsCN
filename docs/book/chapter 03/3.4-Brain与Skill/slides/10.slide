@@ -1,0 +1,101 @@
+<Slide notes={`子 Skill 不是每轮都调。判断标准很朴素：如果角色正在等待已知的时间边界，没有新消息，也没有需要调整的计划，就不必每轮都调用两个子 Skill，那是白白多花模型调用。反过来，遇到公告与服务台答复不一致，才值得付出额外调用来比较来源。
+
+拿许安做例子。他原来相信手作活动会按旧公告开始；收到服务台的新答复后，可以先整理"旧公告内容"和"最新咨询结果"的关系，再决定去核实公告、询问组织者，或者先进行其他活动。
+
+教材给出的是这些选择的条件，不提前替模型写好结局。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.2　把 SOP 写成条件与证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>什么时候才值得调用子 Skill</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 520, height: 200, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 40, height: 40, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>静</Text>
+                    </Box>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>不必调用</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>正在等待已知时间边界，没有新消息，也没有需要调整的计划——就不必每轮都调用两个子 Skill。</Text>
+            </Box>
+
+            <Box style={{ width: 520, height: 200, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 40, height: 40, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>动</Text>
+                    </Box>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>值得调用</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>遇到公告与服务台答复不一致，才值得付出额外模型调用来比较来源。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 15, color: '#546779' }}>案例：许安面对新消息</Text>
+
+            <Box style={{ width: 600, height: 78, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>原来相信手作活动会按旧公告开始</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 22, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 78, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>收到服务台的新答复，与旧认识冲突</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 22, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 32, height: 32, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>整理"旧公告内容"与"最新咨询结果"的关系，再决定：</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 10, marginLeft: 46 }}>
+                    <Box style={{ width: 156, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>去核实公告</Text>
+                    </Box>
+                    <Box style={{ width: 156, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>询问组织者</Text>
+                    </Box>
+                    <Box style={{ width: 156, height: 36, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>先做其他活动</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 600, height: 62, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 12 }}>
+                <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>教材给出选择的条件，不提前替模型写好结局</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 22</Text>
+    </Box>
+
+</Slide>

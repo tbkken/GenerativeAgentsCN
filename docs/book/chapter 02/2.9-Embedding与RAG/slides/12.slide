@@ -1,0 +1,81 @@
+<Slide notes={`检索器要跑完五个环节：读材料、切片段、生成向量、算相似度、把前 k 段交给模型。
+
+切分那一步要保留编号和来源，因为后面清单里要靠这个编号说清「这次引的是哪一段」。生成向量的时候，问题和片段放在同一个请求里一次提交，省往返也更整齐。
+
+排序之后选择前 k 个，这一段是可调的。教学里默认取 3，它只是一个练习值，未必能把需求、容量、开放时间和预约都找齐。
+
+最后有两处输出：一份检索清单，一份回答文件。检查的顺序是先读清单，再读答案。很多人反过来做，直接从流畅的文字里判断对不对，很容易被它说服。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.3　做一个看得见每一步的小型检索器</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次检索经过的五个环节</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+            <Box style={{ width: 620, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>先设置一个能访问向量的模型</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>教学里用 text-embedding-3-small，回答仍走文本模型。</Text>
+            </Box>
+            <Box style={{ width: 1, height: 50, background: '#B5C7D8' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>命令行传入问题与 top-k</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>例如问手作体验什么时候可以举办，取前 3 段。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 200, alignItems: 'center' }}>
+            <Box style={{ width: 195, height: 200, background: '#EDF4FC', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>读取材料</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>读入本章的{'\n'}教学材料原文</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 195, height: 200, background: '#EDF4FC', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>切分片段</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>chunks 列表{'\n'}带编号与来源</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 195, height: 200, background: '#EDF4FC', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>生成向量</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>问题与片段{'\n'}一次提交请求</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 195, height: 200, background: '#EDF4FC', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>相似度排序</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>问题向量与{'\n'}每个片段逐条比</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#26816B' }}>›</Text></Box>
+
+            <Box style={{ width: 195, height: 200, background: '#ECF7F2', borderRadius: 8, padding: '16px 14px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>交给模型</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>前 k 个片段{'\n'}拼进请求作答</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 128, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>检索详情写进清单文件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>output 目录下的检索 JSON 记录本次用了哪些片段、排序如何，先读它再看答案。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 128, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>回答单独写成一份文件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>答案与依据分开保存，检查时可以逐条对照，而不是只看一段流畅的文字。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 25</Text>
+    </Box>
+
+</Slide>

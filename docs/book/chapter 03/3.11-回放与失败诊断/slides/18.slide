@@ -1,0 +1,79 @@
+<Slide notes={`把分类的路径画出来会更清楚：先接到一个观察或声称，再找到对应事实，再把身份定位到 Run、Attempt、Step 和参与者，然后判断属于四类里的哪一类。
+
+第一类是行为问题：系统可能运行正常，但 SOP、输入或模型决策需要分析，改动应该形成新实验并保留原 Run。第二类是执行问题：模型持续报错、检查点成员哈希不一致、已提交帧出现缺口，要记录错误和最后完整边界。第三类是页面展示问题：已提交位置正确但人物画在错误区域、状态事件存在但图片没切换、切换 Run 后仍显示上一次结果，这需要同时保存帧证据和页面截图。
+
+四条分支最后都汇到同一件事：保留最小可定位证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.5　分清四类问题再处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从观察到最小可定位证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>观察或声称</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>已到达 · 已更正 · 已通知</Text>
+        </Box>
+
+        <Box style={{ height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 554, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>核对对应事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>坐标轨迹 · 状态事件 · 请求与消息</Text>
+            </Box>
+            <Box style={{ width: 44, height: 88, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 554, height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>定位身份</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>Run → Attempt → Step → 参与者</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 270, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '12px 14px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>正确的边界处理</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>范围裁剪或合法拒绝，被记录为质量告警</Text>
+            </Box>
+            <Box style={{ width: 270, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '12px 14px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>行为问题</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>SOP、输入或模型决策需要分析</Text>
+            </Box>
+            <Box style={{ width: 270, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '12px 14px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>执行问题</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>模型报错、帧或快照出现异常</Text>
+            </Box>
+            <Box style={{ width: 270, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '12px 14px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>页面展示问题</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>事实正确，但画面与事实不一致</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>保留证据</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>入口、动作、预期、实际、身份与原始记录——四类分支都汇到这里</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 27</Text>
+    </Box>
+
+</Slide>

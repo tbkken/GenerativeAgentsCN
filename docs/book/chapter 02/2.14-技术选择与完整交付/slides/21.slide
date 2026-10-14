@@ -1,0 +1,54 @@
+<Slide notes={`走到下一章，边界要说清楚，否则很容易把文件当成已经发生过的事。
+
+先说可以带走的：活动主题、人物描述与需求，房间与规则材料，排期与校验方法。
+
+再说必须重新做的：地图、坐标、Agent、Brain、Skill、模型用途，以及实验怎么装配，都要按系统流程重新建立。
+
+最后说本章文件里没有的东西。没有 run_id，没有已提交的 StepResult，也没有回放事实。本章只校验已编码的规则，不证明真实预订发生过，也不证明仿真跑过。
+
+顺便提一句：题目允许不同房间同时举行活动，因为这次没配置共享主持人和设备约束。现实任务若有设备、主持人、清洁间隔或无障碍需求，须先补齐输入和规则，再扩展校验器。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.4　用交付清单明确完成边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>进入第三章之前，边界要说清楚</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>本章交付的筹备文件是作者材料，不是仿真已经运行的证据。</Text>
+
+        <Box style={{ height: 120, background: '#ECF7F2', borderRadius: 10, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 80, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>可以在第三章复用的</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>活动主题、人物描述与需求；房间与规则材料；排期与校验方法；两条路线的运行记录。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 120, background: '#EDF4FC', borderRadius: 10, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 80, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>必须重新配置的</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>地图、坐标、Agent、Brain、Skill、模型用途与实验装配，都要按系统规定的流程重新建立。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 100, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>本章文件里没有的</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>没有 run_id、没有已提交的 StepResult、也没有回放事实。本章校验只覆盖已编码规则，不证明真实预订或仿真已运行。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,61 @@
+<Slide notes={`最后总结三条使用纪律，都是我在前面反复遇到的情况。
+
+第一，不跨版本。FrontierMath 第一版和第二版之间改过题目，分数不能混在一张榜上看。同一个名字后面挂着不同的版本号，成绩就是不同的东西。
+
+第二，不跨协议。带工具和不带工具、跑一次和跑多次取最好，这些都不是同一场比赛。榜单上把两者并排列出，很容易让人误读成模型之间的差距。
+
+第三，不相加。把几个基准的分数加起来做成一个综合能力总分，看起来很直观，其实是错的。每个基准的题目范围、判分口径、难度分层都不一样，加起来的数字没有对应的现实含义。
+
+这三条其实就是一句话：先看清楚测的是什么，再谈分数高不高。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑤　1.4.5　领先模型：三条使用纪律</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>分数的三个"不要"</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 322, background: '#EDF4FC', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 28, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>不要一</Text></Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>不跨版本</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>改了题目、改了参考答案，就是新的一份卷子。第一版和第二版的分数不能放进同一张榜。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.45 }}>例子：FrontierMath v1 与 v2</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 322, background: '#F7F3E8', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 28, background: '#546779', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>不要二</Text></Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>不跨协议</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>带工具与不带工具、跑一次与跑多次取最好，都是不同的比赛。并列展示会让人误读成模型差距。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>例子：HLE 的 60.9% 与 65.0%</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 322, background: '#FFF4E6', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 28, background: '#CB6B28', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>不要三</Text></Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不相加</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>题目范围、判分口径、难度分层都不同，把几个基准的分数加起来求"综合能力"，数字没有现实含义。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>需要综合判断时，按能力分别列，不求和</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>三条纪律合成一句：先看清楚测的是什么、怎么测的，再谈分数高不高</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>30 / 36</Text>
+    </Box>
+
+</Slide>

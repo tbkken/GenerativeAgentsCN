@@ -1,0 +1,77 @@
+<Slide notes={`把图片、录音和网页截图放在一起看，它们的取证边界其实差得很远。
+
+先看图片。它能证明的是图上写了哪些名称，以及谁挨着走廊。业务事实它一个都证明不了，容量要去 rooms.csv 查，预约要去 availability.json 查。
+
+再看录音。转写之后我们拿到的是文字，能证明这个人说了什么。但数字和时点特别容易错，"十点"和"十点半"只差一个字，业务结果完全不同，所以人数、时间、否定词和人名都要回听原音频确认。
+
+最后是网页截图。它只能证明这一次页面上显示成什么样。哪怕页面明明白白写着空闲，也不能证明后台的预约已经提交——这两件事之间隔着一次真正的写入。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.3　语音：先转写，再确认关键事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>图像、语音与截图的证据范围</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
+
+            <Box style={{ width: 368, background: '#F4F7FA', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>图片　平面示意</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可以证明</Text>
+                <Box style={{ height: 90, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>图上写了哪些房间名称，谁挨着公共走廊。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>还要另查</Text>
+                <Box style={{ height: 112, background: '#ECF7F2', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.55 }}>容量查 rooms.csv，预约查 availability.json。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 368, background: '#F4F7FA', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>录音　负责人口述</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可以证明</Text>
+                <Box style={{ height: 90, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>把声音转成文字之后，能读到这个人说了什么。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>还要另查</Text>
+                <Box style={{ height: 112, background: '#ECF7F2', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.55 }}>人数、时间、否定词与人名，回听原音频确认。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 368, background: '#F4F7FA', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>网页截图　本次可见</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可以证明</Text>
+                <Box style={{ height: 90, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>这一次页面上显示成什么样，仅此而已。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779' }}>还要另查</Text>
+                <Box style={{ height: 112, background: '#FFF4E6', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>即使页面显示空闲，也不证明后台预约已提交。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>三种输入，三种边界：图片只看标注与相对位置，录音先转写再回听，截图只说明本次页面状态。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 26</Text>
+    </Box>
+
+</Slide>

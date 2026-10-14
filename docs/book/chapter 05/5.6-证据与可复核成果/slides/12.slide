@@ -1,0 +1,77 @@
+<Slide notes={`取材边界最容易出错的地方在最后一步。
+
+这个 Run 一共 76 步，Step1 是 09:00，每步一分钟，所以 Step76 就是 10:15。如果目标对象恰好在末轮提交答复，那么人物的下一轮接收已经超出了这次窗口。
+
+这种情况要同时记录两件事：一是「对象已响应」，这是窗口内真实发生的事实；二是「窗口内尚无人物接收或确认事实」，这是一个明确的缺口。不能把窗口外的确认补算成窗口内的闭环，那等于用后来的记录改写当时的结论。
+
+另外，虚拟时间、模型耗时、含暂停的墙钟时间要分别标注。历史判断需要身份、哈希和帧连续性支持，播放顺畅只是一种观感。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.3　保持相同的取材边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>窗口在 Step76 结束</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 340, height: 220, background: '#F7F3E8', borderRadius: 10, padding: '16px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>起点</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>Step1 · 09:00</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 308 }}>每步一分钟，本 Run 共 76 步。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 220, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 220, background: '#EDF4FC', borderRadius: 10, padding: '16px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>此前</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>Step75</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 308 }}>此前的已提交事实。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 220, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 220, background: '#FFF4E6', borderRadius: 10, padding: '16px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>末轮</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>Step76 · 10:15</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 308 }}>末轮对象提交答复；本 Run 预定窗口到此结束。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+            <Box style={{ width: 60, height: 4, background: '#CB6B28' }} />
+        </Box>
+
+        <Box style={{ width: 1152, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>虚线之外：目标人物下一轮 —— 不在预定窗口内</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 1112 }}>对象在末轮答复，人物的下一轮已在窗口之外。要同时记录「对象已响应」和「窗口内尚无人物接收／确认事实」，不能把窗口外的确认补算成窗口内闭环。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>三种时间要分别标注</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 1112 }}>虚拟时间 · 模型耗时 · 含暂停的墙钟时间。内存与最新状态会变化，播放顺畅不能替代核查。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

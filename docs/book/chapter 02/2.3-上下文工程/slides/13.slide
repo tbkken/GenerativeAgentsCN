@@ -1,0 +1,74 @@
+<Slide notes={`这段代码是手工管理的最小形态，我把关键几步拆开说。
+
+第一条消息先把资料和人数写进去，让模型检查一次。拿到结果以后，最关键的一步是把完整的输出项接回历史里，而不是只挑出那段给人看的文本。
+
+然后追加用户的新消息：人数在正式需求里改成十三人，请按新人数重新检查，不沿用旧结论。
+
+第二次请求把整段历史再发出去，所以模型这一次看到的，既有上一轮的全部输出，也有这条新消息。
+
+这段例子的观察目标很明确：十三人大于十二人的容量，正确的回答应该指出冲突，不能继续说人数符合要求。真实应用还要同步更新任务的正式数据并重新运行检查，不能只改聊天记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.3　OpenAI API：手工保留多轮状态</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>手工管理：保存什么，追加什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ flex: 60, flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>一次请求里，历史是怎样接上的</Text>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column' }}>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>rules = "依据已提供资料回答；候选、查询结果和已验证事实须明确区分。"</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>history = [{'{'}"role": "user", "content": "手作室容量12人，活动10人。先检查人数。"{'}'}]</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>first = client.responses.create(</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}model=os.environ["OPENAI_MODEL"],</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}instructions=rules, input=history, store=False,</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>)</Text>
+                <Text style={{ fontSize: 13, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>history.extend(first.output){'        '}# 保留完整输出项</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>history.append({'{'}</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}"role": "user",</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}"content": "人数改成13人，请重新检查，不沿用旧结论。",</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'}'})</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>second = client.responses.create(</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}model=os.environ["OPENAI_MODEL"],</Text>
+                <Text style={{ fontSize: 13, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>{'    '}instructions=rules, input=history, store=False,</Text>
+                <Text style={{ fontSize: 13, color: '#20344B', fontFamily: 'Consolas, monospace', lineHeight: 1.75 }}>)</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 40, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>保存原输入</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>不要只留最后一句给用户看的文本</Text>
+            </Box>
+
+            <Box style={{ height: 108, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>加入完整输出</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>工具调用、推理条目与消息元数据都在里面</Text>
+            </Box>
+
+            <Box style={{ height: 108, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>再追加新消息</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>明确要求按新人数重新检查</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 30, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>十三人大于十二人容量，正确回答应指出冲突。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 25</Text>
+    </Box>
+
+</Slide>

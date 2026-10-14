@@ -1,0 +1,119 @@
+<Slide notes={`最后一个练习要带走七件事，它们不是七份清单，而是同一条交付链路。
+
+先选定交付范围：只交可审阅的设计，还是连真实运行与接收记录一起交，这两种范围要求的材料完全不同。接着按四组材料逐组交：问题与材料、行为与对照、运行或计划、接收反馈。
+
+然后是一份教学量表，五个维度加起来一百分，用来复核而不是奖励成功。最后留一个方向问题：将来想改策略、改输入或者加系统机制，先判断这件事改变了哪一层。
+
+我特别想强调第五件。接收是整条链路的关口，它检验的不是文件好不好看，而是另一个人能不能独立找到范围、来源、原始文件和已知限制。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的七件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>十节正文到这里收束。最后的练习是把材料交给别人，所以七个知识块围绕同一件事：怎样让接收者独立判断。</Text>
+            <Box style={{ width: 360, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>四组材料</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>一份教学量表</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>一位能独立判断的接收者</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 760, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ width: 648, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>先选择要交付的范围</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>设计、运行、独立环境接收，三种范围的证据逐级增加</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ width: 648, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>第一份交付：问题和材料</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>委托改写、来源登记、假设的失败条件与三类对象的准备</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ width: 648, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>第二份交付：行为与对照</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>精确决策文本、依赖清单、反例审读与包内差异核对</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ width: 648, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>第三份交付：运行和结果</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>运行索引、五环判分表与报告的六个要素</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 64, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+                </Box>
+                <Box style={{ width: 648, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>第四份交付：接收与反馈处理</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>只拿入口的独立检查、如实标注层次与变更影响</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>⑥</Text>
+                </Box>
+                <Box style={{ width: 648, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>一份可以说明理由的量表</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>五个维度合计一百分，设计与运行两种范围的依据不同</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 64, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>⑦</Text>
+                </Box>
+                <Box style={{ width: 648, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>扩展之前，先识别改了哪一层</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>改策略、改输入、加系统机制，以及将来更换模型</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 31</Text>
+    </Box>
+
+</Slide>

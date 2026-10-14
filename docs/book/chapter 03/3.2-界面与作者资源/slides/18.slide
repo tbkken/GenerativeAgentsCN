@@ -1,0 +1,52 @@
+<Slide notes={`聊天和 Embedding 是两种不同的用途，可以分别准备配置。
+
+聊天配置用来生成对话内容，表单里包含最大输出 tokens 和 Temperature，它们影响输出的长度和风格。Embedding 配置把文本转成向量，主要服务于记忆检索这类需求。实验创建页会要求你选择相应的项目，所以两种配置要分清楚准备。
+
+关于密钥，有几件事要记住。密钥由本机的凭据设施管理，表单不会回显已经保存的密钥。交换包保存的是凭据环境变量的引用，不携带密钥本体；换到另一台机器运行，需要重新提供相应环境。
+
+还有一点，公共配置的修改不会自动更新已经建好的实验，这和前面讲的副本关系是一致的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.5　模型配置：可选择不等于已经可用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>聊天与 Embedding 是两种用途</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 48 }}>
+
+            <Box style={{ width: 552, height: 250, background: '#EDF4FC', borderRadius: 10, padding: 20, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>聊天</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>生成对话内容</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>表单包含最大输出 tokens 与 Temperature，影响输出的长度与风格。</Text>
+            </Box>
+
+            <Box style={{ width: 552, height: 250, background: '#ECF7F2', borderRadius: 10, padding: 20, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>Embedding</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>把文本转成向量</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>服务于记忆检索这类需求；实验创建页会要求选择相应项目。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 190, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 120, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 9 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>密钥由本机凭据设施管理</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>表单不回显已保存的密钥；交换包保存的是凭据环境变量引用，不携带密钥本体。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>换到另一台机器运行，需要重新提供相应环境。</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>公共配置的修改，也不会自动更新已经建好的实验。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 22</Text>
+    </Box>
+
+</Slide>

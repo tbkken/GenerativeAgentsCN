@@ -1,0 +1,63 @@
+<Slide notes={`这四类记录经常被当成一回事，其实它们回答的问题完全不同。
+
+日志回答某个时刻发生了什么，比如「预约文件读取失败」这一条消息。但一条没有关联 ID 的消息，还原不出整条任务过程。
+
+调用链回答同一次任务有哪些步骤、父子关系和时间，比如读材料、生成候选、校验、保存文件。它能告诉你这一步有没有被记录、有没有被执行，但看不到模型完整的内部思维。
+
+指标回答多次任务整体怎么样，比如延迟分位数、错误率、Token 和费用的趋势。它可以说出「最近变慢了」，但说不出某一份排期为什么出错。
+
+评价回答按哪条规则判了多少分。要小心：程序结束不等于业务通过，一次通过也不代表总体能力。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.7　用 Langfuse 观察一次完整排期任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四种记录各回答什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 180 }}><Text style={{ fontSize: 14, color: '#546779' }}>记录</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 14, color: '#546779' }}>回答什么问题</Text></Box>
+            <Box style={{ width: 290 }}><Text style={{ fontSize: 14, color: '#546779' }}>开放日例子</Text></Box>
+            <Box style={{ width: 264 }}><Text style={{ fontSize: 14, color: '#546779' }}>单独不能证明什么</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 110, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>日志 Log</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>某个时刻发生了什么</Text></Box>
+            <Box style={{ width: 290 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>「预约文件读取失败」</Text></Box>
+            <Box style={{ width: 264 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>仅凭一条无关联 ID 的消息，无法还原整条任务过程</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 110, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>调用链 Trace</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>同一次任务有哪些步骤、父子关系和时间</Text></Box>
+            <Box style={{ width: 290 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>读材料 → 生成候选 → 校验 → 保存文件</Text></Box>
+            <Box style={{ width: 264 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>未记录或未执行的步骤；模型完整的内部思维</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 110, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>指标 Metric</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>多次任务整体怎么样</Text></Box>
+            <Box style={{ width: 290 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>延迟分位数、错误率、Token 与费用趋势</Text></Box>
+            <Box style={{ width: 264 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>某一份排期为什么出错</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>评价 Score</Text></Box>
+            <Box style={{ width: 330 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>按哪条规则判为多少分</Text></Box>
+            <Box style={{ width: 290 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>business_valid=0，原因是预约冲突</Text></Box>
+            <Box style={{ width: 264 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>程序结束就等于业务通过；一次通过代表总体能力</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>28 / 34</Text>
+    </Box>
+
+</Slide>

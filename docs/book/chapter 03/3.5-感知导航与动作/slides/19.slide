@@ -1,0 +1,78 @@
+<Slide notes={`几个原语的语义再明确一下。
+
+ACT 是当前位置上的活动。抵达阅读区后提交 predicate 为阅读、object 为开放日介绍资料就够了，不需要内核新增业务编码；target 参数须与当前事实一致，它不能顺带移动。
+
+WAIT 用于确实没有立即继续的条件，如等待已发出的对象请求获得回复；不能为了省事把所有活动都写成等待。MOVE 的可选 predicate 表达“快步行走”这样的移动活动，不写“已经抵达服务台”，实际地址由内核确定。
+
+权限边界看公告栏：林岚不能以 Agent 身份直接改对象状态，必须 INTERACT 提出请求，由公告栏在自己轮次决定并提交，对象因此有独立行为，请求链可审核。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.4　六种动作分别表达什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>ACT、WAIT 与权限边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 22 }}>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Text style={{ fontSize: 16, color: '#546779' }}>普通活动用 ACT；WAIT 要有真实原因。</Text>
+
+            <Box style={{ height: 122, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>ACT · 当前位置上的活动</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>例：predicate: “阅读”、object: “开放日介绍资料”；不需要内核新增业务编码；target 参数须与当前事实一致，不能顺带移动。</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>WAIT · 要有真实原因</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>等待已发出的对象请求获得回复；不能为了省事，把所有活动都写成等待。</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#ECF7F2', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>MOVE 的 predicate 表达移动活动</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>如“快步行走”，不写“已经抵达服务台”；移动事件的实际地址由内核确定。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 490, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>公告栏的权限边界</Text>
+
+            <Box style={{ height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>林岚（Agent）：INTERACT 提出请求</Text>
+            </Box>
+
+            <Box style={{ height: 24, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>公告栏：自己的轮次决定</Text>
+            </Box>
+
+            <Box style={{ height: 24, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+
+            <Box style={{ height: 64, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>提交状态变化，留下可审核请求链</Text>
+            </Box>
+
+            <Box style={{ height: 76, background: '#FFF4E6', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>林岚不能以 Agent 身份直接 SET_OBJECT_STATE</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>对象具有独立行为，状态变化可被审计</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 23</Text>
+    </Box>
+
+</Slide>

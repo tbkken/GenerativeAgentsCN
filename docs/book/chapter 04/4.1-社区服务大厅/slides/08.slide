@@ -1,0 +1,81 @@
+<Slide notes={`动手之前，条件要先冻结，不然两组的差别说不清是谁造成的。
+
+场景是青禾社区的便民服务站，20 乘 16 格。四个区域用矩形坐标划出来，外边界阻挡、内部连通，对象之间留出可走的邻格。
+
+四位来访者从入口出发，引导员从等候区出发；两组的实际出生位置、遮挡关系和视野都保持一致。
+
+观察窗口是候选 W：十月十八日上午九点到十点十五，按北京时间，一步一分钟，一共七十六步。正式比较之前要校准并冻结，两组用同一套。
+
+还有一条纪律：最后一轮尚未投递的回复，不算人物已经收到。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.2　运行条件与观察窗口</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>动手前先冻结的条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16 }}>
+            <Box style={{ width: 420, height: 268, background: '#EDF4FC', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>候选 W · 两组相同</Text>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.1 }}>76 步</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>2026-10-18　09:00—10:15{'\n'}Asia/Shanghai　·　1 分钟／步</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>正式比较前校准并冻结；两组相同。</Text>
+            </Box>
+            <Box style={{ width: 420, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>最后一轮尚未投递的回复，不算人物已收到。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 700, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, color: '#546779' }}>世界与区域</Text></Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>World“青禾社区”→ Sector“便民服务站”，20×16 格</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, color: '#546779' }}>入口与等候区</Text></Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>入口 [1,1,18,3]　·　等候区 [1,4,18,4]</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, color: '#546779' }}>两个服务区</Text></Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>A 服务区 [1,8,9,7]　·　B 服务区 [10,8,9,7]</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, color: '#546779' }}>连通与邻格</Text></Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>外边界阻挡、内部连通；对象留可走邻格</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, color: '#546779' }}>出生点</Text></Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>四位来访者从入口，余真从等候区</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 72, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 15, color: '#26816B' }}>两组一致性</Text></Box>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>实际出生、遮挡与视野一致</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

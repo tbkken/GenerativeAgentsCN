@@ -1,0 +1,64 @@
+<Slide notes={`有一个问题经常被忽略：两个角色如果同时去改同一个文件，会发生什么。
+
+程序里每个角色都构造独立的指令和输入，用独立的客户端，返回的内容写进不同的文件。这不是多此一举，而是为了保证两次审阅互不干扰。
+
+一旦两个角色同时修改同一个 schedule.json，就会出现覆盖——后写的盖掉先写的；或者产生混合版本——文件里两种口径搅在一起，谁也说不清哪一条是谁写的。这属于文件协调问题，在多角色之间加一句"请合作"，并不能解决它。
+
+办法是分配输出文件：各写各的，只有汇总步骤写最终报告。程序把这件事写进结构里，就不依赖角色自觉。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.2　用 OpenAI API 实现最小分工</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>独立上下文与独立输出文件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 504, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>每个角色独立走一遍</Text>
+            <Box style={{ flexDirection: 'column', gap: 6, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>独立指令与输入</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>每个角色自己构造要看的材料与要求</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 6, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>独立客户端</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>没有隐式共享的聊天记录</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 6, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>独立输出文件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>审阅结果各写各的，只有汇总写最终报告</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 616, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>并写同一个文件会怎样</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>覆盖</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>后写入的版本盖掉先写入的</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 12, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>混合版本</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>同一个文件里留下两种口径</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 5, background: '#F4F7FA', borderRadius: 8, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>这是文件协调问题</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>在角色之间加一句「请合作」，不能解决它。要靠分配输出文件，而不是靠自觉。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 25</Text>
+    </Box>
+
+</Slide>

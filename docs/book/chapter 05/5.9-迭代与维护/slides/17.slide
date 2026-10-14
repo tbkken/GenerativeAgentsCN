@@ -1,0 +1,64 @@
+<Slide notes={`可以把下一轮工作写成一段具体的交接文字，让接手的人照着做。
+
+写法是这样的：复制原封存实验为独立草稿；只把咨询台目的检索从"需要时"改为"每次判断前"，保留其原有澄清决策；保留四名来访者的初始话语、窗口规则和全部运行参数；保存后复核差异，再执行。
+
+这段话里有两组信息。一组是改什么，只改检索条件；另一组是不动什么，澄清决策、初始话语、窗口规则、运行参数全部保留。只写第一组，接手的人很容易顺手多改。
+
+原实验和 Run 的真实 ID 在操作完成之后登记，书里不预先填写这些编号。还要提醒一句：这时候研究的是检索条件的变化，不能把新结果仍然归到最初那次建议与先澄清的对照上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.4　选对副本，才能改对地方</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把下一轮写成一段交接</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>交接文字要说清两件事</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>改什么，以及不动什么。只讲第一件，接手的人很容易顺手多改一处，下一轮的结果就说不清来源。</Text>
+            <Box style={{ width: 400, height: 152, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>真实编号留空</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>原实验与 Run 的 ID 在操作后登记，不预先填写。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 720, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 720, height: 210, background: '#F7F3E8', borderRadius: 12, padding: '20px 24px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>下一轮工作的交接文字</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.75 }}>复制原封存实验为独立草稿；只把咨询台目的检索从"需要时"改为"每次判断前"，保留其原有澄清决策；保留四名来访者的初始话语、窗口规则和全部运行参数；保存后复核差异，再执行。</Text>
+            </Box>
+
+            <Box style={{ width: 720, flexDirection: 'row', gap: 14 }}>
+                <Box style={{ width: 230, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>不动</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>原有澄清决策</Text>
+                </Box>
+                <Box style={{ width: 230, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>不动</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>初始话语与窗口规则</Text>
+                </Box>
+                <Box style={{ width: 230, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>不动</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>全部运行参数</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 4px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>此时研究的是检索条件的变化，新结果不再属于最初那次建议／先澄清对照。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 27</Text>
+    </Box>
+
+</Slide>

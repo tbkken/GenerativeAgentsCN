@@ -1,0 +1,49 @@
+<Slide notes={`协商开始之前，这个世界里是空的，只有规则和选项。
+场地说明牌写得很清楚：亚洲上海时区的十八点到二十一点可以用，最多十二个人；最后十分钟要收整，所以活动最晚二十点五十结束。可以用的模式只有两种，正常交谈和静默共读，没有隔音分区，也不能远程参加，更没有自动延时。
+在这些规则的范围内，一共准备四个候选。A 是十八点到十九点交谈，B 是十九点到二十点交谈，C 是十九点五十到二十点五十交谈，D 是十九点到二十点静默共读。四个都满足场地规则。
+要记住一件事：满足场地规则，不等于满足每个人的需求。这两件事混在一起，后面就全乱了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>1　　4.6.1</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>共同事实与四个候选</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>四个人共享的是场地规则与候选选项，不是彼此的私人理由。四个候选全部满足场地规则，这只是共同事实。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 72, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>场地说明牌</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>18:00—21:00　最多 12 人</Text>
+            </Box>
+            <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 168, height: 72, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>A</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>18:00 — 19:00</Text>
+            </Box>
+            <Box style={{ width: 168, height: 72, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>B</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>19:00 — 20:00</Text>
+            </Box>
+            <Box style={{ width: 168, height: 72, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>C</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>19:50 — 20:50</Text>
+            </Box>
+            <Box style={{ width: 168, height: 72, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>D</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>19:00 — 20:00</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

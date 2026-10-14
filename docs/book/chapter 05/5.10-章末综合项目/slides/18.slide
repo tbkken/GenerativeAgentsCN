@@ -1,0 +1,61 @@
+<Slide notes={`报告要让人能读懂，也要让结论经得起追问。至少要有六个部分。
+
+方法说清楚你做了什么、比较的是什么。全部样本说明分母是多少，一个都不能漏。主要结果只报事实，不替读者下判断。代价包括调用、时间和重试，失败的那部分也算在里面。替代解释是把另一种可能也写出来，不要只留一个你喜欢的答案。最后是局限，明确说出结论能走多远。
+
+配图可以很简单，原始计数比一个没有分母的大百分比有用得多。另外，每一个主要结论都应该在需求—证据矩阵里找到对应依据，否则它就只是一个说法，不是一项可以核对的结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.4　第三份交付：运行和结果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>报告的六个要素</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>报告至少包含六个部分，每个主要结论都要在需求—证据矩阵中找到依据</Text>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 21 }}>
+            <Box style={{ width: 370, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>方法</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>做了什么、比较什么、共同条件是什么</Text>
+            </Box>
+            <Box style={{ width: 370, height: 112, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>全部样本</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>分母先固定，未完成与失败一个都不漏</Text>
+            </Box>
+            <Box style={{ width: 370, height: 112, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>主要结果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>只报事实与定位，不替读者下结论</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 21 }}>
+            <Box style={{ width: 370, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>代价</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>调用、等待与重试；失败同样计入</Text>
+            </Box>
+            <Box style={{ width: 370, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>替代解释</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>把另一种可能也写出来，不只留一个答案</Text>
+            </Box>
+            <Box style={{ width: 370, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>局限</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>明确写出结论能走多远，不能推到哪一步</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F7F3E8', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>每一项结论都要在需求—证据矩阵里找到对应依据</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>配图可以很简单，原始计数比没有分母的大百分比更有用</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 31</Text>
+    </Box>
+
+</Slide>

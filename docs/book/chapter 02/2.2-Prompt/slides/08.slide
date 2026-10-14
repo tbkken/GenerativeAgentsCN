@@ -1,0 +1,90 @@
+<Slide notes={`比较三种写法的时候，有一条纪律必须先立起来：其余条件全部固定。
+
+材料不变，都是那四份文件；模型不变，用同一个版本；工具不变，有没有查询能力要一致；校验器和评分表也不变。这样才可以把差异归到任务描述上。
+
+写法 A 就是一句愿望，帮我安排开放日。它没有材料、没有产物、没有验收。
+写法 B 加了材料和产物：请根据提供的四份材料提出活动时间表，并列出缺失信息。
+写法 C 是完整的任务合同，把验收规则和未知项处理也写进去。
+
+无论哪一版，结果都要存下来。通过、失败、缺失了哪些项、花了多少时间，都保留。这样比较的才是过程，不是某一次的好运。
+
+要特别注意一点：这个对照是人工设计的教学图，不是实测成绩。少量样本只能叫练习观察，不能挑最好的一次当成结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.2　从模糊提示逐步改进</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种写法，只改一处</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 18 }}>
+
+        <Box style={{ height: 72, background: '#F7F3E8', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 6, height: 36, background: '#546779' }} />
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>固定条件</Text>
+            <Text style={{ fontSize: 16, color: '#546779' }}>材料、模型、工具、校验器与评分表全部不变 —— 三组只改变任务描述</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24, height: 300 }}>
+
+            <Box style={{ width: 368, background: '#F4F7FA', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 5, height: 24, background: '#546779' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>写法 A · 一句愿望</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>帮我安排开放日。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>没有材料、没有产物、没有验收</Text>
+            </Box>
+
+            <Box style={{ width: 368, background: '#EDF4FC', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 5, height: 24, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>写法 B · 材料与产物</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>请根据提供的四份材料，提出活动时间表，并列出缺失信息。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>依据与交付已指定，验收规则仍未写</Text>
+            </Box>
+
+            <Box style={{ width: 368, background: '#ECF7F2', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 5, height: 24, background: '#26816B' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>写法 C · 完整任务合同</Text>
+                </Box>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>在 B 的基础上加入验收规则、未知项处理与输出清单。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>能判对错，也能说清哪些还没确认</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24, height: 132 }}>
+
+            <Box style={{ width: 800, background: '#ECF7F2', borderRadius: 12, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 6, height: 76, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>保存全部尝试</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>通过、失败、缺失项与耗时都保留下来，逐项对照才看得出差别。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 328, background: '#FFF4E6', borderRadius: 12, padding: '20px 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>人工设计的对照</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>图中没有模型成绩，不能当成实测结论。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

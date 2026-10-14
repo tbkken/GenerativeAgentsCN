@@ -1,0 +1,94 @@
+<Slide notes={`只读查询和写操作的性质完全不同，我把它拆成三行对照。
+
+看典型操作。查询是去读已有的预约记录；写操作是预订、转账或者发送，它会改变外部世界的状态。
+
+看重试的代价。只读查询相对容易重试，多查一次不会有副作用。写操作不一样：一次网络超时可能发生在外部操作完成之后，也就是说，对方其实已经收到了，我们这边只是没等到回应。这时候盲目重复，就会造成重复的预订或者重复的付款。
+
+看还要确认什么。查询主要确认参数和允许范围；写操作还需要额外的幂等设计和状态确认。
+
+本章不执行这类写操作，但要从一开始就把查询和提交分开对待。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.4　参数错误、工具失败与无进展</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>查询可以重试，提交不行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>只读查询相对容易重试；写操作还需要额外的幂等与状态确认。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 200, height: 56, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>对照维度</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ flex: 1, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>只读查询</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 420, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>写操作：预订、转账、发送</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 200, height: 100, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>典型操作</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ flex: 1, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>查询指定房间与日期的已有预约记录</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 420, height: 100, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>改变外部世界的状态，不只是读取</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 200, height: 100, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>重试代价</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ flex: 1, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>相对容易重试，多查一次不会改变记录</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 420, height: 100, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>盲目重复会造成重复副作用</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 200, height: 100, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>还要确认什么</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ flex: 1, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>参数是否有效、是否在允许范围内</Text>
+            </Box>
+            <Box style={{ width: 16 }} />
+            <Box style={{ width: 420, height: 100, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>需要幂等与状态确认：超时可能发生在外部操作完成之后</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', height: 56 }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B' }}>本章不执行写操作，但从一开始就要区分查询与提交。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 26</Text>
+    </Box>
+
+</Slide>

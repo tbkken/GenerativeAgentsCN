@@ -1,0 +1,100 @@
+<Slide notes={`创建之后再去改公共资源，是很容易犯的一个错。
+
+已经启动的 Run 读的是它创建时复制的副本，所以改公共公告栏的 Skill 不会改变它正在执行的行为。你想看的「新做法有没有更好」，在这种改动里根本体现不出来。
+
+要做比较，就在独立实验里完成修改，再启动一个新的 Run，让两份实验各自拥有自己的副本和身份。
+
+判断的方法很简单：问一句「这次的改动有没有进入这个 Run 的副本」。没有进入，那这次观察得到的还是老方案的结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.1　启动时固定了哪些输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>改公共资源，不会改变已经启动的 Run</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 656, flexDirection: 'column', gap: 16 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>两条路要分开走</Text>
+
+            <Box style={{ width: 656, height: 118, background: '#F4F7FA', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>直接改公共资源</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 168, height: 40, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>改公共 Skill</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#546779' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 168, height: 40, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>已启动的 Run</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#546779' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 168, height: 40, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>读旧副本</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 656, height: 118, background: '#ECF7F2', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>先另建独立实验</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 168, height: 40, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>独立实验改完</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 168, height: 40, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>新启动的 Run</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 168, height: 40, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>读到新方案</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 464, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>比较新方案怎么做</Text>
+
+            <Box style={{ width: 464, height: 188, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>在独立实验里完成修改</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>再启动一个新的 Run</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>3</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>两个 Run 各自有副本与身份</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 464, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>先问一句：这次改动有没有进入它的副本？没有进入，观察到的还是老方案。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 23</Text>
+    </Box>
+
+</Slide>

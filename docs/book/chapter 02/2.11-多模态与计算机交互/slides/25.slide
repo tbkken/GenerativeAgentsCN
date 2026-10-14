@@ -1,0 +1,72 @@
+<Slide notes={`第三道练习是一个追问，也是这一节的落点。
+
+问题是这样：为什么一张网页成功截图，可以证明页面已经显示，却不能证明后台预约已经提交？
+
+把"能证明"和"不能证明"分开看就清楚了。
+
+一张截图能证明的，是这一刻页面渲染出来的内容，是页面上各个元素的位置和状态，还有就是浏览器确实把这个页面加载出来了。它记录的是屏幕上的事实。
+
+它不能证明的，是后台的预约已经提交成功。它也不能证明数据已经写进服务端，更不能证明别人看到的状态和这里一样。屏幕和后台之间隔着一整条链路：请求有没有发出去，服务端有没有收下，有没有真的写进去。
+
+截图是"看见"的证据，不是"做到"的证据。这两类证据不能互换。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.6　本节练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习三：截图证明了什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 24 }}>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>截图能证明</Text>
+                </Box>
+                <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>这一刻页面渲染出来的内容</Text>
+                </Box>
+                <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>页面元素的位置与当前状态</Text>
+                </Box>
+                <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>浏览器确实加载了这个页面</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>截图不能证明</Text>
+                </Box>
+                <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>后台的预约已经提交</Text>
+                </Box>
+                <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>数据已经写进服务端</Text>
+                </Box>
+                <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 8, padding: '16px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>其他人看到的是同样的状态</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>截图是"看见"的证据，不是"做到"的证据</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>屏幕和后台之间隔着请求、接收与写入，这三步要靠各自的证据去证明。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 26</Text>
+    </Box>
+
+</Slide>

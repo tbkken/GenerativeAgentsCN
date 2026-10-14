@@ -1,0 +1,60 @@
+<Slide notes={`模型在结果里写「我已到达手作室」，这句话很自然会被当成结论。但它只是过程文本，它不改变世界，也不记录位移。
+
+要证明位移，要看提交事实里的实际目标坐标、四层地址和已执行路径，以及目标对应关系。要证明状态改变，要看相应对象事件的对象身份和结构化前后状态，比如公告栏从旧安排变成新安排。要证明回复到达，要看请求 ID、目标对象、回复事实，以及接收者下一轮上下文里到底拿到了什么。
+
+还有一层容易混：MOVE 本身带活动语义，「前往手作室核实时间」描述的是移动目的，不能当成抵达证据；反过来，坐标变了也不能自动替它补上一条没有提交过的活动目的。两条证据各自独立。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.1　一条动作怎样成为可回放事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>过程文本不是世界事实</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一句话不等于一次位移</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 460 }}>模型输出「我已到达手作室」，这句话写在结果里，也出现在日志里，但它本身不改变世界，也不记录位移。</Text>
+            <Box style={{ width: 460, height: 56, background: '#F4F7FA', borderRadius: 8, paddingLeft: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>位移要看：实际 to_coord 与已执行路径</Text>
+            </Box>
+            <Box style={{ width: 460, height: 56, background: '#F4F7FA', borderRadius: 8, paddingLeft: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>状态要看：对象事件及结构化前后状态</Text>
+            </Box>
+            <Box style={{ width: 460, height: 56, background: '#F4F7FA', borderRadius: 8, paddingLeft: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>回复要看：请求 ID 与接收者的下一轮上下文</Text>
+            </Box>
+            <Box style={{ width: 460, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>两类证据各自独立</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>活动文字描述移动目的，不能当成抵达证据；坐标变化也不能自动补出未提交的活动目的。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 668, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>同一句「我已到达」，要分三层看</Text>
+            <Box style={{ width: 628, height: 124, background: '#FFF4E6', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能独立作为证明</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>计划路径 · 导航首格 · 活动描述</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>它们解释选择的原因，不记录已经发生的位移。</Text>
+            </Box>
+            <Box style={{ width: 628, height: 124, background: '#EDF4FC', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>可以取证的已提交事实</Text>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>实际 to_coord · 地址 · 已执行路径 · 目标对应关系</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>对象状态则看状态事件的对象身份与前后值。</Text>
+            </Box>
+            <Box style={{ width: 628, height: 104, background: '#FFFFFF', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>先问一句：这条证据属于哪一类</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>位移、状态、回复各有各的事实来源，混着用就会出现看似成立、其实没有依据的结论。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 27</Text>
+    </Box>
+
+</Slide>

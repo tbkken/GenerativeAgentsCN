@@ -1,0 +1,68 @@
+<Slide notes={`这一块要讲的是信息放在哪里。
+
+我已经知道预约冲突了，所以十点的手作室被占用了。但我不能把这个答案放进所有角色的共同记忆里。否则许安即使从来没有咨询过，也能说出改成十点半。那不是信息传播，那是作者泄题。
+
+所以不同信息放在不同位置：公共场所的名称进入地图语义；人物目标进各自的资料；预约事实只进服务台的私有操作材料；旧消息进公告栏的初始状态。
+
+公告栏的外观状态标签是可以公开感知的，但详细正文要通过互动才能获知，对象内部其他字段不会自动向所有人公开。
+
+还有一层区分：材料对读者公开，不等于运行时对所有 Agent 公开。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.4　作者知道的事情，不一定是角色知道的事情</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>作者知道，不等于角色知道</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>不同信息放在不同位置，谁掌握它，取决于它被放在哪里。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>公共场所名称</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>进入地图语义（World / Sector）</Text></Box>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>人物目标</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>进入各自的人物资料</Text></Box>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>预约事实</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>只进服务台的私有操作材料</Text></Box>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>旧消息</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>进公告栏的初始状态</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>答案进共同 Brain 就等于泄题</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>许安从未咨询也会说出「改成 10:30」——那不是传播，是作者泄露答案。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>公告栏的外观标签可以公开感知，详细正文要通过互动获知；材料对读者公开，不等于运行时对所有 Agent 公开。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,86 @@
+<Slide notes={`建议的目录分成五个部分，作用各不一样。
+
+originals 放下载当时的原始文件，保留原名和字节内容，任何人都不重新打包。extracted 放解压出来的副本，只用来只读查阅。inventory 放清单：来源、身份、边界、大小和摘要，也就是「这份东西是什么、属于哪次运行」。judgments 放人工判分、争议与复核记录。reports 放图表、正文和对外说明，是最终交付出口。
+
+我特别想强调 judgments。它是唯一由人的判断写成的目录，恰恰最容易被忽略。评分过程本身也要留下能重复的判断：谁、在什么时间、依据哪一条判据、给出了什么结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.1　先把原始文件和分析工作分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>证据放在哪个文件夹</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 380, background: '#F4F7FA', borderRadius: 12, padding: '20px 20px', flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>建议目录　evidence/　—— 五类材料分开放，各自职责单一</Text>
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+                <Box style={{ width: 209, height: 260, background: '#F7F3E8', borderRadius: 8, padding: '18px 14px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                    <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#546779', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>原</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>originals/</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5, width: 181 }}>下载时的原始文件，保留原名与字节内容。</Text>
+                    <Box style={{ width: 181, height: 2, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5, width: 181 }}>只进不出，任何人都不重新打包。</Text>
+                </Box>
+
+                <Box style={{ width: 209, height: 260, background: '#EDF4FC', borderRadius: 8, padding: '18px 14px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                    <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#546779', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>解</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>extracted/</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5, width: 181 }}>用于只读查阅的解压副本，内容保持原样。</Text>
+                    <Box style={{ width: 181, height: 2, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5, width: 181 }}>可以看，不可以写回 Run 或实验。</Text>
+                </Box>
+
+                <Box style={{ width: 209, height: 260, background: '#EDF4FC', borderRadius: 8, padding: '18px 14px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                    <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>清</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>inventory/</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5, width: 181 }}>来源、身份、边界、大小和摘要清单。</Text>
+                    <Box style={{ width: 181, height: 2, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5, width: 181 }}>回答「这是什么、属于哪次运行」。</Text>
+                </Box>
+
+                <Box style={{ width: 209, height: 260, background: '#FFF4E6', borderRadius: 8, padding: '18px 14px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                    <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>判</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>judgments/</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5, width: 181 }}>人工判分、争议与复核记录。</Text>
+                    <Box style={{ width: 181, height: 2, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5, width: 181 }}>谁、何时、依据哪条判据。</Text>
+                </Box>
+
+                <Box style={{ width: 209, height: 260, background: '#ECF7F2', borderRadius: 8, padding: '18px 14px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+                    <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>报</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>reports/</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5, width: 181 }}>图表、正文和对外说明。</Text>
+                    <Box style={{ width: 181, height: 2, background: '#B5C7D8' }} />
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5, width: 181 }}>唯一对外出口，须指回前四类。</Text>
+                </Box>
+
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 124, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>judgments/ 是唯一由人的判断写成的目录</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 1112 }}>评分过程本身也要留下别人能重复的判断：谁在什么时间、依据哪一条判据、给出了证据支持、证据表明不成立还是证据不足。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,64 @@
+<Slide notes={`方法讲完了，接下来要把它装进本书真正要做的两类任务里。
+
+第一类在第二章，是活动筹备助手。它需要读取文件、形成结构化结果、调用查询或检查工具，并且在缺少资料的时候正确停下来。这类任务的评价重点在约束、来源、执行和交付。它不需要多轮的自我意识，但必须守住执行边界。
+
+第二类在第三章，是仿真角色。除了读资料，它还要在多轮过程中理解自己当前的位置、看得到什么信息、有哪些私有记忆，以及工具返回了什么。它要按照世界合同来选择行动。评价重点就变成了跨步的一致性、动作参数、信息边界、记忆使用和调用成本。
+
+两类的硬约束和证据都不一样。所以同一套步骤要走两遍，各写一份选择说明，不能合成一份。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 26 }}>
+
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>1.6.6</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>为两类任务分别写选择说明</Text>
+        <Text style={{ fontSize: 17, color: '#546779' }}>同一套步骤，两套任务、硬约束与证据</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 16, paddingTop: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 180, height: 70, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>活动筹备助手</Text>
+                </Box>
+                <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 460, height: 70, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', paddingLeft: 20 }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>约束、来源、执行、交付</Text>
+                </Box>
+                <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 300, height: 70, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>第二章实测</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 180, height: 70, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>仿真角色</Text>
+                </Box>
+                <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 460, height: 70, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', paddingLeft: 20 }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>跨步一致性、动作参数、信息边界、记忆</Text>
+                </Box>
+                <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 300, height: 70, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>第三章实测</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 27</Text>
+    </Box>
+
+</Slide>

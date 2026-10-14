@@ -1,0 +1,56 @@
+<Slide notes={`判分的时候，我不看哪一句话说得漂亮，也不看最后谁提的方案更接近答案。我看的是：主持人有没有做出一次明确、完整的定稿发言，而且是不是最后一次。
+
+为什么强调「最后一次」？因为定稿之后如果又改了，前面那一版就不再算数，评价以改动后的那一版为准。
+
+同时还要单独登记一件事：三名成员里，谁收到了这个版本。同一份方案向三个人各说一遍，不能算成三项结论，因为结论只有一个。
+
+还有两样东西不算定稿：私下的反思，那只是角色自己的想法；以及脑子里最接近答案的那个候选，只要它没有被明确说出来，就不能拿来顶替定稿。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.3　定稿与判分对象</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>以最后一次明确、完整的定稿发言判分</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '20px 28px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 6, height: 76, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.35 }}>以主持人最后一次明确、完整的定稿发言判分</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>另登记三名成员谁收到了该版本</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 448, height: 260, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>算作定稿</Text>
+                <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7, flex: 1 }}>主持人最后做出的一次完整安排：三项活动各自有时段与教室，并且明确标出这是本组的最终版本。前面被后一次覆盖的版本不再计分。</Text>
+            </Box>
+
+            <Box style={{ width: 380, height: 260, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>单独登记</Text>
+                <Box style={{ width: 4, height: 28, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7, flex: 1 }}>三名成员里谁收到了这一版。同案向三人传达不记成三项结论；接收与理解是两件事。</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 260, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不算定稿</Text>
+                <Box style={{ width: 4, height: 28, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.7, flex: 1 }}>私下的反思；没有被明确说出的最佳候选。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 26</Text>
+    </Box>
+
+</Slide>

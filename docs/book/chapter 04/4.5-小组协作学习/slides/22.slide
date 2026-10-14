@@ -1,0 +1,78 @@
+<Slide notes={`这个唯一解是怎么来的？我把过程拆成三步。
+
+一开始，时段有六种排列，教室也有六种排列，合起来三十六种候选。
+
+然后四条私有限制一层层地削。F2 先把拼图钉在十一点；F1 要求阅读早于手作，剩下两个时段的先后次序就定了；F3 和 F4 又固定了手作和阅读各自的教室，第三间自然留给拼图。
+
+削到最后，只剩一种安排。
+
+反过来说也成立：如果没有这四条私有限制，三十六种候选里哪一种都说得通，题目就没有唯一答案了。这也解释了为什么信息共享在这个案例里是必要条件——不共享，连唯一解都构不成。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.6　教师解答与人工判分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>约束怎样把 36 种缩成唯一解</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 116 }}>
+            <Box style={{ width: 400, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>36 种候选</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>时段 6 排列 × 教室 6 排列</Text>
+            </Box>
+            <Box style={{ width: 44, height: 116, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 380, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>四条私有限制</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>F1、F2、F3、F4 逐条削减</Text>
+            </Box>
+            <Box style={{ width: 44, height: 116, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 284, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>唯一解</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>只剩一种安排</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 200, height: 44, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>F2 · 任新</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>固定拼图 11 点 → 拼图的时段不再有选择</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 200, height: 44, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>F1 · 温乔</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>阅读先、手作后 → 剩余两时段的次序确定</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 200, height: 44, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>F3、F4 · 白露</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>固定手作与阅读的教室 → 余下讨论室给拼图</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#FFF4E6', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>没有这四条私有限制，36 种候选里哪一种都说得通，题目就没有唯一解</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 26</Text>
+    </Box>
+
+</Slide>

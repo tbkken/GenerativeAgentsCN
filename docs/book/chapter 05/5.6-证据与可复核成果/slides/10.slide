@@ -1,0 +1,81 @@
+<Slide notes={`四条常见的主张，判据和来源各不相同，我逐条说。
+
+「实施了澄清策略」的判据是：关键目的缺失时先问，收到补充之后才给建议。来源要找到请求、询问、真实补充和后续建议。「抵达正确窗口区域」要看提交坐标与地址是不是落在适配服务区，来源是 MOVE 事实和参与者状态。
+
+「获得适配回复」的判据是窗口按真实目的说明正确下一步，来源包括作者任务、窗口请求与响应，以及接收事实。
+
+「完成咨询闭环」最严格，它要求取得适配回复并且确认了正确下一步，来源在前面几项之外还要加人物发言或后续交互。
+
+记住：主张编号只是分析索引，字段与身份必须按真实协议填写，不能自己编。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.2　让一句主张接受三次追问</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类主张，各自要找到什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 700, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 92, background: '#276FBF' }} />
+                <Box style={{ width: 650, flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>实施了澄清策略</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>判据：关键目的缺失时先问，收到补充后再建议</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>来源：请求 · 询问 · 真实补充 · 后续建议</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 92, background: '#276FBF' }} />
+                <Box style={{ width: 650, flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>抵达正确窗口区域</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>判据：提交坐标与地址落在适配服务区</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>来源：MOVE 事实 · 参与者状态</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 92, background: '#276FBF' }} />
+                <Box style={{ width: 650, flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>获得适配回复</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>判据：窗口按真实目的说明正确下一步</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>来源：作者任务 · 窗口请求与响应 · 接收事实</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 92, background: '#CB6B28' }} />
+                <Box style={{ width: 650, flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>完成咨询闭环</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>判据：取得适配回复，并确认正确下一步</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>来源：上述链条，加人物发言或后续交互</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 428, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>判据先于事实</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 428 }}>先确定什么算正确，再去看记录里有没有发生。顺序颠倒，就很容易照着结果去找理由。</Text>
+            <Box style={{ width: 428, height: 120, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>角色说「建议正确」不算判据</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>角色并不知道正确答案，这句话只构成一条主张，不构成独立判断。</Text>
+            </Box>
+            <Box style={{ width: 428, height: 120, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>编号只是分析索引</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>字段与身份按真实协议填写，不补造编号，不靠截图搭来源链。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

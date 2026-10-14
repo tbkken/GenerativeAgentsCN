@@ -1,0 +1,62 @@
+<Slide notes={`时间粒度这件事，我得多说一句，因为它最容易被误读。
+
+默认是每分钟四格。一次十分钟的移动最多会消费四十格路径，但角色在同一轮里仍然只执行一次世界动作：他可以在这一轮走到目的地，但不能抵达之后在同一个轮次里接着做动作。所以“十分钟走完”不等于“十分钟里能做很多件事”。
+
+这也不是在逐分钟地模拟真实生活。调度器到九点并不会强制谁去上课，晨读只是活动语义上的倾向。粗粒度换来的是一段可以长期运行的时间线，代价是细节被压扁了。
+
+我提醒这一点，是因为有人看到十分钟一步，就以为角色在场景里能像真人一样连续活动。它更像一张时刻表，而不是一段录像。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.2　时间粒度与轮次边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>粗粒度不等于逐分钟生活</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 380 }}>十分钟一步，是为了让跨日长跑在可接受的时间里跑完；代价是细小动作被压在同一格内。</Text>
+            <Box style={{ width: 380, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一次世界动作的边界</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>成功选择 world-act 后结束本轮；同轮不叠加第二件世界动作。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 732, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 732, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 68, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>每分钟四格，10 分钟最多 40 格路径</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>MOVE 的路径长度有上限，不是一次跨过整张地图。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 732, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 68, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>抵达之后不能同轮 ACT</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>到达目的地和与之交互分在两轮，节奏比真实生活更粗。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 732, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 68, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>到 9 点不强制上课</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>调度器不按钟点发指令；周期活动只是语义上的倾向。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 27</Text>
+    </Box>
+
+</Slide>

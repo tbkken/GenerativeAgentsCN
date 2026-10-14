@@ -1,0 +1,87 @@
+<Slide notes={`两段决策方法之后，后面的流程是同一套，两组都要走一遍。
+
+从相同的首句开始：周澈和孟川说的完全一样，谭悦和邱禾说的也完全一样。基线这一组会拿到一次建议，对照这一组会先被追问缺的字段；追问之后收到同一个人的真实补充，再按同样的服务范围给出建议。
+
+拿到建议之后，就要合法导航、实际移动，走到窗口，取得窗口的真实回复，最后真实确认下一步该准备什么。
+
+有一条旁路必须记住：走错窗口之后还可以改道，但走错时发出的请求仍然计数，额外追问的轮次和对象调用也照样计成本。箭头只表示顺序关系，不指定在第几步完成。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.3　决策之后的同一套流程</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从首句走到确认</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 760, height: 56, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>相同首句：H1 = H3，H2 = H4　·　每人的完整目的分别私有</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 760, flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 370, height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>基线：给一次建议</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>标明是推测，可被新说明修正</Text>
+                </Box>
+                <Box style={{ width: 370, height: 84, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>对照：只追问这一字段</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>收到真实补充后再推荐窗口</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 56, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>按相同服务分工建议窗口 → 合法导航 → 实际移动</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 56, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>匹配窗口实际回复</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 56, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>真实确认正确下一步</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 360, flexDirection: 'column', gap: 20 }}>
+
+            <Box style={{ width: 360, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>走错后的请求仍计数</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>可以改道，但已发出的错误请求、额外追问轮次与对象调用都计入成本。</Text>
+            </Box>
+
+            <Box style={{ width: 360, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>补充必须来自同一人</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>教师答案不能当作补充；基线收到新说明后同样可以补救。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,63 @@
+<Slide notes={`有三句话特别容易被读错，我逐条说清。
+
+第一，工具接受了不等于窗口已经答复。提交成功只说明请求被受理，不代表对方给了适配的建议，更不代表事情办好了。
+
+第二，导航可达不等于已经抵达。路径算得出来，只说明理论上走得到，实际位置必须和感知记录核对。
+
+第三，这个案例里没有业务排队模型。对象一轮可以答复多个请求，所以等待不能被解释成行政审批的吞吐能力。
+
+这三条都会直接影响指标怎么算，不能含糊过去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.4　容易被读错的边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三句容易被读错的边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 680 }}><Text style={{ fontSize: 14, color: '#546779' }}>容易混淆的说法</Text></Box>
+            <Box style={{ width: 440 }}><Text style={{ fontSize: 14, color: '#546779' }}>正确的读法</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 680, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>工具接受 ≠ 窗口已答复</Text>
+            </Box>
+            <Box style={{ width: 440, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>提交成功只说明请求被受理，不代表对方给出适配且可执行的建议。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 680, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>导航可达 ≠ 已抵达</Text>
+            </Box>
+            <Box style={{ width: 440, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>路径存在只说明理论上可达；实际位置必须与感知记录核对。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 680, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>本案没有业务排队模型</Text>
+            </Box>
+            <Box style={{ width: 440, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>对象一轮可答复多个请求；等待不能被解释成行政窗口的吞吐。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

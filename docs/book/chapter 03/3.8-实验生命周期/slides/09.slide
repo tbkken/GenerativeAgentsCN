@@ -1,0 +1,67 @@
+<Slide notes={`装配草稿的时候，有几项参数要明确写下来，写下来才能被后面核对。
+
+虚拟时间从二零二六年十月十七日九点五十分开始，时区是上海。步长按每步一分钟算，一共四十八步。这三项决定了这次观察窗口覆盖的区间。
+
+窗口的用途是说清楚的：用它来观察角色怎么调整信息、怎么抵达、活动有没有开始。不能因为跑了四十八步，就宣称一个小时的活动已经完整结束，窗口只证明窗口里面发生的事。其他运行参数要按后面第九节的口径去核对。
+
+最后是保存这件事。编辑完要点当前页面对应的保存操作，等结果回来，然后离开、再从同一个实验打开。核对的是服务器保存后的副本，不是还亮在输入框里的内容。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.2　草稿装配完成后，重新打开核对</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>核对的是服务器保存后的副本</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6, width: 1152 }}>时间参数、根 Skill 与 Brain 的依赖、以及保存行为，各自要留下可以复查的对象。</Text>
+
+        <Box style={{ width: 1152, height: 24, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 24 }} />
+            <Text style={{ fontSize: 14, color: '#546779', width: 200 }}>对象</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 380 }}>这次采用的值</Text>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>要核对什么</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 200 }}>时间与时区</Text>
+            <Box style={{ width: 380, height: 48, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>2026-10-17 09:50　Asia/Shanghai</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>虚拟时间从哪一刻开始，决定观察窗口的起点</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 200 }}>步长与步数</Text>
+            <Box style={{ width: 380, height: 48, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>每步 1 分钟，共 48 步</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>窗口用来观察信息调整、抵达与活动开始；其他参数按 3.9 节核对</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 200 }}>保存与重开</Text>
+            <Box style={{ width: 380, height: 48, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>从同一实验重新打开</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>核对服务器保存后的副本，而不是尚未提交的输入框</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>四十八步走到哪一步，只说明窗口内发生了什么，不能据此宣称一小时的活动已经结束。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

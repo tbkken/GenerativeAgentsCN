@@ -1,0 +1,63 @@
+<Slide notes={`这四个层次，每一层回答的问题是不一样的。
+
+JSON 语法只问一件事：能不能解析。引号、逗号、括号是否合法，就这些。
+
+Schema 结构问的是字段和类型符不符合合同。人数必须是整数，房间编号必须落在允许的那几个值里。它管的是形式，不管内容对不对。
+
+业务规则问的是记录之间、以及记录和规则之间相不相容。时长对不对、容量够不够、活动完整不完整、有没有预约冲突，这些都在这儿。
+
+事实来源问的是另一件事：你用的数据有没有依据，是不是适用于本次任务。人数要来自当前需求，预约要来自指定日期的查询。一层只管一件事，这是排查时最省力的做法。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.1　检查分四层</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个层次，各回答一个问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16, height: 26, alignItems: 'center' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 14, color: '#546779' }}>检查层次</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>要回答的问题</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 14, color: '#546779' }}>青禾的例子</Text></Box>
+        </Box>
+
+        <Box style={{ height: 96, flexDirection: 'row', background: '#F4F7FA', borderRadius: 10, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>JSON 语法</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>能否解析</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>引号、逗号、括号是否合法</Text></Box>
+        </Box>
+
+        <Box style={{ height: 96, flexDirection: 'row', background: '#F4F7FA', borderRadius: 10, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>Schema 结构</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>字段和类型是否符合合同</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>人数为整数，房间 ID 属于允许枚举</Text></Box>
+        </Box>
+
+        <Box style={{ height: 96, flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>业务规则</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>记录之间及记录与规则是否相容</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>时长、容量、活动完整性、预约冲突</Text></Box>
+        </Box>
+
+        <Box style={{ height: 96, flexDirection: 'row', background: '#ECF7F2', borderRadius: 10, padding: '0 18px', gap: 16, alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>事实来源</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>数据有依据且适用于本次任务</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>人数来自当前需求，预约来自指定日期的查询</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 23</Text>
+    </Box>
+
+</Slide>

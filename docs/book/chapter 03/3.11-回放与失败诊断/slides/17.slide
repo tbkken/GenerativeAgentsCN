@@ -1,0 +1,81 @@
+<Slide notes={`分类之前有两个动作不能省。
+
+第一是核对对应的事实。听到「已经到达」，就去查坐标轨迹；听到「已经更正」，就去查对象状态事件；听到「已经通知」，就去查请求和消息。第二是把身份定位清楚：是哪一个 Run、哪一次 Attempt、哪一步、哪一个参与者。
+
+为什么身份这么重要？因为同一句话在不同身份下含义完全不同。许安在第一次尝试里说到达，和他在重跑之后的第二次尝试里说到达，是两件互不相干的事。没有身份，证据就没法复核，别人也无法重现你的判断。
+
+所以观察到的现象只是入口，起点必须落到具体的身份上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.5　分清四类问题再处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先核对事实，再定位身份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>观察只是入口，身份才让证据可定位</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 354, height: 110, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>观察或声称</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>已到达 · 已更正 · 已通知</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 110, background: '#EDF4FC', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>核对对应事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>坐标轨迹 · 状态事件 · 请求与消息</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 110, background: '#ECF7F2', borderRadius: 10, padding: '12px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>定位身份</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>Run → Attempt → Step → 参与者</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>身份要一层一层收窄</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 245, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Run</Text>
+                </Box>
+                <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 245, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Attempt</Text>
+                </Box>
+                <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 245, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>Step</Text>
+                </Box>
+                <Box style={{ width: 44, height: 72, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 245, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>参与者</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>同一句话在不同身份下是两件事；没有身份，证据就无法复核。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,49 @@
+<Slide notes={`报告结果的时候，还有几件事不能省。
+
+第一，N 个人里 s 个已经证实、u 个还没核验，就报区间 [s/N，（s+u）/N] 和那个 u，不要替未知强行下判断。
+
+第二，如果一次 Run 里零相关行动，那就记「不适用」，不要填一个 0，因为分母根本不存在。
+
+第三，零过期不等于传播全面。得同时看覆盖率：如果没有人真的收到更正，那零过期什么也说明不了。
+
+第四，记忆纠正要看两样东西——节点的有效态，以及固定问题下的真实检索结果。一次限量检索没有返回旧节点，不足以证明纠正成立。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.5 — 4.4.6　报告与边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>记分之外还要报告什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ height: 220, background: '#EDF4FC', borderRadius: 12, padding: '26px 28px', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+            <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>部分证实时的报告范围</Text>
+            <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1 }}>[s/N，（s+u）/N]</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>N 人中 s 人已证实、u 人未核验：报这个区间与 u，不强判未知。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 373, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>零相关行动记不适用</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>没有任何相关动作就没有分母，记「不适用」，不要填 0。</Text>
+            </Box>
+            <Box style={{ width: 373, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>零过期不等于传播全面</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>必须同时看覆盖率：没人收到更正时，零过期没有意义。</Text>
+            </Box>
+            <Box style={{ width: 374, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一次限量检索不够</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>记忆纠正要同时看节点有效态，和固定问题下的真实检索。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

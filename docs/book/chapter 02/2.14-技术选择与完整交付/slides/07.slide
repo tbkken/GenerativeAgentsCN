@@ -1,0 +1,88 @@
+<Slide notes={`剩下五种技术，判断方式也是同一个套路。
+
+资料多到不可能全塞进上下文，才需要检索和 RAG。这时要分两步检查：依据有没有找全，引用的内容是否真的支持结论。
+
+下一步做什么取决于上一步结果，用 Agent 循环。看它会不会根据观察调整，有没有在边界内停下来。
+
+输入是图、是录音、或需要操作页面，用多模态和计算机工具。感知、执行和最终状态要分别核实。
+
+子任务可以拆开独立处理，考虑多 Agent 工作流，但先要算清楚收益是否超过协调成本。
+
+最后是可观测性，它不解决任务，只解决错在哪一次，要把这次的 Trace、输入、模型调用、校验和产物串起来。这些技术可以组合，每加一种都要说得出它解决了什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.1　按问题选择技术</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>扩展路线的五种技术，以及组合方式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 260, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>检索与 RAG</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>资料很多，不能全部放入上下文</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>是否找全依据，引用是否支持结论</Text>
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 260, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Agent 循环</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>下一步依赖未知结果</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>是否根据观察调整，并在边界内停止</Text>
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 260, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>多模态与计算机工具</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>需要读图、听录音或操作页面</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>感知、执行和最终状态是否分别核实</Text>
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 260, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>多 Agent 工作流</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>可分离的子任务需要独立处理</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>质量或耗时收益是否超过协调成本</Text>
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 260, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>可观测性与 Langfuse</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>不清楚错误发生在哪次调用</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本次 Trace、输入、模型调用、校验和产物能否关联</Text>
+        </Box>
+
+        <Box style={{ height: 92, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>技术可以组合</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>MCP 连接包装 CLI 的服务，Skill 指导调用方法，Agent 循环选择下一步，结构化输出约束交付格式。每新增一种，都要说清它解决了什么问题。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,66 @@
+<Slide notes={`把这几条边界收一下，避免误读。
+
+第一，对象有没有被塞进一套通用授权？没有。公告栏按身份判断，是本章教案为了情节能核对而写下的教学行为规则，不是内核里的通用能力。
+
+第二，对象能改什么？只能改自己。它不能顺手改另一个人的记忆，也不能替手作室改状态。谁的记忆谁维护，谁的状态谁提交。
+
+第三，一次拒绝意味着什么？按真实请求者身份拒掉一个不相符的请求，是设计内的结果，不能记成故障。要区分「行为不对」和「系统坏了」。
+
+把这三条讲清楚，后面看回放和做验收的时候，才不会被一次正常的拒绝带偏。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.4　设计公告更新这一段情节</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>教学行为的边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>加进内核了吗</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>没有</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>这是教案里的教学行为规则，不是一套通用的业务授权系统。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>对象能改什么</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>只改自身</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不能顺便改另一个人的记忆，也不能替手作室改状态。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Box style={{ width: 230 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>拒绝算不算故障</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不算，是设计内的结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>判断依据是真实请求者身份，不是请求文本里的自称。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#20344B' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>把边界讲在前面，看回放和做验收时才不会把一次正常的拒绝当成系统出错。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 31</Text>
+    </Box>
+
+</Slide>

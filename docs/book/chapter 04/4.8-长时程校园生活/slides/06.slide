@@ -1,0 +1,68 @@
+<Slide notes={`接下来把信息边界立好，这一步决定了实验有没有意义。
+
+休息区那个咨询台手里只有三条固定资料：阅览区要安静，可以交流的地方是讨论区；报名只记本周的意向；讨论室使用之前要先确认当前的说明。它没有真实的座位、库存，也没有报名锁，所以它给出的是一段文字说明，不是一次真实的资源占用。
+
+另一个关键是初始目标：只把各自的任务放进各自手里，不共享全部答案，也不公开别人的进度。如果一上来每个人都知道该找谁、谁办到哪一步，那后面观察到的“重复执行”和“遗漏”就都不是自然发生的了。
+
+这两条合起来，才让“昨天办完的事今天会不会重做”变成一个可以观察的问题，而不是我提前写好的答案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.1　咨询台与初始信息边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>咨询台知道什么，谁不该知道</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>咨询台的固定资料（只有这三条）</Text>
+
+            <Box style={{ width: 700, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.55 }}>阅览区要安静，可以交流的地方是讨论区</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.55 }}>报名只记录本周的意向，不代表预留了名额</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.55 }}>讨论室使用之前，先确认当前的使用说明</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28', width: 30 }}>!</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.55 }}>它没有真实座位、库存或报名锁：说的是文字说明，不是一次资源占用</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>初始目标只放各自任务</Text>
+
+            <Box style={{ width: 420, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不共享全部答案</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>角色手里只有自己那件事的说明，没有全局答案表。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不公开他人进度</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>无法直接知道别人办到哪一步，只能靠真实消息与感知获得。</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>边界立好，重复与遗漏才是被观察到的行为，不是提前写好的答案。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 27</Text>
+    </Box>
+
+</Slide>

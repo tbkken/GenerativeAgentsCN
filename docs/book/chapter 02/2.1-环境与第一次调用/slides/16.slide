@@ -1,0 +1,65 @@
+<Slide notes={`脚本里的模型名是明确的占位值，不能原样跑，要换成自己账户里真实可用的 ID。
+
+为什么书中不给一个具体的名字？因为给了就容易误解成"这就是最好的那个"。这本书没有为读者锁定一个永久最佳的模型，模型在更新，产品在换，推荐很快会过期。
+
+正确的做法是：每次练习记录下实际请求用的名字和返回里的名字，然后按练习逐项确认能力，比如结构化输出、工具调用、图像输入，这些不是所有模型都有。
+
+最后一个提醒最重要：相同的 API 入口，不代表所有模型都支持相同的参数。遇到"参数不支持"，先核对模型能力，再考虑调整参数。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.4　配置 API，再执行最小调用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>模型名称必须替换</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>没有永久最佳的模型</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>本书不推荐一个固定的模型名。选择时看的是：它在你的账户里可用，并且支持这次练习需要的能力。</Text>
+            <Box style={{ background: '#F7F3E8', borderRadius: 10, padding: '16px 18px' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>环境变量里的占位字符串只是提醒，原样运行不会被接受。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 132 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>占位要替换</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>换成账户里可用、且支持所需能力的模型 ID，不要原样运行。</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 132 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>记录实际名称</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>记录实际请求用的名称与返回里的名称，两者都要留痕。</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 132 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>逐项确认能力</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>结构化输出、工具调用、图像输入这些能力，按练习一项一项确认。</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16, marginTop: 4 }}>
+                <Box style={{ width: 4, height: 70, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>相同入口，不代表相同参数</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>换模型后某些参数可能不再被接受；报错时先核对模型能力，再考虑调整参数。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

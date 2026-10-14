@@ -1,0 +1,54 @@
+<Slide notes={`这道题可以拿来直接用。原方案是 10:15 到 10:45，需要连续三十分钟，而 10:00 到 10:30 已经有一条预约。正确判断是它与已有预约重叠，所以不可行。
+
+10:30 到 11:00 是一个可行答案，但不是唯一答案；其他条件允许时，09:00 到 09:30 也符合题意。
+
+这里有一处必须提前约定：时间区间按左闭右开处理，首尾相接不算重叠。如果不写这一句，评分的人完全可能把 10:30 开始的答案判成另一种结果。评价规则里的歧义，最后会被误算成模型之间的差异。
+
+评分时检查容量、时长、开放时间和预约交集，不要求输出逐字等于参考答案。开放题的答案本来就不唯一。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.2　第二步：准备小而有区分度的任务集</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一道题看清边界约定</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ height: 190, background: '#F7F3E8', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 8 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 3, height: 22, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>练习任务：检查 10:15 – 10:45 是否可行</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>开放日为 2026 年 10 月 17 日，时区为 Asia/Shanghai，开放时间 09:00 – 12:00。手作室容量十二人，10:00 – 10:30 已有预约。手作活动有十名参加者，需要连续三十分钟，拟安排 10:15 – 10:45。请检查是否可行；若不可行，在不改变人数和活动时长的情况下给出一个可行时段，并指出依据。</Text>
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.7 }}>时间区间按左闭右开处理，首尾相接不算重叠。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 160, background: '#FFF4E6', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>原方案　10:15 – 10:45</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>整段落进 10:00 – 10:30 的已有预约，重叠，不可行。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 160, background: '#ECF7F2', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>可行答案　10:30 – 11:00</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>起点与预约终点相接，按左闭右开不算重叠；09:00 – 09:30 同样符合题意。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 60, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 34, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B' }}>评分检查容量、时长、开放时间与预约交集，不要求逐字等于参考答案。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,100 @@
+<Slide notes={`五条理由，我按人念一遍，请留意它们的强度不一样。
+何澄的 R1 是二十点以后需要安静，这一条不可妥协；但他不反对二十点以前交谈，也不反对静默活动。
+秦川有两条：R2 是十九点以前无法到场，这是固定条件；R3 是希望口头交流，静默可以保留，但不能说他的交流需求已经被满足。
+宋遥也有两条：R4 是十九点半必须离开去赴另一个承诺；R5 是他要完整参与六十分钟才接受，不能把半程当成完整参加。
+这些理由初始只发给本人，主持人杜宁和其他代表都不知道。共同 Brain 里只有表达和核对的方法。
+还有一条底线：人物不能为了让故事圆满就取消硬条件——那等于替真实的人改需求。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.2　私有理由与教师分析分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五条理由，只发给本人</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ height: 302, flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>何澄</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>只收到 R1</Text>
+                </Box>
+                <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>R1</Text>
+                        <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>20:00 后需要安静，不可妥协</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#B5C7D8' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>补充</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不反对 20 点前交谈或静默活动</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 368, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>秦川</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>只收到 R2、R3</Text>
+                </Box>
+                <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>R2</Text>
+                        <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>19:00 前无法到场，固定条件</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>R3</Text>
+                        <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>希望口头交流；静默可保留，但不能称交流需求已满足</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 368, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>宋遥</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>只收到 R4、R5</Text>
+                </Box>
+                <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>R4</Text>
+                        <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>19:30 必须离开，赴另一承诺</Text>
+                    </Box>
+                </Box>
+                <Box style={{ height: 104, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>R5</Text>
+                        <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>完整参与 60 分钟才接受，半程不算完整</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 128, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 80, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>这些理由初始只有本人知道，主持人和其他代表都不知道</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>共同 Brain 只含表达与核对方法。人物不能为了圆满故事取消硬条件，那样等于替真实的人改掉了需求。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商　·　来源：4.6.2 私有理由表（示意）</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,94 @@
+<Slide notes={`这一节要处理一个很实际的问题：运行到一半想停下来看看，停下来之后想接着往下走，或者想拿原来的条件重新做一遍。这三件事看起来都叫“再运行一次”，但它们在系统里是完全不同的操作。
+
+我先把结论说清楚：暂停以后继续，还是原来那次运行；从头再做一次，是一次全新的运行。这两者不能互相代替，也不能互相证明。
+
+还有一条容易被忽略：按钮按下去成功，不代表远端的推理已经停下来。这条边界要单独验证，不能靠界面提示。
+
+后面我会沿着身份、边界、暂停、续跑、取消、重跑依次展开，每一段都要求留下可以检查的原始记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.10</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>暂停、取消、{'\n'}续跑与重跑</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 500 }}>同样叫“再运行一次”，身份和历史含义并不相同：续跑保留原来的运行，重跑产生新的运行。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 112, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>运行身份</Text>
+                </Box>
+                <Box style={{ width: 112, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>提交边界</Text>
+                </Box>
+                <Box style={{ width: 112, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>恢复条件</Text>
+                </Box>
+                <Box style={{ width: 112, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>待验收项</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>同一次实验，两种“再跑一次”</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 172, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>Run A　run_id 保持不变</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 156, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>Attempt 1</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 46, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 156, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>核对恢复快照</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 46, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 156, height: 46, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>新 Attempt 2</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>继续执行：从已提交边界的下一步开始</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 34, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#546779' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 138, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>Run B　重跑：新的 run_id</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 200, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>读原 Run 内嵌实验</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 46, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 22, color: '#CB6B28' }}>›</Text>
+                    </Box>
+                    <Box style={{ width: 200, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>新的首个 Attempt</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 46, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>从 Step 1</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>可以记录 origin_run_id，但不能把两个 Run 当成一个历史</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

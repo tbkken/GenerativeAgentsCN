@@ -1,0 +1,55 @@
+<Slide notes={`余真和两个窗口的写法可以放在一起看，因为它们都在处理「别人来问路」这件事。
+
+余真的分支只为实际求助者说明咨询入口和已知地址。他不主动替四个人分类，也不读取评分表。这一点很重要：引导员知道流程，但不应该知道谁该得多少分，否则他会替角色做判断。
+
+两个窗口的根 Skill 有四条公共要求：目的不清就询问；属于自身范围就说明准备信息；不属于自身范围就解释分工并指回正确窗口；所有答复按真实请求 ID 提交。A 和 B 的区别只是已经固定的服务范围，在基线和对照中各自保持一致。
+
+另外要注意，对象可以在同一轮处理多个请求，这是系统能力，本案不把它解释成现实中的排队吞吐。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.4　其余三份材料怎样写完整</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>余真与两个窗口的分工</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>三份材料各自写清界线：谁知道流程、谁负责范围、谁按什么标识提交答复。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>余真的分支</Text>
+                <Box style={{ width: 40, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>只为实际求助者说明咨询入口和已知地址。{'\n\n'}不主动替四人分类。{'\n\n'}不读取评分表。{'\n\n'}知道流程，不替角色做判断。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 300, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>两个窗口的公共写法</Text>
+                <Box style={{ width: 40, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>目的不清就询问。{'\n\n'}属于自身范围就说明准备信息。{'\n\n'}不属于自身范围就解释分工并指向正确窗口。{'\n\n'}按真实请求 ID 提交答复。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 300, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>A 与 B 的区别</Text>
+                <Box style={{ width: 40, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>A 负责活动场地使用咨询。{'\n\n'}B 负责现有设施问题咨询。{'\n\n'}服务范围已固定，在基线和对照中各自保持一致。{'\n\n'}对象可同轮处理多个请求。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>两个容易越界的地方</Text>
+            <Text style={{ fontSize: 15, color: '#20344B' }}>同轮处理多个请求不解释为现实排队吞吐；人物互相说话每次只有一个实际接收者，不能在一句发言里写出双方回答。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 27</Text>
+    </Box>
+
+</Slide>

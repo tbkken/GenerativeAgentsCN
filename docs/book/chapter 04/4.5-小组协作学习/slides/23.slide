@@ -1,0 +1,64 @@
+<Slide notes={`我拿一份人工写错的定稿来演示判分。阅读放到十点、手作放到九点、拼图十一点，三项各五十分钟，教室全都对。
+
+逐条看：C1、C2、C3 都成立，C5、C6、C7 也成立，一共六条。唯独 C4 冲突——阅读没有早于手作。
+
+所以得分是六比七，大约是百分之八十五点七。但完全正确的方案数仍然是零。
+
+这个例子要说明的是：部分分高和全对是两件事。另外必须标清楚，它是人工写出来的错误方案，不是某一次 Run 的真实结果，不能当成实测数据引用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.6　教师解答与人工判分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六项满足，仍不是完全正确</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 112, background: '#F7F3E8', borderRadius: 10, padding: '12px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 13, color: '#546779' }}>人工错误定稿（示意方案条，非实际界面；非 Run）</Text>
+            <Box style={{ flexDirection: 'row', gap: 24, height: 56 }}>
+                <Box style={{ width: 352, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>阅读 10:00—10:50 · 阅览室</Text>
+                </Box>
+                <Box style={{ width: 352, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>手作 09:00—09:50 · 操作室</Text>
+                </Box>
+                <Box style={{ width: 352, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>拼图 11:00—11:50 · 讨论室</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 220 }}>
+
+            <Box style={{ width: 480, height: 220, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6 }}>
+                <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>6 / 7</Text>
+                <Text style={{ fontSize: 18, color: '#546779' }}>≈ 85.7%　满足率</Text>
+            </Box>
+
+            <Box style={{ width: 640, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 640, height: 62, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>成立六条　C1、C2、C3、C5、C6、C7</Text>
+                </Box>
+                <Box style={{ width: 640, height: 62, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>冲突一条　C4 —— 阅读没有早于手作</Text>
+                </Box>
+                <Box style={{ width: 640, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>完全正确方案数 ＝ 0</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 13, color: '#546779' }}>人工错误方案不来自 Run；它是用来演示判分口径的教材材料</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 26</Text>
+    </Box>
+
+</Slide>

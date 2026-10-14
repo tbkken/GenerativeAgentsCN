@@ -1,0 +1,67 @@
+<Slide notes={`一百分分成五块，刻度是按教学权重定的，不是本案已经拿到的分数。
+
+问题与范围十五分，看目标、用户、观察单位和边界是否具体。材料与信息分配二十分，看来源、假设和角色知识里有没有答案泄漏。行为与对照二十分，看标准流程是否精确、唯一变化和依赖是否明确。证据与分析二十五分，权重最高，看判据是否可操作、结论能否追溯到原始事实。接收与表达二十分，看别人能不能独立找到材料并提出反馈。
+
+总分加起来正好一百分。同一维度可以按充分、部分、缺失给分，然后写一句理由，把给分的依据说出来。
+
+评价的目的是辨认知识与证据的缺口，不是奖励所有任务成功。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.6　一份可以说明理由的评分量表</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>100 分由五部分组成</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>教学评分建议，供讲师调整；它不是系统自动质量分，也不是已对本章进行的评分</Text>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 8 }}>
+
+            <Box style={{ width: 168, height: 150, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>15</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>问题与范围</Text>
+            </Box>
+
+            <Box style={{ width: 224, height: 150, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#20344B', lineHeight: 1.0 }}>20</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>材料与信息分配</Text>
+            </Box>
+
+            <Box style={{ width: 224, height: 150, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>20</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>行为与对照</Text>
+            </Box>
+
+            <Box style={{ width: 280, height: 150, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>25</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>证据与分析　（权重最高）</Text>
+            </Box>
+
+            <Box style={{ width: 224, height: 150, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 36, fontWeight: 'bold', color: '#20344B', lineHeight: 1.0 }}>20</Text>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>接收与表达</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>15 + 20 + 20 + 25 + 20 = 100</Text>
+            <Text style={{ fontSize: 16, color: '#546779' }}>同一维度可按充分、部分、缺失给分，并写一句理由</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>评价的目的是辨认知识与证据的缺口，不是奖励所有任务成功</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>先选范围，使「未要求运行」和「要求运行但无证据」得到不同处理</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 31</Text>
+    </Box>
+
+</Slide>

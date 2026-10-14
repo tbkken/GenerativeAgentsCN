@@ -1,0 +1,75 @@
+<Slide notes={`本地这一层固定住之后，再按顺序把模型拉进来。四条命令，一步一步加东西。
+
+第一条是本地检查，不访问模型。第二条跑第一次响应，看一次最普通的文本返回，目的是确认服务这一段是通的：认证、配额、模型名字都对。
+
+第三条让模型按 Schema 输出一份排期候选。输出形状受约束了，但里面的事实仍来自模型自己的判断。
+
+第四条是带工具反馈的完整循环，模型能看到查询结果再调整，跑完之后用同一个校验器独立复核。
+
+有一条要特别注意：中间脚本产出的候选不能直接当成交付物。交付的是最后一次运行目录里的文件，加上紧跟着的独立校验。也不要批量跑完只看最后一行，哪一步失败就先看哪一步的实际输出。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.2　一次完整的 API 路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四条命令跑通一次完整路线</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 255, height: 160, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>本地检查</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>unittest 与规则校验器{'\n'}不访问模型</Text>
+            </Box>
+            <Box style={{ width: 44, height: 160, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 160, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>普通文本</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>first_response.py{'\n'}先看一次基础响应</Text>
+            </Box>
+            <Box style={{ width: 44, height: 160, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 160, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>受约束候选</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>structured_schedule.py{'\n'}按 Schema 输出候选</Text>
+            </Box>
+            <Box style={{ width: 44, height: 160, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 160, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>工具闭环与校验</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>function_calling.py{'\n'}再用校验器独立复核</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>中间的候选不是交付物</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>最后一步用 --output-dir output/final-run 指定本轮目录，交付以该目录的产物与紧随其后的独立校验为准。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 25</Text>
+    </Box>
+
+</Slide>

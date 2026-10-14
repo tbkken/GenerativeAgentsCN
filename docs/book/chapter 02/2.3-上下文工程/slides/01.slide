@@ -1,0 +1,64 @@
+<Slide notes={`这一节要处理一个很具体的问题：一句话里的信息，怎样才算真的送到了模型面前。
+
+组织者说，还是上次那个房间，人数以新表为准。这句话听上去完整，其实藏着三件事：上次的任务是什么，房间指的是哪一个，新表和旧表之间是什么关系。这三件事如果没有实际进入本轮请求，模型就只能靠猜。
+
+所以上下文工程管的不是我们手上有多少资料，而是每一轮请求里实际带上了哪些指令、历史、文件和工具结果，它们怎么组织、怎么更新，又怎么被移出去。
+
+还有一个容易忽略的地方：带上信息的同时，要给模型的输出留出空间。带得越满，能留给回答的余地就越少。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 268, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体　·　2.3</Text>
+        </Box>
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>上下文工程：让模型在这一轮获得合适的信息</Text>
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.65, width: 1000 }}>「还是上次那个房间，人数以新表为准。」要可靠处理这句话，上次的任务、房间的身份、新旧资料的关系，都必须真正进入本轮请求。</Text>
+    </Box>
+
+    <Box style={{ height: 412, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+
+            <Box style={{ width: 300, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>任务要求</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>指令与硬约束</Text>
+                </Box>
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>资料与工具结果</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>来源、日期、适用范围</Text>
+                </Box>
+                <Box style={{ height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>当前工作状态</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>候选、错误与待确认项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 200, height: 248, background: '#ECF7F2', borderRadius: 12, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>筛选与压缩</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>先去无关，{'\n'}再保留证据</Text>
+            </Box>
+
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 440, height: 248, background: '#EDF4FC', borderRadius: 12, padding: '0 24px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>本轮输入</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>事实、来源、状态{'\n'}完整保留关键约束</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 3, height: 34, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>另为输出预留空间；图形面积不表示 Token 比例</Text>
+        </Box>
+
+    </Box>
+
+</Slide>

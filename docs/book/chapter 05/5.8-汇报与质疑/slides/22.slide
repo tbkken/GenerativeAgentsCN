@@ -1,0 +1,53 @@
+<Slide notes={`发现问题之后，评阅意见怎么写才真正有用？我的建议是写成「主张—缺口—所需处理」三段。
+
+比如报告里称 H2 闭环，但附上的记录只有一条入口建议。第一部分是主张：报告称 H2 闭环。第二部分是缺口：所附记录只有入口建议。第三部分是所需处理：请补充定位适配窗口回复以及实际确认，否则就把这一项改为未闭环。
+
+这样的意见允许作者依据事实回应，比一句「感觉不可信」有帮助得多。
+
+处理意见也要留下结果。补充定位、改判、缩小主张、暂时无法解决，都可以成为明确结局；只写「已沟通」，后来者不知道证据到底发生了什么。如果原始记录本身无法支持判断，就保留未知，不要请模型补一个听起来合理的故事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.6　评阅者可以从五个问题开始</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>评阅意见写成主张—缺口—处理</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 14 }}>
+
+        <Box style={{ height: 30, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#546779' }}>例句：报告称 H2 闭环，但所附记录只有入口建议。</Text>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>主张</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>报告称 H2 闭环</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>缺口</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>所附记录只有入口建议，没有窗口回复与确认</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 140 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>所需处理</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>补定位适配窗口回复及确认，否则将其改为未闭环</Text></Box>
+        </Box>
+
+        <Box style={{ height: 148, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 84, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>处理评阅意见也要留下结果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>补充定位、改判、缩小主张和暂时无法解决，都可以成为明确结局；「已沟通」不能告诉后来者证据发生了什么。若原始记录无法支持判断，就保留未知，不请求模型代填一个合理故事。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 26</Text>
+    </Box>
+
+</Slide>

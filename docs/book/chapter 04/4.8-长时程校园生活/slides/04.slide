@@ -1,0 +1,78 @@
+<Slide notes={`三类事项各自要办成什么、留下什么证据，差别很大。
+
+一次性任务有三件：唐悠去咨询台核对阅览区约定，再准确转述给顾澄；顾澄提交一次观摩报名意向；罗予核对讨论室使用说明，再转述给唐悠。前两件的证据不同：唐悠那件要有真实回复、转述和顾澄的相关回应；顾澄那件只要对方确认接收，只能证明意向被收到，不是报名成功。
+
+周期活动是每天九点到十点倾向晨读、晚八点到八点半倾向晚间整理，靠活动名加当地日期识别，不是内核强制的作息。
+
+自愿承诺是唐悠邀请顾澄十月十九日十六点在阅览区交流笔记；如果顾澄没明确承诺自己的行动，邀请不会自动变成承诺。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.1　把一次性任务、周期活动、承诺分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一天里，三件事的身份不同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 10, padding: '0 4px' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 220 }}>类型</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 460 }}>完整任务</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 452 }}>成立证据</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 132, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 100, background: '#276FBF' }} />
+            <Box style={{ width: 216, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>一次性任务</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>A / B / C 三件</Text>
+            </Box>
+            <Box style={{ width: 450, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>A 唐悠核对阅览约定再转述顾澄</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>B 顾澄提交一次观摩报名意向</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>C 罗予核对讨论室说明再转述唐悠</Text>
+            </Box>
+            <Box style={{ width: 442, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>A 真实回复、转述与顾澄相关回应</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>B 对象确认接收，仅证明意向收到</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>C 查询与消息链齐全</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 118, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 86, background: '#26816B' }} />
+            <Box style={{ width: 216, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>周期活动</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>按日期重复</Text>
+            </Box>
+            <Box style={{ width: 450 }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>每日 09:00–10:00 倾向晨读{'\n'}20:00–20:30 倾向晚间整理</Text>
+            </Box>
+            <Box style={{ width: 442 }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>活动名＋当地日期可识别，不是内核强制；没有课程表把角色按到九点。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 118, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 10, padding: '0 16px' }}>
+            <Box style={{ width: 4, height: 86, background: '#CB6B28' }} />
+            <Box style={{ width: 216, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>自愿承诺</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>邀请 → 接受</Text>
+            </Box>
+            <Box style={{ width: 450 }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>唐悠邀请顾澄最晚 2026-10-19 16:00 +08:00 在阅览区开始笔记交流</Text>
+            </Box>
+            <Box style={{ width: 442 }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>顾澄明确承诺本人行动之后，才有一条属于顾澄的承诺；邀请不自动带出承诺。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 27</Text>
+    </Box>
+
+</Slide>

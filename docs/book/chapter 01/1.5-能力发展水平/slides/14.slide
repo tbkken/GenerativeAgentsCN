@@ -1,0 +1,46 @@
+<Slide notes={`第四个知识块讲工程任务和长上下文，也是四个知识块里最容易看错的一块。
+
+软件工程提供了一个比较硬的检验方式：改完代码，能不能通过执行测试。它的好处是结果由程序判定，不依赖人的印象。
+
+但正因为看起来硬，这里更容易踩坑。我在后面会让大家先检查四种"看似一样"的条件：名字一样是不是同一个榜单，百分比一样是不是同一个分母，档位都写 high 是不是同一份计算预算，同样用了工具是不是同一套工具和同样的使用上限。
+
+这四条里任何一条对不上，两个数字就不能排在一起。所以这一块的态度是：条件未知就写未披露，不要把不同设置排成一条进步曲线。接下来的两组成绩，我会按它们各自的条件来解释。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.5.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>高分背后包含执行环境</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>条件未知就写未披露，不把不同设置排成一条进步曲线。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ flex: 1, height: 58, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>同一名称 · 任务版本与修订</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 58, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>同一百分比 · 分母是什么</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 58, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>同一档位 · 计算预算</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 58, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>同样用工具 · 工具集合与上限</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

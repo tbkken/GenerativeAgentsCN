@@ -1,0 +1,47 @@
+<Slide notes={`把两组写进记忆的原话摆出来对照。
+
+基线：收到正式更正后，用 memory-stream-append 追加一条当前正式会址的新信念，写明来源和生效时间，并保留原会址信念的有效态。
+
+对照：收到正式更正后，用 memory-stream-supersede 替代此前那条当前会址信念，使用其真实记忆 ID，新内容与基线完全相同，并写明更正的理由。
+
+关键在最后这句共同条件：工具可用性、检索方式、其余 SOP、模型与窗口都一样。替代的是「目前在哪里举行」，不是「09:30 曾看过杏厅旧公告」，历史观察留在那里。只撤销、不给新内容的 invalidate 是另一场实验，不能混进这一次。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.4　唯一变化：追加还是替代当前信念</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两组写进记忆的原话</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ height: 146, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 24px' }}>
+            <Box style={{ width: 4, height: 96, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>基线　memory-stream-append</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.7, width: 1040 }}>收到正式更正后，追加一条当前正式会址的新信念，写明来源和生效时间；保留原会址信念的有效态。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 146, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 24px' }}>
+            <Box style={{ width: 4, height: 96, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>对照　memory-stream-supersede</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.7, width: 1040 }}>收到正式更正后，替代此前那条当前会址信念，使用其真实记忆 ID；新内容与基线完全相同，并写明正式更正的理由。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 128, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 8, padding: '0 24px' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>两条分支的共同条件</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65, width: 1100 }}>工具可用性、检索方式、其余 SOP、模型与窗口完全相同。替代的是「目前在哪里举行」，不是「09:30 曾看过杏厅旧公告」。只有撤销、没有替代内容的 invalidate 留作另一实验。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>引文为教案设定的记忆规则原文，非系统截图</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

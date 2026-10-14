@@ -1,0 +1,69 @@
+<Slide notes={`任务成功率是一个总结指标，它只会告诉你「行或不行」，不会告诉你卡在哪。所以还要把它拆开，分开测量。
+
+格式通过率看输出能不能解析、符不符合 Schema。工具调用正确率看选择、参数和时机对不对。事实支持率看报告里那些可以核验的结论，有多少真的拿到了材料或工具证据。业务通过率看人数、容量、时段、预约这些硬约束是否全部通过。最后是完成耗时与成本，从任务开始到有效交付的墙钟时间，加上全部调用的实际资源使用。
+
+这五项的分母各不相同，绝对不能相加。格式通过率的分母是十次输出，业务通过率的分母也是十次尝试，但失败的那几次落在哪一项上完全不同。分开测，改进才有方向。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.3　指标与分母要对应</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五个可以分开测的指标</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 240 }}><Text style={{ fontSize: 14, color: '#546779' }}>指标</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>测什么</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 240, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>格式通过率</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>输出是否能解析，并符合约定的 Schema。</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 240, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>工具调用正确率</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>工具选择、参数及调用时机是否符合测试要求。</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 240, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>事实支持率</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>可核验的结论有多少获得材料或工具证据支持。</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 240, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>业务通过率</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>人数、容量、时段、预约等硬约束是否全部通过。</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 240, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 38, background: '#26816B' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>完成耗时与成本</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>从任务开始到有效交付的墙钟耗时，以及全部调用的实际资源使用。</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 34</Text>
+    </Box>
+
+</Slide>

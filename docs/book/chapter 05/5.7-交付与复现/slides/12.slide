@@ -1,0 +1,66 @@
+<Slide notes={`三个动作看起来都在「把文件弄进来」，含义却完全不同。
+
+正式封存要在一致边界取得内容，并生成完整性清单；它不能靠把一个结果 ZIP 改后缀来实现。第三章已区分过界面上的下载按钮和底层正式封存能力，这里不再重复界面操作。
+
+资源绑定是另一件事：config 包可以显式保留未绑定的跨资源依赖，但进入实验前必须绑定完整。遇到同一个 Skill key 内容冲突，不能按显示名称静默覆盖，要明确选定。
+
+导入资源是第三个动作。导入成功只说明资源进来了，不等于恢复了一个 Run 的历史。
+
+这个项目里还有操作没经过界面核验，它们仍列为缺口；我不用命令或直接调接口去补做系统验收。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.3　四类文件对应不同用途</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>封存、绑定、导入不是一回事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>封</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1048 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>正式封存：一致边界 ＋ 完整性清单</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>要在一致边界取得内容并生成完整性清单，不能把一个结果 ZIP 改后缀实现。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>绑</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1048 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>资源绑定：进实验前必须完整</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>config 可以含显式未绑定的跨资源依赖；同一个 Skill key 内容冲突时，不按显示名称静默覆盖。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>导</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1048 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>导入资源：成功不等于恢复历史</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>导入把资源放进工作区，但一个 Run 的执行事实不会因此回来。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>导入资源成功，不等于恢复了一个 Run 的历史</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>本项目没有经 UI 核验的操作仍列为缺口，不用命令或直接接口补做本次系统验收。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

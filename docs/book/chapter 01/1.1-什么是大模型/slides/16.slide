@@ -1,0 +1,93 @@
+<Slide notes={`三个阶段的区别，我们用一句话来卡住它：看这一步会不会改参数。
+
+预训练会改。它拿的是大量资料，做的是训练计算，目标是学会语言里的广泛规律，最后形成基础能力。
+
+后训练也会改。它用的材料不一样，是示范、反馈和具体的任务材料；训练的目标也不一样，是改善行为，让它更适配我们想要的任务。
+
+普通推理不改。我把今天的房间表和问题一起交给它，它用已经有的参数处理这次输入，生成本次的活动方案。参数在这轮里是保持不变的。
+
+再说一句：后训练的方法有很多种，不是所有方法都能叫强化学习。有人用示范来教，有人用人类反馈来改进，它们改善行为的效果是真实的，但改善之后，模型仍然会犯错。
+
+所以"告诉模型一件新事"，和"训练了一个新模型"，是两回事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.4　模型如何从训练走到使用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个阶段，看它改不改参数</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 30, flex: 1 }}>
+
+            <Box style={{ width: 356, background: '#EDF4FC', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 12, border: '1px solid #B5C7D8' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>预训练</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>更新参数</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>大量训练资料</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#276FBF', textAlign: 'center' }}>↓</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>训练计算：学习规律</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#276FBF', textAlign: 'center' }}>↓</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', marginTop: 'auto' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>形成基础能力</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 356, background: '#ECF7F2', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 12, border: '1px solid #B5C7D8' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>后训练</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>继续更新参数</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>示范、反馈与任务材料</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#276FBF', textAlign: 'center' }}>↓</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>继续训练：改善行为</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#276FBF', textAlign: 'center' }}>↓</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', marginTop: 'auto' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>增强任务适配</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 356, background: '#FFF4E6', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 12, border: '1px solid #E5C9A8' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>普通推理</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>使用既有参数</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>当前问题与房间容量表</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#276FBF', textAlign: 'center' }}>↓</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>已有模型处理当前输入</Text>
+                </Box>
+                <Text style={{ fontSize: 16, color: '#276FBF', textAlign: 'center' }}>↓</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', marginTop: 'auto' }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>生成本次活动方案</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>后训练方法很多，不能全部叫作强化学习。</Text>
+            </Box>
+            <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                <Box style={{ width: 3, height: 22, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>本次推理不改变参数，下一轮需重新提供材料。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,67 @@
+<Slide notes={`这一节最后要落到一次真实的观察上。
+
+WorkBuddy 里的工具通常由宿主或者插件提供。这本书没有发现需要在界面里逐个粘贴任意函数定义的通用入口，所以我不会虚构一个"开启 Function Call"的按钮；同一套只读查询能力，下一节通过 MCP 接进来。
+
+能做的是一件明确的事：提一个任务，查询 craft 在 2026-10-17 的预约，再为十人、六十分钟的手作体验提出可行安排。然后展开实际执行步骤，核对调用了哪个工具、带的参数，再核对返回的十点到十点半预约和最终候选。
+
+如果客户端只显示摘要，就不要补造 call_id 和完整响应：把看得见的标成客户端观察，服务日志标成服务端证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.5　WorkBuddy：观察真实工具执行</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>在真实宿主里观察执行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>工具通常由宿主或插件提供；没有逐个粘贴任意函数定义的通用入口。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, alignItems: 'stretch' }}>
+
+            <Box style={{ width: 480, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>一次明确的教学任务</Text>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '14px 16px' }}>
+                    <Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B', lineHeight: 1.8 }}>查询 craft 在 2026-10-17{'\n'}的预约，再为十人、六十分钟{'\n'}的手作体验提出可行安排。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>同一套材料、同一份规则，和前面几步保持一致。</Text>
+            </Box>
+
+            <Box style={{ width: 640, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Box style={{ height: 60, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>展开对话中的实际执行步骤</Text>
+                </Box>
+                <Box style={{ height: 60, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>核对调用的工具与参数</Text>
+                </Box>
+                <Box style={{ height: 60, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>3</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>核对返回的十点至十点半预约</Text>
+                </Box>
+                <Box style={{ height: 60, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>4</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>核对最终候选</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', height: 84 }}>
+            <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>客户端只显示摘要时，把可见内容标为客户端观察，把教学服务日志标为服务端证据；不补造缺失的 call_id 或完整响应。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 26</Text>
+    </Box>
+
+</Slide>

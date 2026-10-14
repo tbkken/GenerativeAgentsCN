@@ -1,0 +1,78 @@
+<Slide notes={`合同里真正起作用的是三个关键字。
+
+required 说明哪些字段必须出现。严格模式下更紧：你定义的字段都要列进必填，别指望「不填就默认」。
+
+enum 限定离散值。房间 ID 只能取允许的三个值，模型不能自己造一个新房间出来。
+
+additionalProperties 设成 false，是用来阻止模型临时发明字段的。模型有时候会热情过头，多加一个 note 字段，下游程序一看没有这个字段，直接崩掉。
+
+还要提醒一句：不同接口对 JSON Schema 的支持只是子集，可空值一般用包含 null 的联合类型表达。写合同时按接口实际支持的来，不要把通用规范的全部特性都假定能用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.2　设计适合程序使用的合同</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个关键字决定合同有多严</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 632, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 140, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 250 }}>
+                    <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#276FBF' }}>required</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>哪些字段必须出现；严格模式下所定义的字段都要列为必填。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 140, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 250 }}>
+                    <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#276FBF' }}>enum</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>限定离散值；房间 ID 只能取允许的那几个，不能自造。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 140, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 250 }}>
+                    <Text style={{ fontSize: 16, fontFamily: 'Consolas, monospace', color: '#CB6B28' }}>additionalProperties</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>设为 false，阻止模型临时发明未约定的字段。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 488, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 176, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>严格结构化模式的写法</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>对象要显式禁止额外字段；所定义的字段需要列为必填；需要表达可空值时，使用包含 null 的联合类型。</Text>
+            </Box>
+
+            <Box style={{ height: 130, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>接口支持的是子集</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>一般 JSON Schema 的不少特性，在这个子集里并不存在。</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不要把一般 JSON Schema 的全部特性，都假定为接口支持。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 23</Text>
+    </Box>
+
+</Slide>

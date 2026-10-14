@@ -1,0 +1,70 @@
+<Slide notes={`动了样本，就要守住三条纪律，不然测出来的失败根本不能算数。
+
+第一，复制材料再构造变体。不要在原文件上直接改，否则跑第二遍的时候你已经不知道自己改了什么。
+
+第二，同步修改这个变体的期望答案。这条最容易被跳过，也最容易造成假失败。举个例子：你只在提示词里把人数从十改到二十，但工具读的仍然是原来那份 requests.csv。于是模型说容量不够，校验器按二十人去算，两边一冲突，你就把它记成模型错了。实际上材料里写的还是十人，是测试本身没有对齐。
+
+第三，记录真正传入了哪些内容、工具使用了哪个数据目录。评价记录里写不清这两件事，失败就无法复盘。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.2　一份有失败样本的小评价集</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>构造变体的三条纪律</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 668, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 668, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 608, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>复制材料，再构造变体</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不在原文件上直接改，保留原始材料作为对照基准。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 608, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>同步修改该变体的期望答案</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>改了什么条件，判定标准就要跟着改，否则测出的失败是假的。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ width: 608, flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>写清真实输入与数据目录</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>记录真正传入了哪些内容、工具使用了哪个数据目录。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 452, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 452, height: 190, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>错在这里</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>只改提示词里的一个人数，却仍让工具读取原来那份 requests.csv。</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>然后把双方冲突算成模型错误。</Text>
+            </Box>
+
+            <Box style={{ width: 452, height: 190, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>这样才对</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>复制一份材料，人数改了，期望答案也改了。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>失败记录里能读出这次真正用了哪些文件。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 34</Text>
+    </Box>
+
+</Slide>

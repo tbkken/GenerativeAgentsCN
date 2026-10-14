@@ -1,0 +1,74 @@
+<Slide notes={`这一节有四个知识块，回答同一个问题的四个侧面：一条已经过期的消息，为什么还可能在起作用。
+
+第一块先把条件钉死。活动时间、两间厅、四层地址、Run 窗口全部写死。更正在什么时候才被允许触发——必须收齐三份真实查询确认，缺一个人就去追问，不能替他确认。
+
+第二块是两组共用的条件式流程：从查询公告、保存信念、向沈禾确认，到提交申请、逐人更正、记忆处理，最后落到会址行动和检索。
+
+第三块是本节唯一变量：收到正式更正后，新内容怎么写进记忆，旧的那条当前会址信念还算不算数。
+
+第四块解决怎么数。个人窗口从他真的能读到更正开始，相关动作只算三类；再用五项人工片段核对口径。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>旧消息为什么还可能在起作用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>同一条新消息，谁来让旧说法失效？</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>四个知识块从「条件固定」走到「怎么数」：先钉死环境与触发顺序，再看两组共同的动作，然后只改旧信念的处理，最后按个人接收边界给行动定分母。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>固定条件与更正触发顺序</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>活动、两厅、人数与窗口写死；收齐三份真实确认才具备申请条件</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>两组共同的条件式 SOP</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>从查询公告到会址行动，两组走同一套条件式步骤，逐字相同</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>唯一变化：追加还是替代当前信念</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>写进去的新内容完全相同，变的是原会址信念还算不算有效</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>按个人接收边界计数与人工判分</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>分母是个人接收之后的动作；人工片段用来核对这个口径</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

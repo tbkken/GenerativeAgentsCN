@@ -1,0 +1,70 @@
+<Slide notes={`这条闭环有五步，我按顺序说。
+
+第一，来访者接近咨询台，感知到交互项，提交规定的那句开场话。第二，如果收到澄清，就说明自己的目的；如果收到建议，就记录建议的来源，合法导航过去并且真的移动。
+
+第三，窗口面对缺目的的人会追问；情况对得上就给下一步，对不上就解释分工并转介到另一个窗口。
+
+第四，收到适配的回复之后，要用真实的发言或者后续交互，把正确的窗口和要准备的内容复述一遍。自己心里总结一下不算确认。
+
+第五，没有新条件的时候可以有理由地等待，但不能为了凑剧情去按步数安排行动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.4　用条件连接请求、移动与确认</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五步闭环，每步都要有证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>每步都必须真实发生，并留下可核对的记录。</Text>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 200 }}>提交规定首句</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>接近咨询台，感知交互项，提交规定首句。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 200 }}>补充，或记录来源</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>收到澄清就说明私人目的；收到建议就记录来源，合法导航并实际移动。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 200 }}>追问、适配与转介</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>窗口对缺目的者追问；适配则给下一步，不适配则解释分工并转介。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 200 }}>真实复述</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>以真实发言或后续交互复述正确窗口与准备内容；私人总结不算确认。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+            </Box>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 200 }}>可有理由地等待</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>无新条件可有理由地等待，不按 Step 排剧情。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

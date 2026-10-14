@@ -1,0 +1,63 @@
+<Slide notes={`系统的作者资源有七项：Map 描述场地，图像与 Spatial Asset 提供背景和物件外观，Agent 是人物，Crowd 把人物组织成一次选择集，Skill 和 Brain 描述方法与决策，Model Preset 是聊天和 Embedding 的服务配置，Evaluator 负责业务评价。
+
+这里要建立一条纪律：能保存一份资源，不等于运行链已经用上了它。
+
+有两项尤其容易被看成已经生效。Embedding 配置保存成功，不证明这次记忆检索已经用了向量；Evaluator 能作为资源复制，也不证明运行时已经调用它。
+
+后面还要继续检查实际消费的位置和质量结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.2.2　认识资源，不把源码合同当作已完成操作</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>3.2.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>认识资源，也认清边界</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>能作为资源保存，不等于运行链已经用上。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+            <Box style={{ width: 268, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>Map</Text>
+            </Box>
+            <Box style={{ width: 268, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>图像与 Spatial Asset</Text>
+            </Box>
+            <Box style={{ width: 268, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>Agent</Text>
+            </Box>
+            <Box style={{ width: 268, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>Crowd</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 268, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>Skill 与 Brain</Text>
+            </Box>
+            <Box style={{ width: 268, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>Model Preset</Text>
+            </Box>
+            <Box style={{ width: 268, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>Evaluator</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,73 @@
+<Slide notes={`查 Trace 的时候要把这些字段记下来：参与者、Step、用途、模型、开始和结束时间、错误以及调用参数。
+
+记全了，才能回答「谁在什么时候、为了什么、用哪个模型发了这次请求」。只记一个模型名称，事后是没法复盘的。
+
+有一条边界要特别注意：如果这次配置没有保存请求内容，页面就应该明确显示缺失。不能拿模型事后写的总结，补成当时的原始请求。
+
+Attempt 选择器提供了定位入口，但日志下载读的是 Run 的进程日志文件，分析时仍然要核对实际记录的身份和时间范围。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.4　在页面中观察什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>查 Trace 时要记下这些字段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>六个字段，回答「谁、何时、为了什么、用哪个模型」</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>记不全是常见的复盘障碍，只写模型名称说明不了问题</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 20 }}>
+            <Box style={{ flexDirection: 'row', gap: 21 }}>
+                <Box style={{ width: 370, height: 100, background: '#EDF4FC', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 01</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>参与者</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>哪个角色或对象发起</Text>
+                </Box>
+                <Box style={{ width: 370, height: 100, background: '#EDF4FC', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 02</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Step</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>属于哪一步</Text>
+                </Box>
+                <Box style={{ width: 370, height: 100, background: '#EDF4FC', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 03</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>用途</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>这次调用要完成什么</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 21 }}>
+                <Box style={{ width: 370, height: 100, background: '#EDF4FC', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 04</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>模型</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>实际调用的模型标识</Text>
+                </Box>
+                <Box style={{ width: 370, height: 100, background: '#EDF4FC', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 05</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>开始与结束时间</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>用来估算单次请求耗时</Text>
+                </Box>
+                <Box style={{ width: 370, height: 100, background: '#EDF4FC', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>字段 06</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>错误与调用参数</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>失败原因与请求参数</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>本次配置没有保存请求内容时，页面应明确显示缺失；不能拿模型事后总结补成历史原始请求。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 23</Text>
+    </Box>
+
+</Slide>

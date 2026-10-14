@@ -1,0 +1,69 @@
+<Slide notes={`先把题目完整读一遍。三个活动是读图阅读、纸艺手作和合作拼图，每项五十分钟；开始时间只能是九点、十点、十一点，每个时段恰好安排一项；教室只有阅览室、操作室和讨论室，每间在本题恰好用一次；每一项都必须同时写着时段和教室，缺一项就不算完整安排。
+
+再往下是边界。这是我们自己造的纸上案例，所以世界内只做阅读、讨论和定稿这三件事，并不真的举办这三项活动。
+
+讨论本身另有一个时间：二〇二六年十一月十二日下午两点到三点，一分钟一步，总共六十一步，和纸上的活动日十一月十四日分开。执行前校准就冻结了，不能为了等拼图落到十一点而把讨论停掉。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.1　完整共同题面</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次 50 分钟，时段与教室各只用一次</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, height: 186, background: '#F7F3E8', borderRadius: 10, padding: '14px 22px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>共同题面卡（示意排版，非实际界面）</Text>
+            <Box style={{ flexDirection: 'row', gap: 14, height: 70 }}>
+                <Box style={{ width: 360, height: 70, background: '#FFFFFF', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>读图阅读</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>50 分钟 · 须有时段与教室</Text>
+                </Box>
+                <Box style={{ width: 360, height: 70, background: '#FFFFFF', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>纸艺手作</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>50 分钟 · 须有时段与教室</Text>
+                </Box>
+                <Box style={{ width: 360, height: 70, background: '#FFFFFF', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>合作拼图</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>50 分钟 · 须有时段与教室</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 1108, height: 44, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                <Text style={{ fontSize: 14, color: '#20344B' }}>只能 09:00、10:00、11:00 开始，每时段恰一项　·　教室：阅览室、操作室、讨论室，每间恰用一次</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#FFF4E6', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>「教室只用一次」是题目限制</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>不能以现实中教室可复用为由取消；取消它等于换了另一道题</Text>
+            </Box>
+            <Box style={{ width: 96, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>题目限制</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 58, background: '#F4F7FA', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 34, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>世界内做阅读、讨论和定稿，<Text style={{ fontWeight: 'bold', color: '#276FBF' }}>不真正举办</Text>这三项活动</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#EDF4FC', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>讨论 Run 候选：2026-11-12 14:00 — 15:00，1 分钟／步，61 步</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>与纸上活动日 2026-11-14（Asia/Shanghai）分开；执行前校准冻结，不为等 11 点拼图而中止讨论</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 26</Text>
+    </Box>
+
+</Slide>

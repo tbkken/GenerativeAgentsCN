@@ -1,0 +1,78 @@
+<Slide notes={`有三种说法听起来像已经接通了，实际都还差一截。
+
+第一种是模型说出了工具名称，就以为连接建立。名称来自宿主提供的描述，模型能复述它，只说明它读到了描述，并不代表任何一条连接真的存在。
+
+第二种是工具链路通了，就以为资源和模板也能用。协议里的三类能力是分别验收的，工具通了，跟资源能不能读、模板能不能用没有关系。
+
+第三种是在某个宿主里跑通了，就以为所有宿主都行。每个宿主按自己的实现支持不同的能力类型，也支持不同的协议版本。
+
+所以要养成一个习惯：把话说准确。不说「我接上了 MCP」，而是说清楚在哪个宿主里、哪一项工具或资源、经过了哪一次核对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.1　验收的准确说法</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种「已经接通」的说法</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 520, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>常见说法</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>模型说出了工具名称</Text>
+            </Box>
+            <Box style={{ width: 44, height: 108, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+            </Box>
+            <Box style={{ width: 520, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>实际情况</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>说明它读到了描述，连接并未建立</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 520, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>常见说法</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>工具链路已经接通</Text>
+            </Box>
+            <Box style={{ width: 44, height: 108, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+            </Box>
+            <Box style={{ width: 520, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>实际情况</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>资源浏览与提示模板仍需分别验收</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 520, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>常见说法</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>在某个宿主里跑通了</Text>
+            </Box>
+            <Box style={{ width: 44, height: 108, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+            </Box>
+            <Box style={{ width: 520, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>实际情况</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>不同宿主支持的能力类型与协议版本不同</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#20344B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>把话说准确：在哪一个宿主、哪一项能力、哪一次核对</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>验收记录写清楚这三项，复现和排查才有依据。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 27</Text>
+    </Box>
+
+</Slide>

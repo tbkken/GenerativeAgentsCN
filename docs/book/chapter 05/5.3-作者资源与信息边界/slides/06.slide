@@ -1,0 +1,45 @@
+<Slide notes={`「每人获得自己的任务」这句话很容易被读大。它具体指的是每个人得到自己的目的和第一句话，不是把作者表里那一列正确答案一起复制过去。
+
+有人会想，那要不要加一层隐藏权限，让系统在背后替作者纠正分配错误？这里是没有的。边界只能靠材料本身划清：谁该看到什么，在材料放进去的那一刻就已经决定了。
+
+一旦把答案写进共同输入，模型读到它，严格来说不是跨身份记忆泄漏——所有角色共享同一份输入，谈不上谁泄漏给谁。真正发生的是作者自己把答案放错了位置。此后关于「咨询台为什么一开始就知道答案」的追问，答案都在材料里，而不在模型里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.1　同一张作者表，不等于同一份角色输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>装错了不是记忆泄漏，是材料泄漏</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, height: 360, background: '#FFF4E6', borderRadius: 12, padding: '28px 30px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#CB6B28' }}>需要判断的地方</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.2 }}>材料本身泄露</Text>
+            <Box style={{ width: 64, height: 3, background: '#CB6B28', marginTop: 2 }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 440 }}>把答案写入共同输入后，模型读到它并不属于跨身份记忆泄漏，而是作者自己把答案放错了位置。此后关于「咨询台为什么一开始就知道答案」的追问，答案都在材料里，而不在模型里。</Text>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ width: 620, height: 170, background: '#F4F7FA', borderRadius: 12, padding: '24px 28px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>「每人获得自己的任务」</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 564 }}>具体指获得自己的目的和首次话语，不是连作者表中的正确窗口答案一起复制。</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 170, background: '#EDF4FC', borderRadius: 12, padding: '24px 28px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>没有隐藏权限</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 564 }}>这里没有设置隐藏系统权限来替作者纠正分配错误；边界只能靠材料本身划清。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 27</Text>
+    </Box>
+
+</Slide>

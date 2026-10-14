@@ -1,0 +1,62 @@
+<Slide notes={`在教学工作区里，我习惯把要求一次写清楚，避免它替我简化。
+
+先确认当前目录里有校验脚本和参考方案；运行校验器，把报告写到指定的输出文件；展示实际命令、执行结果和报告内容，并解释退出码。然后校验我提供的候选方案，把失败报告保留下来。
+
+有一条要明确写进去：不要为了通过而修改规则或校验脚本。否则我拿到的不是检查结果，而是一个被改过的题目。
+
+查看结果时，要核对实际命令步骤和文件产物。界面没有显示退出码，就让受控包装器显式输出进程结果。不要从绿色文字、任务结束或者一句「已检查」去推断成功。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.6　在 WorkBuddy 中执行相同校验</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>在任务里把证据要求写清楚</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>提交给教学工作区的任务</Text>
+            <Box style={{ background: '#F7F3E8', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>请先确认当前目录中有 validate_schedule.py 和 fixtures/valid-schedule.json。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>运行 Python 校验器，输入该参考方案，将报告写到 output/reference-report.json。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>展示实际命令、执行结果和报告内容，解释退出码。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>然后校验我提供的候选方案，保留失败报告；</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', fontWeight: 'bold', lineHeight: 1.6 }}>不要为了通过而修改规则或校验脚本。</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779' }}>保持客户端适合该工作区的默认权限设置。</Text>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>查看实际命令步骤，以及右侧生成的文件产物。</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>界面没显示退出码，就让受控包装器显式输出进程结果。</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>不要从绿色文字、任务结束或「已检查」推断成功。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px' }}>
+                <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>它不等于存在一个公开的 workbuddy 命令，也不等于输入框中的斜杠命令。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

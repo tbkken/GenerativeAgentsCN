@@ -1,0 +1,113 @@
+<Slide notes={`读状态的方法是每一句都问两句：能判断什么，还不能判断什么。
+
+创建可以判断目录和输入已经建立，不能判断工作进程已经跑起来。运行可以判断正在执行，不能判断当前这一步已经提交。收尾可以判断请求的步数已经提交、正在收尾，不能判断报告已经完成、正式包已经导出。完成可以判断请求的执行过程结束，不能判断业务指标全部通过。失败可以判断执行出现了失败，不能判断已有的提交都不可用。
+
+原因是这些状态由协议明确定义，描述的是执行阶段，不是业务结论。当前执行器在最后一步之后先进入收尾，生成质量报告后再写完成，正式归档还要另行封存。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.2　八种状态分别说明什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>每个状态都要问两句</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>能判断什么，还不能判断什么</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 120 }} />
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 496, paddingLeft: 14 }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>可以据此判断什么</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 512, paddingLeft: 14 }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>还不能据此判断什么</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 72 }}>
+            <Box style={{ width: 120, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>CREATED</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 496, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>Run 目录与输入已创建</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 512, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>工作进程已经执行</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 72 }}>
+            <Box style={{ width: 120, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>RUNNING</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 496, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>正在执行</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 512, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>当前计算中的 Step 已提交</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 72 }}>
+            <Box style={{ width: 120, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>FINALIZING</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 496, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>请求步数已提交，正在收尾</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 512, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>报告已完成，正式包已导出</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 72 }}>
+            <Box style={{ width: 120, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>COMPLETED</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 496, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>请求的执行过程结束</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 512, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>业务指标全部通过</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 72 }}>
+            <Box style={{ width: 120, height: 72, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>FAILED</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 496, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>执行出现了失败</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 512, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>已有提交都不可用</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 42, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>这些状态由协议明确定义，描述的是执行阶段；生成质量报告后才写完成，正式归档还要另行封存。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,72 @@
+<Slide notes={`服务启动这一段有两件事必须讲清。
+
+第一件，默认走的是 stdio。启动之后它在等宿主发协议请求，终端上不会打印自然语言。看到屏幕停住不动，先别急着判定故障，很可能只是它在安静地等输入。正式连接的时候，也不是手动去跑它，而是由宿主按配置启动。
+
+第二件，日志的通道。stdio 下标准输出承担的是协议消息，调试信息必须写到标准错误。这条规则如果不遵守，协议里混进非协议内容，宿主侧就会解析失败，而且报错信息往往指向别处，很难查。
+
+需要本地调试 HTTP 的时候，可以换成 streamable-http 传输并指定端口。但要记住，这个监听地址仍然是本机地址，不能直接拿给云端的接口去访问。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.4　启动之后</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>屏幕不动不等于故障</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+            <Box style={{ width: 420, flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>默认走 stdio，{'\n'}等宿主发请求</Text>
+                <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>启动命令在示例说明里；正式连接时由宿主按配置启动，不需要手动常驻一个进程。</Text>
+            </Box>
+
+            <Box style={{ width: 692, flexDirection: 'column', gap: 12 }}>
+
+                <Box style={{ width: 692, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>启动后没有自然语言输出</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>它在等待宿主发送协议请求，安静是正常状态</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 692, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>需要本地 HTTP 调试时</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>换成 streamable-http 传输并指定端口，本地监听地址仍不能供云端访问</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 692, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>由宿主负责启动</Text>
+                        <Text style={{ fontSize: 15, color: '#546779' }}>按配置里的命令与参数拉起进程，不靠人工手动运行</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>调试输出必须走标准错误</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>标准输出承担协议消息；混入普通文本会让宿主解析失败，报错还会指向别处。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 27</Text>
+    </Box>
+
+</Slide>

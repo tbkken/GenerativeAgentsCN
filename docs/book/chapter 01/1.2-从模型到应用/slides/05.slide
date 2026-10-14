@@ -1,0 +1,132 @@
+<Slide notes={`把条件列出来以后，我们逐条看。
+
+第一是人数。这场活动安排 10 个人，房间容量是 12 人，10 不超过 12，这一条过。
+
+第二是时长。要求连续 30 分钟。判断的方法是拿结束时间减开始时间，看够不够 30 分钟。注意"连续"这个词，中间被切断就不算。
+
+第三是开放时间。房间 09:00 到 12:00 开放，那么整段活动必须都落在这个区间里，不能有一头伸到外面去。
+
+第四是已有预约。10:00 到 10:30 这个时段属于别人了，新的活动不能占用同一时段。这一条是刚才那条候选被否掉的原因。
+
+第五是相邻活动。如果新活动紧挨着上一场，比如上一场 10:30 结束，这一场 10:30 开始，这样是可以的。首尾相接不等于重叠。
+
+这五条都过，候选才成立，两处结论：10:00 到 10:30 冲突，10:30 到 11:00 满足这些条件。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.1　同一个任务，可以有不同的完成方式</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五项条件，逐条对照</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ width: 118, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>人数</Text>
+                </Box>
+                <Box style={{ width: 210, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>教学设定</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>10 人，房间容量 12 人</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>怎样判断</Text>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>10 ≤ 12</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ width: 118, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>时长</Text>
+                </Box>
+                <Box style={{ width: 210, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>教学设定</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>连续 30 分钟</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>怎样判断</Text>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>结束时间减开始时间 ≥ 30 分钟</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ width: 118, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>开放时间</Text>
+                </Box>
+                <Box style={{ width: 210, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>教学设定</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>09:00—12:00</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>怎样判断</Text>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>整段活动都在开放时间内</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+                <Box style={{ width: 118, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>已有预约</Text>
+                </Box>
+                <Box style={{ width: 210, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>教学设定</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>10:00—10:30</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>怎样判断</Text>
+                    <Text style={{ fontSize: 16, color: '#CB6B28' }}>新活动不能占用同一时段</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ width: 118, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>相邻活动</Text>
+                </Box>
+                <Box style={{ width: 210, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>教学设定</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>首尾衔接不算重叠</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>怎样判断</Text>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>10:30 开始可以紧接上一场</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>核对结果</Text>
+
+            <Box style={{ height: 132, background: '#FFF4E6', border: '2px solid #CB6B28', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>10:00—10:30　冲突</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>整段落在已有预约内，不能使用</Text>
+            </Box>
+
+            <Box style={{ height: 132, background: '#ECF7F2', border: '2px solid #26816B', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>10:30—11:00　满足</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>五项条件全部通过，可以使用</Text>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>还要再看一层</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>应用还须检查候选方案内各活动之间是否冲突。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 22</Text>
+    </Box>
+
+</Slide>

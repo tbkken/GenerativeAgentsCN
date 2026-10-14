@@ -1,0 +1,104 @@
+<Slide notes={`这一节有七个知识块，都在回答同一个问题：我凭什么证明这件事做对了。
+
+前三个先把前提立住。第一，被测对象有四个层次——模型的生成能力、工具的选参与时机、应用的控制逻辑、最终的筹备结果，测哪一层就要把其他条件固定住。第二，评价集里必须故意放进会失败的样本，否则测出来的通过率没有意义。第三，指标必须带着自己的分母和完成定义，不能为了提高分数临时删掉难看的样本。
+
+中间两个讲怎么处理失败：从错误产物向前倒查四步，以及按错误性质决定要不要重试。最后两个讲记账和取证：时间、Token 与费用分别计量；再用 Langfuse 把日志、调用链、指标和评分连起来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>证据、判据、账目，各有各的规矩</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>先限定被测层次，再谈分数</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 320 }}>七个知识块从「测谁」走到「用什么看全过程」：先确定被测对象与失败样本，再让指标带上分母，然后学会倒查、重试与记账，最后把记录关联成一次可核对的尝试。</Text>
+        </Box>
+
+        <Box style={{ width: 772, flexDirection: 'column', justifyContent: 'center', gap: 9 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center', height: 66 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>先确定被测对象</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>模型、工具参数、应用控制、最终结果四层，三条测试路线</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center', height: 66 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>一份有失败样本的小评价集</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>九类样本逐一变动，离线通过不能冒充模型成绩</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center', height: 66 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>指标与分母要对应</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>成功率与五个分项指标，各自带完成定义</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center', height: 66 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>调试时从结果倒查</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>交付控制、工具数据、模型上下文、请求链四步</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center', height: 66 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>可靠性来自有边界的处理</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>按错误性质决定重试，分清逻辑调用与物理尝试</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center', height: 66 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>从 usage 理解成本</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>时间、Token 与金额分别计量，积分与账单不同口径</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center', height: 66 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>07</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>用 Langfuse 观察一次完整任务</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>日志、调用链、指标与评分怎样关联到同一次尝试</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 34</Text>
+    </Box>
+
+</Slide>

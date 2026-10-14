@@ -1,0 +1,78 @@
+<Slide notes={`模型页上有一个明确的动作，叫复制所选配置到实验，它可以把选中的公共模型配置复制进当前这份草稿。
+
+这里要特别提醒两点。第一，它并不建立以后自动更新的关系，复制那一刻是什么配置，实验里就是什么配置。第二，不能因为模型页有这个按钮，就推断所有资源页都有完全相同的替换入口。入口是分页面存在的，不是通用能力。
+
+那要换地图怎么办？可以通过新建一个独立实验重新选择，走显式导入路径。
+
+不管用哪种已支持的方式换图，换完之后出生点、地址、已知空间和对象绑定检查都要重做一遍。旧坐标只对旧地图有含义，换到新图上不能自动沿用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.2　草稿装配完成后，重新打开核对</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>复制按钮只存在于该页</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+
+        <Box style={{ width: 508, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 508 }}>实验模型页提供把公共模型配置复制进当前草稿的操作。</Text>
+
+            <Box style={{ width: 508, height: 106, background: '#EDF4FC', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>复制所选配置到实验</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>把选中的公共模型配置复制进当前这份草稿。</Text>
+            </Box>
+
+            <Box style={{ width: 508, height: 106, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不建立自动更新关系</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>复制那一刻是什么配置，实验里就保存什么配置。</Text>
+            </Box>
+
+            <Box style={{ width: 508, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不要推广到所有资源页</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不能据此推断其他资源页有完全相同的替换入口。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 628, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 628 }}>需要换成另一张公共地图时，可以新建独立实验重新选择；换图之后这四项都要重做。</Text>
+
+            <Box style={{ width: 628, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 116 }}>出生点</Text>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>新地图上重新选择并保存</Text>
+            </Box>
+
+            <Box style={{ width: 628, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 116 }}>地址</Text>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>层级地址指向新的空间对象</Text>
+            </Box>
+
+            <Box style={{ width: 628, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 116 }}>已知空间</Text>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>人物开始时认识哪些位置</Text>
+            </Box>
+
+            <Box style={{ width: 628, height: 76, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 116 }}>对象绑定</Text>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>公告栏等服务台对象挂到新图</Text>
+            </Box>
+
+            <Box style={{ width: 628, height: 68, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>旧坐标不能自动沿用含义，换图后必须重新做这几项检查。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

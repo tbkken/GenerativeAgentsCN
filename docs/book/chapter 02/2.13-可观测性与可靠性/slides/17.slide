@@ -1,0 +1,82 @@
+<Slide notes={`假设排查到的现象是：手作被排在十点到十一点，而十点到十点半已经有一笔预约。这份排期是错的，但它是一路走到交付才被发现的。
+
+倒查第一步查交付控制。报告里其实已经指出了冲突，可最终还是保存成了通过——那是交付这一环放过了它。
+
+第二步查工具数据。如果工具返回的是「全天空闲」，就要去看它到底读的是哪个数据目录、哪个文件。
+
+第三步查模型上下文。如果预约信息已经正确返回，但候选里没有采用它，那是提示与上下文的问题。
+
+第四步才是请求链。如果查询根本没有发出去，就要回头查工具定义、模型是否支持，以及循环处理有没有漏掉这一步。
+
+每一步都拿本次运行的真实文件、参数和响应记录来对照，不拿模型的总结当证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.4　调试时从结果倒查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从错误产物倒查四步</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 8, padding: '12px 20px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 26, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5 }}>现象：手作被排在 10:00—11:00，与 10:00—10:30 的既有预约冲突，却一直走到了交付。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 152, height: 186, background: '#CB6B28', borderRadius: 8, padding: '12px 12px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#FFF4E6' }}>起点</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>错误产物</Text>
+            </Box>
+            <Box style={{ width: 44, height: 186, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text></Box>
+            <Box style={{ width: 206, height: 186, background: '#EDF4FC', borderRadius: 8, padding: '12px 12px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第一步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>交付控制</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>报告已报错，却保存了通过</Text>
+            </Box>
+            <Box style={{ width: 44, height: 186, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 206, height: 186, background: '#EDF4FC', borderRadius: 8, padding: '12px 12px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第二步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>工具数据</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>是否加载了正确的预约文件</Text>
+            </Box>
+            <Box style={{ width: 44, height: 186, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 206, height: 186, background: '#EDF4FC', borderRadius: 8, padding: '12px 12px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第三步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>模型上下文</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>预约已返回，却没有被采用</Text>
+            </Box>
+            <Box style={{ width: 44, height: 186, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 206, height: 186, background: '#EDF4FC', borderRadius: 8, padding: '12px 12px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第四步</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>请求链</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>调用是否真的发出去了</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>拿真实记录对照</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>本次文件、参数、真实输出与响应记录。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>模型总结只是线索</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>它是过程材料，不是执行证据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#EDF4FC', borderRadius: 10, padding: '12px 22px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>保留每一次失败的原始结果；调整提示之后，用新的实验编号重跑一次。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 34</Text>
+    </Box>
+
+</Slide>

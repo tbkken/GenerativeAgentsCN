@@ -1,0 +1,70 @@
+<Slide notes={`我先从一个真实的委托讲起。一位社区培训负责人看过第四章的服务大厅教案，希望用它组织一次工作人员研讨。他提出来的要求很自然：让大家看看，先问清楚是不是比直接指路更好。
+
+这句话听起来像一个小小的演示需求，作者也许很快就能展示一段人物行走与对话，可这并不能回答委托人的问题。
+
+委托人真正需要知道的是三件事：展示依据什么规则、遗漏了哪些结果、下次换一位讲师能不能继续使用。
+
+所以这一节要把一句愿望组织成一个可以交接的项目。我们复用第四章的虚构服务大厅，不再增加新的行业场景。第三章讲过系统怎样操作，第四章讲过实验怎样比较，这里只关心这些知识怎样共同变成一份别人能够检查、使用和维护的成果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.1　项目范围与完成条件</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从一个委托开始</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>什么才算{'\n'}把项目做完</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>委托人要的不是一段演示，而是一份别人能检查、能使用、能维护的成果。本节把一句愿望组织成一个可以交接的项目。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>一句愿望</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>一个项目</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>一份可交接的成果</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 600, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>委托人的原话</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>让大家看看，先问清楚是不是比直接指路好</Text>
+            </Box>
+            <Box style={{ width: 600, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>研究问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>在给定条件与观察窗口下，比较两种入口咨询策略</Text>
+            </Box>
+            <Box style={{ width: 600, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 290, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>设计交付</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>验收到「可以{'\n'}开始实施」</Text>
+                </Box>
+                <Box style={{ width: 290, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>运行交付</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>再增加真实实验{'\n'}与接收记录</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 24</Text>
+    </Box>
+
+</Slide>

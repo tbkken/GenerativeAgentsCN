@@ -1,0 +1,110 @@
+<Slide notes={`首页侧栏把「实验」和「基础配置」分成两组。基础配置下面有地图、智能体、技能和模型；打开某个实验之后，侧栏变成「当前实验」，里面是实验概览、实验结果，以及这个实验自己的资源入口。
+
+实验页还会显示一行范围提示，写着「实验独立副本」。这行提示不是装饰，它告诉你现在动的是副本，不是公共材料。
+
+最容易踩的坑是同一个「地图」按钮。它有可能打开公共地图，也有可能打开当前实验里的地图。判断依据不是按钮上的字，而是页面所在的范围和实验名称。
+
+所以改之前先确认范围，保存以后从同一个入口重新打开，再核对一遍。这一节里的界面名称，都依据当前页面和前端源码，入口能看到不等于已经完成上传、保存或运行。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.1　先看清正在编辑哪一份内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>侧栏把两组入口分开</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 460, height: 40, background: '#276FBF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>作者工作台　·　侧栏</Text>
+                <Box style={{ width: 70, height: 20, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 11, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 460, height: 300, flexDirection: 'row' }}>
+
+                <Box style={{ width: 152, height: 300, background: '#EDF4FC', borderRadius: 8, padding: 10, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>实验</Text>
+                    <Box style={{ width: 132, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#FFFFFF' }}>实验概览</Text>
+                    </Box>
+                    <Box style={{ width: 132, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>实验结果</Text>
+                    </Box>
+                    <Text style={{ fontSize: 12, color: '#546779', marginTop: 2 }}>基础配置</Text>
+                    <Box style={{ width: 132, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>地图</Text>
+                    </Box>
+                    <Box style={{ width: 132, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>智能体</Text>
+                    </Box>
+                    <Box style={{ width: 132, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>技能</Text>
+                    </Box>
+                    <Box style={{ width: 132, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, color: '#546779' }}>模型</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 308, height: 300, background: '#F4F7FA', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>地图编辑器</Text>
+                    <Box style={{ width: 284, height: 40, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 12px', gap: 10 }}>
+                        <Box style={{ width: 62 }}><Text style={{ fontSize: 12, color: '#546779' }}>资源名称</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 12, color: '#20344B' }}>青禾学习中心</Text></Box>
+                    </Box>
+                    <Box style={{ width: 284, height: 40, background: '#FFF4E6', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 12px', gap: 10 }}>
+                        <Box style={{ width: 62 }}><Text style={{ fontSize: 12, color: '#CB6B28' }}>范围</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 12, color: '#CB6B28' }}>实验独立副本</Text></Box>
+                    </Box>
+                    <Box style={{ width: 284, height: 40, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 12px', gap: 10 }}>
+                        <Box style={{ width: 62 }}><Text style={{ fontSize: 12, color: '#546779' }}>素材</Text></Box>
+                        <Box style={{ flex: 1 }}><Text style={{ fontSize: 12, color: '#20344B' }}>背景与物件</Text></Box>
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>界面名称依据当前页面与前端源码；入口的只读观察不等于已经完成新案例的上传、保存或运行。</Text>
+
+        </Box>
+
+        <Box style={{ width: 652, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 152, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+                <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>首页侧栏把两组入口分开</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>基础配置下有「地图」「智能体」「技能」「模型」；打开某个实验后，侧栏变为「当前实验」，包含「实验概览」「实验结果」以及实验自己的资源入口。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 152, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+                <Box style={{ width: 4, height: 76, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>实验页会显示范围提示</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>页面显示「实验独立副本」的范围提示，提醒你正在改的是副本，而不是公共材料。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 152, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 16 }}>
+                <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>同一个「地图」按钮，两种落点</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>判断依据是页面所在范围和实验名称，不能只看按钮文字。修改前先确认范围，保存后再从同一入口重开核对。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 22</Text>
+    </Box>
+
+</Slide>

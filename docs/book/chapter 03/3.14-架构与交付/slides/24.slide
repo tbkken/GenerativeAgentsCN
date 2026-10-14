@@ -1,0 +1,74 @@
+<Slide notes={`「复现」这个词有两种用法，混着讲就会互相打架。
+
+第一种是事实回放复现：同一批已经提交的事实，应该得到一致的状态。回放不重新调用模型，也不重新执行 Skill，所以它检查的是「读得对不对」——同一个提交边界读出来是不是同一个结果。
+
+第二种是重新运行实验：这要重新调用模型。即使初始材料完全相同，模型也可能做出不同的决策，因为外部推理本身并不保证逐字稳定。
+
+所以随机种子、相同的模型名、或者把温度设为零，都不能单独保证外部推理完全一致。
+
+要验证回放忠实，就用第一种；要观察行为会不会变，就用第二种。两种复现各有各的用途，不能互相替代。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.6　从已有能力走向新场景</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两种复现，不要互相替代</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 296, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>事实回放复现</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>同一批已提交事实应得到一致的状态。</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 8, height: 8, background: '#26816B', borderRadius: 4 }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不重新调用模型，也不重新执行 Skill</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 8, height: 8, background: '#26816B', borderRadius: 4 }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>检查的是读得对不对：同一提交边界同一结果</Text>
+                </Box>
+                <Box style={{ height: 54, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>用来验证回放是否忠实于那次执行</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, height: 296, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>重新运行实验</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>同样的初始材料，也要重新调用一次模型。</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 8, height: 8, background: '#276FBF', borderRadius: 4 }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>决策可能与上一次不同，属于正常现象</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 8, height: 8, background: '#276FBF', borderRadius: 4 }} />
+                    <Text style={{ fontSize: 14, color: '#546779' }}>要比较的是行为分布，而不是逐字相同</Text>
+                </Box>
+                <Box style={{ height: 54, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>用来观察换条件以后行为会不会变</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>随机种子、相同模型名或温度为零</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>都不能单独保证外部推理逐字相同，所以第二种复现不能承诺「一字不差」。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 29</Text>
+    </Box>
+
+</Slide>

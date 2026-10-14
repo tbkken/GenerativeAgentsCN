@@ -1,0 +1,64 @@
+<Slide notes={`许安只记得旧消息“手作活动十点开始”，这是他的认识，不是世界状态。他后来收到服务台答复、查询到更新后的公告，认识才获得新依据。这条线可以拿来研究信息传播——误信本身是有价值的行为现象。
+
+但方向反过来就出问题：如果回放把“许安以为公告改了”画成“公告栏真的改了”，事实边界就被破坏了。
+
+记忆让角色延续目标、记录经验、解释判断，但它不替代世界事实——写下“公告已经更新”，公告栏并不会因此真的改变。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.1　三种容易混在一起的内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>误信可以研究，虚构破坏边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', height: 300, gap: 24 }}>
+
+            <Box style={{ width: 440, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>人物认为怎样</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.65 }}>许安第一次走进学习中心，只记得旧消息“手作活动十点开始”。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>几轮之后收到服务台的答复、又查询到更新后的公告内容，才有了核对旧认识的新依据。这种误信是可以研究的行为现象。</Text>
+            </Box>
+
+            <Box style={{ width: 688, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>世界实际怎样</Text>
+                <Box style={{ flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 316, height: 88, background: '#FFFFFF', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>公告栏的状态</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>只由已提交的世界事实决定</Text>
+                    </Box>
+                    <Box style={{ width: 316, height: 88, background: '#FFFFFF', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>角色的记忆</Text>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>只是他写下的内容文字</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>回放把误信画成公告已经改动，则会破坏事实边界。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>写下“公告已经更新”，并不等于公告栏真的变了</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>记忆不会替代世界事实；检验时要同时保留两种记录，缺一边就无法判断是谁错了。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>记忆解决跨轮连续性：延续目标、记录经验、解释判断——但一个可信的角色必须能改变认识，同时保留自己曾经依据什么采取行动的历史。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

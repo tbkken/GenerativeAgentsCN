@@ -1,0 +1,56 @@
+<Slide notes={`这一节要带走的是三句话。
+
+第一句，信息按接收者分配。一张作者表不等于同一份角色输入；正确窗口答案只给作者和评分者，不能写进角色资料，也不能写进公共 Brain。
+
+第二句，图纸不等于答案。地图、语义和碰撞各管一段，公开空间语义里不写「谁该去哪个窗口」。答案一旦写进共同输入，那不是跨身份记忆泄漏，而是材料本身泄露。
+
+第三句，状态分栏登记。文稿、公共资源、实验副本、运行证据是四个核对面，互不替代。缺什么就先写清楚缺什么，不要用一个「完成」盖住全部工作。
+
+下一节我们看 Skill 的精确文本与行为评审。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.3　作者资源与信息边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节小结</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>记住三句话</Text>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF', width: 56 }}>一</Text>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>信息按接收者分配</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>一张作者表不等于同一份角色输入；答案表只给作者与评分者，不进角色与公共 Brain。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B', width: 56 }}>二</Text>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>图纸不等于答案</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>地图、语义与碰撞各司其职，公开空间语义里不写「谁该去哪个窗口」。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28', width: 56 }}>三</Text>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>状态分栏登记</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>文稿、公共资源、实验副本、运行证据互不替代；缺什么就写清楚缺什么。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>第五章　5.3　作者资源与信息边界　·　下一节：Skill 与评审</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 27</Text>
+    </Box>
+
+</Slide>

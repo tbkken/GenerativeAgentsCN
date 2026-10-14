@@ -1,0 +1,81 @@
+<Slide notes={`这是全书的最后一节，我想把整章的落点收在这里。前面九节一直在准备材料：范围、来源、行为文本、运行记录、接收检查。这些准备有一个共同的检验方式——换一个人，他能不能照着做下去。
+
+接收者不必精通系统，但他要能独立判断三件事：交付物是什么、证据在哪里、哪些内容已经验证过。只要有一件说不清，这份交付就还留在作者手里。
+
+所以这节的作业不追求最大的模型、最多的角色或最长的运行时间，只要求一次有明确接收者的交付。把「作者能够讲明白」推进到「别人能够照着做」，前五章的知识才算连成了一体。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.10　章末综合项目</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次有接收者的交付</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>让另一位操作者{'\n'}真正接手</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>读完全书之后，最有价值的练习是完成一次有明确接收者的交付。它检验的不是功能多少，而是前五章的知识有没有连成一体。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>设计交付</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>运行交付</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>独立环境接收</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ width: 600, flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 168, height: 92, background: '#EDF4FC', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>作者</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>准备与记录</Text>
+                </Box>
+                <Box style={{ width: 44, height: 92, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 168, height: 92, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>四组材料</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>可定位、可核对</Text>
+                </Box>
+                <Box style={{ width: 44, height: 92, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+                </Box>
+                <Box style={{ width: 168, height: 92, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>接收者</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>独立判断</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 600, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#546779' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 600, flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 290, height: 112, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>交付物与证据</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>是什么、在哪里、{'\n'}哪些已经验证</Text>
+                </Box>
+                <Box style={{ width: 290, height: 112, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>缺口与下一步</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>哪里还没做、{'\n'}接下来怎样继续</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 31</Text>
+    </Box>
+
+</Slide>

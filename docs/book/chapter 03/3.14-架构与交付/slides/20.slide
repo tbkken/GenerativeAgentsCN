@@ -1,0 +1,54 @@
+<Slide notes={`交付时有两种很常见的偷懒，都留不下能用的证据。
+
+第一种是只交付一张漂亮的回放截图。画面确实好看，但它丢掉了产生这个画面的条件：用的哪一版地图、哪一份 Skill 文本、哪一组模型参数、哪一次 Run。别人拿着这张图，既复现不了，也判断不了它是不是正常结果。
+
+第二种是只交付几个数字。比如到达率是多少、平均延迟多少。数字本身看不出分母是怎么定义的，也看不出失败样本和缺失数据有没有被正确处理。
+
+图像、Skill 文本和模型参数都可能影响结果，所以交付材料要带着这些条件一起走。八个位置里，只要有一个是空的，别人就会在这里问不出答案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.5　一份实验交付物应包含什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>只交截图，或只交数字</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 64, height: 64, background: '#CB6B28', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>只交付一张漂亮回放截图</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>会丢掉产生该画面的条件：地图版本、Skill 文本、模型参数、Run 身份。别人复现不了，也判断不了它是否正常。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 150, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 64, height: 64, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>只交付几个数字</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>看不出分母怎么定义，也无法判断是否正确处理了失败样本与缺失数据；数字对不对，读者无从核对。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>图像、Skill 文本和模型参数都可能影响结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>交付材料要带着这些条件一起走，八个位置缺一个，别人就在那里问不出答案。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 29</Text>
+    </Box>
+
+</Slide>

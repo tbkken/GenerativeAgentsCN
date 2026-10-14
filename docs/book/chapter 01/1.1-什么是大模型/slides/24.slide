@@ -1,0 +1,65 @@
+<Slide notes={`既然"稳定"不等于"正确"，那我们该用什么方式记录错误？
+
+答案是：不要只记一个"幻觉"，要记下具体是什么错，以及该去哪里查。
+
+第一类，数字错。它说"手作室可以容纳十五人"。那就要问：容量表提供给它了吗？如果提供了，它用对了吗？
+
+第二类，动作错。它说"已经完成预约"，但系统里查不到记录。那就去查工具是不是真的执行了，返回值是不是成功。
+
+第三类，逻辑错。它的解释写得很完整，很通顺，但安排本身还是冲突。这说明还要再用独立的方式校验一遍数字、引用和业务约束。
+
+把错误落到具体的类别上，你才可能修好它。只说"AI 又胡说"，既找不到原因，也改不动流程。
+
+这就是开头那件事的下一步：不是换个说法再问一遍，而是把该提供的材料补上，把该查的记录查一遍，把候选方案逐条检查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.6　为什么回答会变化，为什么会有"幻觉"</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>与其笼统说"幻觉"，不如记录具体错误</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 36 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.4 }}>先分类，再定位</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>把错误说清楚，才有可能修。只记一句"它又说错了"，既找不到原因，也改不动流程。</Text>
+            <Box style={{ background: '#F4F7FA', borderRadius: 8, padding: '14px 16px' }}>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>记录：错误内容 + 判断依据 + 该查的环节</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14 }}>
+                <Text style={{ width: 380, fontSize: 15, color: '#546779' }}>看到的错误</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>优先检查哪里</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', border: '1px solid #E5C9A8', alignItems: 'center' }}>
+                <Text style={{ width: 380, fontSize: 18, color: '#20344B', fontWeight: 'bold' }}>"手作室可容纳 15 人"</Text>
+                <Text style={{ flex: 1, fontSize: 17, color: '#546779' }}>容量表是否提供、是否正确使用</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', border: '1px solid #E5C9A8', alignItems: 'center' }}>
+                <Text style={{ width: 380, fontSize: 18, color: '#20344B', fontWeight: 'bold' }}>"已经完成预约"，却没有记录</Text>
+                <Text style={{ flex: 1, fontSize: 17, color: '#546779' }}>工具是否实际执行并返回成功</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', alignItems: 'center' }}>
+                <Text style={{ width: 380, fontSize: 18, color: '#20344B', fontWeight: 'bold' }}>解释很完整，但安排仍然冲突</Text>
+                <Text style={{ flex: 1, fontSize: 17, color: '#546779' }}>数字、引用与业务约束是否通过独立校验</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 26</Text>
+    </Box>
+
+</Slide>

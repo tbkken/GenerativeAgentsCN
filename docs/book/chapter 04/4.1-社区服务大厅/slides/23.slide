@@ -1,0 +1,51 @@
+<Slide notes={`最后留两道练习，都跟判分口径有关。
+
+第一道：如果来访者说“我已经知道怎么办了”，这个算不算完成确认？不算。他还得指向正确的窗口，并且至少说出一项相关的准备内容，比如日期、人数或者要带的材料。光说一句满意，态度再好也不够。
+
+第二道：给两组再共有一项明确的需求，看看字段齐全的时候，能不能跳过追问、直接建议。这里要注意顺序——总任务数和判分表必须事先改好，不能等看到结果再回头挑人去算。
+
+这两道练习考的是同一件事：判分标准要先定下来，而且必须写清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.7　练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习：一句满意表态不算确认</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, height: 168, background: '#EDF4FC', borderRadius: 12, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 48, height: 48, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>“我已知道怎么办了”，如何判分？</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>需指向正确窗口，并至少说出一项相关准备内容；只表达满意，不算完成确认。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 168, background: '#ECF7F2', borderRadius: 12, padding: '18px 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 48, height: 48, background: '#26816B', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>再加入两组共有的一项明确需求</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>观察字段齐全时能否跳过追问，直接给出建议。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>须事先修改总任务数与判分表，不能看结果后挑人。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

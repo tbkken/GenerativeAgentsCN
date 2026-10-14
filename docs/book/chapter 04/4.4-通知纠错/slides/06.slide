@@ -1,0 +1,95 @@
+<Slide notes={`第一段是三名参与者的真实查询。叶青、吴悠、江辰各自与公告交互，拿到回复「本次会址为杏厅」，保存当前会址信念，再分别真的向沈禾说一句已查过。保存的信念只用自然语言，不附任何可能被继承的旧地点 SPO。
+
+第二段只有在第一段收齐后成立。沈禾拿到三份实际确认才提交申请，缺人只能追问，不能代确认。公告对象核对请求者身份后提交 revised 并回复；沈禾拿到正式更正确认，再逐人发出内容相同的更正，三次都是真实 SPEAK。
+
+最容易出错的一条：公告变成 revised 只是公开外观上的时刻，不等于三人同时知道了杉厅。对象回复与人物实际接收必须分别留证。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.2　先完成原通知链，再触发更正</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>收齐三份确认，更正才被允许发生</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>条件顺序示意图：两段循环，先后不能颠倒。</Text>
+
+        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>第一段　叶青、吴悠、江辰分别执行</Text>
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 250, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>真实查询原公告</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>使用真实查询键</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>原通知：杏厅</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>公告对象真实回复</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>保存当前信念</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只用自然语言描述</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 84, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>真实确认已查询</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>一次只告诉沈禾一人</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>第二段　沈禾申请，公告提交，再逐人发送</Text>
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 250, height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>提交依据与申请</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>检修依据＋完整请求</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>对象提交 revised</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>先核对请求者身份</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>正式更正确认</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>对象回复单独留证</Text>
+            </Box>
+            <Box style={{ width: 44, height: 84, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>逐人发送更正</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>三次真实 SPEAK，内容相同</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, marginTop: 4 }}>
+            <Box style={{ width: 560, height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不能当成同一时刻</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>公告改为 revised 的时刻 ≠ 三人同时知道杉厅</Text>
+            </Box>
+            <Box style={{ width: 560, height: 96, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 22px' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>必须分别留证</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>对象回复与人物实际接收各自留证，不指定固定 Step</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>条件顺序示意图，非系统截图、非 Run 结果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

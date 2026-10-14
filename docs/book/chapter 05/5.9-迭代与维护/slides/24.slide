@@ -1,0 +1,60 @@
+<Slide notes={`程序升级、模型服务下线、文件位置变化，这些都可能发生在项目交付之后。
+
+维护说明应该记下哪个环境曾经完成过哪一级验证：是文件字节核对，是协议读取，是离线回放，还是续跑与重跑。级别不同，能支持的结论强弱也不同。
+
+只要包身份和内容没有改变，改文件名或者换存放位置，就不应该被描述成创建了新的实验。业务身份仍然来自清单，不来自它所在的文件夹。
+
+旧材料在新环境里读不出来时，先保留原件和错误，不要自动改写证据。然后区分是协议不受支持、文件损坏、素材缺失，还是执行依赖变化，再决定下一步。
+
+旧模型不可用时，换模型可以形成新条件，但不能承诺它复现原来的消息或行为。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.7　环境变化以后怎样接手</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>环境变化以后怎样接手</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 5, width: 1088 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>程序升级或服务下线</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>维护说明应记录哪个环境曾完成哪一级验证：文件字节核对、协议读取、离线回放、续跑或重跑。级别不同，结论强弱不同。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 108, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 64, background: '#20344B' }} />
+            <Box style={{ flexDirection: 'column', gap: 5, width: 1088 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>文件位置变化</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>只要包身份与内容未改变，改文件名或存放位置不应被描述为创建了新的实验；业务身份仍来自清单。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 5, width: 1088 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>旧模型不可用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>换模型可以形成新的条件，但不能承诺它复现原来的消息或行为。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 128, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 80, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 5, width: 1088 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>旧材料在新环境中读不出来</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先保留原件和错误，不自动改写证据；再区分协议不受支持、文件损坏、素材缺失和执行依赖变化，之后才决定后续工作。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 27</Text>
+    </Box>
+
+</Slide>

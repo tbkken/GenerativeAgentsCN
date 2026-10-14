@@ -1,0 +1,81 @@
+<Slide notes={`下面这是服务大厅项目当前真正可用的登记样式，里面没有虚构文件，也没有编造 UUID。
+
+项目写社区服务大厅咨询策略比较；本次交付目标写审阅设计与下一阶段执行计划；当前材料是场景说明、需求表、策略差异、预算与待填写证据清单。实验、Run 和 Attempt 全部写「未创建」，三种原始包写「未生成」，接收环境与只读验证写「待记录」，异机续跑和重跑写「未执行」。最后一项写明下一项工作：按约定完成材料制作及浏览器配置，补齐保存证据。
+
+这份记录的价值不在于内容多，而在于每一项都如实。将来真有导出了，就逐项替换对应状态，同时保留交付日期和依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.6　一份简短但可执行的交付记录</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>当前状态登记样式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 64, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>不包含虚构文件和 UUID 的登记样式</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>空项保留「未生成／未验证」，有真实导出后逐项替换</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 420, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6 }}>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>项目</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 776 }}>社区服务大厅咨询策略比较</Text>
+            </Box>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>本次交付目标</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 776 }}>审阅设计与下一阶段执行计划</Text>
+            </Box>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>当前材料</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 776 }}>场景说明、需求表、策略差异、预算与待填写证据清单</Text>
+            </Box>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFF4E6', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>实验 / Run / Attempt</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 776 }}>未创建</Text>
+            </Box>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFF4E6', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>原始结果 ZIP / .gaexp / .garun</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 776 }}>未生成</Text>
+            </Box>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>已核验范围</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 776 }}>本次实际完成的文档检查</Text>
+            </Box>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFF4E6', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>接收环境与只读验证</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 776 }}>待记录</Text>
+            </Box>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFF4E6', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>异机续跑 / 重跑</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 776 }}>未执行</Text>
+            </Box>
+
+            <Box style={{ width: 1108, height: 36, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, color: '#546779', width: 320 }}>下一项工作</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', width: 776 }}>按约定完成材料制作及浏览器配置，补齐保存证据</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

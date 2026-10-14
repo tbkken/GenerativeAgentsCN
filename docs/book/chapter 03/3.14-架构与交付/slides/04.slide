@@ -1,0 +1,72 @@
+<Slide notes={`把五个职责摊成一张表，重点看第三列——为什么必须保持这个边界。
+
+Protocol 定义文件、身份、空间、Skill 与事实合同，各环节只有用同一套数据含义，交流才成立。
+
+Studio 负责编辑公共资源与实验、预检并组织交换，作者的工作就不会混进运行中的事实。
+
+Runtime 装配 Run、调用能力、提交 Step、监督与恢复，执行过程因此有明确状态与一致边界。
+
+Replay 读取已提交事实，生成状态与页面投影；它不重新执行模型或 Skill，看历史不会改变历史。
+
+CLI 和 Web 适配层把请求转成模块公开 API：它只是入口，不是另一套事实源。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.1　五个职责如何配合</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五个模块各守一段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 16px' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779' }}>模块</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779' }}>本章中做什么</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779' }}>为什么保持这个边界</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#F7F3E8', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#546779' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Protocol</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>定义文件、身份、空间、Skill 与事实合同</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>各环节用同一套数据含义交流，交接才成立</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>Studio</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>编辑公共资源与实验，预检并组织交换</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>作者工作不混入运行中的事实</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>Runtime</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>装配 Run、调用能力、提交 Step、监督与恢复</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>执行过程有明确状态与一致边界</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>Replay</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>读取已提交事实并生成状态与页面投影</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>查看历史不会再次执行模型或 Skill</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>CLI / Web 适配层</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>把操作请求转成模块公开 API</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>界面不是另一套事实源</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 29</Text>
+    </Box>
+
+</Slide>

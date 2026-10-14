@@ -1,0 +1,62 @@
+<Slide notes={`这一节的练习是：写出三条不能靠自然语言总结来证明的结果，并且为每一条指定证据。
+
+第一条好比说抵达。抵达需要坐标和移动的事实，得有位置记录能对上，光说到了不算。
+
+第二条好比说公告更新。更新需要对象真的提交，得有提交的记录，光说改了不算。
+
+第三条好比说消息已收到。收到需要真实的参与者后续还能引用这条消息，或者给出回复，只有转述不算。
+
+写的时候顺序反一下更好用：先想清楚我要证明什么，再想哪条证据能证明它，最后才去设计动作。
+
+后面各节会把这些检查落到具体的入口上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.7　开始前的自检</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三条只靠总结证明不了的结果</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>先想清楚要证明什么，再挑哪条证据能证明它。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 86, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>已经抵达</Text></Box>
+                <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779' }}>需要坐标与移动事实，总结说到了不算</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>位置记录能对上</Text></Box>
+            </Box>
+
+            <Box style={{ height: 86, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>公告已更新</Text></Box>
+                <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779' }}>需要对象真的提交，总结说改了不算</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>对象提交状态与回复</Text></Box>
+            </Box>
+
+            <Box style={{ height: 86, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>消息已收到</Text></Box>
+                <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779' }}>需要真实参与者参与，转述不算</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>后续上下文或回复</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>后续各节会把这些检查落到具体入口：资源、空间、Skill、运行与回放。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

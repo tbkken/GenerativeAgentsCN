@@ -1,0 +1,59 @@
+<Slide notes={`许安第一次走进学习中心时，脑子里只有一条旧消息：手作活动十点开始。几轮之后，他收到服务台的答复，又查询到更新后的公告内容，才有了核对旧认识的新依据。
+
+一个可信的角色应该能够改变认识，同时保留自己曾经依据什么采取行动的历史——这两件事必须同时成立，缺一个都不可信。
+
+记忆解决的正是这种跨轮连续性：让角色延续目标、记录经验、解释判断。但要守住一条边界：写下“公告已经更新”这行字，并不会真的改变公告栏。记忆不能替代世界事实。
+
+这一节就围绕这条边界，把打算、待确认和已经发生彻底分开。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.6</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>记忆与跨步进度</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>区分“我打算做”和“已经发生”：记忆让角色延续目标、记录经验、解释判断，但它不替代世界事实。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>跨轮连续性</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>认识可更正</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>历史保留</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>待确认进度</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 560, height: 118, background: '#F7F3E8', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>许安的旧认识</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>只记得旧消息：“手作活动十点开始。”</Text>
+            </Box>
+            <Box style={{ width: 560, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>核对旧认识的新依据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>收到服务台的答复，又查询到更新后的公告内容</Text>
+            </Box>
+            <Box style={{ width: 560, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>认识可以改变，历史仍然保留</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>写下“公告已经更新”，并不等于公告栏真的变了</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

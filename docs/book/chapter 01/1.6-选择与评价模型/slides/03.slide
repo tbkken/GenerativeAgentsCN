@@ -1,0 +1,40 @@
+<Slide notes={`把目标写清楚，是所有比较的地基。写一份好方案这句话不够具体，它可以意味着文字好看，也可以意味着安排完整、没有冲突，甚至意味着方案已经被相关系统保存下来。这几种理解指向的是完全不同的标准。
+
+为了让评价时不会临时改标准，我先把本次任务限定死：根据提供的材料生成开放日方案，正确处理房间容量、时间和预约；缺少信息时明确标出；每项关键安排给出依据。同时划出边界，不执行真实预约，也不以文字声称已经执行。
+
+这一段话同时定了两件事。一件是能力需求，模型要理解材料、组织约束、产生方案，并且表达出哪些地方还不确定。另一件是执行边界，它不需要自己决定活动经费，更不能在没有工具的情况下宣布预约已经完成。接下来要做的是把这些要求翻译成一条条可以观察、可以核对的检查项。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 26 }}>
+
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>1.6.1　第一步</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把目标写成可核验的结果</Text>
+        <Text style={{ fontSize: 17, color: '#546779' }}>先限定任务，检查项才立得住</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24, alignItems: 'center', paddingTop: 12 }}>
+
+            <Box style={{ width: 480, height: 120, background: '#F7F3E8', borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一段可核验的目标</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>做什么、不做什么，一次说清</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 480, height: 120, background: '#ECF7F2', borderRadius: 12, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>五项可观察的检查项</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>每一项都能指出证据在哪里</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 27</Text>
+    </Box>
+
+</Slide>

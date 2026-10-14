@@ -1,0 +1,63 @@
+<Slide notes={`提问的写法值得单独看一遍。
+
+「请找出手作体验的时长、允许房间、开放时间和预约冲突依据；逐项给出文件位置与相关原文，再提出候选。」这里面有两个要求特别关键：一是四类依据要逐项列清，不能只说「帮我查一下」；二是要文件位置和原文，而不是一段总结。
+
+然后看它的执行步骤，观察实际用了文件读取、搜索，还是已连接的查询工具——不同的手段，能力边界不一样。
+
+最后一定打开原文件核对。如果只读到了房间容量，就继续查预约；如果查到的是旧日期记录，要重新限定范围。
+
+这里要克制一句：它的底层检索算法没有在这次练习里得到验证，所以不能把「它找到了文件」说成「它用了 Embedding 或向量数据库」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.5　用文件搜索完成相同的取证任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次取证任务的提问与观察</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 634, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 15, color: '#546779' }}>提出要求：四类依据逐项列清</Text>
+
+            <Box style={{ width: 634, height: 212, background: '#F7F3E8', borderRadius: 8, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>请找出手作体验的时长、允许房间、开放时间和预约冲突依据；逐项给出文件位置与相关原文，再提出候选。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>要求写具体，回来的依据才能逐条核对。</Text>
+            </Box>
+
+            <Box style={{ width: 634, height: 132, background: '#F4F7FA', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>两个要求缺一不可</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>逐项列出必要依据，避免遗漏开放时间这类容易被跳过的条件；要位置与原文，而不是一段总结。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 470, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 470, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>第一步　看它用了什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>在展开的执行步骤里，观察实际采用了文件读取、搜索，还是已连接的查询工具。</Text>
+            </Box>
+
+            <Box style={{ width: 470, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>第二步　打开原文件核对</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>只读到房间容量就继续查预约；查到旧日期记录就重新限定范围。</Text>
+            </Box>
+
+            <Box style={{ width: 470, height: 128, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>第三步　别替它下没验证的结论</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>底层检索算法本次练习未验证，不能把「它找到了文件」写成「它用了向量数据库」。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 25</Text>
+    </Box>
+
+</Slide>

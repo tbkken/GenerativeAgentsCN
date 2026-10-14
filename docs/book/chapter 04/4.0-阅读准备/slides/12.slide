@@ -1,0 +1,73 @@
+<Slide notes={`这里有两组特别容易混的数。
+
+上面数的是时间间隔。从第 1 步到第 61 步，中间只有 60 个一分钟间隔；61 个时间点覆盖 60 分钟。公式是末时刻等于起时刻，加上步数减一乘步长。
+
+下面数的是独立重复。一个 Run 里有四项任务、若干条消息、几次恢复，这些都不能当成四次独立重复，因为同一个 Run 里的角色会互相影响。
+
+恢复只是同一个 run_id 下的新 attempt_id，它延续原来的 Run，不增加独立样本量。
+
+这两组都只是示意，不是实际运行安排，也不是样本量证明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.2　时间点、任务单位与独立 Run（示意）</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>时间点、任务单位与独立 Run</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 208, background: '#EDF4FC', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>时间点与跨度　·　示意</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 190, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>Step1 · 09:00</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Box style={{ height: 2, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 13, color: '#546779', textAlign: 'center' }}>60 个一分钟间隔</Text>
+                </Box>
+                <Box style={{ width: 190, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#276FBF' }}>Step61 · 10:00</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>T末 = T始 + (N−1)×步长　；　61 个时间点覆盖 60 分钟</Text>
+        </Box>
+
+        <Box style={{ height: 208, background: '#ECF7F2', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>独立重复　·　示意</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 138, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>Run A01</Text>
+                </Box>
+                <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 138, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>Run A02</Text>
+                </Box>
+                <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 138, height: 56, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>Run A03</Text>
+                </Box>
+                <Box style={{ width: 24 }} />
+                <Box style={{ width: 196, height: 56, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3 个独立 Run</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>Run 内部的任务、消息与恢复 Attempt，都不增加独立样本数。</Text>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>图 4.0-3 语义重绘（示意）：不是实际运行安排，也不是样本量证明。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 20</Text>
+    </Box>
+
+</Slide>

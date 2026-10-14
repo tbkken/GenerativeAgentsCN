@@ -1,0 +1,47 @@
+<Slide notes={`收束成三个反问。第一，图像是否已经变成语义？背景入库、四层地址、状态外观，都要分别录入并核对。第二，画出的门是否已经设为可走？隔断、门洞与路径检查是三道独立工序。第三，预览切换是否等于世界提交？运行时的变化要靠 SET_OBJECT_STATE 和回放事实证明。
+
+四项核对完成、待验收项标注清楚之后，就可以进入下一节，给人物编排 Brain 与 Skill。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3.3　收束</Text>
+
+        <Text style={{ fontSize: 46, fontWeight: 'bold', color: '#20344B' }}>记住三个反问</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ flexDirection: 'row', gap: 24, marginTop: 8 }}>
+
+            <Box style={{ width: 368, height: 250, background: '#EDF4FC', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>图像是否已经变成语义？</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>背景入库、四层地址树、状态外观，分别录入并核对。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 250, background: '#FFF4E6', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#CB6B28' }}>2</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>画出的门，是否已经设为可走？</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>连续隔断、门洞格与路径检查，是三道独立工序。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 250, background: '#ECF7F2', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#26816B' }}>3</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>预览切换，是否等于世界提交？</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>运行时还需 SET_OBJECT_STATE 提交与回放证据。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B' }}>四项核对完成、待验收项标注清楚后，随后再编排行为——下一节 3.4　Brain 与 Skill。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 25</Text>
+    </Box>
+
+</Slide>

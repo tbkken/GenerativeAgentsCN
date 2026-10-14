@@ -1,0 +1,61 @@
+<Slide notes={`四个名称这样安排：hall-service-brain 是 brain，驱动四名来访者和余真；hall-consultation 是咨询台根 Skill，也是 atomic；hall-window-a 与 hall-window-b 各是一个窗口的根 Skill。四份都能用纯文本，不新增子 Skill 或脚本。
+
+两组关系写清楚：Brain 和两个窗口在基线与对照中全文相同，只有咨询台那份的决策段不同，而且不为两组设计不同的调用树。
+
+还有一条纪律：人物差异放在各自资料里，不能在共同 Brain 里列出「谁去 A、谁去 B」的评分答案；窗口知道分工，却不能凭姓名读取来访者的完整目的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.1　交付全文，不只交付一句差异</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四份材料的名称、类型与角色</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>这是作者命名建议，尚未在 Studio 创建资源；不需要为两组设计不同的调用树。</Text>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>Skill 名称</Text></Box>
+            <Box style={{ width: 460 }}><Text style={{ fontSize: 14, color: '#546779' }}>类型与角色</Text></Box>
+            <Box style={{ width: 340 }}><Text style={{ fontSize: 14, color: '#546779' }}>两组关系</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 320 }}>hall-service-brain</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 460 }}>brain，驱动四名来访者与余真</Text>
+            <Text style={{ fontSize: 15, color: '#546779', width: 340 }}>全文相同，按实际身份读取各自资料</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 320 }}>hall-consultation</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 460 }}>atomic，咨询台根 Skill</Text>
+            <Text style={{ fontSize: 15, color: '#CB6B28', width: 340 }}>只有决策段不同</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 320 }}>hall-window-a</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 460 }}>atomic，A 窗口根 Skill</Text>
+            <Text style={{ fontSize: 15, color: '#546779', width: 340 }}>全文相同</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 320 }}>hall-window-b</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 460 }}>atomic，B 窗口根 Skill</Text>
+            <Text style={{ fontSize: 15, color: '#546779', width: 340 }}>全文相同</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center', marginTop: 6 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>两条纪律</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>人物差异放在各自资料里，不在共同 Brain 里列评分答案；窗口与咨询台知道分工，却不能凭姓名读取来访者的完整目的。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 27</Text>
+    </Box>
+
+</Slide>

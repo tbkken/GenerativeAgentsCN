@@ -1,0 +1,90 @@
+<Slide notes={`回环这一条最容易被忽略。
+假设三个人已经对候选 B 表过态，其中有人明确同意；讨论过程中候选改成了 D。这时候不能把对 B 的同意搬到 D 上，必须重新逐人征询，因为态度针对的永远是具体候选。
+同样的道理，也不能在脑内替别人回答。比如对何澄说「你反对晚上的活动」，这句话已经歪曲了他的 R1；正确做法是真实询问，然后等他本人纠正。
+对照组的额外轮次和等待都是干预成本，所以它可能晚定稿，甚至到最后都没有定稿，这一点要如实报告。
+还有一点：基线组如果自然出现了复述，也照样保留，不删掉不合预想的行为——我们比较的是规定的方法，不是有没有出现某个动作。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.4　唯一变化：理由复述确认</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>候选一改，态度就得重问</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ height: 400, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 694, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>回环检查　·　示意</Text>
+
+                <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>旧候选 B 的同意</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>三人已按 B 逐人表态，其中有人明确同意</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 20px' }}>
+                    <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>候选被修改</Text>
+                </Box>
+
+                <Box style={{ height: 88, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#B5C7D8' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>候选改为 D</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>时间与模式都可能一起变，旧表态的依据已经不成立</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 20px' }}>
+                    <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>旧同意不能穿过回环</Text>
+                </Box>
+
+                <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                    <Box style={{ flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>必须重新逐人征询 D</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>不能移用对 B 的态度，也不能由主持人代答</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 426, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>三条同时成立的提醒</Text>
+                <Box style={{ height: 98, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>不能脑内代答：须真实询问、等待本人纠正</Text>
+                </Box>
+                <Box style={{ height: 98, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>额外轮次与等待是干预成本，可能晚定稿甚至未定稿</Text>
+                </Box>
+                <Box style={{ height: 98, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>基线自然出现的复述也保留；比较的是规定方法</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>对何澄说「你反对晚上活动」，已经歪曲了 R1</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>必须真实询问、等待本人纠正，不能由主持人替他写一个态度。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,71 @@
+<Slide notes={`地图不只是背景图。它由三部分组成，各自负责一段。
+
+图片负责「看起来是什么」——柜台长什么样。节点和语义负责「这个设施是什么、能做什么交互」，这一层是公开的，所以里面不能写任务答案。碰撞和通路负责「人物能到哪里」——能不能走过去，会不会穿过去。
+
+三个对象的具体矩形和相邻格子，仍然要在素材制作阶段补齐并核验。现在手里的是草图，不能把尚未完成的草图称为可以导入的地图，更不能临时借用旧案例里同名的物件，就认为地址的含义一样。第三章讲过地图与空间的操作，进到相应服务区以后，人物还要从感知里取得对象地址与交互项。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.2　地图给出地点，不替咨询台回答问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>图像、节点与碰撞各管一段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 668, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 668, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 88, background: '#26816B' }} />
+                <Box style={{ width: 598, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>图像</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>图片显示柜台长什么样；作者侧要备齐背景图与对象图片</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>核对：素材是否与实际保存的资源一致</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 88, background: '#276FBF' }} />
+                <Box style={{ width: 598, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>节点与语义</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>语义说明这个设施是什么、能做哪些交互，这一层是公开的</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>核对：公开语义里不含任何任务答案</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 668, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 88, background: '#276FBF' }} />
+                <Box style={{ width: 598, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>碰撞与通路</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>通路决定人物能到哪里、能不能走过去</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>核对：矩形与邻格须在素材制作阶段补齐并核验</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 452, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ width: 452, height: 250, background: '#FFF4E6', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>需要判断的地方</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.3 }}>不能想当然</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65, width: 400 }}>不能把尚未完成的 4.1 草图称为可导入地图。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65, width: 400 }}>更不能临时借用旧案例里的同名物件，并认为地址含义相同。</Text>
+            </Box>
+
+            <Box style={{ width: 452, height: 190, background: '#EDF4FC', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>进入服务区后再感知</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65, width: 400 }}>人物进入相应服务区后，再从感知取得对象地址与交互项；界面操作参照第三章的资源教程。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 27</Text>
+    </Box>
+
+</Slide>

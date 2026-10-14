@@ -1,0 +1,87 @@
+<Slide notes={`这四条假设我逐条说一遍，不妨照这个结构做一份。
+
+第一行，两组除澄清段外使用相同内容。暂这样处理是为了便于解释策略差异；改变它需要保存后的资源内容逐项比较。
+
+第二行，四位来访者能够接近咨询台及窗口，这是完成任务的空间前提；改变它需要实际地图路径与运行位移核对。
+
+第三行，模型配置可以支持所需调用。这里要坦白：当前还没填写实测结论，需要先选用可用服务；改变它要分别核对真实配置、连接与运行记录。
+
+第四行，对象没有业务队列与审批流程，本案只研究咨询，不模拟办理。要加机制应重新定义项目，不能补一句提示冒充实现。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.4　把假设写成可检查的约束</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>假设要配一条会改变它的证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 36, flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Box style={{ width: 408, padding: '0 16px' }}><Text style={{ fontSize: 14, color: '#546779' }}>假设或尚缺资料</Text></Box>
+            <Box style={{ width: 336, padding: '0 16px' }}><Text style={{ fontSize: 14, color: '#546779' }}>为什么暂这样处理</Text></Box>
+            <Box style={{ width: 384, padding: '0 16px' }}><Text style={{ fontSize: 14, color: '#546779' }}>需要什么证据才能改变状态</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 408, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>两组除澄清段外使用相同内容</Text>
+            </Box>
+            <Box style={{ width: 336, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>便于解释策略差异</Text>
+            </Box>
+            <Box style={{ width: 384, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>保存后的资源内容逐项比较</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 408, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>四位来访者能够接近咨询台及窗口</Text>
+            </Box>
+            <Box style={{ width: 336, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>是完成任务的空间前提</Text>
+            </Box>
+            <Box style={{ width: 384, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>实际地图路径与运行位移核对</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 408, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>模型配置可以支持所需调用</Text>
+            </Box>
+            <Box style={{ width: 336, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>需要选用可用服务，当前未填写实测结论</Text>
+            </Box>
+            <Box style={{ width: 384, height: 88, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>真实配置、连接及运行记录分别核对</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 408, height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>对象没有业务队列与审批流程</Text>
+            </Box>
+            <Box style={{ width: 336, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本案只研究咨询，不模拟办理</Text>
+            </Box>
+            <Box style={{ width: 384, height: 88, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>如要增加机制，应重新定义项目，不能补一句提示冒充实现</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center', marginTop: 6 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>未知信息若会改变任务答案、权限或主要比较条件，就先处理它，再形成正式比较材料。</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>不要边运行边悄悄换条件。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 23</Text>
+    </Box>
+
+</Slide>

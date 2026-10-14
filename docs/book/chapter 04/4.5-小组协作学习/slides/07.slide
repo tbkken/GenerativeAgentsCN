@@ -1,0 +1,116 @@
+<Slide notes={`这个案例里有两种东西需要分清：世界内真正发生的动作，和只写在纸上的候选值。
+
+世界内发生三件事：读图阅读、小组讨论、定稿。也就是说，角色的确会去整理题目、会互相说话、会拿出一份完整安排。
+
+题目里那三项活动——读图阅读、纸艺手作、合作拼图——并不真的举办。我们做的是一场纸上排程，不是在办活动。
+
+空间上也只到学习站这一层：青禾社区下面是学习站，学习站里有讨论区和资料区，四个人都知道这两个区的地址。资料区里的对象只回答共同题面，不给解答。
+
+三个教室是纸上的候选值。不必建一个真实场地，也不能说选了教室就等于角色真的走过去了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.1 — 4.5.2　世界边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>世界内做什么，纸上是什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 512, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>世界内真正发生的三件事</Text>
+
+            <Box style={{ width: 512, height: 76, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>读</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>读图阅读</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>理解共同题面与自己手上的条件卡</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 512, height: 76, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>论</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>小组讨论</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>成员之间真实发言，一次只对一名接收者</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 512, height: 76, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>稿</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>定稿与传达</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>拿出完整安排，再逐人说明同一版本</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 512, height: 72, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>不真正举办这三项活动；世界内只做阅读、讨论和定稿</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 608, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>四个位置，各管一段</Text>
+
+            <Box style={{ width: 608, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 44, height: 44, background: '#B5C7D8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>社</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>青禾社区</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>场景容器</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 608, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 44, height: 44, background: '#B5C7D8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>站</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>学习站</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>活动发生的地方</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 608, height: 72, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>区</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>讨论区／资料区</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>四人知道两区地址；对象只答共同题面，不给解答</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 608, height: 72, background: '#F7F3E8', borderRadius: 8, padding: '12px 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 44, height: 44, background: '#20344B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>卡</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>题面卡</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>私有条件的载体，不在共同上下文里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 608, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>三个教室是纸上候选值，不必建真实 Arena；选教室不等于实际移动</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 26</Text>
+    </Box>
+
+</Slide>

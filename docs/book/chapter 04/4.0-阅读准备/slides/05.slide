@@ -1,0 +1,59 @@
+<Slide notes={`问题缩小之后，还要管住结论的长度。我把它分成三个层次。
+
+层次一是系统机制，看权限、请求、路径、提交和恢复身份这些到底成不成立。机制正常并不等于业务成功，两者不能互换。
+
+层次二是本次模型行为，看固定条件、独立 Run、判分和成本。这里能得到的是这几个角色在这次设置下的表现，它不等于三个现实人口的样本。
+
+层次三是现实应用效果，需要现实资料校准、外部验证，还要说明适用条件。仿真里全员赞同，不等于现实世界的支持率。
+
+写作时最常犯的错，就是拿第一层的证据去说第三层的话。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.1　结论的层次</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>结论只能停在证据能支持的位置</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 430, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>同一批数据，能说的话有长有短</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>证据到哪一层，结论就只能写到哪一层；写得比证据长，就是越界。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>机制正常 ≠ 业务成功</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>三个角色 ≠ 三个现实人口样本</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 686, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>层次一　系统机制</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>所需证据：权限、请求、路径、提交与恢复身份</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>不能跳到：机制正常 ≠ 业务成功</Text>
+            </Box>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>层次二　本次模型行为</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>所需证据：固定条件、独立 Run、判分和成本</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>不能跳到：三个角色 ≠ 三个现实人口样本</Text>
+            </Box>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>层次三　现实应用效果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>所需证据：现实资料校准、外部验证、适用条件</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>不能跳到：仿真全员赞同 ≠ 现实支持率</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 20</Text>
+    </Box>
+
+</Slide>

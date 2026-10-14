@@ -1,0 +1,71 @@
+<Slide notes={`每一步都要留下和问题相匹配的证据，这是这一章的一个硬要求。
+
+举三个例子。地图预检通过了，只能证明某些结构条件成立，它不能代替人物实际穿过门洞的轨迹。
+
+模型说我记住了，不能代替记忆真的写进去了、后面真的检索得到。
+
+运行状态变成已完成，也不能代替业务目标已经达成，它只说明这次执行结束了。
+
+所以看证据的时候，先问一句：这条证据能证明我想证明的那件事吗。答案对不上，就要再往下找一条。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.6　本章怎样组织实践</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>证据要跟问题对得上</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 546 }}><Text style={{ fontSize: 14, color: '#546779' }}>这条证据说明什么</Text></Box>
+            <Box style={{ width: 566 }}><Text style={{ fontSize: 14, color: '#CB6B28' }}>它不能代替什么</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 546, height: 106, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>地图预检通过</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>某些结构条件成立</Text>
+            </Box>
+            <Box style={{ width: 566, height: 106, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能代替实际轨迹</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>人物真的穿过门洞，要靠位置记录</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 546, height: 106, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>模型说「我记住了」</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>它生成过这样一句话</Text>
+            </Box>
+            <Box style={{ width: 566, height: 106, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能代替记忆写入</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>还要看后续检索能不能取到</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 546, height: 106, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>状态变成 COMPLETED</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>这次执行结束了</Text>
+            </Box>
+            <Box style={{ width: 566, height: 106, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能代替目标达成</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>业务目标是否达成要单独判断</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>看证据先问一句：它能证明我想证明的那件事吗。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

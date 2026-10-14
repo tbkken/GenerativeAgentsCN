@@ -1,0 +1,118 @@
+<Slide notes={`五种表述我逐个说，因为它们看起来都很像结论。
+
+world-act 返回 accepted，能说明的是该请求被接受了，还缺的是对象处理、响应提交和人物下一轮接收。余真说「周澈明白了」，能说明余真说过这句话，还缺周澈自己的真实双人 SPEAK 或后续交互。一张「准备前往 A 窗口」的便签，说明的是动作前的计划，还缺下一轮的坐标确认抵达和窗口的实际答复。
+
+「已收到建议」说明有一条接收主张，还缺来源，以及建议是否适配具体任务。最后，「我已经办理好了」只是人物的总结。本案只做咨询，没有行政审批和实际维修机制，所以这句话不能用来认定审批或维修已经完成。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.4　把叙述中的「完成」拆开验证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五句话，各自还缺什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>五种常见表述，逐条拆开看它到底证明了什么</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 520, flexDirection: 'column', gap: 8 }}>
+
+                <Box style={{ width: 520, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#546779' }} />
+                    <Box style={{ width: 476, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>世界动作返回</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>world-act 返回 accepted</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 520, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#546779' }} />
+                    <Box style={{ width: 476, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>人物发言</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>余真说「周澈明白了」</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 520, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#546779' }} />
+                    <Box style={{ width: 476, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>动作前的便签</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>「准备前往 A 窗口」</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 520, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#546779' }} />
+                    <Box style={{ width: 476, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>接收主张</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>「已收到建议」</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 520, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#546779' }} />
+                    <Box style={{ width: 476, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>人物总结</Text>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>「我已经办理好了」</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 608, flexDirection: 'column', gap: 8 }}>
+
+                <Box style={{ width: 608, height: 84, background: '#FFFFFF', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                    <Box style={{ width: 564, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>能说明：该请求被接受</Text>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>还缺：对象处理 · 响应提交 · 人物下一轮接收</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 608, height: 84, background: '#FFFFFF', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                    <Box style={{ width: 564, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>能说明：余真说了这句话</Text>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>还缺：周澈自己的真实双人 SPEAK 或后续交互</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 608, height: 84, background: '#FFFFFF', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                    <Box style={{ width: 564, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>能说明：动作前的计划</Text>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>还缺：下轮坐标确认抵达 · 窗口实际答复</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 608, height: 84, background: '#FFFFFF', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                    <Box style={{ width: 564, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>能说明：有一条接收主张</Text>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>还缺：来源 · 建议是否适配具体任务</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 608, height: 84, background: '#FFFFFF', borderRadius: 10, padding: '10px 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                    <Box style={{ width: 564, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>能说明：人物的总结</Text>
+                        <Text style={{ fontSize: 14, color: '#CB6B28' }}>还缺：本案只咨询，不能据此认定审批或维修完成</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

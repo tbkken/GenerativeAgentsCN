@@ -1,0 +1,80 @@
+<Slide notes={`感知返回的主要部分有七项。
+
+current_location 给出当前坐标、地址和位置锚点；spatial_nodes 是范围内的四层空间语义；nearby_agents 是附近角色的身份、位置与活动；game_objects 给对象的地址、公开状态和当前交互项；events 是范围内可观察的事件；active_conversations 是属于该参与者的活动会话；attention 汇总各类候选数量、带宽以及有没有发生截断。
+
+前三项回答我在哪、周围有什么结构；中间三项回答谁在附近、发生了什么；最后一项提醒返回被裁过多少。
+
+读返回的时候按这个顺序扫一遍，就不容易漏掉关键信息。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.1　感知返回有范围的事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>感知返回里有什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>视野决定空间范围，注意力带宽限制候选输出；七项内容各回答一类问题。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 26 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>返回内容</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>角色可以据此判断什么</Text></Box>
+            </Box>
+
+            <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>current_location</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>当前坐标、地址和位置锚点</Text></Box>
+            </Box>
+
+            <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>spatial_nodes</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>当前范围内的四层空间语义</Text></Box>
+            </Box>
+
+            <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>nearby_agents</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>附近角色的身份、位置与活动</Text></Box>
+            </Box>
+
+            <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>game_objects</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>对象地址、公开状态和当前交互项</Text></Box>
+            </Box>
+
+            <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>events</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>当前范围内可观察的事件</Text></Box>
+            </Box>
+
+            <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>active_conversations</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>属于该参与者的活动会话</Text></Box>
+            </Box>
+
+            <Box style={{ height: 48, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 30, background: '#26816B' }} />
+                <Box style={{ width: 250 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>attention</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>各类候选数量、带宽以及是否发生截断</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,82 @@
+<Slide notes={`一个可靠的 Brain 至少要回答五件事：现在知道什么、还缺少什么、何时需要子 Skill、可以提交什么动作、何时停止。
+
+对应到做法：先读身份、虚拟时间、位置、上轮活动和外部观察；再检索私有记忆、感知现场，对照新证据核实上轮待确认事项；存在冲突或选择困难才调用子 Skill；然后选一个当前可执行的动作——需要移动便先移动，需要咨询便先发请求，尚未得到答复就保留不确定性；便签写在动作之前，调用一次 world-act，成功即结束。
+
+特别提醒：咨询本身也可以是有依据的下一步，不必等全部答案齐备才行动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.2　把 SOP 写成条件与证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>可靠的 Brain 至少回答五件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 660, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+
+            <Box style={{ width: 660, height: 84, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 200, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>现在知道什么？</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>读取本轮身份、虚拟时间、当前位置、上轮活动和外部观察</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 84, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 200, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>还缺少什么？</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>检索相关私有记忆，感知现场；对照新证据核实待确认事项</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 84, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 200, height: 52, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>何时需要子 Skill？</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>存在冲突或选择困难时按需调用，取得建议后并回判断</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 84, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 200, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>可以提交什么动作？</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>需要移动先移动，需要咨询先发请求；未得到答复便保留不确定性</Text>
+            </Box>
+
+            <Box style={{ width: 660, height: 84, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 200, height: 52, background: '#20344B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>何时停止？</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>必要便签写在动作前，调用一次 world-act；成功即结束本轮</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 460, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ width: 460, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>咨询也是行动</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>从"需要比较或整理"分支走向动作选择，咨询本身就可以是有依据的下一步，不必等全部答案齐备才行动。</Text>
+            </Box>
+
+            <Box style={{ width: 460, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>SOP 是选用的方法</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>"先读取、再判断"是本案例选用的 SOP，不是所有实验都必须采用的内核流水线；换写法可以，可靠性的责任随之转移。</Text>
+            </Box>
+
+            <Box style={{ width: 460, background: '#F7F3E8', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>教材不替模型写结局</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>给出的是选择的条件；每个角色走到哪个分支，由运行时的输入与证据决定。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 22</Text>
+    </Box>
+
+</Slide>

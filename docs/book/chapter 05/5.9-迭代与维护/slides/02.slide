@@ -1,0 +1,91 @@
+<Slide notes={`这一节要看清四件事，它们是一条链，不是四份清单。
+
+第一件，先写问题再写修改。观察到一个失败结果，先把它写成别人能查的问题单，而不是立刻决定要给谁加什么内容。
+
+第二件，不同变更需要不同的验证。改一句说明、改评分口径、改行为输入、换模型环境，复查范围差别很大，重跑不是唯一的动作。
+
+第三件，选对副本才能改对地方。公共资源、实验草稿、封存实验和 Run 各自保存自己的内容，改错一份等于白改，还会让新结果挂到旧结论上。
+
+第四件，维护说明和历史事实分开保存。环境变化以后，接手的人还要能找回原始证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>把一句笼统的"再优化一下"，拆成可核对的问题、可界定的修改范围和一个可交接的下一轮。</Text>
+            <Box style={{ width: 360, height: 52, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>一句模糊的反馈</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>问题单与变更层</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>可交接的下一轮</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先写问题，再写修改</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>现象、位置、证据、解释、修改建议、验收条件，六项写全才叫问题单</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>不同变更，需要不同的验证</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>先选修改层，再决定是只复查文档，还是必须做新实验、留新证据</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>选对副本，写清身份</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>公共资源与实验各自保存内容；续跑、重跑、改后再做是三种不同身份</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>维护说明与历史事实分别保存</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>当前建议、历史结论与未验证事项分开存放，环境变化后仍可接手</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 27</Text>
+    </Box>
+
+</Slide>

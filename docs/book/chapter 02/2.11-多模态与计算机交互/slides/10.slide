@@ -1,0 +1,58 @@
+<Slide notes={`模型回了一段很流畅的场馆介绍，这时候最容易放松。要挡住这种感觉，就把验收拆成三个问题分别问。
+
+第一个问题：三个房间都识别对了吗？这是 OCR 层面的核对，逐个比对名称就行。
+
+第二个问题：图中相对位置描述对了吗？比如哪些房间挨着走廊。这属于视觉理解，要对着图看它有没有说反。
+
+第三个问题，也是最关键的一个：它有没有承认，真实的预约情况从图里看不出来？如果它对预约状态说得头头是道，那说明它在编。
+
+三个问题各管一段，只要有一段没过，就不能说这次读图通过了。不要因为整段话读起来顺，就默认所有视觉问题都已经解决。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.2　OpenAI API：把图片作为输入内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>验收要把问题拆开问</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, height: 210, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>房间认得准吗</Text>
+                <Box style={{ width: 48, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>逐个比对名称，看有没有把三个房间识别错。这一层只管字符对不对。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 210, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>位置说对了吗</Text>
+                <Box style={{ width: 48, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>对着图检查相对位置有没有说反，有没有从相邻推出实际不存在的门。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 210, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>承认看不出预约吗</Text>
+                <Box style={{ width: 48, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>这是最关键的一问。如果它对预约状态说得头头是道，那是在编，不是在读。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不要因一段流畅的场馆介绍，就判所有视觉问题都已通过</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>三个问题各管一段，任何一段没过，这次读图就没有通过。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 26</Text>
+    </Box>
+
+</Slide>

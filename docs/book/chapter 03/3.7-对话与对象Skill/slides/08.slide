@@ -1,0 +1,65 @@
+<Slide notes={`再讲一处最容易被忽略的断口。
+
+周宁把服务台的答复告诉林岚，这件事本身是成立的。但要分清两句话：服务台明确回复了什么，以及我建议怎么做。前者是事实，后者是建议。
+
+林岚收到建议，并不意味着公告栏已经被修改。公告栏要不要改、改成什么，还要林岚自己核实、自己决定，然后真的发出一次交互请求。
+
+同样，周宁说「我会去通知许安」，也不等于许安已经收到。话是自己说的，接收的人并不在场。要让信息真正传到，后面还得有另一条真实消息，或者一次对象交互。
+
+所以信息传播链上每一段都要单独成立，不能用一个人的话把整条链补齐。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.1　一次 SPEAK 连接两名 Agent</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>转述不等于送达</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 136, flexDirection: 'row' }}>
+            <Box style={{ width: 350, height: 136, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>周宁</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>拿到服务台答复，把事实和建议一起转述出去。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 136, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 350, height: 136, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>林岚</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>收到了建议，仍要自己核实、自己决定是否请求更新。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 136, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 350, height: 136, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>许安</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>节点到此断开：此刻还没有任何消息真正到达他。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>林岚收到建议，不等于公告栏已经修改；周宁说「我会去通知许安」，不等于许安已经收到</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>后续需要另一条真实消息或对象交互，才能把传播这一段补齐。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>转述时要把两件事分开说</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>「服务台明确回复了什么」和「我建议怎么做」不是同一类信息；也不能仅凭一条 SPEAK 就证明两人面对面站在一起。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 31</Text>
+    </Box>
+
+</Slide>

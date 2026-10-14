@@ -1,0 +1,56 @@
+<Slide notes={`留一个练习：把"每轮都反思一次"改成"证据冲突、重要目标改变或重复无进展时才整理记忆"。
+
+改完观察真实调用轨迹，比较额外调用次数与行为质量，而不是只比较文字长短——少调用不等于变差，多调用也不等于更认真。
+
+再做一项检查：会不会出现"子 Skill 已经通知林岚"这样的建议。参考判断是，这种说法应改成候选动作，因为子 Skill 的文本没有构成通知事实。通知到底有没有发生，还是要回到世界里的 SPEAK 或对象回复事实上来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.5　怎样判断 Brain 做对了</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习：改掉"每轮都反思一次"</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 520, height: 170, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>原约定</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#546779' }}>每轮都反思一次</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>固定节奏整理记忆，调用次数先上去。</Text>
+            </Box>
+            <Box style={{ width: 112, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 520, height: 170, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>改成</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>触发式整理记忆</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>证据冲突、重要目标改变或重复无进展时，才整理记忆。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>观察什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>真实调用轨迹；比较额外调用次数与行为质量，而不是只比较文字长短。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 14 }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>再检查一处</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>是否出现「子 Skill 已经通知林岚」的建议——应改成候选动作；子 Skill 的文本没有构成通知事实。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 22</Text>
+    </Box>
+
+</Slide>

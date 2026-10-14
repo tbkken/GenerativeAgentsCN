@@ -1,0 +1,72 @@
+<Slide notes={`五项接手任务，各有必要的交付和必须保留的边界。
+
+设计审阅要交需求、两组差异、人物信息边界和判分表；边界是尚无行为结果时不评价策略效果。
+
+文件核对要交实际文件、来源、原名、类型、大小与摘要；收到文件不等于通过协议校验或运行验收。
+
+结果复算要交全部结果索引、原始证据、评分依据与缺失项；截图和总结不能独立证明闭环。
+
+事实回放要交可校验的 Run 材料、兼容读取环境和素材；记住回放不重新调用模型，所以它证明不了模型行为。
+
+重新执行要交正式输入或 Run 包、环境条件和执行计划；这次新执行还要另行确认预算与身份。接收者签收材料只说明这次交付被接收，不自动代表每一级验证都通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.1　先约定接收者要完成什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交付什么，就守住什么边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 34, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 20 }} />
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 176 }}>接手任务</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 460 }}>必要交付</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779', width: 440 }}>应明确保留的边界</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 176 }}>设计审阅</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 460 }}>需求、两组差异、人物信息边界、判分表</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 440 }}>尚无行为结果时不能评价策略效果</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 176 }}>文件核对</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 460 }}>实际文件、来源、原名、类型、大小与摘要</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 440 }}>收到文件不等于已通过协议校验或运行验收</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 176 }}>结果复算</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 460 }}>全部结果索引、原始证据、评分依据与缺失项</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 440 }}>截图和总结不能独立证明闭环</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 176 }}>事实回放</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 460 }}>可校验的 Run 材料、兼容读取环境与素材</Text>
+            <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.5, width: 440 }}>回放不重新调用模型</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 176 }}>重新执行</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 460 }}>正式输入／Run 包、环境条件、执行计划</Text>
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, width: 440 }}>新执行需要另行确认预算与身份</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

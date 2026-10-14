@@ -1,0 +1,44 @@
+<Slide notes={`最后一个知识块，把这些快照变成我们能用的判断。
+
+前面读过的成绩指向一个具体结论：当前模型已经适合承担四类工作——资料理解、候选方案生成、复杂问题求解，以及受约束的工具操作。
+
+但同一批成绩也指出，有三件事必须单独验证：任务的完整性、事实依据，和重复执行的可靠性。这三件事不会因为平均分高就自动满足。
+
+所以在选型的时候，不要只问"这是不是最强的模型"。更要问的是：在我们的输入规模、我们的成本限制、我们的时间要求下，它能不能把目标完成。
+
+接下来把四类常见的筹备工作摊开，一类一类看它能用什么、我们必须验什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.5.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把发展水平翻译成可用的判断</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>不要只问"是不是最强模型"，要问它在我们的输入与成本限制下能否完成目标。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ flex: 1, height: 84, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>已适合承担</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>资料理解 · 方案生成 · 复杂求解 · 受约束工具操作</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 84, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>仍需单独验证</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>任务完整性 · 事实依据 · 重复可靠性</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

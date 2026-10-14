@@ -1,0 +1,75 @@
+<Slide notes={`现在看那份整理说明到底长什么样。子技能把它压成五个栏目：现象、证据来源、已做、待做、不能确认。
+
+这里有个关键区分：五条事实和五个栏目不是一一配对的。我拿 K3 举例。「前次记录 E-17 只写了外观观察」这一条，放在「证据来源」里成立，因为它说明了资料的出处；放在「已做」里也成立，但它只能算前史，不能算本轮做的事；它同时还在提醒前史和本轮的边界。
+
+所以你把五个栏目都填满，并不等于五项事实都补齐了。没从设备拿到的内容还是缺口，不能照着框架把答案塞进去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.3　共同流程，只改变整理段</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五项表达框架，不是五项事实</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ width: 616, flexDirection: 'column', gap: 8 }}>
+            <Box style={{ height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>现象</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>教学面板橙色指示灯间歇出现</Text></Box>
+            </Box>
+            <Box style={{ height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>证据来源</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>前次记录 E-17 与本次真实查询回复</Text></Box>
+            </Box>
+            <Box style={{ height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>已做</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>必须区分前史与本轮：前次只作外观观察</Text></Box>
+            </Box>
+            <Box style={{ height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>待做</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>恢复正常确认，仍待复核</Text></Box>
+            </Box>
+            <Box style={{ height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不能确认</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>阈值、原因、零件与修法</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 504, flexDirection: 'column', gap: 16 }}>
+            <Box style={{ height: 260, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>把 K3 放进框架会怎样</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>「前次记录 E-17 只写了外观观察」同时落在好几栏里：</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#26816B', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>证据来源：说明了资料出处</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#26816B', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>已做事项：但只是前史，不是本轮</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 6, height: 6, background: '#26816B', borderRadius: 3 }} />
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>前史边界：本轮仍未做全面检查</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>凑齐五栏 ≠ 补齐五项事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>尚未从设备取得的内容仍是缺口，不能照框架把答案交给子 Skill。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

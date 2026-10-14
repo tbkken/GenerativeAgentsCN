@@ -1,0 +1,87 @@
+<Slide notes={`整条链路分三段。本轮：动作前保存必要待确认便签，调用 world-act；若成功接受，立即结束本轮，不能再补写完成记忆；若被拒绝，保留不确定性，依据错误与调用预算处理。
+
+中间隔着世界执行与整步持久提交——不以 accepted 代替结果。“立即结束本轮”和下一轮的判断之间，隔着的就是这一层。
+
+下一轮：读取实际坐标、活动、对象状态或答复；证据符合目标，才更新为已确认进度，否则继续保留待确认，失败不记完成。
+
+林岚的例子最典型：写下准备更新公告的便签后，必须等实际答复再确认结果，不能沿成功接受分支直接记为完成。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.4　在动作之前写“待确认”</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先存待确认，下轮再核对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>“立即结束本轮”与下一轮的判断之间，还隔着世界执行与整步提交。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 460, height: 420, background: '#F4F7FA', borderRadius: 12, padding: '16px 16px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>本轮</Text>
+                <Box style={{ width: 428, height: 62, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>动作前保存必要待确认便签</Text>
+                </Box>
+                <Box style={{ width: 428, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+                </Box>
+                <Box style={{ width: 428, height: 62, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>调用 world-act</Text>
+                </Box>
+                <Box style={{ width: 428, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, color: '#CB6B28' }}>↓</Text>
+                </Box>
+                <Box style={{ width: 428, height: 76, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.4 }}>成功接受？是：立即结束本轮，不能再补写完成记忆</Text>
+                </Box>
+                <Box style={{ width: 428, height: 62, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>否：保留不确定性，依据错误与调用预算处理</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, height: 420, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 144, height: 420, background: '#F7F3E8', borderRadius: 12, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.8 }}>世界执行{'\n'}与{'\n'}整步持久提交</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 420, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 460, height: 420, background: '#F4F7FA', borderRadius: 12, padding: '16px 16px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>下一轮</Text>
+                <Box style={{ width: 428, height: 62, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>读取实际坐标、活动、对象状态或答复</Text>
+                </Box>
+                <Box style={{ width: 428, height: 26, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+                </Box>
+                <Box style={{ width: 428, height: 54, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>证据符合目标？</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 20 }}>
+                    <Box style={{ width: 204, height: 104, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#26816B', lineHeight: 1.4 }}>是：更新为{'\n'}已确认进度</Text>
+                    </Box>
+                    <Box style={{ width: 204, height: 104, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.4 }}>否：继续保留待确认，{'\n'}失败不记完成</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

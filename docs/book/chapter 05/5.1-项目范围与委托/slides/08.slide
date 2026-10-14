@@ -1,0 +1,84 @@
+<Slide notes={`把两种范围并排看，差别就清楚了。
+
+左边是设计交付。它检查材料是否完整：问题与方法要写清范围、判据和计划；输入材料要给出精确文字和依赖；运行证据只写明待执行；接收范围停在纸面审读。
+
+右边是运行交付。前面三项它同样需要，但输入材料换成实际保存的实验副本，运行证据换成全部 Run 与判分，接收范围换成实际约定的核查。
+
+请注意，这两栏的四个比较项是一一对应的，但它不是执行顺序，不表示先做完设计再自动进入运行。本章示例目前仍然停在左边的位置：材料在设计上完整，运行尚未发生。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.2　建立一页足够具体的项目约定</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>设计交付与运行交付</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 1152 }}>项目约定首先要选清交付范围：本次只交可审阅的设计，还是还要交真实运行与接收记录？两种范围分别列出完成材料。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 560, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>设计交付　检查材料是否完整</Text>
+                </Box>
+                <Box style={{ width: 560, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>问题与方法</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>范围、判据、计划</Text>
+                </Box>
+                <Box style={{ width: 560, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>输入材料</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>精确文字与依赖</Text>
+                </Box>
+                <Box style={{ width: 560, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>运行证据</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>明确待执行</Text>
+                </Box>
+                <Box style={{ width: 560, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>接收范围</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>纸面审读</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 560, height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>运行交付　再要求真实配置与全部 Run</Text>
+                </Box>
+                <Box style={{ width: 560, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>问题与方法</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>同样需要</Text>
+                </Box>
+                <Box style={{ width: 560, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>输入材料</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>实际保存的实验副本</Text>
+                </Box>
+                <Box style={{ width: 560, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>运行证据</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>全部 Run 与判分</Text>
+                </Box>
+                <Box style={{ width: 560, height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 14, color: '#546779', width: 110 }}>接收范围</Text>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>实际约定的核查</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1060 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>两栏四行一一对应，但不表示执行顺序</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>本章示例尚处于设计准备，只完成了左侧这一栏所要求的材料。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

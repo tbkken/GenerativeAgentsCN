@@ -1,0 +1,70 @@
+<Slide notes={`除了主指标，还有几个口径必须同时报，每个的边界都要写清楚。
+第一，重要理由公开率：已经公开的 R 项除以五。只看一条理由也可能得出百分之百的准确率，但它并不全面。
+第二，最终记录状态：没有定稿的要单独列出；理由分母为零的时候记不适用。
+第三，明确回应覆盖率：对最后候选有明确态度的代表人数除以三；没有最后候选就记未进此阶段。
+第四，保留事项记录率：准确保留原意的反对或保留事项，除以征询时实际提出的这类事项；没有提出就记不适用。
+另外还要报事实性错误比例。判断时要小心：说容量三十人是错的，更喜欢交流是偏好，担心太晚影响休息是理由和担忧，不能因为实验里没有数据就把它判成错误事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.5　主要指标：记录已经讨论过的理由</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同时要报的五个口径</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ height: 440, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+
+            <Box style={{ height: 30, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>同时报什么</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>分母与边界</Text></Box>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>重要理由公开率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>已公开的 R 项 ÷ 5；只听一项也可能准确率 100%，却不全面</Text></Box>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>最终记录状态</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>未定稿单独列；理由分母为 0 记不适用</Text></Box>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>明确回应覆盖率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>对最后候选有明确态度的代表 ÷ 3；无最后候选记未进此阶段</Text></Box>
+            </Box>
+
+            <Box style={{ height: 72, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>保留事项记录率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>准确保留原意的反对／保留事项 ÷ 最终征询实际提出的此类事项；无事项不适用</Text></Box>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>事实性错误比例</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>矛盾或无依据冒充场地事实的声明 ÷ 全部可核验场地事实声明</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>「容量 30 人」可判错；「更喜欢交流」是偏好；「担心太晚影响休息」是理由与担忧，不能仅因没有实验数据就判成错误事实。支持率不是主要成功指标。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

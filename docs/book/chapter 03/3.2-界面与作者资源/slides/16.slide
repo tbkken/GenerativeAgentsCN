@@ -1,0 +1,50 @@
+<Slide notes={`模型配置这一块，最需要建立的意识是：填完表单，只是把配置存下来。
+
+基础配置的「模型」页有「＋ 新建模型」。按实际服务填写配置名称、模型 ID、服务地址和 API Key。表单里还有超时；如果是聊天配置，还会包含最大输出 tokens 和 Temperature。
+
+保存之后才可以点「测试连接」。如果有未保存的修改，应该先保存再测。
+
+还有一点要注意：连接测试会真的去访问你配置的那个服务。所以它的结果应该记录成「这次配置的一次观察」，而不是「整场仿真已经通过」。
+
+模型 API 的协议以系统网关实际支持的为准，不能把第二章 Responses 示例里的全部参数直接搬过来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.2.5　模型配置：可选择不等于已经可用</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>3.2.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>填完表单，只是把配置存下来</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>可选择不等于已经可用，连接要单独测试。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 500, height: 64, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>聊天配置</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 500, height: 64, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>Embedding 配置</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 22</Text>
+    </Box>
+
+</Slide>

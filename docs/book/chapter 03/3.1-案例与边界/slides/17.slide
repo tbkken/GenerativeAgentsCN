@@ -1,0 +1,64 @@
+<Slide notes={`用 48 步之前，先看清一个常量。
+
+当前 ga-cn-v1 的移动常量是每虚拟分钟 4 格。也就是说，一轮一分钟的 MOVE，最多消费 4 格路径。
+
+要留意 32 像素这个数字，它只是显示尺度，不是距离本身，格子数才是。
+
+步长、角色数、对象数和模型调用链，都会影响实验成本。48 步不是系统的默认值，也不是必然合适的预算，它只是这一轮候选配置里的取值。
+
+所以可以按研究问题建立更小的独立练习，也可以直接准备完整案例，正式运行前并不强制试跑若干步。
+
+如果实验已经封存了，就先复制成一个新的独立实验再调整，不要回写旧实验，也不要改旧运行留下的证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.5　一次活动有三种时间</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一轮最多走 4 格</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 700, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Text style={{ fontSize: 48, fontWeight: 'bold', color: '#276FBF' }}>4 格</Text>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>每虚拟分钟 · 移动常量</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>ga-cn-v1：一轮 1 分钟的 MOVE 最多消费 4 格路径</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 420, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>32 px 只是显示尺度</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>格子数才是距离本身</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>步长、角色数、对象数与模型调用链都会影响实验成本。</Text>
+        </Box>
+
+        <Box style={{ height: 58, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>48 步不是系统默认值，也不是必然合适的预算，它只是候选配置里的取值。</Text>
+        </Box>
+
+        <Box style={{ height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>可以按研究问题建立较小的独立练习，也可以直接准备完整案例；正式运行前不强制试跑。</Text>
+        </Box>
+
+        <Box style={{ height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>实验已经封存时，先复制成新的独立实验再调整，不回写旧实验、不改旧 Run 证据。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,84 @@
+<Slide notes={`先看这份业务合同，它是后面核对的依据。
+
+第一个工具叫 get_room_availability，输入是房间编号和日期，要检查的结果是这一天该房间的开放时间以及已经被占用的区间。第二个工具叫 validate_schedule，输入是一个排期对象，要检查的是候选方案是否满足规则，如果不满足，具体是哪条规则出错。
+
+这两个工具都是只读的。查询预约不会改动任何记录，校验方案也只返回结论和错误说明。选它们做教学材料，是因为出问题的范围小，容易看清楚。
+
+装依赖用 requirements-mcp.txt，启动直接跑 mcp_server.py；要用同一个虚拟环境里的解释器，不要混用系统解释器。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.4　先检查教学服务的业务合同</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两个只读工具，一份合同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 704, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 704, height: 186, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 664, height: 28, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', fontFamily: 'Consolas' }}>get_room_availability</Text>
+                    <Box style={{ width: 90, height: 28, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>只读</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 664, height: 54, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ width: 110, fontSize: 14, color: '#546779' }}>输入</Text>
+                    <Text style={{ flex: 1, fontSize: 15, color: '#20344B' }}>room_id、date</Text>
+                </Box>
+                <Box style={{ width: 664, height: 54, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ width: 110, fontSize: 14, color: '#546779' }}>应检查的结果</Text>
+                    <Text style={{ flex: 1, fontSize: 15, color: '#20344B' }}>指定日期的房间、开放时间及已占用区间</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 704, height: 186, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 664, height: 28, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B', fontFamily: 'Consolas' }}>validate_schedule</Text>
+                    <Box style={{ width: 90, height: 28, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>只读</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 664, height: 54, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ width: 110, fontSize: 14, color: '#546779' }}>输入</Text>
+                    <Text style={{ flex: 1, fontSize: 15, color: '#20344B' }}>schedule 对象</Text>
+                </Box>
+                <Box style={{ width: 664, height: 54, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ width: 110, fontSize: 14, color: '#546779' }}>应检查的结果</Text>
+                    <Text style={{ flex: 1, fontSize: 15, color: '#20344B' }}>候选方案是否满足规则及具体错误</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 400, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 400, height: 206, background: '#20344B', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>启动方式</Text>
+                <Text style={{ fontFamily: 'Consolas', fontSize: 14, color: '#FFFFFF', lineHeight: 1.7 }}>{`$ python -m pip install -r requirements-mcp.txt
+$ python mcp_server.py`}</Text>
+            </Box>
+
+            <Box style={{ width: 400, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>用同一虚拟环境的解释器</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>依赖与启动命令见示例说明；不要混用系统解释器。</Text>
+            </Box>
+
+            <Box style={{ width: 400, height: 130, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>默认启动 stdio 服务</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>起来之后等待宿主发送协议请求。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 27</Text>
+    </Box>
+
+</Slide>

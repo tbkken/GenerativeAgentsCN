@@ -1,0 +1,76 @@
+<Slide notes={`把这张平面示意的三个房间摆开看。手作室、阅读室、交流室，各自只有名称标注，底下横着一条公共走廊。
+
+我特别强调一件事：图里没有容量数字，也没有预约状态。看到空白就以为容量不限、以为随时可约，这是最常见的误读。
+
+还有一条更容易被忽略。两个方框挨在一起，只说明它们在版面上一左一右，不说明中间有门，更不说明可以走通。要判断通行，得看真实的建筑资料，而这幅图不是建筑资料。
+
+那么容量从哪里来？查 rooms.csv。预约从哪里来？查 availability.json。图负责认路，表格负责报数，两个来源各管一段，谁也不能替代谁。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.1　从图片读出什么，不能读出什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个房间与一条公共走廊</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>青禾社区学习中心　教学平面示意　非比例图</Text>
+                <Box style={{ width: 96, height: 26, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 360, height: 150, background: '#FFFFFF', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>手作室</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>可见标注：房间名称</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>容量：图中未标</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>预约：图中未标</Text>
+                </Box>
+                <Box style={{ width: 360, height: 150, background: '#FFFFFF', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>阅读室</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>可见标注：房间名称</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>容量：图中未标</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>预约：图中未标</Text>
+                </Box>
+                <Box style={{ width: 360, height: 150, background: '#FFFFFF', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>交流室</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>可见标注：房间名称</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>容量：图中未标</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>预约：图中未标</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 44, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>公共走廊　连接三个房间</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ flex: 1, height: 36, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>容量依据　rooms.csv</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 36, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>预约依据　availability.json</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 36, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>矩形相邻不能证明门可通行</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>图 2.11-1 重绘　教学平面示意：非比例图，不含可导航地图数据；作者教学图，非界面截图，也不代表任何模型成绩。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,74 @@
+<Slide notes={`预算和样本这块有两句话必须记住。
+第一句是每组用相同预算先跑一个 Run，再按预先登记的计划决定要不要重复。计划写在前面，不是看到结果之后再补。
+第二句是三名集合者在同一个世界里活动，他们互相可见、可能互相影响，所以不是三个独立实验。
+还有一个数字容易读错：完整 31 步乘以 5 名参与者，得到 155 个参与者轮次。这个 155 不等于 155 次模型请求，它是包含引导员、公告对象、失败请求和物理重试在内的全部成本。
+所以算成本、算分母的时候，口径要写清楚，否则后面所有比率都会对不上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.2　预算、轮次与独立性</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同世界三人，不是三个实验</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 506, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 506, height: 168, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>155</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>参与者轮次，不是请求数</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>5 × 31 = 155。含引导员、公告对象、失败与物理重试的全部成本。</Text>
+            </Box>
+
+            <Box style={{ width: 506, height: 142, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>每组同预算先跑一个 Run</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>再按预登记的计划决定是否重复；计划写在看结果之前。</Text>
+            </Box>
+
+            <Box style={{ width: 506, height: 142, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>三人共享同一个世界</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>互相可见、可能互相影响，因此不能当作三个独立样本。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 618, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>三种常见误读</Text>
+
+            <Box style={{ width: 618, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 88, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>把轮次当请求</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>155 是参与者轮次，不是导航或 MOVE 的请求次数，更不是模型调用次数。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 618, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 88, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>把三人当三次重复</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>同一世界里三人互相影响，不能拆成三个独立实验来算显著性。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 618, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 88, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>忘了失败与重试</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>成本口径要含引导员、公告对象、失败请求和物理重试，不能只算成功那部分。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 26</Text>
+    </Box>
+
+</Slide>

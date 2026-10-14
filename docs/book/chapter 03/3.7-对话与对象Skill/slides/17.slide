@@ -1,0 +1,56 @@
+<Slide notes={`这一段情节成立的前提，是信息被分开放。
+
+这一章的教案给服务台一条私有的背景事实：手作室在二〇二六年十月十七日十点到十点半已经有预约。而原来的公告上仍然写着十点开始，两者冲突。
+
+这条事实只写进服务台自己的材料，不放进四个人共用的 Brain。这一点非常关键：如果放进共同记忆，每个角色从第一轮就会通过系统提示直接知道答案。
+
+那样的话，实验表面上可能走得很顺，但信息传播这件事完全没有被演示出来，谁回答对了也只是复述作者的答案。
+
+顺带说一句，活动计划里的二十四、十、十六这些数字是计划元数据；这次实验只有四名 Agent，不能据此说几十人已经到场。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.4　设计公告更新这一段情节</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>私有事实只交给服务台</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 420, height: 320, background: '#F7F3E8', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>服务台私有预约事实</Text>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>手作室已有预约{'\n'}10:00 — 10:30</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>只写入服务台材料，不放进四人共用的 Brain；组织者要自己咨询才能拿到。</Text>
+        </Box>
+
+        <Box style={{ width: 44, height: 320, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 28, color: '#276FBF' }}>›</Text>
+        </Box>
+
+        <Box style={{ width: 640, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 640, height: 128, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>原公告仍写「手作活动十点开始」</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>两处信息冲突，所以组织者要先核实，再决定是否调整为十点半至十一点半。</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 156, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>若放进四人共用的 Brain</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>每个角色从第一轮就会通过系统提示知道答案。实验虽然可能顺利完成，却无法演示信息传播。</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>计划里的二十四人、十人和十六人是计划元数据；当前实验只有四名 Agent，不能据此声称有几十人已经到场。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 31</Text>
+    </Box>
+
+</Slide>

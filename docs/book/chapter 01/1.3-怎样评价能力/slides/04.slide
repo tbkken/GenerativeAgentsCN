@@ -1,0 +1,125 @@
+<Slide notes={`把六个环节连起来看，一次评价的骨架就清楚了。
+
+最左边是使用目标。它决定后面所有事：我到底要解决什么问题。目标写成“减少报名整理中的遗漏”和写成“可靠地调整活动安排”，后面每一步都会不一样。
+
+然后是任务样本。用哪份材料、出哪些题，这是在动手之前就要定下来的。同一份资料出十道题，和换十份资料各出一题，测到的东西不同。
+
+接着是可观察输出。要事先说清记录什么：只记最终答案，还是把中间步骤、工具调用都留下来。
+
+判分规则要在看到结果之前写死，否则很容易不自觉地放宽标准。判完分才汇总成指标，最后写上适用范围。
+
+八个对十个，只有配上“哪份材料、哪些题、什么判据”，才变成一个可以讨论的结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3　导言</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六环连起来，才叫一次评价</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', height: 194, gap: 24 }}>
+
+            <Box style={{ width: 320, background: '#EDF4FC', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>使用目标</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>要解决什么问题</Text>
+                <Box style={{ height: 1, background: '#B5C7D8', marginTop: 4 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>减少报名整理中的遗漏</Text>
+            </Box>
+
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 320, background: '#EDF4FC', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>任务样本</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>用哪份材料、出哪些题</Text>
+                <Box style={{ height: 1, background: '#B5C7D8', marginTop: 4 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>同一份资料上的 10 道题</Text>
+            </Box>
+
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 320, background: '#EDF4FC', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>可观察输出</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>记录下什么结果</Text>
+                <Box style={{ height: 1, background: '#B5C7D8', marginTop: 4 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>助手答案逐题留档</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 26, flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#B5C7D8' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 194, gap: 24 }}>
+
+            <Box style={{ width: 320, background: '#ECF7F2', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>判分规则</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>怎样算对、怎样算错</Text>
+                <Box style={{ height: 1, background: '#B5C7D8', marginTop: 4 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>预先固定标准答案</Text>
+            </Box>
+
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 320, background: '#ECF7F2', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>汇总指标</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>怎样加成一个数</Text>
+                <Box style={{ height: 1, background: '#B5C7D8', marginTop: 4 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>准确率 8 / 10 = 80%</Text>
+            </Box>
+
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 320, background: '#ECF7F2', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 6 }}>
+                <Box style={{ width: 34, height: 34, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>适用范围</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>结论能走到哪里</Text>
+                <Box style={{ height: 1, background: '#B5C7D8', marginTop: 4 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>只限这份材料与这些题目</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>指标只是这条链上的一环：选错了任务，再精确的计算也不能回答原来的问题。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 31</Text>
+    </Box>
+
+</Slide>

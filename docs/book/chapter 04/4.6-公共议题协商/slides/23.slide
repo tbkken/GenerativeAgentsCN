@@ -1,0 +1,77 @@
+<Slide notes={`把整条证据连接起来看，从理由原文一直到最后记录，一共六步。
+第一步是理由原文，也就是真实说出来的 R1 到 R5，没说过的不算。第二步是场地回复，这部分来自说明牌，它只答共同事实。第三步是候选版本，要写清编号、时间和模式。第四步是复述及修正，由本人确认或者纠正。第五步是明确态度，同意、保留还是反对。第六步才是最终记录，里面要有理由、回应和分歧。
+如果你是从结果页回头找证据的，先顺着「Agent、人物、对话」找到摘要，再逐条核对参与者、顺序和全文。
+私人总结只能帮你定位，它不能替代公开记录，这一点必须在报告里写清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.6　证据连接与结果页入口</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从理由原文到最终记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>六步证据链（示意）：每一步都要求真实回复，缺一步就不能进入下一步</Text>
+
+        <Box style={{ height: 110, flexDirection: 'row' }}>
+            <Box style={{ width: 154, height: 110, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 10px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>理由原文</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.4 }}>真实说出的 R 项</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 154, height: 110, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 10px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>场地回复</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.4 }}>对象只答共同事实</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 154, height: 110, background: '#F7F3E8', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 10px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>候选版本</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.4 }}>编号、时间与模式</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 154, height: 110, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 10px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>复述及修正</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.4 }}>本人确认或纠正</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 154, height: 110, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 10px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>明确态度</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.4 }}>同意／保留／反对</Text>
+            </Box>
+            <Box style={{ width: 44, height: 110, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 154, height: 110, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 10px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>最终记录</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.4 }}>理由、回应与分歧</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>从结果页回查时，先按「Agent → 人物 → 对话」找到摘要，再逐条核对参与者、顺序与全文；摘要只用来定位。</Text>
+        </Box>
+
+        <Box style={{ height: 100, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>私人总结不替代公开记录；记录里写的每一句话，都必须能在真实发言与真实回复里找到对应。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

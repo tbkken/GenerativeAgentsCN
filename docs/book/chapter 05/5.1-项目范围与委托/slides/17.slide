@@ -1,0 +1,59 @@
+<Slide notes={`一个人也可以完成小型项目，但应该留一次隔日复核。做法很简单。
+
+先关闭编辑页面，只按交付入口重新寻找资料，看看不依赖记忆能不能找到全部材料。然后随机抽一项得分，从报告一路回查到实际回复和确认。
+
+这样做能发现三类问题：路径失效、说明遗漏，还有那些只存在于作者记忆里的前提。它们平时看不出来，别人接手时才会集中爆发。
+
+不过我要提醒，这一步不能冒充独立评阅。你自己隔一天再查，仍然带着作者的思路。如果确实有另一位接收者参与，应该记录他具体检查了什么，而不是写一个笼统的「全部无误」，那样等于什么都没说。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.4　三类参与者，三种不同职责</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>最小的自检：隔一天再找一次</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>关闭编辑页面之后</Text>
+
+            <Box style={{ width: 560, height: 84, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', width: 32 }}>1</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5, width: 472 }}>只按交付入口重新寻找资料，不靠记忆</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 84, background: '#EDF4FC', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', width: 32 }}>2</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5, width: 472 }}>随机抽一项得分，回查到实际回复与确认</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>这一步能发现什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>路径失效、说明遗漏，以及只存在于作者记忆中的前提。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>但它不能替代什么</Text>
+
+            <Box style={{ width: 560, height: 120, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不能冒充独立评阅</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>作者隔日自查仍然带着原来的思路。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 158, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>有第二位接收者时，写清他查了什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>记录具体检查项，不要求写一个笼统的「全部无误」——那样的记录对后来的人没有帮助。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

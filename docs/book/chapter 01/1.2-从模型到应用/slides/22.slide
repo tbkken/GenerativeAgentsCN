@@ -1,0 +1,68 @@
+<Slide notes={`这一节讲完了，最后留下三个反问。以后你看到任何一个"AI 做得很好"或者"AI 做得很差"的结论，都可以拿这三个问题去问一遍。
+
+第一个问题，它拿到了什么资料？资料有没有真的进入这次输入，来源清不清楚，是不是有效的。
+
+第二个问题，它能调用什么工具？谁提出请求，谁实际执行，它被允许做什么，边界在哪里。
+
+第三个问题，谁来检查结果？什么时候算完成，靠哪条证据支持这个"完成"，出了问题由谁处理。
+
+这三个问题的作用，是把"这个 AI 行不行"这种笼统的判断，拆成可以逐个核对的条件。
+
+顺便预告一下下一节：我们讲了这么多"符合约束""准确""可靠"，接下来要把这些词变成可以计算、可以比较的指标。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>1.2　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>记住三个反问</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>能力不只来自模型，还来自它周围的资料、工具与校验。判断之前，先把这张条件表问一遍。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>它拿到了什么资料？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>资料是否进入输入，来源与有效时间是否明确</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#EDF4FC', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>它能调用什么工具？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>谁提出请求、谁实际执行，权限边界在哪里</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 106, background: '#FFF4E6', borderRadius: 12, padding: '0 22px', alignItems: 'center' }}>
+                <Box style={{ width: 46, height: 46, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#CB6B28' }}>谁来检查结果？</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>哪条证据支持"完成"，失败由谁处理</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingTop: 6 }}>
+                <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#546779' }}>下一节　1.3　怎样把"聪明"变成可测量的问题</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 22</Text>
+    </Box>
+
+</Slide>

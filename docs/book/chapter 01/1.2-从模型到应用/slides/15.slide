@@ -1,0 +1,76 @@
+<Slide notes={`先看前两个名字。模型，指的是执行推理的那个核心组件——它本身没有界面，也不负责保存文件。
+
+模型服务，指的是提供调用模型的接口。你发一个请求过去，它把结果返回给你。这里要记录的是请求日期、接口和配置，因为同一个模型在不同接口配置下，返回可能不一样。
+
+再看后两个。产品，是我们真正打开来用的那个东西，它组织了界面、文件、工具和任务体验。产品版本、有哪些工具、有什么权限，这些都要记下来。
+
+最后一个名字容易被忽略，叫模型快照。它是用来标识某个具体的模型状态的。这里要特别核对一件事：提供方有没有承诺把这个快照固定住，还是说它只是一个会随时更新的别名。
+
+四个名字分清楚了，记录才有意义。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.4　模型名称、服务与产品不是同一个东西</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四个容易混用的名称</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ flex: 55, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>名称与含义</Text>
+
+            <Box style={{ flexDirection: 'row', height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#276FBF' }} />
+                <Box style={{ width: 128 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>执行推理的核心组件</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#276FBF' }} />
+                <Box style={{ width: 128 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型服务</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>提供调用模型的接口</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#26816B' }} />
+                <Box style={{ width: 128 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>产品</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>组织界面、文件、工具和任务体验</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+                <Box style={{ width: 128 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>模型快照</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>标识某个具体模型状态</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 45, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>评价时记录什么</Text>
+
+            <Box style={{ height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>精确标识、推理设置</Text>
+            </Box>
+
+            <Box style={{ height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>请求日期、接口与配置</Text>
+            </Box>
+
+            <Box style={{ height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>产品版本、工具与权限</Text>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>提供方是否承诺固定；是否只是更新别名</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,83 @@
+<Slide notes={`核验这一环，最容易被一句话糊弄过去。
+
+「我已安排好全部活动」，这是模型说的，它只是一段文本。文本可以很流畅、很像结论，但它本身不构成证据。
+
+要成为证据，得看工具真实返回了什么。我们调用 validate_schedule，它返回通过，这说明本章编码的排期约束被满足了。注意范围——是这一套约束被满足，不是所有约束都被满足。
+
+再往外一层是现实状态：房间到底有没有被预订。本节这些工具只有查询和校验能力，产物是一份本地筹备文件，它管不到现实里的预订系统。
+
+所以做题时养成习惯：把「模型说的」「校验器返回的」「现实里发生的」分开写，不要混成一句「已经完成」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.1　从一次回答到一个闭环</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>核验最容易被忽略</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>三种「看起来完成了」，可信度完全不同。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0px 20px' }}>
+            <Box style={{ width: 190, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>模型说</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>一句话，一段文本</Text>
+            </Box>
+            <Box style={{ width: 3, height: 72, background: '#CB6B28', marginRight: 20 }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>「我已安排好全部活动」</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>模型输出可以很像结论，但它只是输出，没有核对过任何外部条件。</Text>
+            </Box>
+            <Box style={{ width: 268, height: 52, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不能作为通过依据</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 116, background: '#ECF7F2', borderRadius: 10, padding: '0px 20px' }}>
+            <Box style={{ width: 190, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>工具返回</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可复核的真实结果</Text>
+            </Box>
+            <Box style={{ width: 3, height: 72, background: '#26816B', marginRight: 20 }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 16, color: '#20344B', fontFamily: 'Consolas, monospace' }}>validate_schedule 返回通过</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>说明本章编码的排期约束得到满足，范围限于这套约束。</Text>
+            </Box>
+            <Box style={{ width: 268, height: 52, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>可以作为核验依据</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0px 20px' }}>
+            <Box style={{ width: 190, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#546779' }}>现实状态</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>房间是否被预订</Text>
+            </Box>
+            <Box style={{ width: 3, height: 72, background: '#B5C7D8', marginRight: 20 }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>这一层本节没有工具可以证明</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>本章工具只有查询与校验能力，产物是本地筹备文件。</Text>
+            </Box>
+            <Box style={{ width: 268, height: 52, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>超出本节证据范围</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F7F3E8', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>三者都不能证明现实中的房间已经被预订</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>模型的话不是证据，校验通过也只能说明编码的约束被满足。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,91 @@
+<Slide notes={`这一节要看清四件事，它们是一条链上的四个动作，不是四份互不相干的清单。
+
+第一件，把原始文件和分析工作分开。原始导出、解压副本、派生材料各有各的处理规则，混在一起放，字节就可能被重新打包或补写，后面任何核对都会失效。
+
+第二件，让一句主张接受三次追问。主张要问判据，判据要问事实，事实要问定位。同时把取材边界冻结住，不能拿窗口之外的记录来补窗口之内的结论。
+
+第三件，把叙述里的「完成」拆开验证。一条状态返回、一句人物发言，能说明的事情比字面少得多。
+
+第四件，人工阅卷要留下别人能重复的判断，对外结论只写到证据能支持的位置。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>结论不是写出来的，是沿着一条能查回来的链子走出来的。四个动作依次把一句判断变成可复核的成果。</Text>
+            <Box style={{ width: 360, height: 52, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>一句判断</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>一条能查回来的链</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>一份可复核的成果</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 650 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先把原始文件和分析工作分开</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>原始导出、解压副本、派生材料各有各的处理规则，字节要能回头核对</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 650 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>让一句主张接受三次追问</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>问判据、问事实、问定位，并把取材范围冻结在同一个已提交边界内</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 650 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把叙述中的「完成」拆开验证</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>文字与状态能说明什么、还缺什么；失败的成本也不随未提交事实一起消失</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4, width: 650 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>对外结论写到证据能够支持的位置</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>人工阅卷留下别人能重复的判断，报告按固定顺序写，措辞与证据相称</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

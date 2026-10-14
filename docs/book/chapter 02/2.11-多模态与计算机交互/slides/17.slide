@@ -1,0 +1,94 @@
+<Slide notes={`坐标这件事，必须说透。
+
+模型看到一张截图，说"点击 412、286 这个位置"。这句话的全部含义是：它提出了一个动作。至于那个位置在真实页面上是什么，它并不知道，它只知道截图上的像素。
+
+所以会出三种错法。
+
+第一种是按钮移位。上一次截图里按钮在上方，这一次页面内容变了，按钮下移了，同一个坐标就落在空白处。
+
+第二种是页面滚动。截图是滚动前的，坐标是滚动前算的，滚动一发生就全偏了。
+
+第三种是内容遮挡。目标按钮被弹层盖住，点下去点的是弹层。
+
+因此执行完必须回头看页面：目标对不对，状态是不是我们想要的那一个。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.4　计算机工具：从动作请求到真实页面</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>坐标只是动作请求，不是执行证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 22 }}>
+
+        <Box style={{ width: 500, background: '#F4F7FA', borderRadius: 10, padding: 14, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>教学页面窗口　只读本地页面</Text>
+                <Box style={{ width: 88, height: 24, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>手作室详情（折叠状态）</Text>
+                <Box style={{ width: 190, height: 34, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>展开详情　按钮原位置</Text>
+                </Box>
+                <Box style={{ width: 190, height: 34, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>模型坐标落点 x 412 y 286</Text>
+                </Box>
+                <Text style={{ fontSize: 12, color: '#CB6B28', lineHeight: 1.5 }}>页面内容下移后，同一坐标落在按钮下方的空白区域。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#546779' }}>x = 412　y = 286</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>坐标以本次截图为基准</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 630, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>三种让动作落空的常见情形</Text>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '13px 18px' }}>
+                <Box style={{ width: 3, height: 62, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>按钮移位</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>页面重新渲染后原坐标落在空白处，点了等于没点。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '13px 18px' }}>
+                <Box style={{ width: 3, height: 62, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>页面滚动</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>坐标按滚动前的截图算出，一滚动就整体偏移。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '13px 18px' }}>
+                <Box style={{ width: 3, height: 62, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>内容遮挡</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>目标被浮层盖住，点到的是覆盖在上面的那一个元素。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '15px 20px' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>执行后仍要核对目标与页面状态：按钮移位、滚动或遮挡，都可能让动作落错位置。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 26</Text>
+    </Box>
+
+</Slide>

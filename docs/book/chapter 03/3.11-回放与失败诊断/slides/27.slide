@@ -1,0 +1,39 @@
+<Slide notes={`把这一节收一收，记住三件事。
+
+第一，已提交才算发生。动作被接受、模型说过什么、画面停在哪里，都只是过程；能证明世界改变的，是提交到持久边界的事实。
+
+第二，回放只读边界。它读取已提交帧和包内素材，校验身份、哈希与连续性，不执行 Brain，不重新调用模型，也不会把临时日志补进历史。
+
+第三，先写缺口。证据不足时标「待复现」，而不是为了叙事顺畅补一个数值。把入口、动作、预期、实际、身份和原始记录写全，判断权就交给了证据。
+
+带着这三件事，下一节我们去看业务指标、行为质量与 Evaluator，学习怎样定义分母与时间点。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.11　回放事实与失败诊断</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>已提交才算发生</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>画面与文字只是线索；坐标、路径、状态事件与回复事实才是证明。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>回放只读边界</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>读既有帧与包内素材，不执行 Brain，不重新调用模型。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>先把缺口写出来</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>证据不足就标「待复现」，不用补出来的数值凑叙事。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：业务指标、行为质量与 Evaluator —— 定义分母与时间点</Text>
+
+    </Box>
+
+</Slide>

@@ -1,0 +1,52 @@
+<Slide notes={`先问最基础的一件事：计算机凭什么知道两句话意思接近？
+
+它不认识词，只认识数。Embedding 做的事情，就是把一段文本换成一组浮点数，也就是一个向量。训练会让语义相关的文本在向量空间里靠得更近。
+
+这件事的教学价值在这里：当有人问「哪里能做手工体验」，检索有可能命中「手作室使用说明」。这两句没有完全相同的字词，靠关键词匹配是碰不到的，靠向量却可以排到前面。
+
+还有一处工程细节要提前交代：生成答案用的模型和生成向量用的模型是两件事，需要分别配置，不能混用同一个环境变量。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.9.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>Embedding 为什么适合找相近内容</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>字面上不一样，语义上却可能很近——这正是关键词匹配做不到的地方。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 264, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>文本变成向量</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>一段文字换成一串浮点数</Text>
+            </Box>
+            <Box style={{ width: 264, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>相近者靠得更近</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>方向接近，排序就能靠前</Text>
+            </Box>
+            <Box style={{ width: 264, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>两个模型分开配</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>回答与向量各用各的设置</Text>
+            </Box>
+            <Box style={{ width: 264, height: 96, background: '#F7F3E8', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>接口带用量信息</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>向量与用量一起返回</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 25</Text>
+    </Box>
+
+</Slide>

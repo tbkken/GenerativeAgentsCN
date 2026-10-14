@@ -1,0 +1,97 @@
+<Slide notes={`这两个数字是这样算出来的。
+
+先看使用率。成功的是 G1 和 G2，两个人；分母是全部四人。所以 2 除以 4 等于 50%。
+
+再看路程成本。窗口末全体访客的实际累计路程是 120 格，主要成功人数是 2，所以 120 除以 2 等于 60 格每一次成功访问。
+
+关键是这两个量的时间边界不一样。20 格、32 格、43 格分别是 G1、G2、G4 各自的对应活动发生时的累计路程；而 120 格是窗口结束时全体的累计量。
+
+所以我不能用 120 去减前三个数，来倒推 G3 的路程。那个数根本没有给定，任何倒推都是编造。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.6　人工判分：走到正确房间仍可能不成功</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>2/4 与 60 格从哪来</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 20 }}>
+
+            <Box style={{ width: 700, background: '#EDF4FC', borderRadius: 10, padding: '22px 22px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>合适区域使用率</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 200, height: 68, background: '#FFFFFF', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>成功人数</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>2</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 24, color: '#276FBF' }}>÷</Text>
+                    </Box>
+                    <Box style={{ width: 160, height: 68, background: '#FFFFFF', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>全部四人</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>4</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 24, color: '#276FBF' }}>=</Text>
+                    </Box>
+                    <Box style={{ width: 208, height: 68, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>50%</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, background: '#F4F7FA', borderRadius: 10, padding: '22px 22px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>成功访问路程成本</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <Box style={{ width: 200, height: 68, background: '#FFFFFF', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>窗口末全体实际路程</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>120 格</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 24, color: '#276FBF' }}>÷</Text>
+                    </Box>
+                    <Box style={{ width: 160, height: 68, background: '#FFFFFF', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>主要成功人数</Text>
+                        <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>2</Text>
+                    </Box>
+                    <Box style={{ width: 44, height: 68, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 24, color: '#276FBF' }}>=</Text>
+                    </Box>
+                    <Box style={{ width: 208, height: 68, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>60 格／成功访问</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>两个量的时间边界不同</Text>
+
+            <Box style={{ width: 420, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>各自活动发生时</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>G1 20 格 · G2 32 格 · G4 43 格，是各次对应 ACT 发生时的累计量</Text>
+            </Box>
+
+            <Box style={{ width: 420, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>窗口末全体</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>120 格是四人合计的累计量，与上面三个数不是同一时点</Text>
+            </Box>
+
+            <Box style={{ width: 420, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>不能用 120 减前三数倒推 G3</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>G3 的路程未给定，未知就写成未知</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

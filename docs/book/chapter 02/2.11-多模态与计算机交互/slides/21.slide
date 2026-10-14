@@ -1,0 +1,71 @@
+<Slide notes={`教学页面要在本地 HTTP 服务下才能正常打开。在 examples 目录里跑一条命令：用 Python 的 http.server，绑定 127.0.0.1，端口 8765，把 data 目录作为站点根目录。
+
+绑定 127.0.0.1 是故意的，它只对本机开放，不对外网暴露。服务只在命令运行期间存在，终端一关就没了。
+
+然后访问 127.0.0.1:8765 下面的 review-page.html。预约信息折叠在房间详情里，要让它先展开手作室详情，再读预约区间并截图，最后跟 availability.json 对一遍。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.5　在 WorkBuddy 中分别练习读图与网页操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本地服务的边界与停止方式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', alignItems: 'center' }}>
+            <Box style={{ width: 150, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>启动本地服务</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只对本机开放</Text>
+            </Box>
+            <Box style={{ width: 610 }}>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#276FBF' }}>python -m http.server 8765 --bind 127.0.0.1 --directory data</Text>
+            </Box>
+            <Box style={{ width: 320 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>服务只在命令运行期间存在，终端关闭即结束。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', alignItems: 'center' }}>
+            <Box style={{ width: 150, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>打开教学页面</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>浏览器访问</Text>
+            </Box>
+            <Box style={{ width: 610 }}>
+                <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#276FBF' }}>http://127.0.0.1:8765/review-page.html</Text>
+            </Box>
+            <Box style={{ width: 320 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>让助手展开手作室详情，读取预约区间并截图。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', alignItems: 'center' }}>
+            <Box style={{ width: 150, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>核对与结束</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>对照数据文件</Text>
+            </Box>
+            <Box style={{ width: 610 }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>把展开后的真实页面与 availability.json 逐项对照。</Text>
+            </Box>
+            <Box style={{ width: 320 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>练习结束，在该终端按 Ctrl+C 停止服务。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>远端环境里的 localhost 不是读者电脑</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>若浏览器工具运行在远端，先确认它的执行位置；这是静态教学页面，没有登录、发送或预约提交按钮。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 26</Text>
+    </Box>
+
+</Slide>

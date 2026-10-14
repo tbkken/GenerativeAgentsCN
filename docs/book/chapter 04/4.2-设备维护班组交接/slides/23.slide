@@ -1,0 +1,64 @@
+<Slide notes={`最后一个问题：结果不理想的时候，我们能说到哪一步。
+
+如果设备从来没回复过 K4，那问题出在查询和原始回复这一段。如果 K4 已经收到了，却没被整理进说明里，那问题在子技能的输入或输出。
+
+如果记录确实保存了，宋青始终没去读，那要查的是保存、通知、接收、查询这一整条链。如果宋青读到了却说错了，那要看的是他的复述和实际使用，而不是文件在不在。
+
+还有一句要提醒：「检查已完成」这句话有两种含义。如果说的是现场核对面板，那就需要位置和动作作为凭证；如果说的是设备恢复正常，在本案里根本不成立，因为没有任何依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.7　从哪一环丢失，解释就停在哪一环</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从哪一环丢失，解释就停在哪一环</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32, alignItems: 'center' }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>解释范围不超过证据{'\n'}所在的那一环</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>每一处失败都对应一个可核对的位置。指不出位置，就不能下结论。</Text>
+            <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>「检查已完成」的两种含义</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>若指现场核对面板，需要位置和 ACT 作证；若指恢复正常，本案没有成立依据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 720, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>设备从未回复 K4</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>核对查询与原回复</Text></Box>
+            </Box>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>已收到 K4 却没整理进去</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>核对子 Skill 输入／输出</Text></Box>
+            </Box>
+
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>记录已保存，宋青未读取</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>核对保存、通知、接收、查询链</Text></Box>
+            </Box>
+
+            <Box style={{ height: 108, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 260 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>收到后说错</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>核对复述与实际使用，而非只看文件存在</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

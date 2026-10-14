@@ -1,0 +1,55 @@
+<Slide notes={`写一份好方案这句话太软了。它可以意味着文字好看，也可以意味着安排完整、没有冲突，甚至意味着方案已经被相关系统保存。评价的时候临时决定用哪一种理解，结果就没法比较。
+
+所以先把任务写死。根据提供的材料生成开放日方案，正确处理房间容量、时间和预约；缺少信息时明确标出；每项关键安排给出依据。最后两句是关键边界：不执行真实预约，也不以文字声称已经执行。
+
+这段话同时划出两件事。需要它做的是理解材料、组织约束、产生方案，还要能说清哪些地方不确定。不需要它做的也很明确：它不必自己决定活动经费，更不能在没有工具的情况下宣布预约完成。
+
+我特别想强调后一条。模型非常擅长写出一句听起来已经完成的话，但文字上的完成和真实世界里的完成是两回事。把这条边界写进任务目标里，评价时才有据可依。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.1　第一步：把目标写成可核验的结果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先把任务写死：做什么，不做什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ height: 200, background: '#F7F3E8', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>本次任务的目标</Text>
+            <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.7 }}>根据提供的材料生成开放日方案，正确处理房间容量、时间和预约；缺少信息时明确标出；每项关键安排给出依据。</Text>
+            <Text style={{ fontSize: 17, color: '#CB6B28', lineHeight: 1.7 }}>不执行真实预约，也不以文字声称已经执行。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 180, background: '#ECF7F2', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>需要它做</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>理解材料，把条件对应到正确的房间与活动</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>组织约束，检查时间、容量与预约交集</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>表达不确定：缺什么、以什么为依据</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 180, background: '#FFF4E6', borderRadius: 12, padding: '22px 24px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>不需要它做</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>不需要自行决定活动经费</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>不能在没有工具的情况下宣布预约完成</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>文字上的完成，不等于现实里已经发生</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 56, flexDirection: 'row', alignItems: 'center', gap: 12, background: '#F4F7FA', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 3, height: 32, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B' }}>目标同时划定了能力需求和执行边界，两者都要在评价里被检查。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 27</Text>
+    </Box>
+
+</Slide>

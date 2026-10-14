@@ -1,0 +1,43 @@
+<Slide notes={`最后一段，给一个可以反复用的方法。
+
+我们平时遇到问题，第一反应往往是换一个模型试试。但同一个现象，背后的原因可能出在完全不同的层。换模型可能碰巧好了，也可能什么都没解决，还白白花了时间。
+
+所以这段要练的是另一个动作：先别急着换，先想清楚"如果我把这一层换掉，结果会不会变"。这个反问能帮你定位问题到底在哪一层。
+
+而且做对照的时候，每次尽量只改变一个因素。同时改两个，就算结果变好了，你也说不清是哪一个起了作用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.2.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>换掉哪一层，结果会改变</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>同一个错误现象，可能来自完全不同的层。每次尽量只改变一个因素。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 270, height: 52, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', paddingLeft: 18 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>资料是否进入输入</Text>
+            </Box>
+            <Box style={{ width: 270, height: 52, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', paddingLeft: 18 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>参数与调用过程</Text>
+            </Box>
+            <Box style={{ width: 270, height: 52, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', paddingLeft: 18 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>执行与交付</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 22</Text>
+    </Box>
+
+</Slide>

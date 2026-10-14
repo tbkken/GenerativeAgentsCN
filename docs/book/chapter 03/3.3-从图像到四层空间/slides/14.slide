@@ -1,0 +1,87 @@
+<Slide notes={`对象的状态外观要和初始状态对上：状态名与初始状态 JSON 顶层的 state 精确匹配，未命中时就使用默认显示素材。
+
+所以默认图、状态图和初始值要一起核对，缺一样都可能出现「配置看着对、运行不生效」的情况。
+
+还要分清两件事：编辑器里预览切换正常，只是配置检查通过；运行时的真实变化，需要 SET_OBJECT_STATE 提交，并用回放事实证明。预览不是证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.3　建立四层地址树</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>状态外观与初始 state 的匹配</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ height: 96, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+            <Box style={{ width: 168, height: 72, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>状态名匹配</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 72, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>「状态外观」的状态名，与初始状态 JSON 顶层的 state 精确匹配。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 118, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>状态名</Text>
+                </Box>
+                <Box style={{ width: 32, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#276FBF' }}>＝</Text>
+                </Box>
+                <Box style={{ width: 118, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>state 顶层</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 96, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+            <Box style={{ width: 168, height: 72, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>未命中回退</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 72, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>状态名未命中时，使用默认显示素材。</Text>
+            </Box>
+            <Box style={{ width: 276, height: 40, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>回退到默认显示素材</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 96, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+            <Box style={{ width: 168, height: 72, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>三样一起核对</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 72, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>默认图、状态图和初始值，要一起核对。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 8 }}>
+                <Box style={{ width: 86, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>默认图</Text>
+                </Box>
+                <Box style={{ width: 86, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>状态图</Text>
+                </Box>
+                <Box style={{ width: 86, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>初始值</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 118, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 86, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>编辑器预览切换正常，只是配置检查</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>运行时还需真实 SET_OBJECT_STATE 提交，并以回放事实证明变化。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 25</Text>
+    </Box>
+
+</Slide>

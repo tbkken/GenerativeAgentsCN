@@ -1,0 +1,74 @@
+<Slide notes={`片段切好之后，还得给它一个编号，不然检索结果里一堆文字你没法说清是哪来的。
+
+配套脚本用的是「文件名加段号」这种形式，编号里不直接打中文，用两位数字，比如规则文件里的第三段。写检索清单的时候，这个编号就是定位用的把手。
+
+不过要说清一个边界：这种编号不是跨所有文件都永久稳定的业务身份。你重新切一次、换一种切法，编号就可能变。所以重建索引的时候，要连同这次使用的输入副本和检索清单一起保存下来，不然过几天你没法复现当时的结果。
+
+最后一条最容易被忽略：权限要在检索之前过滤。不能先把私有内容送进模型，再在提示里要求它别说出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.2　切分材料时保留能解释证据的上下文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>片段要能追回原文件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 15, color: '#546779' }}>片段编号的形态</Text>
+
+            <Box style={{ width: 440, height: 96, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>文件名 # 段号</Text>
+            </Box>
+
+            <Box style={{ width: 440, height: 132, background: '#F7F3E8', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>脚本按什么切</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>Markdown 二级标题、CSV 行、JSON 中的预约记录，各切一段并编号。</Text>
+            </Box>
+
+            <Box style={{ width: 440, height: 116, background: '#FFF4E6', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不是永久稳定的业务身份</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>它便于定位本次检索结果，但不能当成跨所有文件的唯一标识。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 664, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px' }}>
+                <Box style={{ width: 4, height: 88, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>追溯：带上来源，再谈依据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>检索清单里保留编号，复核时才能回到那一段原文；重建索引后要一起保存输入副本与清单。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px' }}>
+                <Box style={{ width: 4, height: 88, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>权限：过滤必须在检索之前</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不能先把私有内容送给模型，再靠提示要求它不要说出来。授权由应用负责，不交给提示词。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 132, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px' }}>
+                <Box style={{ width: 4, height: 88, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>版本：记下这份依据什么时候有效</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>版本或更新时间、有效范围和访问权限，三者一起记，答案才不会引用过期的事实。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 25</Text>
+    </Box>
+
+</Slide>

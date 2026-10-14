@@ -1,0 +1,108 @@
+<Slide notes={`延迟有两个口径，混起来谈就没有意义了。
+
+第一个是首 Token 延迟，简称 TTFT。在本书里，它的定义是客户端发出请求，到收到第一个输出 Token 之间的时间。它回答的是“用户等了多久才看到有东西在动”。
+
+第二个是端到端延迟。它从用户提交任务开始，到应用完成校验并交付结果结束。这里面的检索、工具等待、重试和文件保存，全部算在内。
+
+两者的差别可能非常大。一个应用可能三百毫秒就吐出第一个字，但真正把任务做完要二十秒。前端看起来很流畅，后面其实还在跑。
+
+所以有一句话要记住：很快显示“正在处理”，不能证明任务完成得快。演示的时候如果只盯着首字速度，很容易得出错误的结论。如果任务本身要等工具返回，端到端才是关键指标。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.8　能用，还要等得起、付得起</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从发出请求到交付结果</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>两条时间条，两个口径</Text>
+
+            <Box style={{ flexDirection: 'row', height: 110, alignItems: 'center' }}>
+                <Box style={{ width: 150, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>首 Token 延迟</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>TTFT</Text>
+                </Box>
+                <Box style={{ width: 16 }} />
+                <Box style={{ width: 500, flexDirection: 'column', gap: 6 }}>
+                    <Box style={{ flexDirection: 'row', height: 44, gap: 0 }}>
+                        <Box style={{ width: 30, height: 44, background: '#B5C7D8', borderRadius: 6 }} />
+                        <Box style={{ width: 220, height: 44, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, color: '#FFFFFF' }}>请求 → 第一个 Token</Text>
+                        </Box>
+                        <Box style={{ flex: 1 }} />
+                    </Box>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>用户等了多久才看到有东西动</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 150, alignItems: 'center' }}>
+                <Box style={{ width: 150, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>端到端延迟</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>提交到交付</Text>
+                </Box>
+                <Box style={{ width: 16 }} />
+                <Box style={{ width: 500, flexDirection: 'column', gap: 6 }}>
+                    <Box style={{ flexDirection: 'row', height: 44, gap: 0 }}>
+                        <Box style={{ width: 30, height: 44, background: '#B5C7D8', borderRadius: 6 }} />
+                        <Box style={{ width: 220, height: 44, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, color: '#FFFFFF' }}>到第一个 Token</Text>
+                        </Box>
+                        <Box style={{ width: 250, height: 44, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 15, color: '#FFFFFF' }}>继续到完成校验与交付</Text>
+                        </Box>
+                    </Box>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>从用户提交任务，到应用完成校验并交付结果</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, height: 70 }}>
+                <Box style={{ width: 158, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>检索</Text>
+                </Box>
+                <Box style={{ width: 158, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>工具等待</Text>
+                </Box>
+                <Box style={{ width: 158, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>重试</Text>
+                </Box>
+                <Box style={{ width: 158, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>文件保存</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 160, background: '#FFF4E6', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 100, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>很快显示“正在处理”</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>不能证明任务完成得快。界面上出现字，和业务上完成，是两件事。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>端到端包含什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>检索、工具等待、重试和文件保存都属于后者。先写清算到哪一步，再比较两个方案。</Text>
+            </Box>
+
+            <Box style={{ height: 130, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>两个口径不要混用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>同一份记录里只报一个数的时候，注明是首 Token 还是端到端。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 31</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,65 @@
+<Slide notes={`现在看写法。我把研究问题写成一句话：在给定的四项咨询需求、服务分工、人物信息与观察窗口下，把入口咨询台的一次窗口建议替换为缺少关键目的时先澄清，咨询闭环、错误窗口请求和咨询负担会出现什么差异。
+
+这句话里有三样东西必须写明。第一是共同条件，也就是四项咨询需求、服务分工与人物信息、观察窗口。第二是唯一改变的地方，只动咨询台那一段决策方法。第三是结果的用途，用来讨论信息缺失与服务策略，而不是评判工作人员的表现。
+
+还有一条边界要守住：不能拿这个教学实验去推定现实大厅的业务处理效率。这样写，结果和预期不一样也是一项发现。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.1　将一句愿望改写成可回答的问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把问题写成一句可以被回答的话</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节采用的研究问题</Text>
+
+            <Box style={{ width: 700, height: 156, background: '#EDF4FC', borderRadius: 10, padding: '18px 24px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.75 }}>在给定的四项咨询需求、服务分工、人物信息与观察窗口下，将入口咨询台的「一次窗口建议」替换为「缺少关键目的时先澄清」，咨询闭环、错误窗口请求和咨询负担会出现什么差异？</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 60, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>调用更多却没有增加闭环，仍然是一项可以讨论的发现</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 60, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>不以证明预设观点为完成条件，也不要求每个角色都成功</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 60, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>它要求共同条件明确、结果完整、解释能接受复查</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>必须写明的三项共同条件</Text>
+
+            <Box style={{ width: 420, height: 68, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>四项咨询需求</Text>
+            </Box>
+            <Box style={{ width: 420, height: 68, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>服务分工与人物信息</Text>
+            </Box>
+            <Box style={{ width: 420, height: 68, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>观察窗口</Text>
+            </Box>
+
+            <Box style={{ width: 420, height: 122, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.65 }}>结果用于讨论信息缺失与服务策略，不能推定现实大厅的业务处理效率。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

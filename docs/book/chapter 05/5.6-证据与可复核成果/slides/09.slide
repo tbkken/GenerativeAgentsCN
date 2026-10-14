@@ -1,0 +1,84 @@
+<Slide notes={`把「H3 完成咨询闭环」这一路问下来，四步是这样走的。
+
+先从主张出发，它现在的身份只是待核验的示例，不是结论。然后找判据：什么情况算闭环？冻结的作者材料给出的答案是「取得适配回复，并确认正确下一步」。接着找事实：请求、响应、人物发言，记录里实际发生了哪些。最后是定位：Run 是什么、Step 是第几步、记录身份是哪一条。
+
+这一步不能省。没有定位，别人就无法回到那条记录去核对，你的判断就只剩下你的说法。
+
+最后提醒一句：教师答案定义何为正确，真实事实说明是否发生。这是两件不同的事，不能拿前者去证明后者。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.2　让一句主张接受三次追问</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>主张 › 判据 › 事实 › 定位</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 340, background: '#F4F7FA', borderRadius: 12, padding: '20px 20px', flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>一句「H3 完成咨询闭环」要接受三次追问，才允许写进报告</Text>
+            <Box style={{ flexDirection: 'row' }}>
+
+                <Box style={{ width: 245, height: 240, background: '#FFF4E6', borderRadius: 8, padding: '14px', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>第 1 问 · 起点</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>主张</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, width: 217 }}>「H3 完成咨询闭环」</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 217 }}>这是待核验的示例主张，还不能当成结论。</Text>
+                </Box>
+
+                <Box style={{ width: 44, height: 240, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                </Box>
+
+                <Box style={{ width: 245, height: 240, background: '#EDF4FC', borderRadius: 8, padding: '14px', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>第 2 问 · 什么算正确</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>判据</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, width: 217 }}>适配回复 ＋ 确认</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 217 }}>来自冻结的作者材料，说明什么情况算闭环。</Text>
+                </Box>
+
+                <Box style={{ width: 44, height: 240, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                </Box>
+
+                <Box style={{ width: 245, height: 240, background: '#EDF4FC', borderRadius: 8, padding: '14px', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>第 3 问 · 发生了什么</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>事实</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, width: 217 }}>请求 ／ 响应 ／ 人物发言</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 217 }}>记录里实际提交了什么，而不是计划了什么。</Text>
+                </Box>
+
+                <Box style={{ width: 44, height: 240, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+                </Box>
+
+                <Box style={{ width: 245, height: 240, background: '#ECF7F2', borderRadius: 8, padding: '14px', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>第 4 问 · 在哪一条</Text>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>定位</Text>
+                    <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, width: 217 }}>Run · Step · 记录身份</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 217 }}>让别人能回到那一次具体记录去复核。</Text>
+                </Box>
+
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>教师答案</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 528 }}>定义何为正确，是判据的来源。</Text>
+            </Box>
+            <Box style={{ width: 568, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>真实事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, width: 528 }}>说明是否发生，只能来自已提交记录。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

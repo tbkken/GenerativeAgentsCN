@@ -1,0 +1,68 @@
+<Slide notes={`第五组工具结果理解，有一件事必须说清楚，否则很容易自欺欺人。
+
+在还没有接入真实工具的时候，我们可以提供预先写好的工具结果，比如一段查询成功的返回，一段查询失败的返回，或者一个指向错误房间的结果。让模型读这些结果，看它能不能正确使用，会不会把失败当成成功，会不会在没有调用证据的情况下仍然宣布完成。
+
+这种做法有它的价值，但它必须被标成工具结果理解测试。不能因为模型正确解读了一段预置的失败返回，就说它已经成功调用过工具。这两件事差得很远，一个是理解，一个是执行。
+
+第二章接通工具之后，再增加真实参数选择、执行和回传的端到端测试，那时候测的才是完整的调用链。另外，每项任务都要保存四样东西：原始输入、预期检查项、允许的答案范围和失败条件，缺一样，事后就没法复盘。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.2　第二步：准备小而有区分度的任务集</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>没有真工具，也能考懂结果</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>读得懂返回，不等于调得动工具</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>在尚未接入真实工具时，用预先写好的结果考察理解能力，是可行的做法，但必须把测试的名字写准。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>用预置结果替代真实调用</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>第五组可以提供写好的查询成功、查询失败与错误房间结果</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>必须标为工具结果理解测试</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不能当成模型已经成功调用工具</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>接通工具后再加端到端测试</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>第二章之后增加真实参数选择、执行和回传的测试</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>每项任务存四样东西</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>原始输入、预期检查项、允许的答案范围、失败条件</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 27</Text>
+    </Box>
+
+</Slide>

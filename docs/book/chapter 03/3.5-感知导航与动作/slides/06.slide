@@ -1,0 +1,79 @@
+<Slide notes={`带宽限制的是候选数量，而且是分类限制，不是限制整个 JSON 的总行数。
+
+附近空间、附近角色、对象、事件四类候选，各自有各自的带宽。当前位置的层级锚点需要保留，不会被候选挤掉。
+
+所以看到返回节点数超过某一个带宽值，不能直接说限制无效，要分别对照 nearby_space_candidates、nearby_agent_candidates、game_object_candidates 和 event_candidates 这四个数。
+
+还有一点要记住：在范围内不等于出现在返回中。范围决定谁有资格被看见，带宽决定谁真的被列出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.1　感知返回有范围的事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>带宽限制的是候选，不是总行数</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 22 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 16, color: '#546779' }}>不同类别的附近候选分别受到限制，须逐类对照。</Text>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8 }}>
+
+                <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ width: 320 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>nearby_space_candidates</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>附近空间候选，单独受限</Text></Box>
+                </Box>
+
+                <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ width: 320 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>nearby_agent_candidates</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>附近角色候选，单独受限</Text></Box>
+                </Box>
+
+                <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ width: 320 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>game_object_candidates</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>对象候选，单独受限</Text></Box>
+                </Box>
+
+                <Box style={{ height: 64, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                    <Box style={{ width: 320 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>event_candidates</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>事件候选，单独受限</Text></Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ background: '#ECF7F2', borderRadius: 10, padding: '12px 18px' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>当前位置的层级锚点需要保留，不会被候选挤掉。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 430, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>在范围内 ≠ 出现在返回中</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>范围决定谁有资格被看见；带宽决定谁真的被列出来。</Text>
+            </Box>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>节点数超过一个带宽值，不等于限制无效</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>带宽不是整个 JSON 的总行数；要逐类对照四个候选计数字段，再下结论。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 23</Text>
+    </Box>
+
+</Slide>

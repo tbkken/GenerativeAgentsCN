@@ -1,0 +1,60 @@
+<Slide notes={`有三句话最容易被读错，我把它们单独列出来。
+
+第一，生成总结不证明它影响了决策。总结写得再漂亮，也要看到它在后续被真实检索、并且改变了某个动作，才算起作用。
+
+第二，午夜以后必须保留日期和偏移。十月二十日早上八点半，写成“八点半”就丢了日期和时区，跨日场景里这个缩写是歧义的，会把窗口内外的判断搅乱。
+
+第三，次日的晨读是新实例。不能把昨天的报名改个名字叫今天的任务，用来逃避重复计数。
+
+最后补一条常被误解的：角色晚上真的在休息，或者有理由地等待，不算卡死。只有当它有条件继续、却反复无事可做，才值得怀疑。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.4　三句容易被读错的边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>证据边界：三句先记牢</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>生成总结不证明影响了决策</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>要看到整理之后的真实检索与使用，链条才算接上；登记一份总结不等于产生了收益。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>午夜以后保留日期与偏移</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>2026-10-20T08:30:00+08:00 不能缩写成歧义的“八点半”。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>次日晨读是新实例</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>不能把昨日报名改名成今日任务，用换名字的方式逃避重复计数。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>真实休息或有理由的等待，不自动算卡死</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>暂停不是重新灌教师答案；只有有条件继续却反复无事可做，才值得怀疑。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 27</Text>
+    </Box>
+
+</Slide>

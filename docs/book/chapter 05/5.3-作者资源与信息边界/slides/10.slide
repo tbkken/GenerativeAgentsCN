@@ -1,0 +1,64 @@
+<Slide notes={`两组来访者拿到的东西是一样的：四个 Arena 的真实初始已知地址。这一点不能省，否则人物连路都走不了，实验根本跑不起来。
+
+但地址不等于答案。他们不知道窗口怎么分工，也不知道自己被归到哪一类。真正进入相应服务区以后，还要从感知里取得对象地址和交互项——也就是说，走近了才看得见柜台。
+
+还有一条容易被忽略：收到一句文字形式的地址，不会自动新增系统的已知空间。地址要真的存进已知空间里，人物才认这个位置。
+
+所以这一步提供的是合法移动的公共空间基础，不是让角色提前知道咨询答案。前者是入场券，后者是作弊，两者在材料上必须分得清清楚楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.2　地图给出地点，不替咨询台回答问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>合法移动的基础，不是咨询答案</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 300, background: '#ECF7F2', borderRadius: 12, padding: '26px 30px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>地图给的</Text>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>两组来访者都获得四个 Arena 的真实初始已知地址</Text>
+                </Box>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>这是合法移动所需的公共空间基础</Text>
+                </Box>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>两个条件不同的组别拿到同一份空间底稿</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 300, background: '#EDF4FC', borderRadius: 12, padding: '26px 30px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>地图没给的</Text>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>不知道窗口分工，也不知道自己被归到哪一类</Text>
+                </Box>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>对象地址与交互项要进入服务区后从感知取得</Text>
+                </Box>
+                <Box style={{ width: 500, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>公开语义里不出现任何分流答案</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#FFF4E6', borderRadius: 12, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Box style={{ width: 1076, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>收到一句文字地址，不自动新增系统已知空间</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>提供的是合法移动的公共空间基础，不是让角色预先知道咨询答案。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 27</Text>
+    </Box>
+
+</Slide>

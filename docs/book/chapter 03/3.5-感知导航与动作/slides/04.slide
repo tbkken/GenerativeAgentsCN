@@ -1,0 +1,76 @@
+<Slide notes={`视野是一个硬上限。Agent 调用 world-perceive 的时候，可以不传参数，也可以主动请求一个较小的 radius_tiles，把请求范围缩小，省下注意力带宽。
+
+但请求只能更小，不能更大：运行时用的是人物配置的视野。把请求数字写得再大，生效范围也不会越过外圈。
+
+返回值里给了三个字段可以核对：requested_radius_tiles 是请求的数字，radius_tiles 是实际生效范围，vision_radius_tiles 是视野上限。三个数字对一遍，就能确认请求有没有被截住。
+
+这份范围图是概念示意，保留的是请求半径与硬上限的几何关系，不代表一次真实的返回内容。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.1　感知返回有范围的事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>视野是硬上限，请求只能更小</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 12, alignItems: 'center' }}>
+
+            <Box style={{ width: 440, height: 440, background: '#EDF4FC', borderRadius: 12, flexDirection: 'column', padding: '14px 18px' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>视野硬上限　vision_radius_tiles</Text>
+                <Box style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Box style={{ width: 260, height: 260, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', padding: '12px 14px' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#26816B' }}>生效范围 ≤ 硬上限</Text>
+                        <Box style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                            <Box style={{ width: 84, height: 84, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#FFFFFF' }}>人物</Text>
+                            </Box>
+                        </Box>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779', width: 520, textAlign: 'center' }}>示意：范围与候选筛选的概念图，请求超限时生效范围仍不越过外圈</Text>
+
+        </Box>
+
+        <Box style={{ width: 580, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7 }}>Agent 调用 world-perceive 时可以不传参数，也可以请求一个较小的 radius_tiles；运行时始终以人物配置的视野作为硬上限。</Text>
+
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>三个半径字段，核对请求与生效范围</Text>
+                <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', width: 250 }}>requested_radius_tiles</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>请求的半径</Text>
+                </Box>
+                <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', width: 250 }}>radius_tiles</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>实际生效范围</Text>
+                </Box>
+                <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                    <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 250 }}>vision_radius_tiles</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1 }}>视野硬上限</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>把请求数字写得更大，不会获得更远的视野</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>请求超限时，生效范围仍不能越过视野外圈</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 23</Text>
+    </Box>
+
+</Slide>

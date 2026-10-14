@@ -1,0 +1,69 @@
+<Slide notes={`我把同一条咨询记录写成三个连续句子，你可以照着改自己的报告。
+
+第一句只描述观察：这条任务记录中，咨询台收到补充目的后给出了适配窗口建议。它只陈述记录里发生的事，需要实际记录支持。
+
+第二句提出解释：这一过程与澄清有助于补齐分类字段的机制相符。注意用词是「与机制相符」，不是「因此证明」。
+
+第三句说明下一步：仍需检查其他任务和重复运行，判断收益是否抵偿额外轮次。检验方向明确写出来，推广这一步就有了入口。
+
+这三句是写作示范，不能在没有记录的时候当成本案结果使用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.5　将观察、解释和下一步分成三句话</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三句话约束一次推理</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ height: 340, flexDirection: 'row', alignItems: 'stretch' }}>
+
+            <Box style={{ width: 344, height: 340, background: '#EDF4FC', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>第一句 · 观察</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>只描述记录里发生的事</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.75 }}>这条任务记录中，咨询台收到补充目的后给出了适配窗口建议。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>需实际记录支持</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 340, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 344, height: 340, background: '#ECF7F2', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>第二句 · 解释</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B', lineHeight: 1.4 }}>提出与机制相符的说法</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.75 }}>这一过程与澄清有助于补齐分类字段的机制相符。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>与机制相符，不是结论</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 340, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 344, height: 340, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>第三句 · 下一步</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>说明还需要什么检验</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.75 }}>仍需检查其他任务和重复运行，判断收益是否抵偿额外轮次。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>仍需检验，不能直接推广</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>这三句是写作示范</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不能在没有记录时当成本案结果使用；示例句不充当真实结果。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 26</Text>
+    </Box>
+
+</Slide>

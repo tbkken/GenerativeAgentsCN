@@ -1,0 +1,64 @@
+<Slide notes={`第一层是字节与来源核验。对照清单里的文件名、大小和 SHA256，确认传输后还是同一份材料，再核对生成时间、源状态与提交边界。哈希相同只证明字节相同，不证明内容合理，也不证明业务成功；没有原始摘要时，就记录缺少比较依据，不能用接收后的摘要倒推传输前状态。
+
+第二层是协议与事实核验。用兼容读取环境检查正式包身份、完整性、内嵌实验摘要和帧连续性。Replay 只读事实，不加载 Brain，不重新推理。
+
+第三层是交付结论核验。在实际存在的类别里抽查成功、未完成或有争议的判断，沿材料定位原始记录；某类没有样本就说明未观察到。若清单写完成三项、明细只有两条充分证据，就登记差异，退回补充或修正报告。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.4　接收方先做只读核验</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三层核验，逐层收紧</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 70, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>只读核验可以分三层完成</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>先证明是同一份材料，再证明包说得通，最后才评价结论</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 768, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 710 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>第一层　字节与来源核验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>对照文件名、大小和 SHA256，再核对生成时间、源状态与提交边界</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 960, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 902 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>第二层　协议与事实核验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>用兼容读取环境检查正式包身份、完整性、内嵌实验摘要和帧连续性，再看提交范围内的状态</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1094 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>第三层　交付结论核验</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>抽查成功、未完成或有争议的判断，沿材料定位原始记录；某类没有样本就说明未观察到</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>哈希相同只证明字节相同</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>没有原始摘要时，应记录缺少比较依据，不能用接收后第一次计算的摘要倒证传输前状态。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

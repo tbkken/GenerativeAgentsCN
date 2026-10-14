@@ -1,0 +1,109 @@
+<Slide notes={`这一节要看清六件事，它们是一条链，不是六份清单。
+
+先解决分配：同一张作者表里的话要分别给作者、来访者本人、其他来访者和咨询台，答案表单独留给作者和评分者。分完以后，地图负责给地点，不负责回答该去哪个窗口——公开的空间语义里不能写任务答案。
+
+接着要把人跟物分开核对：五个身份是五条独立 Agent，三个窗口对象是设施，两者不能混为一谈。材料齐了还要逐项点清装进实验的五类输入，漏一类都会在运行时变成悬空引用。
+
+最后用四栏状态记录进度：文稿、公共资源、实验副本、运行证据，它们可以有不同状态，不能用一个绿色完成盖住全部工作。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3　本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的六件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>材料装进实验之前，先要回答六个问题：谁该看到什么、地点与答案怎么分开、人与物怎么分别核对、装进去的到底有几类东西、按什么顺序动手、怎么知道真的做完了。</Text>
+            <Box style={{ width: 360, height: 52, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>一份整理稿</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>一份信息分配方案</Text>
+            </Box>
+            <Box style={{ width: 360, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 360, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>可核对的资源闭包</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ width: 760, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>同一张作者表，不等于同一份角色输入</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>信息按接收者分配，正确窗口答案不进角色资料</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>地图给出地点，不替咨询台回答问题</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>公开空间语义里不写「谁该去哪个窗口」</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把人物初态与对象知识分别核对</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>五个身份与三个对象各按自己的清单逐条检查</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>完整资源闭包需要逐项点清</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>五类输入、作者侧应备齐的内容与保存后要登记的项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>按内容关系安排作者操作</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>先分配、再制作保存、最后装配并重开核对</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 760, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 48, height: 48, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>⑥</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3, width: 654 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>用状态表避免「文件有了就是完成了」</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>文稿、公共资源、实验副本、运行证据四栏互不替代</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 27</Text>
+    </Box>
+
+</Slide>

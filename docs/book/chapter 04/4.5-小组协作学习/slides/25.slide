@@ -1,0 +1,68 @@
+<Slide notes={`失败可能发生在四个不同的位置，要查的地方也不一样。
+
+条件根本没有传出去，要去查持有者的发言和接收方的上下文。传出去了但主持人漏掉，要查主持人的记忆和核对时的输入。推导错了，要查子技能的输出、当前候选和七条判据。方案改过却没有重新发，要查最后定稿的版本和接收者是谁。
+
+练习是这样的：把 F1 删掉，其他条件保留，那么阅读和手作在九点、十点之间有两种排列，就不能唯一确定了。
+
+再比较两种发言——反复复述同一句话，和指出「阅读比手作晚」——后者才是有依据的反驳。话多不等于贡献多，这是有效贡献那个分母要表达的意思。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.7　失败定位与练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>失败位置决定查哪里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 232, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>未传条件</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>查持有者的发言，以及接收方的上下文里到底有没有这条</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 232, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>收到却漏掉</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>查主持人的记忆，以及核对时传进去的输入</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 232, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>推导错误</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>查子 Skill 的输出、当前候选与七条判据</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ width: 232, height: 46, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', padding: '0 16px' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>修订后未重发</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5, flex: 1 }}>查最后定稿的版本，以及三名成员各自收到的是哪一版</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#F7F3E8', borderRadius: 10, padding: '12px 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>练习：删掉 F1，保留其他条件</Text>
+            <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>阅读／手作在 09 与 10 点有两种排列，不能唯一确定。再比较重复复述与指出「阅读比手作晚」的有依据反驳 —— 话更多不等于贡献更多。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 52, background: '#F4F7FA', borderRadius: 10, padding: '10px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 32, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 13, color: '#546779', flex: 1 }}>结果页顺序：Agent → 人物 → 对话／记忆，先找摘要再核对完整证据；此评分是教材外部评价，不称系统已执行业务 Evaluator</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 26</Text>
+    </Box>
+
+</Slide>

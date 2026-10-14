@@ -1,0 +1,73 @@
+<Slide notes={`这里要把两个单位分清楚。
+
+我在应用里发起一次请求，这是一次逻辑调用。但 SDK 内部可能自动重试，底下真的发出了好几个网络请求，那就是多次物理尝试。
+
+本章的示例客户端把自动重试设成零并设置超时，目的是让失败发生的位置一眼可见。生产应用可以按错误类型做有限退避，但那些尝试要计入时间和资源预算。
+
+接下来分情况处理。只读查询重新执行比较简单；有副作用的工具就要谨慎：发信超时可能发生在服务器已经发出、响应还没回来的那一刻，盲目重试会重复发送，应该由业务接口提供幂等约定。
+
+取消也不只是停一下：要停止新调用、中断可取消的请求、终止受管理的子进程，还要核对撤不回来的动作。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.5　可靠性来自有边界的处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>逻辑调用、物理尝试与取消</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 190, background: '#F4F7FA', borderRadius: 10, padding: '18px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>一次逻辑调用，可能产生多次物理尝试</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 380, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>应用发起</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>逻辑调用</Text>
+                </Box>
+                <Box style={{ width: 56, height: 80, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+                <Box style={{ width: 380, height: 80, background: '#EDF4FC', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>可能一对多</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>物理尝试</Text>
+                </Box>
+                <Box style={{ width: 56, height: 80, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+                <Box style={{ width: 226, height: 80, background: '#ECF7F2', borderRadius: 8, padding: '10px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>最终依据</Text>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>实际用量</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本章示例客户端把 SDK 自动重试设为 0，并设置请求超时，先让失败发生的位置一目了然。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, height: 330, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>只读查询</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>重新执行通常比较简单，不会改变外部状态。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>可以按错误类型重试，但要记录尝试次数。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 330, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>有副作用的工具</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>先检查上一次是否已经成功，再决定要不要重发。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>发信超时可能发生在服务器已发送、响应尚未返回的时刻，盲目重试会重复发送。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>应由真实业务接口提供幂等约定，通过状态查询决定下一步。</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 330, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>取消要做四件事</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>停止新的调用；中断可以取消的请求。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>终止受管理的子进程；核对不能撤回的动作。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>配套示例只演示有限调用与异常退出，未实现生产级取消。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 34</Text>
+    </Box>
+
+</Slide>

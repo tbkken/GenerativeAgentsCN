@@ -1,0 +1,68 @@
+<Slide notes={`我先说这一节要解决的问题。委托人想知道，先问清楚是不是比直接指路更好。要回答它，光交出两句结论是不够的，必须把两种咨询方法都写成完整、可以被别人逐字检查的行为材料。
+
+完整意味着身份、能读什么、什么时候做判断、怎么回复、什么时候停，全部写明。只保存一句「先问清楚再推荐」是不行的：接手者既不知道要问什么，也不知道答复之间怎样关联，更不知道谁有权知道完整任务。
+
+所以这里交付的不是一个结论，而是一份咨询台全文和它唯一的那段差异。其余三份材料也要按同样标准写完整，最后留下能被别人复核的记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　综合实战与交付　·　5.4　精确 Skill 与行为审阅</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交付全文，不只交付一句差异</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 520, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>让方法成为{'\n'}可检查的交付物</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 520 }}>委托人要的不是一段演示，而是一份别人能逐字核对的行为材料。两组全文只允许中间一段不同。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>一句结论</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>完整全文</Text>
+                </Box>
+                <Box style={{ width: 160, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>唯一替换段</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 600, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>委托人提出的问题</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>先问清楚是不是比直接指路更好</Text>
+            </Box>
+            <Box style={{ width: 600, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, height: 80, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>要交付的材料</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>咨询台 Skill 的完整全文与唯一替换段</Text>
+            </Box>
+            <Box style={{ width: 600, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 600, flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 290, height: 124, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>基线：直接建议</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>信息不足仍作推测建议，{'\n'}并说明不确定</Text>
+                </Box>
+                <Box style={{ width: 290, height: 124, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>对照：先澄清</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>缺关键目的先问，{'\n'}收到真实补充后再建议</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 27</Text>
+    </Box>
+
+</Slide>

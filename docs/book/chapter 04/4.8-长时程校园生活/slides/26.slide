@@ -1,0 +1,68 @@
+<Slide notes={`最后留一道练习，检验你有没有真的把身份分清。
+
+三句话，请分别写出实例身份和需要的证据。“昨天已经报名”是一次性任务，同一个已提交实例再提交就是重复；“今天再晨读”是周期活动，新日期就是新实例；“明天早上八点半见面”是自愿承诺，得先有本人明确接受，才谈得上兑现。
+
+为什么四十八小时窗口可能把第三项纳入承诺分母？因为窗口拉到二十一日八点后，原本落在窗口外的截止时间进了窗口；只要已明确接受且截止在窗口内，就要进分母。
+
+后续可以只改整理频率或摘要长度，一次只动一个因素。但这里只有三名虚构人物，不支持真实学生生活规律的结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.7　练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>练习：三句话，三种身份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>写出实例身份与证据</Text>
+
+                <Box style={{ width: 560, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 118 }}>昨天已报名</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>一次性任务：同一个已提交实例，再提交计重复。</Text>
+                </Box>
+
+                <Box style={{ width: 560, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B', width: 118 }}>今天再晨读</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>周期活动：新日期即新实例，不算重复昨天的任务。</Text>
+                </Box>
+
+                <Box style={{ width: 560, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 118 }}>明天 08:30</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>自愿承诺：先有本人明确接受，再看兑现证据。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>再想一步</Text>
+
+                <Box style={{ width: 560, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>48 小时窗口为何纳入第三项</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>窗口拉到 10-21 08:00 后，08:30 的截止进入窗口；只要已明确接受且截止落在窗口内，就进承诺分母。</Text>
+                </Box>
+
+                <Box style={{ width: 560, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>后续只改一个因素</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>可以单改整理频率或摘要长度；每次只动一处，才能把差异归因到这一处。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55, flex: 1 }}>三名虚构人物、一组虚构设置，不支持关于真实学生生活规律的结论；不能先看结果再挑人。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 27</Text>
+    </Box>
+
+</Slide>

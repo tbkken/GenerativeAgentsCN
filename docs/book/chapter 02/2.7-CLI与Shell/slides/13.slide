@@ -1,0 +1,63 @@
+<Slide notes={`这一步能建立可信的执行基线，反过来说，基线没有，重跑就没有意义。
+
+如果我自己手工运行都找不到文件，那么让模型重复执行同一条命令，也不会解决问题。原因很简单：问题不在谁执行，而在路径、环境或者参数本身有问题。
+
+所以顺序是：先确认工作目录是不是本章的 examples，相对路径是不是从这里开始解析；再确认解释器可用、依赖装好、编码是 UTF-8；最后确认输入文件和 --output 后面的输出路径确实存在、写得出。
+
+这三样都对了，再把可用的 CLI 暴露给模型。到那时候，模型交付的失败才是关于方案的失败，而不是关于环境的失败。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.3　先手工运行，再让模型调用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>基线没有，重跑就没有意义</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 36 }}>
+
+        <Box style={{ width: 372, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>先查路径 · 环境 · 参数</Text>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>环境问题不要交出去</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.8 }}>命令在自己手里跑不通，说明问题还没轮到最后一步。先把本地这一层理顺，模型的执行结果才有意义。</Text>
+        </Box>
+
+        <Box style={{ width: 744, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 96 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>路径</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, width: 560 }}>相对路径从工作目录开始解析，先确认当前就在 examples 目录。</Text>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 96 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>环境</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, width: 560 }}>解释器可用、依赖装好、-X utf8 让中文输出不乱码。</Text>
+            </Box>
+
+            <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 96 }}><Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>参数</Text></Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, width: 560 }}>输入文件与 --output 后面的输出路径确实存在、写得出。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px' }}>
+                <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>手工都找不到文件，让模型重跑也不会解决</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>先把路径、环境和参数理顺，再把可用的 CLI 暴露给模型。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

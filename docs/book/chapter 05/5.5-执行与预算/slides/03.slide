@@ -1,0 +1,45 @@
+<Slide notes={`先把最容易混的一件事分开。周澈、谭悦、孟川、邱禾和引导员余真，是跑在世界里的五个人物，他们有自己的职业、目标和信息边界。项目负责人、操作人员和评阅者不是世界里的角色，而是组织这次实验的人。
+
+这个区分有两条实际后果。第一，人物的目标不会替项目完成验收。咨询台按预定策略猜错了窗口，不等于验收失败，它可能正是我们想观察的行为结果。第二，组织实验的人也不会因为写了 Skill、建了实验，就获得系统管理权限。
+
+换句话说，同一件事要用两种眼光看：一种看故事里发生了什么，一种看我们作为项目方是否按计划推进。把这两种眼光分开，后面的判据和预算才不会互相污染。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ①</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 80, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>①</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>世界里的五个人，{'\n'}不等于项目里的三类职责</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>人物有自己的职业与目标，不会替项目完成验收；组织实验的人对范围、记录与证据负责，也不因此获得系统管理权限。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>世界里的参与者　·　有职业与目标</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>周澈 · 谭悦 · 孟川 · 邱禾 · 余真</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>按各自信息边界获取内容，行为结果本身就是观察对象</Text>
+            </Box>
+            <Box style={{ width: 560, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>组织实验的人　·　对交付负责</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>项目负责人 · 操作人员 · 评阅者</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>承担范围、记录与证据判断，不替人物完成验收</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 28</Text>
+    </Box>
+
+</Slide>

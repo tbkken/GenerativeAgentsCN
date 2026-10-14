@@ -1,0 +1,60 @@
+<Slide notes={`把基数带进去，得到的是一段区间。
+
+模型调用粗估在二百八十八到八百六十四次之间，Token 在一十四万四千到八十六万四千之间，墙钟大约在九点六到一百四十四分钟之间。
+
+区间之所以这么宽，是因为公式只用了一个系数范围，没有把阅读长记忆、对象多轮回复、重复修复这些真实消耗展开，也没有按模型吞吐校准。
+
+所以更合理的后续做法，是从真实观察中得到每个 Agent 轮次和对象轮次的逻辑调用数，再加入物理重试、上下文长度和模型耗时去修正。这些数字是起点，不是结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.5　当前估算究竟怎样计算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>代入以后得到的是一段区间</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>基数 288 带进去，三项消耗各得到一段范围</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>上下界来自固定系数，不是根据你的模型吞吐校准出来的</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 21 }}>
+
+            <Box style={{ width: 370, height: 220, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>模型调用</Text>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.1 }}>288–864</Text>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>次</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>按 C – 3C 得到</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 220, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>Token</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.1 }}>144,000{'\n'}–864,000</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>按 500C – 3000C 得到</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 220, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>墙钟时间</Text>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#26816B', lineHeight: 1.1 }}>9.6–144</Text>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>分钟</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>按 2C – 30C 得到</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>这些只是当前固定公式的输出，不是费用承诺，也不是完成时间保证。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 23</Text>
+    </Box>
+
+</Slide>

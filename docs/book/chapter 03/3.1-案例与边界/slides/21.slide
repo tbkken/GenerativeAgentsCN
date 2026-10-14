@@ -1,0 +1,57 @@
+<Slide notes={`动手之前先固定三件事。
+
+第一件是把环境坐实：先安装并启动当前项目，按仓库的启动说明进入 Studio，确认正在使用的代码版本、工作区和模型环境。如果系统里已经有别的运行，不要为了读书练习擅自重启服务，也不要改它的资源。
+
+第二件是把问题写小：读一遍案例总览，明确这一轮要观察什么、大概能承担多少调用、在哪里停下来。
+
+第三件是定问题。建议把核心问题定为：原安排发生有依据的修正之后，角色是否通过实际渠道获知，并据此调整自己的记忆和行动。这比要求所有能力都表现完美，更容易得到可以解释的结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.7　开始前的自检</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>开始前的自检</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>先固定三件事，再让角色进入世界。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 354, height: 236, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>坐实环境</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>安装并启动当前项目，按仓库说明进入 Studio，确认代码版本、工作区与模型环境。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 236, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 236, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF' }}>02</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>把问题写小</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>读案例总览，明确这一轮要观察什么、能承担多少调用、在哪里停止。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 236, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 236, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#CB6B28' }}>03</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>定核心问题</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>原安排发生有依据的修正后，角色是否通过实际渠道获知，并据此调整记忆与行动？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>系统里已有其他运行时，不为读书练习擅自重启服务，也不更改它的资源。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

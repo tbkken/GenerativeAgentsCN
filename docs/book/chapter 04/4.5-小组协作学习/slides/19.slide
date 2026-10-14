@@ -1,0 +1,60 @@
+<Slide notes={`除了主指标，还要同时报四个量，因为它们回答的是不同的问题。
+
+第一个是全七项满足的 Run 数除以全部预定 Run 数，另外报定稿覆盖情况。为什么单列？因为七项不是七种独立能力，一个高分不说明这个小组真的能执行。
+
+第二个是真实准确表达过的 F 条件数除以四。这是必要信息共享：重复说不重计，说过一遍也不证明别人真的理解了。
+
+第三个是有效贡献发言除以三名成员全部任务相关发言。新说出必要事实、纠正错误、或者给出有依据的推导，才算有效；一条发言里含两个条件，仍然只算一条。
+
+第四个是全部样本的逻辑调用数除以完全正确方案数，口径里含人物、对象、失败和无定稿成本，物理重试另列；没有正确方案时不可计算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.5　七项判据与不同分母</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>还要同时报的四个量</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 300, height: 64, background: '#FFFFFF', borderRadius: 8, padding: '8px 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>全七项满足的 Run 数 ÷ 全部预定 Run 数；定稿覆盖</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55, flex: 1 }}>七项不是七种独立能力，高部分分不等于能执行</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 300, height: 64, background: '#FFFFFF', borderRadius: 8, padding: '8px 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>真实准确表达过的 F 条件数 ÷ 4</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55, flex: 1 }}>必要信息共享；重复不重计，也不证明全员理解</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 300, height: 64, background: '#FFFFFF', borderRadius: 8, padding: '8px 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>有效贡献发言 ÷ 三成员全部任务相关发言</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55, flex: 1 }}>新必要事实、纠错或有依据推导算有效；一条含两条件仍只计一条</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 300, height: 64, background: '#FFFFFF', borderRadius: 8, padding: '8px 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.4 }}>全部样本逻辑调用 ÷ 完全正确方案数</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55, flex: 1 }}>含人物、对象、失败和无定稿成本；物理重试另列，零正确不可计算</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,78 @@
+<Slide notes={`官方流程有五步，顺序不能乱。
+
+先上传支持的文件。第二步创建一个向量存储，这是服务端上的一个资源。第三步把文件关联进去，让它成为这个存储的一部分。第四步确认处理完成，索引真正就绪了再发请求。
+
+第五步才是发请求，在参数里提供向量存储的 ID。这里要提醒一句：后面这段代码不是建立资料库的完整脚本，它假设你已经按官方流程把索引建好、确认就绪，把 ID 放进了环境变量。
+
+顺序反过来最容易出错：文件还没处理完就发请求，检索当然什么都找不到，但那不是资料的错，是流程没走完。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.4　托管 File Search 是另一条实现路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>托管路线的五步准备</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>官方流程：不使用自己写的切分与检索，索引就绪后再发请求</Text>
+
+        <Box style={{ flexDirection: 'row', height: 130 }}>
+            <Box style={{ width: 354, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第一步</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>上传支持的文件</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>先确认文件类型与内容范围</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 354, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第二步</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>创建向量存储</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>服务端资源，索引保存在这里</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 354, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第三步</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>把文件关联进去</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>文件成为这个存储的一部分</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 26, alignItems: 'center' }}>
+            <Box style={{ width: 951 }} />
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ flex: 1 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 130 }}>
+            <Box style={{ width: 398 }} />
+            <Box style={{ width: 354, height: 130, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第四步</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>确认处理完成</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>索引就绪后再发请求</Text>
+            </Box>
+            <Box style={{ width: 44 }}><Text style={{ fontSize: 24, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 354, height: 130, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>第五步</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>请求里提供存储 ID</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>放进环境变量再传给工具</Text>
+            </Box>
+            <Box style={{ width: 2 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 58, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>这不是建立资料库的完整脚本</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>后面出现的那段请求代码假设索引已经建好并确认就绪；向量存储 ID 由读者自己放入环境变量。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 25</Text>
+    </Box>
+
+</Slide>

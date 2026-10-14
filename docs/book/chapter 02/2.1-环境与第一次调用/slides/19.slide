@@ -1,0 +1,53 @@
+<Slide notes={`接下来换一条路线，把同一件事放进 WorkBuddy 里做一遍。
+
+为什么还要走产品这条路？因为 API 路线让我们看清请求怎么构造、怎么发出、怎么回来，而产品路线让我们看到文件怎么被读取、工具怎么被调用、结果怎么交付。
+
+两条路线的材料和校验规则完全一样，区别在于 API 路线里很多事情要自己管理，产品路线里工作空间、文件和工具都已经接好了。
+
+先按官方安装指南装好适合你操作系统的客户端并登录，然后新建任务。产品里选择哪个模型、能用哪些工具、权限怎么设，这三者共同决定它实际能做到什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.1.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>在 WorkBuddy 中完成第一次任务</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#CB6B28' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>同一任务放进产品，观察它怎样读文件、执行工具并交付结果。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+
+            <Box style={{ width: 620, height: 56, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>沿用 API 练习的材料与校验规则</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#CB6B28' }}>↓</Text></Box>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+                <Box style={{ width: 200, height: 52, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#CB6B28' }}>选择工作空间</Text>
+                </Box>
+                <Box style={{ width: 200, height: 52, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#CB6B28' }}>引用材料文件</Text>
+                </Box>
+                <Box style={{ width: 200, height: 52, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, color: '#CB6B28' }}>打开实际文件</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

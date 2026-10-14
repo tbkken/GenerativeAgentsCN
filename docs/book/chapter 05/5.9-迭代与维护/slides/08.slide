@@ -1,0 +1,82 @@
+<Slide notes={`评阅意见落到哪一层，复查范围就跟着到哪一层。
+
+改说明材料，比如修正交付清单里的错别字、补上证据链接，只需要核对引用是否准确、有没有改变原结论的含义。
+改评分口径，例如明确"确认下一步"需要哪些实际内容，要保留原来的评分，同时说明新规则的适用范围和重新评分依据。
+改行为输入，比如咨询台的澄清措辞或记忆处理方法，就必须做新的独立实验，并给出与旧版的精确 Skill 差异。
+移动窗口、改出生点、增大视野，要复查语义、碰撞、导航、知识与比较条件。
+更换模型配置或程序版本，要复查接口、限制、成本与读取兼容。
+碰到回复重复、帧身份不符这类真实系统问题，要停止相应验收，留证并报告。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.2　不同变更需要不同的验证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>改了什么，决定要复查什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 300, height: 472, background: '#F4F7FA', borderRadius: 12, padding: '28px 24px', flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>判断的起点</Text>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>评阅意见{'\n'}修改了什么</Text>
+            <Box style={{ width: 56, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>先选修改层，再决定复查范围。六类变更的处理方式互不替代。</Text>
+            <Box style={{ flex: 1 }} />
+            <Box style={{ width: 252, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>改一层，查一层</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 44, height: 472, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ width: 760, height: 72, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 116 }}>说明材料</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 570 }}>核对文字、标签和证据链接</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 72, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 116 }}>评分口径</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 570 }}>保留原评分，说明复核依据</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 72, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 116 }}>行为输入</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 570 }}>新独立实验与精确 Skill 差异</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 72, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 116 }}>空间与人物</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 570 }}>复查语义、导航与比较条件</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 72, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 116 }}>模型与环境</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 570 }}>复查接口、限制、成本和执行范围</Text>
+            </Box>
+
+            <Box style={{ width: 760, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 116 }}>实际系统问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', width: 570 }}>留证、停止相应验收并报告</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 27</Text>
+    </Box>
+
+</Slide>

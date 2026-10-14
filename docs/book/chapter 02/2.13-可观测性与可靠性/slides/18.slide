@@ -1,0 +1,85 @@
+<Slide notes={`要在失败之后查得动，运行记录里得先有东西。
+
+我建议一条记录至少包含这些：这次运行的标识；材料内容的摘要；提示的版本或摘要；模型实际返回的名称，注意是实际返回的，不是你配置里写的那个；这次逻辑请求的序号；用了哪个工具、参数是什么；响应 ID；结束状态；校验结果；以及 Token 与耗时。
+
+这十项凑齐，一次失败基本就能复盘：你能对上号，能还原输入，能看出模型是谁，能判断校验是在哪一步做的。
+
+有两条边界要同时守住。错误类型要保留下来，因为它是改进的入口；密钥、认证头、可复用令牌要藏好，它们不该出现在提示、元数据或任何教材产物里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.4　调试时从结果倒查</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一条运行记录里应有什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>十项字段，回答「这是哪一次、传了什么、用了什么、结果如何」</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 14, justifyContent: 'center' }}>
+            <Box style={{ width: 215, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>标识</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>运行标识</Text>
+            </Box>
+            <Box style={{ width: 215, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>输入</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>材料内容摘要</Text>
+            </Box>
+            <Box style={{ width: 215, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>输入</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>提示版本或摘要</Text>
+            </Box>
+            <Box style={{ width: 215, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>模型</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>实际返回名称</Text>
+            </Box>
+            <Box style={{ width: 215, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>请求</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>逻辑请求序号</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, justifyContent: 'center' }}>
+            <Box style={{ width: 215, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>工具</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>名称和参数</Text>
+            </Box>
+            <Box style={{ width: 215, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>响应</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>响应 ID</Text>
+            </Box>
+            <Box style={{ width: 215, height: 78, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>状态</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>结束状态</Text>
+            </Box>
+            <Box style={{ width: 215, height: 78, background: '#ECF7F2', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>结论</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>校验结果</Text>
+            </Box>
+            <Box style={{ width: 215, height: 78, background: '#ECF7F2', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>用量</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>Token 与耗时</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>保留错误类型</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>错误类型是改进的入口，删掉它就没法比较前后两次。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>隐藏密钥与认证头</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不写入提示、元数据或教材产物，可复用令牌同样处理。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 34</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,58 @@
+<Slide notes={`我们从第三章的装配继续往下走。资源和规则都准备好了，接下来要真的启动一次运行，并且读得懂它。
+
+很多人的第一反应是看进度条，但进度条只回答一个问题：系统提交了多少步。它不会告诉你通知有没有被听到、访客有没有理解、模型花了多少钱。
+
+所以这一段要做两件事：一是按状态和时间口径把一次运行读清楚，二是把该记的证据留下来。青禾案例还没有真正在浏览器里跑过一次，后面出现的数字都属于方案推算，不是运行成绩。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.9</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>启动、观察{'\n'}与估算</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>资源和规则备好以后，第一次真正启动一次运行。要看懂它走到哪一步、能观察到什么、又花掉了多少。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>八种状态</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>三种时间</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>调用与费用</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>观察表</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>执行实验 › 运行进度</Text>
+                <Box style={{ width: 56, height: 24, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>示意</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 560, height: 46, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 8px' }}>
+                <Box style={{ width: 330, height: 30, background: '#276FBF', borderRadius: 6 }} />
+                <Box style={{ width: 214 }} />
+            </Box>
+            <Text style={{ fontSize: 13, color: '#546779' }}>进度只表示系统已提交的步数，不表示业务结果</Text>
+            <Box style={{ width: 560, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '10px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>它回答：系统提交了多少步</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>对应请求 Step 的提交进度</Text>
+            </Box>
+            <Box style={{ width: 560, height: 112, background: '#FFF4E6', borderRadius: 10, padding: '10px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>它没有自动回答三件事</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>通知是否有效　·　访客是否理解{'\n'}模型用了多少成本</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

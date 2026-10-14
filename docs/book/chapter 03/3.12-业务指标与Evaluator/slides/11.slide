@@ -1,0 +1,53 @@
+<Slide notes={`延迟的计算本身很简单，难的是前提条件。
+假设在真实运行里，公告更正是在第 u 步提交的，而许安在此之前还没获知正式安排；到了第 v 步，他第一次满足了我们在运行前定义好的获知证据。步长是一分钟，那么步级延迟就是 v 减 u 分钟。
+这个公式只在特定条件下成立：两条事实必须在同一个 Run 里，时区和步长要一致。缺了任何一条，减法出来的数字就没有意义。
+还有一件事必须一起记：实际的消息来源。时间上前后相邻，不等于公告真的起了传播作用，中间可能还有别的渠道。仅凭时间先后就断言是公告带来的效果，这是过度解释。
+所以公式和来源记录要一起进评分表。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.3　怎样计算一次延迟</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>延迟就是两个 Step 之间的差</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+            <Box style={{ width: 380, height: 64, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>延迟 = （v − u）分钟</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>u：公告更正提交的 Step</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>v：首次满足预先定义的获知证据的 Step</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 120, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 250, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>Step u　公告更正提交</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 8, background: '#276FBF' }} />
+            <Box style={{ width: 300, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>Step v　首次满足获知证据</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>成立条件：两条事实在同一 Run　·　时区与步长一致　·　同时记录实际消息来源</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', flex: 1, lineHeight: 1.6 }}>不能仅凭时间先后，就断言这是公告带来的传播效果。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

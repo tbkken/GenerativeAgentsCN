@@ -1,0 +1,69 @@
+<Slide notes={`我们在这一章要交付的，是一份可以被检查的开放日筹备方案。上一节把材料、历史、指令整理清楚了，可只要结果还是自然语言，程序就没法接着往下处理。
+
+「上午先阅读，稍后手作」这句话人看得懂，程序看不懂。它不知道上午是几点，也不知道稍后隔多久。结构化输出要做的，就是把这些含义放进约定好的字段：活动编号、房间编号、开始时间、结束时间、参加人数。
+
+字段一旦约定，程序就能排序、能比对、能算冲突。还要特别注意末尾那个时区偏移，它不是装饰——缺了它，同一份记录换一台电脑运行，含义就会变。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 300, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体　·　2.4</Text>
+        </Box>
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>结构化输出：让结果可以被程序接收</Text>
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.65, width: 960 }}>把活动、房间、起止时间和人数放进约定字段，程序不必再猜「上午先阅读，稍后手作」的含义。先把约定写成合同，再分别检查语法、结构、业务与事实来源。</Text>
+    </Box>
+
+    <Box style={{ height: 340, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 620, height: 336, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 26 }}>
+                <Box style={{ width: 3, height: 18, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>合同里的字段</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', padding: '0 14px', gap: 12, height: 20 }}>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 14, color: '#546779' }}>字段</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>值</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 38, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>activity_id</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"craft_workshop"</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 38, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>room_id</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"craft"</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 38, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>start</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"2026-10-17T10:00:00+08:00"</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 38, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>end</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"2026-10-17T11:00:00+08:00"</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', height: 38, background: '#FFFFFF', borderRadius: 6, padding: '0 14px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#546779' }}>participants</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontFamily: 'Consolas, monospace', color: '#26816B' }}>10</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 44, height: 44, background: '#EDF4FC', borderRadius: 22, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+        </Box>
+
+        <Box style={{ width: 400, height: 320, background: '#EDF4FC', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>程序可以直接接收</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.75 }}>活动的含义由字段承载：哪一场活动、在哪间房、什么时候开始、什么时候结束、几个人参加。</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>程序能排序、比对、算冲突；含义不再藏在句子里。</Text>
+            <Box style={{ flex: 1 }} />
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>字段符合合同，只说明形式对了；业务上是否成立，还要另算。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 23</Text>
+    </Box>
+
+</Slide>

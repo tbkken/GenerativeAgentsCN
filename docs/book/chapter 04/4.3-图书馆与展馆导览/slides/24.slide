@@ -1,0 +1,53 @@
+<Slide notes={`最后记住三个分界，它们贯穿整节的判断。
+
+第一个，发现不等于使用。导览发现率看的是有没有真的感知到导览牌，合适区域使用率看的是有没有真的抵达并提交符合兴趣的活动。G2 可以没见牌却成功，G3 可以见牌却没用，正好说明这两个不是同一个指标。
+
+第二个，看见不等于读懂。感知到牌子只是定位了信息源，真实介绍来自查询回复。
+
+第三个，纸面距离不等于感知范围。两处位置谁更容易被发现，要看人物视野与注意力截断的真实返回，不能凭图纸上的远近来下结论。
+
+这三个分界立住了，一次空间干预的实验设计才站得住。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4.3　本节小结</Text>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>记住三个分界</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ flexDirection: 'row', gap: 24, marginTop: 6 }}>
+
+            <Box style={{ width: 368, height: 236, background: '#EDF4FC', borderRadius: 12, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8, padding: '0 20px' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>发现</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>使用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>导览发现率与合适区域使用率要分开报告</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 236, background: '#F4F7FA', borderRadius: 12, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8, padding: '0 20px' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>看见</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>读懂</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>感知到牌子只是定位信息源，介绍来自查询回复</Text>
+            </Box>
+
+            <Box style={{ width: 368, height: 236, background: '#ECF7F2', borderRadius: 12, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 8, padding: '0 20px' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>纸面距离</Text>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28' }}>≠</Text>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#26816B' }}>感知范围</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>视野与注意力截断才决定谁真的被看见</Text>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>4.3 图书馆与展馆导览　·　青禾主题馆为虚构教案，尚未制作资源、上传或运行；尺寸、预算与窗口是待固定的教学候选。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

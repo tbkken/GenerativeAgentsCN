@@ -1,0 +1,74 @@
+<Slide notes={`来源要分开，还有一个实践里特别常见的坑：文件名相同，内容已经变了。
+
+更新材料的时候，我建议留住三样东西。第一是身份，这是哪一份文件、属于哪个任务。第二是日期。第三是输入副本，或者至少一个摘要指纹，用来说明这次用的到底是哪一版。
+
+有了这三样，才谈得上替换。替换要靠明确的新资料去做，不能把两份同名文件一起丢进去，让模型自己判断哪一份更权威——模型没有权限替我们决定这件事。
+
+青禾这件事里，人数从十人改成十三人，恰恰就是一份同名文件的内容变了。如果分不清版本，后面所有的校验都建立在不牢靠的基础上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.1　内容可以放在一起，来源不能混在一起</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>更新材料时，留住身份与指纹</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ flex: 60, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>替换材料前，先固定三件事</Text>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>身份与日期</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>哪一份资料、属于哪个任务与哪一天</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>输入副本或摘要指纹</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>这次实际用的是哪一版，可以比对</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>同名文件可能已变</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>由明确的新资料替换旧资料，不让模型猜</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 40, height: 358, background: '#F4F7FA', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>requests.csv</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>两次打开，同名却不同内容</Text>
+
+            <Box style={{ height: 76, background: '#FFFFFF', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>上周副本</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>手作 10 人　·　指纹 A1C3</Text>
+            </Box>
+
+            <Box style={{ height: 76, background: '#FFFFFF', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>本周副本</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>手作 13 人　·　指纹 7E90</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 3, height: 30, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>同名不等于同内容</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 25</Text>
+    </Box>
+
+</Slide>

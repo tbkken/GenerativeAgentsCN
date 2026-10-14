@@ -1,0 +1,91 @@
+<Slide notes={`导出范围决定跨资源依赖会不会一起走，这是最需要主动判断的地方。
+资源本身的图片和脚本这些附件应该齐全，缺件会让对方拿到一个不完整的资源。但资源之间的依赖关系是不是一并导出，取决于你选了多大的范围，所以导出之后要自己核对一遍。
+还有一个必须阻断的情况：同一个 skill_key 对应了两份不同内容的时候，应该停下来解释冲突，不能静默覆盖，也不能按显示名称去配对。
+最后一点，公共资源导入成功之后，也不能说某个已经封存的实验自动采用了它，因为封存实验用的是它自己那份副本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.2　在资源中心交换所需内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>导出范围决定依赖是否同行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 634, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>附件齐全</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>资源自身的图片、脚本等附件应齐全。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>导出范围</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>跨资源依赖是否一并导出，由所选范围决定。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>先保存再分享</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>想分享编辑器里的新内容，应先保存。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Box style={{ width: 190 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>依赖必须绑定</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>config 可有显式未绑定依赖，进入实验前必须绑定完整。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ width: 190 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>skill_key 冲突</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>同名不同内容时应阻断并解释，不能静默覆盖或按显示名称配对。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 486, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 486, height: 176, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>逐类检查自己的内容</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>地图、Agent、Crowd、Skill、Brain、模型配置，应分别检查自己的内容与附件，不要只抽查一项。</Text>
+            </Box>
+
+            <Box style={{ width: 486, height: 176, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不要把结论说大</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>公共资源导入成功后，也不能声称某个已封存实验自动采用了它。封存实验用的是它自己的副本。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

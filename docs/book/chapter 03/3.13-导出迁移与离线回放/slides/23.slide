@@ -1,0 +1,84 @@
+<Slide notes={`正式交付包含的东西是可以列出来的：教材素材、精确的 Skill、参数说明、原始导出、来源登记，以及关键事实和质量评分。
+交付时要说清手里是什么。如果只有普通结果 ZIP，就明确这样命名，不要含糊地叫它运行包。如果已经得到了正式运行包，就再补上协议校验的记录。只有在独立环境里完成了验证，才能写那个环境里的回放、恢复或者重跑结论。
+还有一句要说在前面：同一个包的确定性归档，保证的是同样的内容能得到相同的字节，它不意味着重新运行大模型必然生成同样的故事。青禾的可复核性，首先来自固定的输入和真实的记录，再来自完整的验证说明。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.7　交付的是证据和边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交付的是证据和边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>一次正式交付应包含六类材料，并且按手里已有的证据，写下对得上的结论。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 172, height: 74, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>教材素材</Text>
+            </Box>
+            <Box style={{ width: 172, height: 74, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>精确 Skill</Text>
+            </Box>
+            <Box style={{ width: 172, height: 74, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>参数说明</Text>
+            </Box>
+            <Box style={{ width: 172, height: 74, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>原始导出</Text>
+            </Box>
+            <Box style={{ width: 172, height: 74, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>来源登记</Text>
+            </Box>
+            <Box style={{ width: 172, height: 74, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>关键事实与质量评分</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 1152, height: 68, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 300 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>只有普通结果 ZIP</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>就明确这样命名，不要含糊地叫它运行包。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 68, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ width: 300 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>已经得到 .garun</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>再记录协议校验的结果，作为这一步的证据。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 68, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 300 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>只有完成独立环境验证</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>才能写该环境中的回放、恢复或重跑结论。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>确定性归档保证同内容得到相同字节，不等于重跑大模型会生成相同故事</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>青禾的可复核性首先来自固定输入和真实记录，再来自完整的验证说明，而不是「一键复现」四个字。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

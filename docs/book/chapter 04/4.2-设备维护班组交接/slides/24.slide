@@ -1,0 +1,56 @@
+<Slide notes={`这一节讲的是一个很朴素但很容易被忽略的要求：交接不是把消息发出去，而是让对方真的接住。
+
+我留三个反问给大家，以后做自己的案例时可以拿出来对一遍。
+
+第一，对方是「收到」了，还是「正确复述或使用」了？只有后者才算到达。
+
+第二，这一项是经交接到达的，还是后来独立查询补上的？两条路径要分开报，不能互相回填。
+
+第三，记录已经保存，是不是就等于对方读过并且理解了？不等。
+
+把这三句话记住，你设计自己的交接实验时，分母和分子就不容易写错。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.2　小结</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>记住三个反问</Text>
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ height: 112, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 19, color: '#20344B', lineHeight: 1.4 }}>对方是「收到」了，还是「正确复述或使用」了？</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>只认后者</Text></Box>
+        </Box>
+
+        <Box style={{ height: 112, background: '#F7F3E8', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 40, height: 40, background: '#CB6B28', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 19, color: '#20344B', lineHeight: 1.4 }}>这一项是经交接到达的，还是后来独立查询补的？</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>分开报，不回填</Text></Box>
+        </Box>
+
+        <Box style={{ height: 112, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 40, height: 40, background: '#26816B', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 19, color: '#20344B', lineHeight: 1.4 }}>记录已保存，是否等于对方读过并理解？</Text></Box>
+            <Box style={{ width: 210 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>保存不等于理解</Text></Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', marginTop: 4 }}>4.2 设备维护班组交接　·　本案为虚构教案，尚未制作资源与运行；下一节：图书馆与展馆导览</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

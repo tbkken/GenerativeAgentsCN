@@ -1,0 +1,44 @@
+<Slide notes={`第四个问题落在数字上。「成功率提高了」这句话本身没有提供足够信息，听众不知道分母是什么，也不知道比较条件是什么。
+
+要让人听懂，至少要说清五件事：成功定义、任务数、运行数、未完成数、比较条件。以本案为例，正确咨询闭环必须包含适配窗口回复与实际确认；只是给出一次入口建议，还不满足这个条件。
+
+第四章的人工练习给出三项闭环、四项任务，另有一项已经拿到入口有效建议但没完成窗口闭环。合起来看，结论才有边界。数字不是装饰，它决定听众能把这句话相信到什么程度。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.8　演示与评审</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ④</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>④</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>让数字带着分母和条件出现</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>「成功率提高了」没有提供足够信息：听众需要知道成功定义、任务数、运行数、未完成数和比较条件。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16, marginTop: 8 }}>
+            <Box style={{ width: 368, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>分母：任务数与运行数</Text>
+            </Box>
+            <Box style={{ width: 368, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>条件：成功定义与比较条件</Text>
+            </Box>
+            <Box style={{ width: 368, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>口径：主要结论与全体一致</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 26</Text>
+    </Box>
+
+</Slide>

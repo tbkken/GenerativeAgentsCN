@@ -1,0 +1,50 @@
+<Slide notes={`报数之前，先把三个最容易算错的口径讲清楚。
+
+第一种错误是只挑顺利的样本。有的运行从头到尾根本没形成交接，这种情况照样要报 0/5，并且明确标注「未形成交接」，不能把它们从分母里删掉。
+
+第二种是路径混淆。有人先自己查过、后来才收到交接，那要标成「交接前已知」，它不属于新增到达；凭猜测说对的，因为没有交接来源，也不计。
+
+第三种是来源说不清。来源混合或者无法判断的，单独列出来，分母仍然按五项算。另外，失败的和未形成交接的调用，也要进入成本统计。
+
+最后一句要记住：这些比率说明的是信息流动，不能拿来推断设备有多可靠或者维修效率有多高。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.5　收到与正确使用，缺一不可</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个容易算错的口径</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>这三处一算错，结论就会偏得很远。</Text>
+
+        <Box style={{ height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>只选顺利样本</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>交接未开始的样本仍报 0/5，并标注「未形成交接」</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>路径混淆</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>先自查、后收到者标「交接前已知」，不是新增到达；正确猜测无交接来源不计</Text></Box>
+        </Box>
+
+        <Box style={{ height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>来源说不清</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>来源混合或无法判断时单列，分母仍是五项；失败调用也计入成本</Text></Box>
+        </Box>
+
+        <Box style={{ height: 126, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>登记与检查各有凭证要求</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>登记要有对象保存与回复，检查要有相应 ACT，恢复在本案没有成立依据；规定复核与有新疑问的追查不计重复，目的不清的单列。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

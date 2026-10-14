@@ -1,0 +1,88 @@
+<Slide notes={`把两组条件摆在一起，逐行比。
+
+第一行，可用材料。左边只有一句"安排开放日"；右边拿到了容量表和预约记录。模型本身没变，但它能接触到的事实不一样了。
+
+第二行，怎么取得事实。左边只能依赖已经给它的输入，给什么用什么；右边可以通过真实的查询工具去取。
+
+第三行，怎么发现冲突。左边靠模型自己判断；右边有独立的约束校验，是另一段程序在按规则检查。
+
+第四行，交付的依据。左边交出一份候选文本；右边交出来的是文本，加上执行记录和校验记录。
+
+四行比下来，结论很清楚：右边这一列，测量对象已经不是一个裸模型了，它包含资料、工具和控制逻辑。
+
+所以在写评价结论的时候，第一句话就必须交代清楚：我测的是裸模型，还是带资料、带工具、带控制的完整应用。这两者的分数不能互换。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.3　工具会扩展能力，也会改变评价对象</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一模型，两种条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 62, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#546779' }}>只给任务</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可用材料</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>"安排开放日"</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>取得事实</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>依赖已给输入</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>发现冲突</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>模型自行判断</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>交付依据</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>一份候选文本</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ height: 62, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>补齐应用能力</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可用材料</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>容量表＋预约记录</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>取得事实</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>真实查询工具</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>发现冲突</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>独立约束校验</Text>
+            </Box>
+
+            <Box style={{ height: 88, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>交付依据</Text>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>文本＋执行与校验记录</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 22</Text>
+    </Box>
+
+</Slide>

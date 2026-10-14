@@ -1,0 +1,74 @@
+<Slide notes={`结果页上的下载全部，得到的其实是一个结果包，文件名通常是带步骤号的结果压缩包。它是按取材那一刻的提交边界保存的，并且会生成对应这个边界的质量报告。
+检查点详情里的创建压缩包，导出的只是所选的那个检查点，范围更窄。
+这两条路径都不生成正式的外层完整性清单，所以把后缀改成运行包，并不能让它变成正式包。正式的运行包由封存流程写出：它会从一致的暂存副本生成完整性清单和归档，不会在原地改写你已有的压缩包。这也是为什么改名和封存是两件完全不同的事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.3　“下载全部”为什么不等于正式 Run 包</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>「下载全部」得到的是结果包</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>结果页有两条导出路径，产物不同，但都不是正式外层清单封装的包。</Text>
+
+        <Box style={{ width: 1152, height: 216, background: '#F4F7FA', borderRadius: 12, padding: 16, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 1120, height: 34, background: '#B5C7D8', borderRadius: 6, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 13, color: '#20344B' }}>结果页 · 结果与导出</Text>
+                <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#CB6B28' }}>示意</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 320, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>导出结果 / 结果与导出 → 下载全部</Text>
+                </Box>
+                <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 360, height: 48, background: '#EDF4FC', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>result-bundle-step-….zip</Text>
+                </Box>
+                <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 352, height: 48, background: '#FFF4E6', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>按取材时的提交边界保存，并生成该边界的质量报告</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 320, height: 48, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#20344B' }}>检查点详情 → 创建 ZIP</Text>
+                </Box>
+                <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 360, height: 48, background: '#EDF4FC', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>只导出所选检查点</Text>
+                </Box>
+                <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#CB6B28' }}>›</Text>
+                </Box>
+                <Box style={{ width: 352, height: 48, background: '#FFF4E6', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>范围更窄，不能独立替代完整 Run</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>普通结果 ZIP 的生成路径不包含正式外层完整性清单</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不能靠改名变成 .garun。Run 正式封存由 RunService.seal 完成：拒绝活动状态，取得写锁，从一致暂存副本生成完整性清单与归档，不原地改写既有 ZIP。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

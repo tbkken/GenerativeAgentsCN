@@ -1,0 +1,87 @@
+<Slide notes={`创建成功拿到的是可编辑的草稿，接下来要按场景重新装配。系统可以在创建时给一个初始位置，但四位人物到底站在哪里，是我们自己决定的。
+
+按照空间选择器，林岚选公共大厅，周宁选手作室，陈晨选交流室，许安选阅读室，然后把实际的出生坐标、地址和初始已知空间保存下来。这里要提醒一句：公共 Agent 资料里没有坐标，不是配置漏了，坐标本来就属于这一次实验。
+
+装配还包括核对每个对象的根 Skill、人物 Brain 及其依赖。时间参数采用二零二六年十月十七日九点五十分、上海时区、每步一分钟、共四十八步。
+
+最后一步最容易被跳过：保存后要从同一个实验重新打开，看的是服务器上那份副本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.2　草稿装配完成后，重新打开核对</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>出生坐标属于这一次实验</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 22 }}>
+
+        <Box style={{ width: 620, height: 460, background: '#F4F7FA', borderRadius: 12, flexDirection: 'column' }}>
+            <Box style={{ width: 620, height: 44, background: '#276FBF', borderRadius: 12, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>实验内页　四位人物装配</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 56, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+            <Box style={{ padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>选择空间后，保存实际的出生信息</Text>
+                <Box style={{ width: 584, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 72 }}>林岚</Text>
+                    <Text style={{ fontSize: 15, color: '#276FBF', width: 108 }}>公共大厅</Text>
+                    <Box style={{ flex: 1, height: 28, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>坐标 · 地址 · 已知空间</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 584, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 72 }}>周宁</Text>
+                    <Text style={{ fontSize: 15, color: '#276FBF', width: 108 }}>手作室</Text>
+                    <Box style={{ flex: 1, height: 28, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>坐标 · 地址 · 已知空间</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 584, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 72 }}>陈晨</Text>
+                    <Text style={{ fontSize: 15, color: '#276FBF', width: 108 }}>交流室</Text>
+                    <Box style={{ flex: 1, height: 28, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>坐标 · 地址 · 已知空间</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 584, height: 56, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', width: 72 }}>许安</Text>
+                    <Text style={{ fontSize: 15, color: '#276FBF', width: 108 }}>阅读室</Text>
+                    <Box style={{ flex: 1, height: 28, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>坐标 · 地址 · 已知空间</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5, width: 584 }}>公共 Agent 资料中没有坐标，不是配置遗漏；坐标属于这一次实验。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 510, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ width: 510, height: 106, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不要误判为配置遗漏</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>公共资料里没有出生坐标是正常的，它本来属于实验装配。</Text>
+            </Box>
+            <Box style={{ width: 510, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>核对根 Skill 与 Brain</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>确认已复制的内容正是准备运行的文本，依赖也一并到位。</Text>
+            </Box>
+            <Box style={{ width: 510, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>本案例采用的时间参数</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>2026-10-17 09:50　Asia/Shanghai{'\n'}每步 1 分钟，共 48 步</Text>
+            </Box>
+            <Box style={{ width: 510, height: 104, background: '#FFFFFF', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>保存提示不能替代检查</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>保存图片或地图后，仍要重看素材、对象状态图和人物比例。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

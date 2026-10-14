@@ -1,0 +1,52 @@
+<Slide notes={`现在把请求真的发出去。发出之前，有两样东西要分开准备。
+
+第一样是 API Key，它负责认证——你是谁，你有没有权限。第二样是模型名称，它负责选型——这一次要请哪个模型来做事。
+
+很多人会把这两件事混起来，觉得有 Key 就什么都能调。其实不是：同一个 Key 能调用哪些模型、能不能用某些参数，取决于这个 Key 所属项目开通了什么。
+
+所以顺序是先在账户里确认目标模型可用、支持 Responses 接口，也支持这一节要用的文本输入，再把模型 ID 写进环境变量，并且必须替换成自己账户里真实可用的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.1.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>配置 API，再执行最小调用</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#26816B' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>密钥管认证，模型名管选型，两件事分开准备。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 16 }}>
+                <Box style={{ width: 320, height: 60, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>API Key　用于认证</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>所属项目与账户权限决定能调用什么</Text>
+                </Box>
+                <Box style={{ width: 320, height: 60, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>模型名称　用于选型</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>必须是账户可用且支持所需能力的 ID</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 44, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+
+            <Box style={{ width: 656, height: 60, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>一次可以保存下来作为证据的最小调用</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

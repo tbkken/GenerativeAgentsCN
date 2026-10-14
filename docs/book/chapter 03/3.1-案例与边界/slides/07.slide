@@ -1,0 +1,84 @@
+<Slide notes={`这一轮实验里有四位人物。
+
+林岚在公共大厅，是组织者，手里有旧的活动计划，需要核对场地。
+
+周宁在手作室做志愿者，先检查物料，再到大厅帮助来访者，他知道的是那条旧消息。
+
+陈晨在交流室，是想参加十点阅读分享的来访者，会整理物品并询问安排。
+
+许安在阅读室，想参加原消息里的十点手作体验，但需要核实。
+
+另外还有两个对象：服务台在大厅，掌握手作室已有的预约，按真实请求回答；公告栏也在大厅，初始展示旧安排，收到有依据的更新后提交新状态。
+
+人物和对象不是一回事：服务台和公告栏是地图上的游戏对象，绑定的是根 Skill。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.2　四个人，两项对象能力</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁在行动，谁知道什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>公共 Agent 资源 · 4 名</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 276, height: 206, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>林岚</Text>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>公共大厅 · 组织者</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>掌握旧的活动计划，需要核对场地。</Text>
+                <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 8, padding: '8px 10px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>知道旧排期，不知道手作室已被占用</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 276, height: 206, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>周宁</Text>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>手作室 · 志愿者</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>先检查物料，再到大厅帮助来访者。</Text>
+                <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 8, padding: '8px 10px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>掌握旧消息，尚未核对场地</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 276, height: 206, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>陈晨</Text>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>交流室 · 阅读来访者</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>想参加 10:00 的阅读分享，会整理物品并询问安排。</Text>
+                <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 8, padding: '8px 10px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>按自己的目标出发，会主动打听</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 276, height: 206, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>许安</Text>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>阅读室 · 手作来访者</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>想参加原消息里的 10:00 手作体验。</Text>
+                <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 8, padding: '8px 10px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>只知道旧消息，需要核实</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', marginTop: 4 }}>地图 Game Object · 绑定根 Skill · 2 个</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>服务台</Text>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>大厅中的固定对象</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>掌握手作室已有的预约，按真实请求回答。</Text>
+            </Box>
+            <Box style={{ width: 568, height: 152, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>公告栏</Text>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>大厅中的固定对象</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>初始展示旧安排，接收有依据的更新后提交新状态。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

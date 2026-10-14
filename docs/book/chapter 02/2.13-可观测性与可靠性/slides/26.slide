@@ -1,0 +1,70 @@
+<Slide notes={`最后把几种容易混起来的数字分开。
+
+WorkBuddy 的积分，是产品显示的实际消耗。做对照的时候，把产品显示值和当时的模型配置一起记下来。
+
+外接服务的 API 账单是另一件事：它有自己的价格口径和账单页面。不要把 API 的 Token 单价直接换算成所有 WorkBuddy 任务的费用，这两个口径对不上。
+
+本地命令的耗时也要单独记。它属于你的机器在算，不属于模型在算。
+
+还有一项最容易被忽略：等待用户审阅的时间。这段时间既不是模型的执行时间，也不是本地命令的时间。把它混进模型耗时里，你会得出「模型很慢」这种错误结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.6　从 usage 理解成本</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>积分、账单与等待时间不是一回事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 14, color: '#546779' }}>指标</Text></Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 14, color: '#546779' }}>口径</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>怎样记录</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 280, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>WorkBuddy 积分</Text>
+            </Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>产品显示的实际消耗</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>记录产品显示值与当时的模型配置，两者一起写。</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 280, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>外接服务 API 账单</Text>
+            </Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>官方账单与价格口径</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>不把 API 的 Token 单价换算成所有 WorkBuddy 任务的费用。</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 280, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>本地命令耗时</Text>
+            </Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>本机执行时间</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>与模型执行时间分开记录，不合并成一个总数。</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 280, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>等待用户审阅</Text>
+            </Box>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5 }}>人工时间</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>也要和模型执行时间分开，否则会误判模型很慢。</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 34</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,111 @@
+<Slide notes={`把陈晨这一趟拆细一点看。
+
+他从实际上下文和感知里得到目标地址，这是本轮的目标；接着调用导航，导航给出可走终点和路径信息；然后 Brain 选择 MOVE，把动作交给 world-act。
+
+world-act 接收并校验，返回 accepted。这里最容易出错：工具返回 accepted，只说明动作选择被接受，不等于整步事实已经持久提交。
+
+真正提交发生在 Runtime：它按移动预算消费实际路径、保留剩余路径，构造 Event 与结构化载荷，再通过 StepResult 提交。
+
+回放读的是这些已提交的坐标、轨迹和活动。它不会因为模型说了一句「我已抵达」，就直接把小人画到终点。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.2　从一条 MOVE 看完整链条</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>陈晨走一趟，六环各留一笔</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>从「想去阅读桌」到「回放能看到他走了多远」，六环依次留下可查的记录。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 354, height: 178, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>感知与上下文</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>Brain 从实际上下文与感知得到目标地址，作为本轮要去的地方。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 178, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 178, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>调用导航</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>导航给出可走终点与路径信息，这是能不能走通的第一个依据。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 178, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 178, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Brain 选择 MOVE</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>把目标与路径变成这一轮要提交的动作选择。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 354, height: 178, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 28, height: 28, background: '#CB6B28', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>world-act 校验</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>接收并校验本轮动作，返回 accepted。接受的是动作选择，不是整步事实。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 178, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 178, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>StepResult 提交</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>Runtime 按移动预算消费实际路径、保留剩余路径，构造 Event 与载荷后提交。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 178, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 178, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 28, height: 28, background: '#26816B', borderRadius: 14, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>回放读取</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>读已提交坐标、轨迹与活动，不依据模型的自述去画人。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 62, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', fontWeight: 'bold' }}>accepted 说明动作选择被接受，不等于整步事实已经持久提交。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 29</Text>
+    </Box>
+
+</Slide>

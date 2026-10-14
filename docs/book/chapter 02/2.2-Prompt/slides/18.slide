@@ -1,0 +1,54 @@
+<Slide notes={`第五个知识块换到 WorkBuddy 的操作界面上，但要点还是同一件事：先确认文件真的被读到了。
+
+原因很简单。在对话产品里上传一个文件，看起来很成功，因为附件图标出现了。但附件图标只证明你把文件放进去了，不证明它的内容已经进入这次任务。
+
+所以第一轮不要急着要方案，先让它列出两样东西：读了哪些文件，从里面提取出了哪些事实。青禾这里的事实很具体，阅读室容量三十人、阅读分享二十四人、手作体验持续六十分钟。逐条核对这些数字以后，再让它生成候选安排。
+
+这样做能区分两种完全不同的失败：一种是没有读到文件，另一种是读到了但理解错了。这两种情况的处理办法完全不一样，一个要检查输入方式，一个要检查提示和材料本身。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.2.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>先检查读到了什么</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先让它列出文件名与提取出的事实，逐条核对后再生成候选。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 120, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>brief.md</Text>
+                </Box>
+                <Box style={{ width: 120, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>rooms.csv</Text>
+                </Box>
+                <Box style={{ width: 120, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>rules.md</Text>
+                </Box>
+                <Box style={{ width: 120, height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>requests.csv</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 44, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>先列事实，再生成候选</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,108 @@
+<Slide notes={`检查分两段。
+
+配置阶段先查看人物的感知参数，再到地图中核对语义范围、碰撞、出生点以及对象交互距离。保存之后重新打开，确认页面保留的是实际值——这步别省。但要记住：预检通过只表示静态合同满足要求，不代表角色已经走过路线。
+
+运行之后，在回放中选择人物和相应时间位置，查看 Agent 检查器的位置、动作以及当前窗口事件。需要确认边界时，继续查看对应的调用记录和结构化事实：一次感知请求有没有真的发出，返回了哪些候选，导航查询指向什么，MOVE 最终走了哪些格。
+
+页面标签只是入口，结论要落在调用记录上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.5　从页面一路检查到事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>配置预检与运行后检查</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 22 }}>
+
+        <Box style={{ width: 500, background: '#F4F7FA', borderRadius: 12, padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>配置阶段（页面示意）</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 48, height: 24, background: '#CB6B28', borderRadius: 12, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 11, color: '#FFFFFF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Text style={{ fontSize: 13, color: '#546779', width: 120 }}>人物 · 感知参数</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>vision_radius_tiles</Text>
+            </Box>
+
+            <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Text style={{ fontSize: 13, color: '#546779', width: 120 }}>地图 · 装配</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>语义范围 · 碰撞 · 出生点</Text>
+            </Box>
+
+            <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Text style={{ fontSize: 13, color: '#546779', width: 120 }}>对象 · 交互</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>对象交互距离</Text>
+            </Box>
+
+            <Box style={{ height: 60, background: '#ECF7F2', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>保存后重新打开</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>确认页面保留的是实际值</Text>
+            </Box>
+
+            <Box style={{ height: 72, background: '#FFF4E6', borderRadius: 8, padding: '10px 14px', flexDirection: 'column', gap: 3, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>预检通过 ≠ 已走过路线</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>只表示静态合同满足要求</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 630, background: '#F4F7FA', borderRadius: 12, padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 20, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>运行后 · 回放检查（页面示意）</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 48, height: 24, background: '#CB6B28', borderRadius: 12, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 11, color: '#FFFFFF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ flex: 1, height: 44, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>选择人物</Text>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>▾</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 44, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 14px' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>时间位置</Text>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>▾</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                <Text style={{ fontSize: 14, color: '#20344B' }}>Agent 检查器 · 位置</Text>
+            </Box>
+
+            <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                <Text style={{ fontSize: 14, color: '#20344B' }}>Agent 检查器 · 动作</Text>
+            </Box>
+
+            <Box style={{ height: 44, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 26, background: '#276FBF' }} />
+                <Text style={{ fontSize: 14, color: '#20344B' }}>当前窗口事件</Text>
+            </Box>
+
+            <Box style={{ height: 118, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>需要确认边界时：查调用记录与结构化事实</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.55 }}>感知请求有没有真的发出 · 返回了哪些候选 · 导航查询指向什么 · MOVE 最终走了哪些格</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 23</Text>
+    </Box>
+
+</Slide>

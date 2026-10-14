@@ -1,0 +1,88 @@
+<Slide notes={`偏好评价有用，但它会受一些具体因素影响，用之前要把这些因素按住。
+
+第一是呈现顺序。同两份文本，A 放左边和 A 放右边，读者的选择可能会变，所以要交换左右位置各评一次，或者随机分配位置。
+
+第二是量表和长度。文字长的回答常常显得更详细，读者容易给它更高的总体分，这就是冗长偏差，要用明确的量表把长度的影响尽量分开。
+
+第三是事实。偏好评价测的是体验，不负责核对事实，无论读者怎么选，事实都要单独核对一遍。
+
+现在很多做法让模型来当裁判，因为它便宜、快。但模型裁判同样有位置偏差和冗长偏差，必须先用人工标注的样本来检查。
+
+一个偏好排名，首先是特定人群和题目分布下的相对表现，不能直接换算成“完成工作的百分比”。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.6　开放写作为什么需要偏好评价</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>偏好排名会受什么影响</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 480, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>评之前先做的三件事</Text>
+
+            <Box style={{ height: 120, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>交换左右位置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>同两份文本换一次顺序再评，或随机分配位置。</Text>
+            </Box>
+
+            <Box style={{ height: 120, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>使用明确的量表</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>把“哪个更好”拆成可勾选的等级，减少临时标准。</Text>
+            </Box>
+
+            <Box style={{ height: 120, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>单独核对事实</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>偏好评价测体验，不负责核对事实。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>两类偏差与一个替代方案</Text>
+
+            <Box style={{ flexDirection: 'row', height: 140, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 84, background: '#276FBF' }} />
+                <Box style={{ width: 140, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>位置偏差</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>出现在前或后</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>同一份文本放在左边或右边，读者的选择会变；比较时必须交换位置或随机分配。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 140, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 84, background: '#276FBF' }} />
+                <Box style={{ width: 140, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>冗长偏差</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>越长越受偏爱</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>文字长的回答容易拿到更高的总体分；需要明确量表，并把长度因素尽量分开。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 150, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 92, background: '#26816B' }} />
+                <Box style={{ width: 140, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>模型当裁判</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>要用人工样本来查</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>模型可以充当裁判，但存在位置偏差与冗长偏差，需要用人工标注样本先检查偏差，再决定可否使用。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 31</Text>
+    </Box>
+
+</Slide>

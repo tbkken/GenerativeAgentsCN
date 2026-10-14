@@ -1,0 +1,77 @@
+<Slide notes={`有三个容易出错的地方，我逐个说。
+
+第一，接口位置不能搬。Responses 接口用的是 text.format，另一个接口用的是 response_format。名字像，位置和结构都不一样，直接把后者整段搬到这个请求位置，一定会失败。
+
+第二，完整实现要保留 incomplete_details 和请求信息。为什么要留？因为失败的原因不只一种：可能是输出预算不够被截断，可能是内容被限制，也可能是别的问题。留下这些字段，才能区分。
+
+第三，日志纪律。调试信息留得越全越好，但 API 密钥绝对不能写进日志。
+
+最后补一句：参数写了不等于生效，所选模型必须真的支持结构化输出。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.3　使用 Responses 的 text.format</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>请求位置与日志纪律</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>三件事别做错</Text>
+            <Text style={{ fontSize: 17, color: '#276FBF', lineHeight: 1.75 }}>参数写在正确的位置，才谈得上生效。</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.8 }}>位置错了，请求会被拒绝或者被忽略；细节丢了，失败时无从判断原因。</Text>
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#CB6B28' }} />
+                <Box style={{ width: 260 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>接口位置不能搬</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>Responses 用 text.format，另一种接口的 response_format 不能原样搬到这里。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 260 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>保留失败细节</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>保留 incomplete_details 与请求信息，用来区分预算不足、内容限制与其他异常。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 260 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>密钥不进日志</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>调试信息留得越全越好，API 密钥不能写进日志。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 106, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>参数写了不等于生效</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>所选模型需实际支持结构化输出，否则参数传进去也不会起作用。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 23</Text>
+    </Box>
+
+</Slide>

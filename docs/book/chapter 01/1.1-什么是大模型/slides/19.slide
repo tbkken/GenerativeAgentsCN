@@ -1,0 +1,57 @@
+<Slide notes={`第五个知识块，我们处理一个特别容易含糊的问题：模型"知道"一件事，到底是哪一种知道。
+
+答案不是一种，而是四种，而且它们进入回答的路径完全不同。
+
+第一种是参数知识。它是训练过程中学到的规律，留在了参数里，直接影响每一次计算。
+
+第二种是当前上下文。这一轮我给你的指令、之前几轮说过的话、应用读进来的资料和工具返回的结果，都属于这一种。
+
+第三种是外部资料与工具。文件、数据库、预约查询服务都在这里，但它们必须由应用按需去读取，才能进入当前上下文。
+
+第四种是应用持久记忆，比如存放下来的偏好、任务进度和历史记录。它同样要先被读出来，才能用上。
+
+四种知道，路径不一样，检查方法也不一样。这是我们下一段要逐条看的。`} style={{ width: 1280, height: 720, background: '#F4F7FA', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 240, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+        <Text style={{ fontSize: 14, color: '#276FBF' }}>知识块 05</Text>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>四种容易混在一起的"知道"</Text>
+        <Box style={{ width: 72, height: 3, background: '#276FBF' }} />
+        <Text style={{ fontSize: 20, color: '#546779' }}>回答里的信息可能来自参数，也可能是这次才读到的材料</Text>
+    </Box>
+
+    <Box style={{ height: 400, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 16 }}>
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 200, height: 86, background: '#FFF4E6', borderRadius: 8, border: '1px solid #E5C9A8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#CB6B28', fontWeight: 'bold' }}>参数知识</Text>
+                </Box>
+                <Box style={{ width: 200, height: 86, background: '#EDF4FC', borderRadius: 8, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>当前上下文</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 200, height: 86, background: '#EDF4FC', borderRadius: 8, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#276FBF', fontWeight: 'bold' }}>外部资料与工具</Text>
+                </Box>
+                <Box style={{ width: 200, height: 86, background: '#ECF7F2', borderRadius: 8, border: '1px solid #B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 17, color: '#26816B', fontWeight: 'bold' }}>应用持久记忆</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 34, color: '#276FBF' }}>›</Text>
+
+        <Box style={{ width: 340, height: 200, background: '#FFFFFF', borderRadius: 10, border: '1px solid #B5C7D8', padding: 20, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>已有的模型</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>按真实可用的内容计算，生成本次回答</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 26</Text>
+    </Box>
+
+</Slide>

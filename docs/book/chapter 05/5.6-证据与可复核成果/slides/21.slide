@@ -1,0 +1,96 @@
+<Slide notes={`报告按六步走，这个顺序不是排版偏好，而是阅读顺序上的必然。
+
+先写研究条件：冻结的任务、判据和人物是什么。再写全体样本与边界：这次覆盖了哪些计划内 Run，窗口到哪里结束。然后才是观察：已提交事实支持什么结论。
+
+第四步写代价。如果少走错窗口的代价是多花轮次与调用，这个取舍必须完整报告出来，只报好的一面就是选择性呈现。
+
+第五步写未完成，缺哪一环、哪些还待判断，摆明在纸上。
+
+最后是解释限制。这一步最容易被省略，也最容易被夸大。一个小规模教学案例，讲的是它在给定条件下的表现，不能外推成行政服务整体的效率提升。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.7　对外结论写到证据能够支持的位置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>报告按这个顺序写</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 340, background: '#F4F7FA', borderRadius: 12, padding: '20px 20px', flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>六步顺序：条件在前，结论在后，缺口不许省略</Text>
+            <Box style={{ flexDirection: 'row' }}>
+
+                <Box style={{ width: 148, height: 200, background: '#EDF4FC', borderRadius: 8, padding: '12px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>第 1 步</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>研究条件</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 124 }}>冻结的任务、判据与人物设定。</Text>
+                </Box>
+
+                <Box style={{ width: 44, height: 200, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+                </Box>
+
+                <Box style={{ width: 148, height: 200, background: '#EDF4FC', borderRadius: 8, padding: '12px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>第 2 步</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>全体样本与边界</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 124 }}>全部计划内 Run；76 步窗口到此为止。</Text>
+                </Box>
+
+                <Box style={{ width: 44, height: 200, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+                </Box>
+
+                <Box style={{ width: 148, height: 200, background: '#ECF7F2', borderRadius: 8, padding: '12px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>第 3 步</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>观察</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 124 }}>已提交事实支持什么，附来源位置。</Text>
+                </Box>
+
+                <Box style={{ width: 44, height: 200, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>
+                </Box>
+
+                <Box style={{ width: 148, height: 200, background: '#ECF7F2', borderRadius: 8, padding: '12px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>第 4 步</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>代价</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 124 }}>轮次、调用与取舍要完整报告。</Text>
+                </Box>
+
+                <Box style={{ width: 44, height: 200, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#CB6B28' }}>›</Text>
+                </Box>
+
+                <Box style={{ width: 148, height: 200, background: '#FFF4E6', borderRadius: 8, padding: '12px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>第 5 步</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>未完成</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 124 }}>缺失环节与待判断项写在纸上。</Text>
+                </Box>
+
+                <Box style={{ width: 44, height: 200, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 22, color: '#CB6B28' }}>›</Text>
+                </Box>
+
+                <Box style={{ width: 148, height: 200, background: '#FFF4E6', borderRadius: 8, padding: '12px', flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>第 6 步</Text>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>解释限制</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45, width: 124 }}>不外推到行政服务效率。</Text>
+                </Box>
+
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>顺序不是排版偏好</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 1112 }}>先写条件和边界，读者才知道这个观察能管多远；把代价和未完成放在观察之后，取舍和缺口就不会被悄悄藏起来。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

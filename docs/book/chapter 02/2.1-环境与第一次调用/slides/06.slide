@@ -1,0 +1,100 @@
+<Slide notes={`把一次完整任务摊开，主线是四步。
+
+第一步是表达任务。Prompt 和上下文在这里提供目标和证据，也就是告诉系统我们要什么、依据是什么。
+
+第二步是提出候选。模型生成方案，或者生成一段结构化的工具请求。注意它到这里为止只是"提出"，还没有真的执行。
+
+第三步是实际执行。真正动手的是应用，它通过函数、MCP 或者 CLI 与 Shell 去完成。模型说要调用某个工具，和工具真的被调用，是两件事。
+
+第四步是校验交付。用业务规则、评估、文件和最终状态一起判断这次交付到底成不成立。主线之外还有三条按缺口补充的技术，不是必经步骤，用哪几条取决于缺什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.1　先认识本章的学习环境</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一张图看清技术各自的位置</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>目标到交付，中间靠什么</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>箭头表达一次任务如何推进，不代表每次调用都必须用齐所有技术。下面一条是主线，另一条按缺口补充。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 18px' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>用哪几条技术，取决于当前缺什么。</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>本节所有数据均为教学虚构，不涉及真实预约、通知或外部发布。</Text>
+        </Box>
+
+        <Box style={{ width: 752, flexDirection: 'column', justifyContent: 'center' }}>
+
+            <Box style={{ flexDirection: 'row', height: 62, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>表达任务</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>Prompt 与上下文提供目标、证据</Text></Box>
+            </Box>
+
+            <Box style={{ height: 22, justifyContent: 'center' }}><Box style={{ width: 44 }}><Text style={{ fontSize: 14, color: '#276FBF' }}>↓</Text></Box></Box>
+
+            <Box style={{ flexDirection: 'row', height: 62, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>提出候选</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>模型生成方案或结构化工具请求</Text></Box>
+            </Box>
+
+            <Box style={{ height: 22, justifyContent: 'center' }}><Box style={{ width: 44 }}><Text style={{ fontSize: 14, color: '#276FBF' }}>↓</Text></Box></Box>
+
+            <Box style={{ flexDirection: 'row', height: 62, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>实际执行</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>应用通过函数、MCP、CLI / Shell 执行</Text></Box>
+            </Box>
+
+            <Box style={{ height: 22, justifyContent: 'center' }}><Box style={{ width: 44 }}><Text style={{ fontSize: 14, color: '#26816B' }}>↓</Text></Box></Box>
+
+            <Box style={{ flexDirection: 'row', height: 62, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ width: 130 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>校验交付</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>业务规则、评估、文件与最终状态</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 14, marginBottom: 8 }}>
+                <Box style={{ width: 3, height: 20, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>按缺口补充，非必经步骤</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 48, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 12, marginBottom: 7 }}>
+                <Box style={{ width: 96 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>补充信息</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>检索 / RAG、图像与语音</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 48, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 12, marginBottom: 7 }}>
+                <Box style={{ width: 96 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>组织方法</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>Skill、规划、Agent 循环</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 48, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 96 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>分工与控制</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779' }}>多角色协作、预算与记录</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

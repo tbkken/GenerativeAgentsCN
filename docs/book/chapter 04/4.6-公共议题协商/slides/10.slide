@@ -1,0 +1,65 @@
+<Slide notes={`两组用的是同一套行为规范，规范的重点是：态度必须针对某个具体候选。
+代表被问到的时候，只说自己的理由和不可调整的条件，不替别人宣布态度。拿到候选之后，按自己实际知道的时间和模式来判断；不清楚就先问，沉默不表示同意。
+主持人负责核实场地事实、逐人询问理由，并且把来源和未确认的内容一起记下来。提出候选的时候，要说清编号、时间、模式和还没被满足的要求。
+态度征询要逐人发给三个人，问的只能是同意、保留还是反对。改过候选之后必须重新问，不能拿着对旧候选的同意继续用。
+最后记录里要同时有候选、已表达的理由、各方回应、未决事项，以及有没有一致意见。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3　　4.6.3 — 4.6.4</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>共同 SOP：态度必须针对具体候选</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>听到理由不等于可以对候选表态；沉默、含糊和未回应都不会自动变成同意。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 8, marginTop: 10 }}>
+            <Box style={{ width: 100, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>说明理由</Text>
+            </Box>
+            <Box style={{ width: 100, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>按事实判断</Text>
+            </Box>
+            <Box style={{ width: 100, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>3</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>逐人询问</Text>
+            </Box>
+            <Box style={{ width: 100, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>4</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>记录来源</Text>
+            </Box>
+            <Box style={{ width: 100, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>5</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>说明缺项</Text>
+            </Box>
+            <Box style={{ width: 100, height: 76, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>6</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>记真实回应</Text>
+            </Box>
+            <Box style={{ width: 100, height: 76, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>7</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>未回应留痕</Text>
+            </Box>
+            <Box style={{ width: 100, height: 76, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>8</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>改候选重问</Text>
+            </Box>
+            <Box style={{ width: 100, height: 76, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>9</Text>
+                <Text style={{ fontSize: 12, color: '#546779' }}>最终留分歧</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>九条共同行为边界（示意）：说明理由、按已知事实判断、逐人询问、如实记录、改候选重征询。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

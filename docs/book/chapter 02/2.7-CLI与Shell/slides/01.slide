@@ -1,0 +1,52 @@
+<Slide notes={`我们这一节要说清一件事：凡是规则已经写明确的部分，就不要再交给模型去猜。容量、时长、时间重叠，这些都能逐条判断，交给一个确定性的程序去做，结果才可复现。
+
+同一条校验命令，可以回答三个不同的问题。运行它需要哪一段程序、以哪个目录为起点、参数是什么，这是输入；跑完之后，主要结果写在标准输出，诊断信息写在标准错误，退出码记录这次检查到底通过了没有，这是结果。
+
+青禾开放日的排期正好是这种任务：规则写在材料里，所以能写成程序。模型更适合做另外两件事——把候选组织出来，以及在出错时理解错误、解释该怎么改。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体　·　2.7 CLI 与 Shell</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 600, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>把明确规则交给程序执行</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 580 }}>容量、时长与重叠都有明确规则，适合由程序逐条判定。模型组织候选、理解错误并解释修改；独立校验器提供一致的检查结果。</Text>
+            <Box style={{ flexDirection: 'row', gap: 14, marginTop: 6 }}>
+                <Box style={{ width: 176, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>输入与环境</Text>
+                </Box>
+                <Box style={{ width: 176, height: 44, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>结果与诊断</Text>
+                </Box>
+                <Box style={{ width: 176, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>退出码 0 / 1 / 2</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 512, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>本章示例目录 examples · PowerShell</Text>
+            <Box style={{ width: 512, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>Set-Location -LiteralPath{'\n'}    'E:\GenerativeAgentsCN\docs\book\chapter 02\examples'</Text>
+                <Box style={{ height: 1, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>python -X utf8 validate_schedule.py{'\n'}    fixtures/valid-schedule.json{'\n'}    --output output/validation-report.json</Text>
+            </Box>
+            <Box style={{ width: 512, background: '#FFF4E6', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>$LASTEXITCODE</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>0 通过 · 1 不合格 · 2 输入错</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,48 @@
+<Slide notes={`再说一个容易想当然的地方：模型说自己很确定，这句话能不能信。
+
+打个比方，假如助手对一批判断都报告"我有八成的把握"。一次两次看不出来，但如果这样的判断做上很多次，其中大约真的有八成是对的，这才符合概率校准的直观含义。
+
+反过来，如果它总说八成把握，实际只对了六成，或者实际对了九成五，这都叫校准不好。校准不好意味着这个数字不能当作决策依据。
+
+这里要区分两件事。模型说"我非常确定"，这句话本身没有可计算的概率意义，它只是一个说法。就算它真的给出了零点八，这个零点八也必须用实际结果去检验。
+
+检验的办法就是拿这些预测概率和最终的真实结果对照。下面我用一个具体的小算例讲清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>07</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.3.7　自信是否可信</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>自信是否可信</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>报告“有 80% 的把握”，这批判断长期就要约有 80% 正确，才符合概率校准的直观含义。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 8 }}>
+            <Box style={{ width: 260, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>模型报告</Text>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF' }}>80% 把握</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#B5C7D8' }}>↔</Text>
+            </Box>
+            <Box style={{ width: 260, height: 100, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>实际结果</Text>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#26816B' }}>长期约 80% 对</Text>
+            </Box>
+            <Box style={{ width: 90 }} />
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 31</Text>
+    </Box>
+
+</Slide>

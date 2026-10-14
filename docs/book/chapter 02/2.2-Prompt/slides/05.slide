@@ -1,0 +1,114 @@
+<Slide notes={`六个问题在青禾这件事上，答案是具体的，不是套话。
+
+目标：整理约束，提出三个活动的可行时间安排。注意是时间安排，不是直接把活动定下来。
+输入：四份材料文件，加上预约记录要另行查询。这里最容易出错——把文件名写出来，不等于内容已经进入请求。
+必须满足的条件：日期、开放时间、容量、活动时长、允许房间、已有预约，一条都不能少。
+输出：约束清单、候选方案、依据和未解决事项，四样都要，不能只给一段结论。
+不能假设什么：未查询不等于没有预约，没有资料不等于没有限制。这一条是防编造的。
+怎样验收：先跟原始材料核对，再由独立的校验器检查候选，两个动作分开做。
+
+填写的时候还有三个判断：答不出来的那一行就是风险点；材料要写明从哪里取，光列文件名不够；写不清的未知项，要规定它在结果里怎么显示。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.1　六个问题构成一份任务说明</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>青禾的六个具体答案</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+            <Box style={{ height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>目标是什么</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>整理约束，提出三个活动的可行时间安排</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>输入在哪里</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>四份材料文件，预约状态另行查询</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>哪些必须满足</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>日期、开放时间、容量、时长、允许房间、已有预约</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>输出是什么</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>约束清单、候选方案、依据和未解决事项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+                <Box style={{ width: 170 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>什么不能假设</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>未查询不等于无预约；没有资料不等于没有限制</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 46, background: '#26816B' }} />
+                <Box style={{ width: 170 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>怎样验收</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.45 }}>和原始材料核对，再由独立校验器检查候选</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>填写时的三个判断</Text>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>答不出来的那一行</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>就是这次任务的风险点，先补它。</Text>
+            </Box>
+
+            <Box style={{ background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>只列文件名不够</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>要写明材料从哪里取、哪些字段可用。</Text>
+            </Box>
+
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>写不清的未知项</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>要规定它在结果里怎么显示，标注为待核对。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,103 @@
+<Slide notes={`看这条人工构造的五格路径。顺着实线从起点 0 读到 4：首次 MOVE 最多走四格，因为当前预算就是四格。指向目标 5 的那段是未完成语义——还剩一格没走完，要等下一轮。
+
+预算怎么来的？步长乘以 movement_tiles_per_minute，至少为一格。ga-cn-v1 的说明是每分钟四格。当前页面没有供这个案例直接修改移动速度的选项，这个算例用来解释算法，不是青禾案例的实测轨迹。
+
+还要提醒：格子里的数字是路径位置示意，不是 Step 编号。静态格子只是保留邻接关系，读轨迹时以提交记录里的实际路径为准。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.5.3　内核怎样决定走了多远</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五格路径与一轮预算</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 30 }}>
+                <Box style={{ width: 870, height: 26, background: '#276FBF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', paddingLeft: 14 }}>
+                    <Text style={{ fontSize: 12, color: '#FFFFFF' }}>本轮预算消耗 4 格（示意）</Text>
+                </Box>
+                <Box style={{ width: 150, height: 26, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#FFFFFF' }}>剩 1 格</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 30 }}>
+                <Box style={{ width: 150, flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <Box style={{ width: 150, height: 150, background: '#20344B', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#FFFFFF' }}>0</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>起点</Text>
+                </Box>
+                <Box style={{ width: 150, flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <Box style={{ width: 150, height: 150, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>路径</Text>
+                </Box>
+                <Box style={{ width: 150, flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <Box style={{ width: 150, height: 150, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>路径</Text>
+                </Box>
+                <Box style={{ width: 150, flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <Box style={{ width: 150, height: 150, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>路径</Text>
+                </Box>
+                <Box style={{ width: 150, flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <Box style={{ width: 150, height: 150, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#276FBF' }}>首轮终点</Text>
+                </Box>
+                <Box style={{ width: 150, flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+                    <Box style={{ width: 150, height: 150, background: '#FFF4E6', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#CB6B28' }}>5</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#CB6B28' }}>目标 · 未抵达</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 560, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>当前预算（示意）</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 88, height: 40, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#276FBF' }}>步长</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>×</Text>
+                    <Box style={{ width: 280, height: 40, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>movement_tiles_per_minute</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>=</Text>
+                    <Box style={{ width: 104, height: 40, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, color: '#26816B' }}>本轮格数</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 13, color: '#546779' }}>ga-cn-v1：每分钟四格；至少为一格。</Text>
+            </Box>
+
+            <Box style={{ width: 568, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>格内数字是路径位置示意，不是 Step 编号</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>静态格子保留邻接关系，不代表本案例已执行轨迹。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.5 感知、导航与动作</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,80 @@
+<Slide notes={`Epoch AI 是一个独立评测机构，特别之处是同时做两件事：自己跑基准，也审别人的基准。
+
+2026 年 9 月它启动 Benchmark Reviews，第一批审了 15 个热门基准。结论是 4 个合格、9 个有问题、2 个信息不足。有问题的那批里，就包括 HLE、SWE-bench Verified、BFCL v4 和 Terminal-Bench 4.0。
+
+它自己定了三条纪律。不审自家基准，因为存在利益冲突，并承认自家基准也可能有错；一般不向厂商收费，避免结论受买单方影响；判"有问题"不等于"没用"，只是引用分数时要说明已知缺陷。
+
+这套做法把"这个分数能不能信"变成可以查证的过程。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>②　1.4.2　机构案例二：把"能不能信"变成可查证的过程</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>Epoch AI：不改题的审计者</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 28, alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 660, flexDirection: 'column', gap: 16 }}>
+
+                <Box style={{ width: 660, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 68, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Benchmark Reviews</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>对别人的基准做第三方审计：查题目、查判分、查运行配置</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 660, height: 132, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 68, background: '#546779' }} />
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>首批 15 个基准的结果</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>4 个合格，9 个有问题，2 个公开信息不足无法评定</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 660, height: 132, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 68, background: '#546779' }} />
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>判定口径</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>抽样中若两成以上题目含影响准确率的错误，这个基准就要重新解释</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 464, height: 428, background: '#FFF4E6', borderRadius: 12, padding: '20px 20px', flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>三条自我约束</Text>
+
+                <Box style={{ flexDirection: 'column', gap: 4, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>不审自家基准</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>存在利益冲突，并承认自家基准也可能有错</Text>
+                </Box>
+
+                <Box style={{ flexDirection: 'column', gap: 4, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>一般不向厂商收费</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>避免结论受买单方影响；若收费会明确标注</Text>
+                </Box>
+
+                <Box style={{ flexDirection: 'column', gap: 4, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>有问题 ≠ 没用</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>只是引用分数时必须同时说明已知的缺陷</Text>
+                </Box>
+
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>审计本身也有限度：它不重跑所有模型，也不替你判断业务适用性</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 36</Text>
+    </Box>
+
+</Slide>

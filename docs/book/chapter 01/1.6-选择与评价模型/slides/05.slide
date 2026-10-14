@@ -1,0 +1,68 @@
+<Slide notes={`目标写清楚之后，下一步是把它拆成检查项。我按五个维度来拆，每一个都要求能指出证据在哪里。
+
+第一项是事实与来源，容量、预约、人数这些关键字段必须有依据，做法是拿输出和输入材料逐项核对。第二项是约束满足，时间、容量、时长以及相互冲突的处理是否正确，这一项可以人工检查，也可以写一段确定性程序来检查。第三项是信息不足，缺失的内容有没有明确标出，有没有编造必要事实，这一项要和事先准备好的缺失项清单核对。
+
+第四项是交付完整，方案里该有的活动、该列的待确认事项是否齐全，按固定字段和任务清单核对。第五项是使用成本，端到端花了多少时间、调用了几次、费用是多少，记录实际可见的用量。
+
+这五项里，前四项可以直接判定对错，第五项是记录而不是打分。把它们分开，是为了后面看失败分布时，能说清失败到底属于哪一类。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.1　第一步：把目标写成可核验的结果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把目标转成五项检查项</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ height: 34, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 186, paddingLeft: 14 }}><Text style={{ fontSize: 14, color: '#546779' }}>检查维度</Text></Box>
+            <Box style={{ width: 540, paddingLeft: 12 }}><Text style={{ fontSize: 14, color: '#546779' }}>可观察结果</Text></Box>
+            <Box style={{ width: 422, paddingLeft: 12 }}><Text style={{ fontSize: 14, color: '#546779' }}>本练习的判定方式</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 186, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>事实与来源</Text></Box>
+            <Box style={{ width: 540, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>容量、预约、人数等关键字段有依据</Text></Box>
+            <Box style={{ width: 422, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>与输入材料逐项核对</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 186, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>约束满足</Text></Box>
+            <Box style={{ width: 540, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>时间、容量、时长和相互冲突处理正确</Text></Box>
+            <Box style={{ width: 422, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>人工或确定性程序检查</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ width: 186, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>信息不足</Text></Box>
+            <Box style={{ width: 540, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>缺失内容明确，未编造必要事实</Text></Box>
+            <Box style={{ width: 422, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>与预设缺失项清单核对</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 186, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>交付完整</Text></Box>
+            <Box style={{ width: 540, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>包含全部所需活动及待确认事项</Text></Box>
+            <Box style={{ width: 422, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>按固定字段和任务清单核对</Text></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 186, paddingLeft: 14 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>使用成本</Text></Box>
+            <Box style={{ width: 540, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#546779' }}>时间、调用和费用可接受</Text></Box>
+            <Box style={{ width: 422, paddingLeft: 12 }}><Text style={{ fontSize: 15, color: '#20344B' }}>记录端到端时间与实际可见用量</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,55 @@
+<Slide notes={`环境用五条命令搭起来，我按顺序说一遍。
+
+第一条是切到示例目录，也就是 examples 这一层。路径是按本仓库的位置写的，你的仓库放在别处，只改这一行。
+
+第二条看 Python 版本，确认它是 3.11 或者更新的。第三条建虚拟环境，把依赖装在里面，不污染系统里其他项目。第四条用这个环境里的 python 安装依赖。第五条跑离线测试，确认代码本身没有问题。
+
+有一个细节：为了避免激活脚本的执行策略问题，我直接调用虚拟环境里的 python。macOS 或 Linux 上对应的是 .venv/bin/python。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.3　安装独立的 Python 环境</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五条命令搭起一个干净环境</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>顺序固定，路径只改第一行</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>仓库放在其他位置时，只需要改第一条命令里的路径。依赖装进虚拟环境，不会影响系统里的其他项目。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>不必先激活虚拟环境</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>直接调用其中的 python，可以绕开激活脚本的执行策略问题。</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>macOS 或 Linux 上，解释器通常是 .venv/bin/python。</Text>
+        </Box>
+
+        <Box style={{ width: 720, flexDirection: 'column', gap: 6 }}>
+            <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#546779' }}># Windows PowerShell　仓库位置不同时只改这一行</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#20344B' }}>Set-Location -LiteralPath 'E:\GenerativeAgentsCN\docs\book\chapter 02\examples'</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#20344B' }}>python --version</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#20344B' }}>python -m venv .venv</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#20344B' }}>.\.venv\Scripts\python.exe -m pip install -r requirements.txt</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas', color: '#20344B' }}>.\.venv\Scripts\python.exe -m unittest discover -s tests -v</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>后文统一写 python</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>未激活虚拟环境时，替换为 .\.venv\Scripts\python.exe</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

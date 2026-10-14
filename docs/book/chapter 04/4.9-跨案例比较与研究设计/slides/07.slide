@@ -1,0 +1,63 @@
+<Slide notes={`时延这个词最容易被混着用，我把它拆开。
+
+在大厅案例里，时延是从来访者第一次咨询算起，到收到第一条适配而且能执行的建议为止，任务最后有没有闭环并不进入这个数。
+
+这一节的六行数据用的是另一个口径：从 Run 开始算，到这项任务闭环那一刻为止。它衡量的是整场多久走完，一次 Run 里快的和慢的任务都会被卷进同一个数。
+
+所以两个时延不能放在一起比，先对齐起止点再说。
+
+还有一层：这六行数据假设每项任务都完整观察到第 60 分钟，没有基础设施中断、没有缺失记录。真实报告要另列中断、缺失和任务未发起这三类情况。未闭环的任务没有完成时间，绝不能给它补一个 60。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.2　观察窗口与两条边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>时延从哪算起，窗口到哪里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 36 }}>
+
+            <Box style={{ width: 500, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 500, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>本节：Run 开始 → 闭环</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>整场走完花了多久。一次 Run 里最快和最慢的任务，都被卷进同一个数里。</Text>
+                </Box>
+                <Box style={{ width: 500, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>4.1：首次咨询 → 有效回应</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>只看第一次有效回应，任务后来有没有闭环，不进入这个数。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 616, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 616, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>窗口一致</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>六行数据假设每项任务都完整观察到第 60 分钟，没有基础设施中断，也没有缺失记录。</Text>
+                </Box>
+                <Box style={{ width: 616, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>真实记录另列</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>真实报告要把中断、缺失与「任务未发起」单独列出来，不能拿人工假设顶上。</Text>
+                </Box>
+                <Box style={{ width: 616, height: 132, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>不补未完成时点</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>截止时还没闭环的任务没有完成时间，只统计数量，不替它估一个终点。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>两段时延起止点不同，数值不能直接放在一起比。先对齐起止点与观察窗口，再谈谁快谁慢；六行数据只用来练习算术，不构成模型效果结论。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 25</Text>
+    </Box>
+
+</Slide>

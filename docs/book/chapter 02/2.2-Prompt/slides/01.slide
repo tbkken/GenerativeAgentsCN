@@ -1,0 +1,67 @@
+<Slide notes={`我们先从一句很常见的请求开始：帮我安排开放日。这句话听起来完整，其实什么都没说清楚——哪一天、用哪个房间、最后要交给我什么，全都没有。
+
+遇到这种情况，人容易先怪模型不听话。但得先分清一件事：遗漏到底来自哪里？是模型没有遵守已经给出的要求，还是这些要求根本没有提供。这两个原因对应的处理办法完全不同。
+
+Prompt 是影响本次生成的输入。所谓提示工程，就是把愿望具体化为三件事：依据什么、完成什么、怎样验收。重点不在措辞漂亮，而在任务定义、提供哪些材料，以及给出少量示例。
+
+接下来我要把这句愿望拆成六个可以逐个回答的问题。拆开以后你会发现，原本模糊的一团要求，变成了一张能逐条核对的清单。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 300, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体　·　2.2</Text>
+        </Box>
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.65, width: 1000 }}>“帮我安排开放日”没有说明日期、房间或交付形式。把愿望写成“依据什么、完成什么、怎样验收”，它才成为一份可以逐条核对的说明。</Text>
+    </Box>
+
+    <Box style={{ height: 380, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 300, height: 220, background: '#F4F7FA', borderRadius: 12, padding: 22, flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#546779' }}>一句愿望</Text>
+            <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.5 }}>“帮我安排开放日”</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.9 }}>没有说明日期{'\n'}没有说明房间{'\n'}没有说明交付形式</Text>
+        </Box>
+
+        <Box style={{ width: 44, height: 44, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+        </Box>
+
+        <Box style={{ width: 760, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 12, height: 104 }}>
+                <Box style={{ width: 245, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>目标　交付什么</Text>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.55 }}>整理约束，提出三个活动的可行时间安排</Text>
+                </Box>
+                <Box style={{ width: 245, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>输入　依据哪些材料</Text>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.55 }}>四份材料文件，预约状态另行查询</Text>
+                </Box>
+                <Box style={{ width: 245, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>约束　必须满足什么</Text>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.55 }}>日期、开放时间、容量、时长、房间</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 12, height: 104 }}>
+                <Box style={{ width: 245, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>输出　文件与格式</Text>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.55 }}>约束清单、候选方案、依据与未解决事项</Text>
+                </Box>
+                <Box style={{ width: 245, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>假设　未知项如何处理</Text>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.55 }}>未查询不等于无预约，要标为待核对</Text>
+                </Box>
+                <Box style={{ width: 245, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>验收　用什么判通过</Text>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.55 }}>和原始材料核对，再由校验器检查</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

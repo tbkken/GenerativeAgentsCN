@@ -1,0 +1,84 @@
+<Slide notes={`来访者这边的行为最容易写得含糊，我把它拆成六条可以检查的动作。
+
+他只持有自己的需求，首次提交的是指定话语，也就是带着刻意含糊的那句请求。只有被询问目的时才补充信息。收到建议之后，他要保留建议来源，并且用自己实际已经知道的地址去导航，而不是凭空知道新地点。
+
+接近对象之后取真实交互项；收到适配窗口的回复以后，再用真实发言或后续交互确认下一步。这里的关键是分开判断：移动、请求、收到答复是三件事。
+
+所以「我知道了」这句话不能替代闭环证据。我们要求的是能指出哪一步提交、哪一步接收、哪一步产生了新的认识，而不是只听人物自己说他明白了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.4　其余三份材料怎样写完整</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>共同 Brain 的来访者部分</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 700, flexDirection: 'column', gap: 6 }}>
+
+                <Box style={{ width: 700, height: 54, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>只持有自己的需求</Text>
+                </Box>
+
+                <Box style={{ width: 700, height: 54, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>首次提交指定话语</Text>
+                </Box>
+
+                <Box style={{ width: 700, height: 54, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>被询问目的才补充</Text>
+                </Box>
+
+                <Box style={{ width: 700, height: 54, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>收到建议后保留来源，使用实际已知地址导航</Text>
+                </Box>
+
+                <Box style={{ width: 700, height: 54, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>接近对象后取真实交互项</Text>
+                </Box>
+
+                <Box style={{ width: 700, height: 54, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 32, background: '#26816B' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', width: 640 }}>收到适配窗口回复后，以真实发言或后续交互确认下一步</Text>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+                <Box style={{ width: 420, height: 210, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>「我知道了」不算证据</Text>
+                    <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>移动、请求与收到答复分开判断，不让一句话代替闭环证据。</Text>
+                </Box>
+
+                <Box style={{ width: 420, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>不共享私有记忆</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>使用同一个 Brain，并不等于四名来访者之间可以互相读取记忆。</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 220 }}>逐项检查</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 880 }}>四份全文是否都明确回答了「什么证据触发下一步」。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 27</Text>
+    </Box>
+
+</Slide>

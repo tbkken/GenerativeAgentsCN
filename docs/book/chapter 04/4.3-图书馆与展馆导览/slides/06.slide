@@ -1,0 +1,70 @@
+<Slide notes={`接下来是这次实验里唯一真正被改动的东西。
+
+两幅平面图来自同一个对象：24 格宽、18 格高的网格，边界封闭、内部连通。入口、甲厅、乙厅、休息区四个区域的位置在两幅图里完全一样，资料对象和邻格关系也一样。
+
+不同之处只有一处：那块橙色的导览牌。基线条件里它立在入口区靠左的位置，坐标为 2、2、1、1；对照条件里它挪到入口区偏中右的位置，坐标为 12、5、1、1。
+
+位置移动的时候，语义范围与服务范围跟着走，显示素材也随之更新，但我不新增也不修改任何一个碰撞格。名称、内容、根 Skill、交互距离、图片尺寸全部保持一致，背景里也不能留下另一块烘焙好的牌子。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>②　　4.3.2　唯一干预：同一块非阻挡牌的位置</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>同一块牌，两个位置</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>外框与内部通路完全相同，只有橙色牌子的坐标改变；这是同一对象的两个独立实验条件。（平面图为示意，不含出生点与路径验收）</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 32, marginTop: 10 }}>
+
+            <Box style={{ width: 300, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>同一对象</Text>
+                <Box style={{ width: 260, height: 64, flexDirection: 'column' }}>
+                    <Box style={{ height: 32, background: '#FFFFFF' }} />
+                    <Box style={{ height: 32, flexDirection: 'row' }}>
+                        <Box style={{ flex: 1, background: '#EDF4FC' }} />
+                        <Box style={{ flex: 1, background: '#ECF7F2' }} />
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>24 × 18 格　边界封闭　内部连通{'\n'}入口／甲厅／乙厅／休息区位置不变</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#546779' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 400, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 400, height: 76, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF', width: 56 }}>基线</Text>
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>[2,2,1,1]</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>入口区靠左</Text>
+                    </Box>
+                </Box>
+                <Box style={{ width: 400, height: 76, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28', width: 56 }}>对照</Text>
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>[12,5,1,1]</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>入口区中右</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 312, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>随位置一起动的</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>语义范围与显示素材同步移动</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>不增改任何碰撞格</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>名称、内容、根 Skill、交互距离、图片尺寸相同</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

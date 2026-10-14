@@ -1,0 +1,56 @@
+<Slide notes={`接下来讲可靠性，但我想先把一个常见的误解拆掉：不是所有失败都值得重试。
+
+把错误分成三类，处理方式完全不同。
+
+第一类是暂时的。网络抖了一下，或者遇到部分限流。这一类可以在预算之内做有限次的退避重试，注意是有限，而且要算进时间和资源里。
+
+第二类是输入写错了。参数不对、房间根本不存在。这一类重试多少次都没用，得回去修输入。
+
+第三类是权限被拒绝，或者压根没有可行的时段。这一类不是技术问题，是条件问题：要么说明原因，要么调整条件，要么直接停下。
+
+分不清这三类，重试就变成了碰运气。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.13.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>可靠性来自有边界的处理</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>先判断错误属于哪一类，再决定是退避、修输入，还是停下来。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 368, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>暂时的失败</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>网络失败、部分限流：在预算内有限退避</Text>
+            </Box>
+            <Box style={{ width: 368, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>输入的问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>参数错误、未知房间：修正输入再跑</Text>
+            </Box>
+            <Box style={{ width: 368, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>条件的问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>权限拒绝、没有可行时段：说明原因或停止</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 880, height: 54, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>重试必须有边界：限次数、限总时长、限资源</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 34</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,75 @@
+<Slide notes={`最容易出错的地方是把调用数直接当成钱。这一条我要说重一点。
+
+调用次数不是货币费用。真正的金额受两件事影响：上下文有多长，以及模型按什么价格计价。这两样都没有资料，就只能报调用次数或者 Token 数，不能编一个金额出来。
+
+还有一种情况要提前想到：一项都没闭环的时候，单位成功代价没有定义。这时候不能写无穷大，也不能写零，只能报总投入，并说明单位值为什么算不出来。
+
+另外，墙钟耗时和虚拟业务等待是两回事。挂着暂停、有人工排查的那段时间，不能拿来当模型的吞吐性能；虚拟世界里业务等待的时间，也不等于真实延迟。
+
+有多少证据说多少话。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.5　调用数、金额与耗时</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>调用数不是货币费用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 396, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 396, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>分子包含什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>未闭环任务、全部 Attempt、恢复前的失败和真实重试都不剔除。只算成功路径，代价一定报低。</Text>
+            </Box>
+
+            <Box style={{ width: 396, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>零成功怎么办</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>一项都没闭环时，单位成功代价没有定义，不能写成无穷大或零，只报总投入。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 720, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ width: 720, flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 26 }}>
+                <Box style={{ width: 190 }}><Text style={{ fontSize: 14, color: '#546779' }}>要报什么</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>需要什么证据</Text></Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>调用与 Token</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>有真实用量记录时，报调用次数与 Token 数，并注明统计口径与时间范围</Text></Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 92, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>金额</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>需要真实用量加上对应时间的计价，缺任何一样就不写金额</Text></Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>墙钟耗时</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>含暂停与人工排查的挂钟时间，要说明它受了哪些人工介入影响</Text></Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>虚拟业务等待</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>与墙钟时间不是一回事，不能拿来代替模型吞吐或真实业务延迟</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 25</Text>
+    </Box>
+
+</Slide>

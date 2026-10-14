@@ -1,0 +1,78 @@
+<Slide notes={`这四格是把一个成绩变成可用证据的最小集合。
+
+模型身份，要写到能唯一指认的程度。同一个厂商可能同时提供好几个名字很像的模型，写错一格，后面的比较就全部作废。
+
+题目范围同样关键。HLE 是 2,500 道题；另有一份 HLE-Verified 是 1,811 道，其中 668 道沿用已核验题，1,143 道是修订题，还排除了原集里 689 道不确定题。题集不一样，两个百分比就不能放在一起排名。
+
+运行条件最容易漏。用不用工具、每道题多少 Token 预算、用什么采样设置、由谁判分，都会改变结果。
+
+来源与时间决定你能追到哪一步。厂商自报和维护方公布，性质不同；报告日期要写，查不到的调用日期就写未披露，不能用查阅日期顶替。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.1　专家级问题已经能解决一部分，工具会改变能力边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四格共同限定一个成绩</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, height: 26 }}>
+            <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>仅有模型名和百分比，还不足以判断它能否与另一行比较。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 330 }}>
+
+            <Box style={{ width: 273, height: 330, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 52, height: 52, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>模</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型身份</Text>
+                <Box style={{ width: 40, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>完整标识与显示名分别记录；{'\n'}能拿到什么精度就写什么精度</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 330, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 52, height: 52, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>题</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>题目范围</Text>
+                <Box style={{ width: 40, height: 3, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>基准版本与子集；{'\n'}样本量、修订与排除项</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 330, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 52, height: 52, borderRadius: 10, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>运</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>运行条件</Text>
+                <Box style={{ width: 40, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>工具、预算、配置；{'\n'}采样设置与运行框架</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 330, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 52, height: 52, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>源</Text>
+                </Box>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>来源与时间</Text>
+                <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>厂商自报还是维护方公布；{'\n'}日期，以及未披露的是哪些字段</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 84, background: '#F7F3E8', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 3, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>四格填齐之后，才轮到比较；条件不同就写"条件不同"，不写"谁更强"。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

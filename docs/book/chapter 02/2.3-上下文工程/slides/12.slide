@@ -1,0 +1,93 @@
+<Slide notes={`两条路线放在一起看，差别在于状态保存在哪一边。
+
+路线一，手工管理历史。本轮输入是历史加新材料；模型返回之后，我们把完整的 response.output 留下来，下一轮把它作为输入的一部分再发出去。应用要自己保管历史，也要自己控制它别长到超限。
+
+路线二，关联前一次响应。上一轮响应有一个真实的 id，下一次请求带上 previous_response_id，服务端就知道接在哪一轮后面。例外是：行为要求不会自动继承，这一次仍要用 instructions 显式再发一遍。
+
+最后几句是边界：只保存 output_text 会丢掉工具调用这类条目；关联响应不等于前面那些 Token 免费；业务进度仍要由应用自己保存。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.3　OpenAI API：手工保留多轮状态</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两条路线，都要明确本轮输入</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ flex: 50, flexDirection: 'column', gap: 8 }}>
+
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>路线一　手工管理历史</Text>
+
+                <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>本轮输入</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>历史与新材料</Text>
+                </Box>
+
+                <Box style={{ height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                    <Box style={{ width: 44, alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text></Box>
+                </Box>
+
+                <Box style={{ height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>保留完整输出项</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>response.output</Text>
+                </Box>
+
+                <Box style={{ height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                    <Box style={{ width: 44, alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text></Box>
+                </Box>
+
+                <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>下轮输入</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>完整历史加新消息</Text>
+                </Box>
+
+            </Box>
+
+            <Box style={{ flex: 50, flexDirection: 'column', gap: 8 }}>
+
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>路线二　关联前一次响应</Text>
+
+                <Box style={{ height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>上一轮响应</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>真实的 response.id</Text>
+                </Box>
+
+                <Box style={{ height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                    <Box style={{ width: 44, alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text></Box>
+                </Box>
+
+                <Box style={{ height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>行为要求</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>本次仍要显式提供 instructions</Text>
+                </Box>
+
+                <Box style={{ height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                    <Box style={{ width: 44, alignItems: 'center' }}><Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text></Box>
+                </Box>
+
+                <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>下轮请求</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>previous_response_id</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 30, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>只保留 output_text 会丢工具项；关联响应不等于免费 Token；业务进度仍由应用单独保存。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 25</Text>
+    </Box>
+
+</Slide>

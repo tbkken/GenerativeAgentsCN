@@ -1,0 +1,51 @@
+<Slide notes={`本节练习是：把「仿真证明澄清策略有效」改成可验收的项目要求。
+
+原写法的问题在于，它把结果提前写进了题目。一旦结论已经确定，收集到的材料就只能往一个方向解释，项目也失去了允许结果与预期不同的空间。
+
+一个比较好的答案是：在固定教学条件下比较两种入口咨询策略，提交包含全部任务、未完成样本、调用负担和证据定位的报告，由接收者抽查任一任务的判分。
+
+这句话规定了应完成的工作——哪些任务、哪些样本、哪些负担、证据要能定位，也明确把判断权交给接收者。同时它允许结果与预期不同，甚至允许结论是「澄清没有带来闭环改善」。这才是一个项目该有的样子。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.6　完成不等于所有问题都得到肯定答案</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把「证明有效」改成可验收的要求</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 1152 }}>本节练习是把一句已经写好结论的要求，改写成一项可以验收的项目要求。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 480, height: 220, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>原来的写法</Text>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.4 }}>仿真证明澄清策略有效</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>结果被提前写进了题目，没有留下与预期不同的空间。</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 220, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>一个较好的答案</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.65 }}>在固定教学条件下比较两种入口咨询策略，提交包含全部任务、未完成样本、调用负担和证据定位的报告，由接收者抽查任一任务的判分。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1060 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>它规定了应完成的工作，也允许结果与预期不同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>全部任务、未完成样本、调用负担与证据定位都要留下，判断权交给接收者。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

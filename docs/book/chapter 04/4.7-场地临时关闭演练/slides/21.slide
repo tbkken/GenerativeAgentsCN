@@ -1,0 +1,72 @@
+<Slide notes={`四个指标的口径我一条一条写清楚。
+集合到达率，是窗口内首次进入集合区的人数除以三。引导员不进分母，他不是集合者。
+人均移动负担，是三个人在窗口内全部已执行路径的边数除以三，单位是格每人。数组里含起点，但不多计一格；重复查询不产生位移，也不计入。
+路线执行启动时延，是从第一次获得目标可达路线，到第一次实际朝这个目标 MOVE 之间的虚拟分钟数，可以是零。可达查询在同一个 Step 就执行的，时延记零；没有执行的，不补时间。
+无效请求率，是地址、目标证据或权限不合法的导航和 MOVE 拒绝数，除以全部导航和 MOVE 请求数。合法目标确实不可达要另列，不进无效的分子。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.5　四个指标的计算口径</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>每个指标的分母是什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+
+        <Box style={{ width: 360, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>口径先行</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 360 }}>分母写不出来，结果就不能与别的案例比较，也无法复核。</Text>
+            <Box style={{ width: 360, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>引导员不入分母</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>到达率与移动负担都只算三名集合者。</Text>
+            </Box>
+            <Box style={{ width: 360, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不可达要另列</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>合法目标确实不可达，不算参数无效，不进无效分子。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 760, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 26 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>指标</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>口径</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>集合到达率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>W 内首次进入集合区人数 ÷ 3；引导员不入分母</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>人均移动负担</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>三人 W 内全部已执行路径边数 ÷ 3，单位格／人</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>路线执行启动时延</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>首次获可达路线 → 首次朝该目标 MOVE，虚拟分钟，可为 0</Text></Box>
+            </Box>
+
+            <Box style={{ height: 100, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>无效请求率</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>地址、目标证据、权限不合法的拒绝数 ÷ 全部请求</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 26</Text>
+    </Box>
+
+</Slide>

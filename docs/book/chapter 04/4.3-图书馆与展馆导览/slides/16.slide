@@ -1,0 +1,100 @@
+<Slide notes={`40 格到底该怎么理解，这里要划清三条界线。
+
+第一，它是人物任务约束，也是人工判分的条件，但不是内核的自动额度。内核不会在 40 格处扣掉人物的行动，也不会把他截停。
+
+第二，未知消耗不能当成零。人物要根据真实进度自己控制探索，遇到没算清的路程，我们也要如实记录。
+
+第三，预算会凸显绕行代价，同时也会掩盖继续探索之后取得的成功。所以要同时报告预算内和预算外的结果，并且不能把这 40 格称作人类耐力标准。
+
+另外，走到预算不等于要虚构离馆行为，人物可以真的在场地里休息或者阅读。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.4　一个时间窗口，一个软步行预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>每人 40 格：是约束，不是额度</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 668, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>40 格标尺（每格 1 个移动格）</Text>
+
+            <Box style={{ width: 656, height: 56, flexDirection: 'row' }}>
+                <Box style={{ width: 82, height: 56, background: '#EDF4FC', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>5</Text>
+                </Box>
+                <Box style={{ width: 82, height: 56, background: '#FFFFFF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>10</Text>
+                </Box>
+                <Box style={{ width: 82, height: 56, background: '#EDF4FC', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>15</Text>
+                </Box>
+                <Box style={{ width: 82, height: 56, background: '#FFFFFF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>20</Text>
+                </Box>
+                <Box style={{ width: 82, height: 56, background: '#EDF4FC', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>25</Text>
+                </Box>
+                <Box style={{ width: 82, height: 56, background: '#FFFFFF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>30</Text>
+                </Box>
+                <Box style={{ width: 82, height: 56, background: '#EDF4FC', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>35</Text>
+                </Box>
+                <Box style={{ width: 82, height: 56, background: '#FFF4E6', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>40</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', justifyContent: 'space-between', width: 656 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>0</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>10</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>20</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>30</Text>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>40 格</Text>
+            </Box>
+
+            <Box style={{ width: 656, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.5 }}>它是人物任务约束，也是人工判分条件；人物按真实进度自己控制探索。</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>内核不会自动扣额或截停，未知消耗不能当零。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 452, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>三条界线</Text>
+
+            <Box style={{ width: 452, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>是约束与判分条件，不是内核自动额度</Text>
+            </Box>
+
+            <Box style={{ width: 452, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>未知消耗不能当零，路程要按已执行边如实累计</Text>
+            </Box>
+
+            <Box style={{ width: 452, height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                <Box style={{ width: 28, height: 28, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>不称为人类耐力标准；预算前后结果都要报告</Text>
+            </Box>
+
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>到预算不必虚构离馆，可以真的休息或阅读。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

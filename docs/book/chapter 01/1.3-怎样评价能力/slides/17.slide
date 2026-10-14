@@ -1,0 +1,145 @@
+<Slide notes={`把六次重复算出来，两条轨迹的形状就看得很清楚。
+
+蓝色是“至少成功一次”，公式是一减去（一减 p）的 k 次方。第一次是八成，第二次九成六，第三次九成九二，到第六次几乎就是一定成功。它一直在往上走，而且很快接近满。
+
+绿色是“每次都成功”，公式是 p 的 k 次方。第一次也是八成，第二次就掉到六成四，第三次五成一，第六次只剩两成六。它一直在往下走。
+
+两条线在第一次的时候重合成一个点，因为只做一次时，这两件事本来就是同一件事。从第二次开始分开，而且越走越远。
+
+这里必须提醒：这是固定概率的假设演算，不是题集实测。它假设同一道固定任务、初始状态和配置都相同、每一次试验互相独立。这几个条件缺一个，公式就不适用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.4　多给几次机会，与每次都可靠</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>p = 0.8：一次容易，六次很难</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 26 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 16, height: 16, background: '#276FBF', borderRadius: 3 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>至少一次成功　1 − (1 − p)^k</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 16, height: 16, background: '#26816B', borderRadius: 3 }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>每次都成功　p^k</Text>
+            </Box>
+            <Box style={{ flex: 1 }} />
+            <Text style={{ fontSize: 14, color: '#546779' }}>纵轴：假设条件下的概率（%）</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', padding: '0 140px' }}>
+
+            <Box style={{ flexDirection: 'row', height: 250, alignItems: 'flex-end', gap: 28 }}>
+
+                <Box style={{ width: 122, height: 250, flexDirection: 'row', gap: 10, alignItems: 'flex-end' }}>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>80</Text>
+                        <Box style={{ width: 56, height: 176, background: '#276FBF' }} />
+                    </Box>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>80</Text>
+                        <Box style={{ width: 56, height: 176, background: '#26816B' }} />
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 122, height: 250, flexDirection: 'row', gap: 10, alignItems: 'flex-end' }}>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>96</Text>
+                        <Box style={{ width: 56, height: 211, background: '#276FBF' }} />
+                    </Box>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>64</Text>
+                        <Box style={{ width: 56, height: 141, background: '#26816B' }} />
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 122, height: 250, flexDirection: 'row', gap: 10, alignItems: 'flex-end' }}>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>99.2</Text>
+                        <Box style={{ width: 56, height: 218, background: '#276FBF' }} />
+                    </Box>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>51.2</Text>
+                        <Box style={{ width: 56, height: 113, background: '#26816B' }} />
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 122, height: 250, flexDirection: 'row', gap: 10, alignItems: 'flex-end' }}>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>99.8</Text>
+                        <Box style={{ width: 56, height: 220, background: '#276FBF' }} />
+                    </Box>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>41.0</Text>
+                        <Box style={{ width: 56, height: 90, background: '#26816B' }} />
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 122, height: 250, flexDirection: 'row', gap: 10, alignItems: 'flex-end' }}>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>100</Text>
+                        <Box style={{ width: 56, height: 220, background: '#276FBF' }} />
+                    </Box>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>32.8</Text>
+                        <Box style={{ width: 56, height: 72, background: '#26816B' }} />
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 122, height: 250, flexDirection: 'row', gap: 10, alignItems: 'flex-end' }}>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#276FBF' }}>100</Text>
+                        <Box style={{ width: 56, height: 220, background: '#276FBF' }} />
+                    </Box>
+                    <Box style={{ width: 56, height: 250, flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 4 }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>26.2</Text>
+                        <Box style={{ width: 56, height: 58, background: '#26816B' }} />
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ height: 2, background: '#B5C7D8' }} />
+
+            <Box style={{ flexDirection: 'row', height: 22, gap: 28 }}>
+                <Box style={{ width: 122, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#546779' }}>k = 1</Text></Box>
+                <Box style={{ width: 122, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#546779' }}>k = 2</Text></Box>
+                <Box style={{ width: 122, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#546779' }}>k = 3</Text></Box>
+                <Box style={{ width: 122, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#546779' }}>k = 4</Text></Box>
+                <Box style={{ width: 122, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#546779' }}>k = 5</Text></Box>
+                <Box style={{ width: 122, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 14, color: '#546779' }}>k = 6</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24, height: 82 }}>
+            <Box style={{ width: 560, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>pass@k　至少一个候选成功</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>适合有可靠验证办法的场景，例如用测试检查程序</Text>
+            </Box>
+            <Box style={{ width: 568, background: '#ECF7F2', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>pass^k　独立重复 k 次，每次都成功</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>区分“偶尔能成”与“持续可靠”，服务台自动办理更关心后者</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>k = 2 时：至少一次成功 96%，每次都成功 64%</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>前提是同一道固定任务、初态与配置相同、各次独立；不能直接把题集平均准确率代入 p，自适应重试另评。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 31</Text>
+    </Box>
+
+</Slide>

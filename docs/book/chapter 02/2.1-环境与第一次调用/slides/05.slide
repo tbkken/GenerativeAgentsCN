@@ -1,0 +1,91 @@
+<Slide notes={`顺着这条线走一遍。最左边是本地程序，跑在读者自己的电脑上，负责读取材料和环境变量。这一步的问题往往最朴素：解释器不对、路径写错、依赖没装上。
+
+往右是 SDK 或者 HTTP 这一段，把请求构造出来发出去，问题多半是参数写错、字段名不对。
+
+再往右是模型服务，它先检查权限，再看这次请求的模型和参数是否被支持，然后完成生成。认证失败、权限不足、额度不够、限流，都发生在这一段。
+
+最右边是响应对象，它不只带文本，还带状态、工具项和用量。output_text 只是方便读文本的入口，不代替这三样信息。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.1　先认识本章的学习环境</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次请求经过的层</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 255, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>本地程序</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>读取材料{'\n'}与环境变量</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>SDK / HTTP</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>构造并发送请求</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>模型服务</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>检查权限并生成</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+
+            <Box style={{ width: 255, height: 130, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>响应对象</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>状态、输出{'\n'}与 usage</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', gap: 20 }}>
+
+            <Box style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 3, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>先定位本地问题</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>读环境变量失败、模块导入失败时，查解释器、文件与依赖。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1, background: '#B5C7D8' }} />
+
+            <Box style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 3, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>先定位服务问题</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>被拒绝、被限流时，查认证、权限与配额。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1, background: '#B5C7D8' }} />
+
+            <Box style={{ flex: 1, flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 3, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>另查任务结果</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>能返回但缺事实、违反约束，是任务没做完。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>output_text 只是文本入口</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>响应还可以包含工具请求、状态与用量，后续章节逐一展开。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

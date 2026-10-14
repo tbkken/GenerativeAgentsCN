@@ -1,0 +1,70 @@
+<Slide notes={`将来更换模型的时候，模型配置与能力评价也要重新进入视野。
+
+第一章给的模型基准，帮助我们理解候选模型大致能做什么。第二章讲的技术，说明资料、工具和上下文怎样影响实际表现。这两部分都很有用，但它们都不能替代本场景的实际任务评价。
+
+原因在于评分的对象不一样。一个模型在知识题上得分更高，不保证它在长链请求、记忆与对象反馈中更稳定。服务大厅这类任务需要多轮澄清、记住已说过的字段、在正确窗口给出适配回复，这些能力和知识答题不是一回事。
+
+所以换模型之后要重新测。用能力证据提出合理预期，再用本场景的实际任务去核对它。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.7　进一步扩展时，先识别改变了哪一层</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>换模型时，要重看什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>前两章能提供什么</Text>
+
+            <Box style={{ width: 440, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>第一章的基准</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>帮助理解候选模型大致具备什么能力</Text>
+            </Box>
+
+            <Box style={{ width: 440, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>第二章的技术</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>说明资料、工具与上下文怎样影响表现</Text>
+            </Box>
+
+            <Box style={{ width: 440, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>它们的位置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>提出合理预期，而不是给出结论</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 680, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>换模型时要重看的三件事</Text>
+
+            <Box style={{ width: 680, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', width: 612, lineHeight: 1.5 }}>模型配置与能力评价要重新进入视野</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', width: 612, lineHeight: 1.5 }}>知识题得分更高，不保证长链请求更稳定</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', width: 612, lineHeight: 1.5 }}>记忆与对象反馈中的表现要重新测</Text>
+            </Box>
+
+            <Box style={{ width: 680, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>它们都不能替代本场景的实际任务评价。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>29 / 31</Text>
+    </Box>
+
+</Slide>

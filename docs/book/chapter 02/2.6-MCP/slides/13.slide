@@ -1,0 +1,62 @@
+<Slide notes={`远程 HTTP 这一路，请求的发起方不在你的电脑上。
+
+按照 OpenAI 的接入方式，是 OpenAI 服务端去访问你配置的 MCP 地址。所以能不能连上，取决于对方能不能访问到那个地址。
+
+Streamable HTTP 通过 HTTP 传消息，适合连接远程服务。服务器是不是可达、要不要认证、部署在哪里，这些都由服务提供者安排，客户端能决定的只是填哪个地址。
+
+同一份能力，本地 stdio 由桌面宿主启动进程；远程 HTTP 则是把地址交给远端。两条路线不能共用一个未经验证的本机地址。
+
+新的远程教学部署请按当前 Streamable HTTP 文档实现，不要照搬旧的示例写法。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.3　远程 HTTP</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>请求由谁发起</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+            <Box style={{ width: 420, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>OpenAI 服务</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>远端请求发起方</Text>
+            </Box>
+            <Box style={{ width: 44, height: 140, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 420, height: 140, background: '#F7F3E8', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>可访问的 MCP 服务</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>Streamable HTTP</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>先确认实际可达性与授权</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 24, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>两端通过配置项 server_url 相连，地址由使用者在工具配置里给出</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 20 }}>
+            <Box style={{ width: 370, height: 180, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>传输方式</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>Streamable HTTP 通过 HTTP 传输消息，适合连接远程服务。</Text>
+            </Box>
+            <Box style={{ width: 370, height: 180, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>谁负责可达性</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>服务器的可达性、认证和部署由服务提供者安排。</Text>
+            </Box>
+            <Box style={{ width: 370, height: 180, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>当前推荐做法</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>新的远程教学部署优先按当前 Streamable HTTP 文档实现。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 27</Text>
+    </Box>
+
+</Slide>

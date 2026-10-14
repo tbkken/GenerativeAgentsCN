@@ -1,0 +1,66 @@
+<Slide notes={`这是 SWE-bench Verified 最扎眼的一个数字：百分之五十九点四。
+
+它的含义是，在这个基准最难、长期无人解决的那批题里，有近六成的测试用例本身有问题。测试有问题会往两个方向出错。一个方向是测试太窄，功能上完全正确的提交，却因为测试写得过于具体而被判失败。另一个方向是测试太宽，实际上错误的提交，因为测试覆盖不够而被放过。
+
+两个方向的影响不一样。太窄会压低分数，让模型看起来比实际差；太宽会抬高分数，让模型看起来比实际强。合在一起，分数的含义就模糊了。
+
+这就是 OpenAI 在 2026 年 2 月宣布不再报告这个基准成绩的原因之一。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑥　1.4.6　错题二：判分规则本身的缺陷</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>最难的那批题，测试有问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 28, alignItems: 'stretch' }}>
+
+            <Box style={{ width: 460, height: 452, background: '#FFF4E6', borderRadius: 12, padding: '24px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>SWE-bench Verified 最难题中的缺陷测试占比</Text>
+                <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>59.4%</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>指 138 道最难、且长期无人解决的问题里，测试用例本身存在缺陷的比例。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>来源：2026 年 2 月退役声明中引述的内部审计</Text>
+            </Box>
+
+            <Box style={{ width: 664, flexDirection: 'column', gap: 15 }}>
+
+                <Box style={{ width: 664, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>缺陷方向一：测试太窄</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>功能上完全正确的提交，因为测试写得过于具体而被判失败。后果是把分数压低。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 664, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 76, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>缺陷方向二：测试太宽</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>实际上错误的提交，因为测试覆盖不足而被放过。后果是把分数抬高。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ width: 664, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 76, background: '#546779' }} />
+                    <Box style={{ flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>加上污染，于是退役</Text>
+                        <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>一个方向压分、一个方向抬分，分数的含义就模糊了。这成为 2026 年 2 月停止报告该成绩的理由之一。</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>33 / 36</Text>
+    </Box>
+
+</Slide>

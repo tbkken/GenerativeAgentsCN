@@ -1,0 +1,76 @@
+<Slide notes={`右图为什么只有成功的任务？因为只有闭环了，我们才知道它用了多久。
+
+A 组的闭环用时是 6、7、8、11、12、17，中位数 9.5 分钟，还有 6 项没完成；B 组是 9、10、12、13、14、16、18、19，中位数 13.5 分钟，还有 4 项没完成。
+
+应该读成：B 组闭环更多，但在已经闭环的那部分里，典型用时更长。
+
+这不能证明 B 对每个人更慢，因为两组的成功子集可能不是同一批任务。也不能说某个任务是因为澄清才成功的。
+
+还有一个陷阱：右边两组不能一一连点。把 A 的一个点和 B 的一个点连起来，等于假定了它们是同一项任务的两次尝试，可数据里并没有这个对应关系。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.4　成功子集的用时</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>成功子集的用时不是全体完成时间</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 468, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 468, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>点数为什么不同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>左图每组固定 3 次 Run，所以只有 3 个点；右图 A 有 6 项、B 有 8 项已闭环任务，一共 14 个点。</Text>
+            </Box>
+
+            <Box style={{ width: 468, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不能一一连点</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>两组的成功子集可能不是同一批任务，连点就等于假定了它们一一对应，数据里没有这个关系。</Text>
+            </Box>
+
+            <Box style={{ width: 468, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>两条横线不一样</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>左图横线是汇总闭环率，右图横线是各自成功子集的中位数，两个横线的含义不同。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 648, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 648, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 48, height: 48, background: '#276FBF', borderRadius: 24, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>A</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>6，7，8，11，12，17</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>中位数 9.5 分钟　·　未闭环 6 项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 648, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 48, height: 48, background: '#26816B', borderRadius: 24, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>B</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B' }}>9，10，12，13，14，16，18，19</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>中位数 13.5 分钟　·　未闭环 4 项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 648, height: 140, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 100, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>应读为：B 闭环更多，已闭环子集典型时间更长。不能证明 B 对每人更慢，也不能说某任务因澄清才成功，两组成功子集可能不同。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 25</Text>
+    </Box>
+
+</Slide>

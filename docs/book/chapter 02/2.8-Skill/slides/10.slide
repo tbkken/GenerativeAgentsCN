@@ -1,0 +1,66 @@
+<Slide notes={`渐进读取拆成动作，就是三步。
+
+第一步是判断适用性。这一步只看 front matter 里的 name 和 description，不看脚本，也不看参考资料。名字含糊、描述空泛，就会走偏。第二步是读方法：打开 SKILL.md，看输入要求和步骤。第三步是按需展开，方法里引用到 references、scripts、assets 才去读。
+
+有三条边界要记住。方法要完整：输入、操作、验收和停止条件都写清楚，否则执行不下去。依赖要齐全：脚本要按自身位置找到材料，不能假定别人已切到 Skill 根目录。最后一条最重要——Skill 只提供方法本身，能不能连上服务、有没有执行权限，由宿主负责。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.2　渐进读取怎样节省上下文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先判断、再读方法、最后按需展开</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>图 2.8-1 的走向：每一步只搬进来下一步需要的东西。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 186, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 68, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>01</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先判断适用性</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>只看 name 与 description，决定这个方法是否相关。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 186, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 186, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 68, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>02</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>再读方法</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>打开 SKILL.md，读输入要求与操作步骤。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 186, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 30, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 186, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 68, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>03</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>按需展开</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>references、scripts、assets 用到哪份读哪份。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 62 }} />
+            <Box style={{ width: 44, height: 62 }} />
+            <Box style={{ width: 340, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.5 }}>方法要完整　输入、操作、验收、停止条件</Text>
+            </Box>
+            <Box style={{ width: 44, height: 62 }} />
+            <Box style={{ width: 340, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>依赖要齐全　脚本按自身路径发现材料</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 80, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>Skill 只提供方法，连接、执行权限与预算由宿主负责</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>装着 Skill，不等于它自己能连上服务，也不等于它有权执行命令。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 27</Text>
+    </Box>
+
+</Slide>

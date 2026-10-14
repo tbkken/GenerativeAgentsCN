@@ -1,0 +1,65 @@
+<Slide notes={`还有一个坑：60 分钟是截止，不是终点。
+
+窗口结束那一刻，没闭环的任务只是「还没完成」，不是「用了 60 分钟才完成」。当成完成时间填进去，平均值和整条分布会同时被抬高。
+
+这类只知道「至少这么久还没完成」的数据叫删失数据，处理方式要先说清再谈中心值。本入门例不拟合生存模型，但至少要意识到它的存在。
+
+真实提前停止时，报告要写清停在哪里、为什么停、影响多少任务。
+
+一种做法是把预定四项任务全部留在计划分母，注明含中断影响；另一种是另做完整窗口分析，但必须同列被排除的 Run 与理由，不能只留漂亮的那部分。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.4　截止、删失与提前停止</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>60 分钟是截止，不是终点</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 476, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>没有完成时间，{'\n'}就不写完成时间</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 476 }}>窗口结束那一刻，没闭环的任务只是「还没完成」。把它当成「用了 60 分钟」，会同时抬高平均值和整条时间分布。</Text>
+            <Box style={{ width: 476, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>删失：只知道「至少这么久」</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>任务可能在窗口外才完成，也可能永远不会完成。处理方式要先说清，再谈中心值；本入门例不拟合生存模型。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 640, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 100, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>提前停止要报覆盖与原因</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>真实发生提前停止时，写清停在哪里、为什么停、影响了多少任务。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 640, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 100, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>预定任务留在计划分母里</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>把预定的四项任务全部保留在计划分母中，同时注明其中含有中断带来的影响。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 640, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 100, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>另做完整窗口分析要同列排除项</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>若要单独分析完整窗口样本，必须同时展示被排除的 Run 与理由，不能只留漂亮的分析。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 25</Text>
+    </Box>
+
+</Slide>

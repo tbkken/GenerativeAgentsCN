@@ -1,0 +1,64 @@
+<Slide notes={`这一节讲完，留下三个问题，用到任何工具接入上都可以问。
+
+第一，它拿到了什么资料。材料来自哪里、覆盖到什么范围，决定了答案的上限。
+
+第二，它能调用什么工具。工具的清单、参数和返回结果，是判断一次调用成没成的依据。
+
+第三，谁来检查结果。工具返回不等于任务完成，业务规则有没有满足，要有独立的一步去核对。
+
+MCP 把连接这一段统一了，好处是可以把同一个能力接进不同的宿主，不必每次都重写对接代码。但它统一的只是连接方式。业务规则还是业务的事，权限还是服务的事，验收还是我们自己的事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>本节收束　·　2.6　MCP：让工具以共同的方式接入应用</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三个反问</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>换任何一个工具接入，都可以先问这三句。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 20, marginTop: 8 }}>
+
+            <Box style={{ width: 370, height: 180, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第一问</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>它拿到了什么资料</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>材料来自哪里、覆盖到什么范围，决定答案的上限。</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 180, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第二问</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>它能调用什么工具</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>工具清单、参数与返回结果，是判断调用成没成的依据。</Text>
+            </Box>
+
+            <Box style={{ width: 370, height: 180, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第三问</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>谁来检查结果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>工具返回不等于任务完成；业务规则是否满足要独立核对。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#20344B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>MCP 统一的是连接方式</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>业务规则还是业务的事，权限还是服务的事，验收还是我们自己的事。</Text>
+            </Box>
+            <Box style={{ width: 160, height: 52, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>2.6　本节完</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 27</Text>
+    </Box>
+
+</Slide>

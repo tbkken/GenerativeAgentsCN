@@ -1,0 +1,80 @@
+<Slide notes={`我们从前面几个案例里各攒下了一串百分比：咨询闭环、关键事实到达、约束满足，看着都是百分数，其实不是同一种量。有的按任务算，有的按 Run 算，有的按请求次数算。
+
+这一节先把口径摊开讲清楚：同一批数字，换一个分母、换一个权重，它回答的问题就换了。
+
+我们手上会有一份六行人工教学数据，它是为了练习比较而编出来的，不是系统跑出来的结果，所以任何比较结论都不能往模型效果上推。
+
+最后一步，把这套纪律写成自己的一页研究计划，让别人能照着判分。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第四章　面向问题的场景化应用　·　4.9　跨案例比较与研究设计</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>同一批数字，{'\n'}读成什么看口径</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 500 }}>四个案例各自留下一串比率。它们能不能放在一起比，取决于分母、权重与观察窗口是不是同一套。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 140, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>六行人工数据</Text>
+                </Box>
+                <Box style={{ width: 122, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>三种口径</Text>
+                </Box>
+                <Box style={{ width: 150, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>一页研究计划</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 70, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>人工汇总，不是系统运行结果</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>六行比较数据：每行一次 Run，每次四项任务</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, flexDirection: 'row', gap: 12 }}>
+                <Box style={{ width: 198, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>闭环率</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>分母是任务{'\n'}还是 Run</Text>
+                </Box>
+                <Box style={{ width: 198, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>用时</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>只算成功子集{'\n'}还是全体</Text>
+                </Box>
+                <Box style={{ width: 198, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>代价</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.4 }}>总量与单位值{'\n'}一起报</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 620, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 70, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>一页研究计划</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>别人按规则判一段示例，就能给这份计划判分</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 16 }}>
+                <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>结论只能停在证据能支持的位置：少重复、不同成功子集、没有现实校准，都推不出普遍优越。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 25</Text>
+    </Box>
+
+</Slide>

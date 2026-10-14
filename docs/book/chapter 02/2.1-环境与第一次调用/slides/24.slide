@@ -1,0 +1,54 @@
+<Slide notes={`这一节讲完了，我把要带走的东西收成三步。
+
+第一步，环境跑通。用人工写好的参考排期，确认校验器能给出"通过"和"不通过"两种结果。这一步不联网，也不需要密钥。
+
+第二步，一次真实响应。把密钥和模型名准备好，发出第一次调用，并且把返回的内容保存下来——保存下来它才是证据，看一眼就关掉不算。
+
+第三步，同一份材料。产品路线里读到的文件，必须和我们前面用的材料是同一份，否则两次结果没法比。这三步的顺序很重要：先本地，再联网，最后对照组。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.1　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25, textAlign: 'center' }}>这一次调用，先证明三件事</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 330, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>环境跑通</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>参考排期退出码 0，错误样本返回非零</Text>
+            </Box>
+            <Box style={{ width: 44, height: 132, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 330, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>一次真实响应</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>发出调用并把返回内容保存下来</Text>
+            </Box>
+            <Box style={{ width: 44, height: 132, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 330, height: 132, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>同一份材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>产品路线读到的文件与前面完全一致</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 82, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>顺序不能倒过来：先本地，再联网，最后对照组</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>倒过来做，一次失败要同时怀疑三件事，很难定位。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.2　Prompt：把愿望写成可执行任务</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 24</Text>
+    </Box>
+
+</Slide>

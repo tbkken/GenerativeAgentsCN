@@ -1,0 +1,64 @@
+<Slide notes={`动手的顺序是有讲究的：先分配，再制作，最后修正。
+
+第一步，把本节的分配表做完——每一行都要写清内容是什么、交给谁、通过什么方式进去、绝对不能包含什么。这张表定了，后面做什么才算有依据。
+
+第二步，按表制作并保存公共材料。做的过程中如果发现依赖没齐，就补齐对应内容，不要把悬空引用留给运行时去猜——系统猜不出来，只会失败。如果发现人物资料里混进了评分答案，先改文稿，改完再录入。
+
+还有一条边界：具体 Skill 的共同部分和唯一替换段，留到下一节评审。不能在这一节另写一套略有不同的业务流程，那样会出现两个互相矛盾的版本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.5　按内容关系安排作者操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先分配，再制作，后修正</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 64, height: 64, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>先完成本节分配表</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>内容、接收者、进入方式、不得包含什么，四件事逐行写清，再谈制作。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 64, height: 64, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>再制作并保存公共材料</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>发现依赖未齐就补齐对应内容，不把悬空引用留给运行时猜测。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 120, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 64, height: 64, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ width: 1020, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>发现问题先改文稿</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>人物资料一旦包含评分答案，修正文稿之后再录入，不在系统里就地遮掩。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+            <Box style={{ width: 1076, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不要在写作阶段抢跑下一节</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>具体 Skill 的共同部分和唯一替换段留到 5.4 评审，不能在本节另写一套略有不同的业务流程。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 27</Text>
+    </Box>
+
+</Slide>

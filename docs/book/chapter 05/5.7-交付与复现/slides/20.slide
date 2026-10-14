@@ -1,0 +1,54 @@
+<Slide notes={`凭据和费用这两件事，最好在交付之前就讲明白。
+
+先说凭据。包本身不携带模型密钥，它只声明需要哪些环境变量之类的凭据要求。接收者要在自己的目标机器上提供可用的凭据，而且密钥不该写进交付表，更不该写进 Skill 里。把密钥放进交付材料，等于把它交给了所有能拿到这份材料的人。
+
+再说离线与联网。离线读取不需要调用模型，所以它不产生请求，也不产生费用。但连接验证和正式执行不一样，它们真的会发出请求，也会真的计费。这一部分应该纳入一份独立的执行计划，写清谁授权、预算多少、用什么标识，而不是默认「顺便跑一下」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.5　正式复现是一项单独工作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>凭据自带，费用另算</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'stretch', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 280, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>凭据</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>包不携带模型密钥</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>包只声明环境变量等凭据要求，接收者在目标机器提供自己的可用凭据。</Text>
+                <Box style={{ width: 520, height: 62, background: '#FFF4E6', borderRadius: 8, padding: '12px 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>不把密钥写进交付表或 Skill。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, height: 280, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>离线与联网</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>离线读取不需要调用模型</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>连接验证和正式执行则可能产生请求与费用。</Text>
+                <Box style={{ width: 520, height: 62, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.6 }}>应纳入独立的执行计划。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>凭据归属与费用归属，都要写在交付说明里</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>谁提供密钥、谁批准预算、用哪个模型标识执行，都应在动手之前说清楚，而不是默认「顺便跑一下」。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

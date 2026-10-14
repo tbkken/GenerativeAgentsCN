@@ -1,0 +1,84 @@
+<Slide notes={`收到压缩文件后，先认清它是哪种包。
+
+普通结果 ZIP 装的是一段固定提交边界里的结果、报告和审计材料，可以看，不能当成正式 Run 包，也不能回放；改成 .garun 只是换了名字，内容合同没变。
+
+config 资源包装的是选定的基础资源和附件。它可显式保留未绑定的跨资源依赖，但进入实验前必须绑定完整。
+
+exp 也就是 .gaexp，装完整实验输入与装配，用来准备新运行。run 也就是 .garun，在内嵌实验之上带执行事实，可按条件回放、恢复或重跑。
+
+三种正式包都用 ga-package v2，类型由清单的 package_kind 识别，不靠文件名推断。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.3　四类文件对应不同用途</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先认清包类型，再决定怎么用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 78, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>文件类型，决定接收者拿它做什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>读完清单核实类型，再选择导入、运行或回放</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'stretch', gap: 16 }}>
+
+            <Box style={{ width: 276, height: 280, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 62, height: 26, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>ZIP</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>普通结果 ZIP</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>固定提交边界的结果与审计材料，可以查看，不能回放</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5, marginTop: 4 }}>改后缀不会让它变成正式包</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 280, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 86, height: 26, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>config</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>资源包</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>所选基础资源和附件，如地图、人物、Skill，可选导入</Text>
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.5, marginTop: 4 }}>进入实验前必须绑定完整</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 280, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 26, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>.gaexp</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>实验包</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>完整实验输入与装配，用来准备并开始一次新的运行</Text>
+                <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5, marginTop: 4 }}>三种正式包之一</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 280, background: '#F4F7FA', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 78, height: 26, background: '#20344B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>.garun</Text>
+                </Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>运行包</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>内嵌实验与执行事实，按条件回放、恢复或重跑</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, marginTop: 4 }}>身份与帧可以校验</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 90, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>扩展名或「能解压」不能单独证明协议验证通过</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>三种正式包采用 ga-package v2，类型由清单的 package_kind 识别，不靠文件名推断。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

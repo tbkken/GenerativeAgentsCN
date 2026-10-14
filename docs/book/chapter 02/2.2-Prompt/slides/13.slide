@@ -1,0 +1,72 @@
+<Slide notes={`示例给了以后，要防止一种误用：把它当成标准答案。
+
+例子里的时间只是演示。预约改为十点半到十一点半以后，例一里那个十点半到十一点半的新活动就不能再直接拿出来用，因为事实变了。示例要覆盖的是容易混淆的情况——端点相接和真正重叠正好是一对；同时要明确哪些内容只是演示，哪些是必须遵守的规则。
+
+再往上一层，是交付要求怎么提。我们要的是可检查的交付物：依据和简短的核对说明，说明这个结论是从哪份材料、哪次计算得来的。
+
+反过来，要求模型披露内部逐步思考，看起来更透明，其实更难核对。它的长篇自述不能替代查询记录，也不能替代程序跑出来的结果。读者真正需要的是来源、计算和结论，而不是一段自我叙述。
+
+把这两件事分开：示例负责教规则，交付合同负责要求证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.3　用示例澄清边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>示例教规则，不教数值</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 142, background: '#F4F7FA', borderRadius: 12, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 5, height: 78, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>示例教的是判断规则</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>不是让模型永远照抄十点半；时间变了，旧例子的时间就不能充当当前事实。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 142, background: '#F4F7FA', borderRadius: 12, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 5, height: 78, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>示例要覆盖容易混淆的情况</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>端点相接与真正重叠是一对最容易混的边界，放在一起才看得出区别。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 142, background: '#F4F7FA', borderRadius: 12, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 5, height: 78, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 8, flex: 1 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>明确哪些内容只是演示</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>示例的适用范围要说清，避免被当成可以套用的固定答案。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 480, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>交付要求：要哪一种</Text>
+
+            <Box style={{ height: 168, background: '#ECF7F2', borderRadius: 12, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>给出依据与简短核对说明</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>可检查的来源、计算和结论，能逐条对回材料。</Text>
+            </Box>
+
+            <Box style={{ height: 168, background: '#FFF4E6', borderRadius: 12, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>披露内部逐步思考</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>长篇自述不能替代查询记录与程序结果，更难核对。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,76 @@
+<Slide notes={`冲突不是单独一句话的问题，而是两份材料汇合以后才出现的。
+
+一边是 S01 里的既有设定，B 窗口提供设施问题咨询。另一边是资料包里多出来的一张教学便签，写着 B 窗口也能审批场地预约。把两句话放在一起，冲突就出现了——咨询被扩大成了审批。
+
+为什么这很要紧？因为一旦 B 窗口变成能审批，正确窗口的判断变了，任务设计要改，评分判据也要改。这不是补一句说明就能解决的事。
+
+所以本次决定是：便签不纳入当前场景。将来如果真需要审批机制，那是新需求，要另议范围。
+
+我还要强调一句：这张便签是为练习构造的反例，它被我们读到，并不等于对象就多了一项能力。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.3　冲突先登记，再决定是否采用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两份材料汇合，冲突才成形</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 430, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>S01　既有设定</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>B 窗口提供设施问题咨询</Text>
+            </Box>
+            <Box style={{ width: 292 }} />
+            <Box style={{ width: 430, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>新增教学便签</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>“B 窗口也能审批场地预约。”</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 193 }} />
+            <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 678 }} />
+            <Box style={{ width: 44, height: 48, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 193 }} />
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>C01　冲突登记</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>咨询扩大为审批，任务与判据都会改变</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 40, flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>本次决定</Text>
+                <Text style={{ fontSize: 17, color: '#20344B' }}>便签不纳入当前场景；需要新需求时另议范围</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 56, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>便签是为练习构造的冲突材料：被读到，不等于对象新增了一项能力。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 23</Text>
+    </Box>
+
+</Slide>

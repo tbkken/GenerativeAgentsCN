@@ -1,0 +1,69 @@
+<Slide notes={`现在把分叉画清楚。两组材料的上游完全一样：身份与服务范围是共同的，两边都不知道来访者没说出口的私人任务，也不能按姓名猜用途。
+
+分叉只发生在中间。基线这一支在信息不足时仍然给出推测建议，并明确说明这是推测；对照这一支缺少关键目的时先问，等收到真实补充之后再给建议。区别就这两三行。
+
+分叉之后两边再次合流：回复、提交和停止的写法完全相同。一次 world-act 成功后结束，答复经提交由目标人物下一轮接收，不提前宣布对方理解。
+
+所以核对时只要盯住中间那一段。如果两边在温度、模型、窗口规则上也有差别，那就不是唯一变量了，结论也就无法归因。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.1　交付全文，不只交付一句差异</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两组全文只允许一处变化</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>两组全文中唯一允许变化的位置是中间的咨询决策段；上游与下游必须逐字相同。</Text>
+
+        <Box style={{ width: 1152, height: 64, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>共同：身份与服务范围</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 168, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>直接建议组</Text>
+                <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>信息不足仍作推测建议{'\n'}明确说明不确定</Text>
+            </Box>
+            <Box style={{ width: 560, height: 168, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>先澄清组</Text>
+                <Box style={{ width: 40, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>缺关键目的先问{'\n'}收到真实补充后再建议</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#CB6B28' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 560, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#26816B' }}>↓</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 64, background: '#F4F7FA', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>共同：回复、提交、停止</Text>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', width: 1152, marginTop: 4 }}>只替换决策段，其余全文一致。同 skill_key 分处独立实验；同一闭包内出现同 key 异内容时应被阻断。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 27</Text>
+    </Box>
+
+</Slide>

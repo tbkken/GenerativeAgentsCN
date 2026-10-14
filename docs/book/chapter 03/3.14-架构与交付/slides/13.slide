@@ -1,0 +1,74 @@
+<Slide notes={`从「已经提出请求」到「别人真的知道了」，中间隔着三道门，一道都不能跳。
+
+第一道门是请求被接受。world-act 返回 accepted，只说明这次动作选择被系统接受了，还没有任何状态被写下来。
+
+第二道门是整步事实提交。请求、对象状态和回复一起通过 StepResult 落盘，到这一刻事情才算真正发生。
+
+第三道门是目标实际收到。反馈出现在下一轮的上下文里，人物据此判断、更新记忆，这才是获知。
+
+最容易犯的错误，是把「已提出更新请求」记成「全体来访者已经获知」。这一句话跨过了三道门里还没成立的两道。写交付材料的时候要说清楚：哪一道过了，哪一道没有。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.3　从一条咨询看跨步反馈</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从请求到获知，隔着三道门</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>三道门依次成立，缺一道，后面的结论就还早。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 132, height: 92, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>门 ①</Text>
+            </Box>
+            <Box style={{ width: 20 }} />
+            <Box style={{ flex: 1, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>请求被接受</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>world-act 返回 accepted：只说明动作选择被接受。</Text></Box>
+                <Box style={{ width: 180 }}><Text style={{ fontSize: 14, color: '#276FBF' }}>还没有状态被写下</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 154, height: 92, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>门 ②</Text>
+            </Box>
+            <Box style={{ width: 20 }} />
+            <Box style={{ flex: 1, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>整步事实提交</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>请求、对象状态与回复一起通过 StepResult 落盘。</Text></Box>
+                <Box style={{ width: 180 }}><Text style={{ fontSize: 14, color: '#276FBF' }}>到这一刻才真正发生</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 176, height: 92, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>门 ③</Text>
+            </Box>
+            <Box style={{ width: 20 }} />
+            <Box style={{ flex: 1, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>目标实际收到</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>反馈出现在下一轮上下文，人物据此判断并更新记忆。</Text></Box>
+                <Box style={{ width: 180 }}><Text style={{ fontSize: 14, color: '#26816B' }}>这才是「已获知」</Text></Box>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>把「已提出更新请求」记成「全体来访者已经获知」</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>这一句话跨过了两道还没成立的门；报告里要说清哪一道过了、哪一道没有。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 29</Text>
+    </Box>
+
+</Slide>

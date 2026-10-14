@@ -1,0 +1,79 @@
+<Slide notes={`两组都会遇到冲突，也都有准备定稿的时刻。差别只在于：对照段在这个时刻多调用了一次逐项核对。
+
+这个子技能拿到三样东西：共同题面、已经收到的限制及来源、当前那份完整候选。要做的事很朴素——把输入里本来就有的规则，逐条拿去比候选。
+
+比完之后，每一项只能落在三种状态之一。满足，说明这条规则与候选不冲突。冲突，说明候选违反了它。缺信息，说明这条规则压根还没收到，比如白露那两条没传过来，就只能标缺口。
+
+它最后返回的是待询问的问题，而不是一份答案。主持人拿到缺口，再决定是去追问、改方案，还是就此定稿。同一份候选、同一组条件，只核对一次。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.4　唯一变化：是否显式调用核对子 Skill</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>逐项核对返回什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 16, color: '#546779' }}>逐项标出三种状态，再返回待询问的问题。</Text>
+
+            <Box style={{ width: 620, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Box style={{ width: 104, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>满足</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, flex: 1 }}>这条已有规则与当前候选不冲突</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Box style={{ width: 104, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>冲突</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, flex: 1 }}>候选违反了已收到的限制，必须处理</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 44, background: '#B5C7D8' }} />
+                <Box style={{ width: 104, height: 48, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>缺信息</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.55, flex: 1 }}>规则尚未收到；没收到白露两条件就标缺口，不猜教师答案</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>传入三样输入</Text>
+
+            <Box style={{ width: 500, height: 66, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>共同题面</Text>
+            </Box>
+            <Box style={{ width: 500, height: 66, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>已收到的限制及其来源</Text>
+            </Box>
+            <Box style={{ width: 500, height: 66, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>当前完整候选</Text>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同候选与同条件集合只核对一次</Text>
+
+            <Box style={{ width: 500, height: 84, background: '#ECF7F2', borderRadius: 10, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>据返回的缺口决定：追问、修订，或定稿</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 26</Text>
+    </Box>
+
+</Slide>

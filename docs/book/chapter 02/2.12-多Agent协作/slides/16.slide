@@ -1,0 +1,92 @@
+<Slide notes={`把两种方式并排看，差别集中在四处。
+
+第一是步骤来源。固定工作流的步骤和分支由程序预先规定；自主协作则由协调者根据任务动态选择角色。第二是灵活程度，前者运行时不变，要改就得改程序；后者可以继续追问、甚至临时改变分工。
+
+第三是调用次数。固定工作流事先就确定，比如本章脚本固定三次；自主协作难以预估，可能反复追加。第四是失败传播，固定工作流的路径可预测、容易复现；自主协作会让上下文扩散，失败传播更难预测。
+
+所以选择的关键不是哪种更先进，而是你愿不愿意用确定性去换灵活性。任务越需要严格验收，越应该偏向前者。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.12.4　工作流和自主协作的差异</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁定步骤：预定，还是动态</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 480, height: 52, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>固定工作流</Text>
+            </Box>
+            <Box style={{ width: 152 }} />
+            <Box style={{ width: 480, height: 52, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>自主协作</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 480, height: 100, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>程序预先规定步骤和分支</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>例如两个审阅都完成后才汇总，校验失败就停止</Text>
+            </Box>
+            <Box style={{ width: 152, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>步骤来源</Text>
+            </Box>
+            <Box style={{ width: 480, height: 100, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>协调者按任务动态选择角色</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>分工在运行时才决定，不由程序写死</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 480, height: 100, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>运行时不变，改法要改程序</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>流程是代码的一部分，行为稳定可复现</Text>
+            </Box>
+            <Box style={{ width: 152, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>灵活程度</Text>
+            </Box>
+            <Box style={{ width: 480, height: 100, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>可以继续追问、改变分工</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>灵活来自运行时判断，代价是不确定</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 480, height: 100, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>调用次数事先确定</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本章脚本固定三次调用，费用可预先估</Text>
+            </Box>
+            <Box style={{ width: 152, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>调用次数</Text>
+            </Box>
+            <Box style={{ width: 480, height: 100, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>难以预估，可能反复追加</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>继续追问就要继续调用，预算容易被突破</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 480, height: 100, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>路径可预测，容易复现</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>失败点明确，便于定位和重跑</Text>
+            </Box>
+            <Box style={{ width: 152, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>失败传播</Text>
+            </Box>
+            <Box style={{ width: 480, height: 100, background: '#FFF4E6', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>上下文扩散，失败传播更难预测</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>一个环节的偏差，可能被带到后面几步</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 25</Text>
+    </Box>
+
+</Slide>

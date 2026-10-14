@@ -1,0 +1,74 @@
+<Slide notes={`同一条命令，我们让它跑三次，每次换一个输入。
+
+第一次用人工构造的正确方案，期望退出码是 0，报告写到 output/validation-report.json。第二次用示例目录里提供的错误方案，期望退出码是 1，报告写到 invalid-report.json。第三次故意给一个不存在的文件名，期望退出码是 2，错误信息出现在标准错误里。
+
+三次结果都要留下来，不要用同一个文件覆盖之后就丢掉失败记录。失败记录才是判断「程序有没有真的在工作」的证据。
+
+这三步做完，手里就有了一条可信的基线：同样一条命令，什么输入应该得到什么结论，我心里有数。基线没有，重跑就没有参照。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.3　先手工运行，再让模型调用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一脚本，三次运行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 300, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Box style={{ height: 28 }}><Text style={{ fontSize: 14, color: '#546779' }}>输入</Text></Box>
+            <Box style={{ height: 88, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>01 正确方案</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>fixtures/valid-schedule.json</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>02 错误方案</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>fixtures/invalid-schedule.json</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>03 不存在的文件</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>fixtures/not-found.json</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 820, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+            <Box style={{ height: 28, flexDirection: 'row', gap: 16, padding: '0 18px' }}>
+                <Box style={{ width: 448 }}><Text style={{ fontSize: 14, color: '#546779' }}>预期结果</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>要保存什么</Text></Box>
+            </Box>
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 448 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>退出码 0；报告写入 output/validation-report.json</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>通过报告与退出码</Text></Box>
+            </Box>
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 448 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>退出码 1；报告写入 output/invalid-report.json</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>不合格报告与失败原因</Text></Box>
+            </Box>
+            <Box style={{ height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 448 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>退出码 2；错误信息写入标准错误，不生成报告</Text></Box>
+                <Box style={{ width: 320 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>输入错误的诊断信息</Text></Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F4F7FA', borderRadius: 8, padding: '14px 18px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>不要用同一个文件覆盖后便丢弃失败记录：失败报告才是判断程序有没有真的在检查规则的证据。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

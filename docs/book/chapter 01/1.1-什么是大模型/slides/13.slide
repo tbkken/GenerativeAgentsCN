@@ -1,0 +1,64 @@
+<Slide notes={`沿着刚才的回环，有三个地方特别容易判断错，我们一个一个说。
+
+第一是输入端。文件躺在电脑里，这件事本身没有任何意义。除非应用真的去读了它，并且把内容放进这一次的请求里，模型才可能用上它。所以在青禾这件事上，"房间容量表在我的电脑上"不等于"模型看到了容量表"。
+
+第二是生成端。模型做的事是为接下来可能出现的片段打分，然后按规则选一个。它会一直生成，直到出现结束信号，或者撞到长度限制。整个过程中，它没有去查任何外部事实。
+
+第三是显示端。你在屏幕上看到文字一个一个冒出来，这叫流式输出，它是一种呈现方式。它给人"正在思考、正在核对"的错觉，但实际上它只是在陆续显示已经生成的内容。
+
+最后补一句：预测下一个片段，并不等于只会在字面上接词。模型能学到语法、概念、代码结构，甚至解题的模式。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.3　一段回答是怎样生成的</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>输入端、生成端、显示端</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24, flex: 1 }}>
+
+            <Box style={{ flex: 1, background: '#EDF4FC', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 14 }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 14, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>入</Text>
+                </Box>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>输入端</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>文件在电脑里，不等于已经送给模型</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, marginTop: 'auto' }}>需要应用真正去读取，并把内容放进这一次的请求里，模型才可能用得上。</Text>
+            </Box>
+
+            <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 14 }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 14, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>算</Text>
+                </Box>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>生成端</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.5 }}>为后续内容算分，按规则选择</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, marginTop: 'auto' }}>一直生成到停止或达到限制；这个过程不核验外部事实，也不执行工具。</Text>
+            </Box>
+
+            <Box style={{ flex: 1, background: '#ECF7F2', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 14 }}>
+                <Box style={{ width: 56, height: 56, borderRadius: 14, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>显</Text>
+                </Box>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B' }}>显示端</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B', lineHeight: 1.5 }}>陆续显示，不等于边输出边核验</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, marginTop: 'auto' }}>文字一个个出现只是呈现方式，不代表这些内容已经被检查过。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', border: '1px solid #E5C9A8', flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+            <Box style={{ width: 3, height: 30, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>预测下一个片段并不等于只会简单接词：模型能学到语法、概念、代码结构，以及处理一类问题的模式。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 26</Text>
+    </Box>
+
+</Slide>

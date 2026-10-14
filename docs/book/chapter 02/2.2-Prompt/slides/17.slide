@@ -1,0 +1,61 @@
+<Slide notes={`材料拼进去以后，还有一个很容易被误解的地方。
+
+Markdown 标题、来源标签、分隔线，这些写法确实有助于说明内容边界，让模型更好地区分哪一段是任务、哪一段是材料。但它们只是文本约定，不是权限隔离。写上“以下内容不是指令”，不等于模型在机制上就无法服从它。
+
+这里还有一条更具体的限制：这段演示没有提供查询工具，所以模型不能真正查询预约。这个事实必须反映在回答里——预约状态保留成待核对项，而不是给出一个看起来确定的结论。
+
+最后说说提示放在哪里。官方现行建议是让代码来管理应用提示，直接通过 instructions 和 input 发送。本书据此把提示保存在代码或文本文件中，这样它可以和输入、模型标识、运行结果放在一起比较。我们不依赖在平台上另外创建的可复用提示对象，少一层同步关系，就少一处对不上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.2.4　OpenAI API：把指令与材料分别发送</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>边界标记不是权限隔离</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 150, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>标题与标签有用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>Markdown 标题、来源标签有助于说明内容边界。</Text>
+            </Box>
+
+            <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>但标记不等于隔离</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>边界标记本身不是权限隔离，写在文本里的约定不改变能力边界。</Text>
+            </Box>
+
+            <Box style={{ height: 150, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>没有工具就查不到</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>本轮没有查询工具，预约状态只能保留为待核对项。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 680, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>提示保存在哪里</Text>
+
+            <Box style={{ height: 200, background: '#EDF4FC', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>官方现行建议</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>应用提示交给代码管理，直接通过 instructions 与 input 发送。</Text>
+            </Box>
+
+            <Box style={{ height: 200, background: '#ECF7F2', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>本书的做法</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>提示保存在代码或文本文件中，与输入、模型标识和结果一起比较，不另建可复用提示对象。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

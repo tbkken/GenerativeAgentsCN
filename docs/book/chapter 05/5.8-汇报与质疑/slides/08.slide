@@ -1,0 +1,84 @@
+<Slide notes={`二十分钟的骨架可以用一条时间线来记。前四分钟讲研究什么，接着四分钟讲怎样比较，中间六分钟放证据，最后六分钟做解释与讨论。线段长度就是时间长度，一眼能看出哪一段最重。
+
+我想强调中间和后面这两段。证据段优先选一项闭环、一项未闭环的任务，把入口请求、建议、移动、窗口回复和实际确认逐个定位；某类样本不存在，就直接说未观察到，不要额外重跑来凑展示类别。汇总放在后面统一给。
+
+讨论段回答三个问题：澄清多花的轮次值不值得，失败可能来自消息截断还是模型偏离，还有哪些问题现有教案没有回答。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.2　用一条问题线组织二十分钟</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>二十分钟回答的四个问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 20 }}>
+
+        <Box style={{ height: 40, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#546779' }}>0—20 分钟：研究什么　›　怎样比较　›　证据是什么　›　能解释到哪里</Text>
+        </Box>
+
+        <Box style={{ height: 320, flexDirection: 'row' }}>
+
+            <Box style={{ width: 230, flexDirection: 'column' }}>
+                <Box style={{ height: 52, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>0—4 分钟</Text>
+                </Box>
+                <Box style={{ height: 268, background: '#EDF4FC', padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>问题</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>研究什么：四项任务与服务分工，首句相同、私人目的不同。</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>两组设定完全一致</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 230, flexDirection: 'column' }}>
+                <Box style={{ height: 52, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4—8 分钟</Text>
+                </Box>
+                <Box style={{ height: 268, background: '#EDF4FC', padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>唯一差异</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>怎样比较：只改咨询台决策段，其余条件不动。</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>直接展示差异段</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 346, flexDirection: 'column' }}>
+                <Box style={{ height: 52, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>8—14 分钟</Text>
+                </Box>
+                <Box style={{ height: 268, background: '#ECF7F2', padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>证据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>一项闭环、一项未闭环，逐个定位入口请求、建议、移动、窗口回复与实际确认；再给全体任务汇总。</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>尚无运行时按同样顺序列待采集证据</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 346, flexDirection: 'column' }}>
+                <Box style={{ height: 52, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>14—20 分钟</Text>
+                </Box>
+                <Box style={{ height: 268, background: '#ECF7F2', padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>解释与讨论</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>澄清的额外轮次是否值得；失败来自消息截断还是模型偏离；哪些问题现有教案没有回答。</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>留下报告入口与接收检查范围</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>时间分配是汇报建议，不是系统运行耗时</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>虚拟分钟、播放时长与运行耗时应分别标注；讲稿不必讲遍所有模块，第三章已有相应章节，可在附页给出定位。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 26</Text>
+    </Box>
+
+</Slide>

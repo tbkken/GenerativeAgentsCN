@@ -1,0 +1,54 @@
+<Slide notes={`助手要自己往前走，光有四个动作还不够，还得有组织任务的方法。这一节讲三种方法，它们增加的东西并不一样。
+
+规划，是把目标拆成可以检查的子目标：确认输入完整、核对可用时段、生成候选、检查冲突、交付。关键在最后一句——计划允许被事实修正。
+
+ReAct 强调的是推理和行动交替：根据当前的观察选行动，再根据行动结果更新下一步。这里要澄清一个常见误解：不需要模型公开完整的内部推理链，可观察到的证据是工具请求、参数和结果。让它简要说明「为什么查这个房间、下一步检查什么」，就够用了。
+
+反思，是让模型回顾失败并提出调整。但它提出调整之后，仍然需要下一次真实校验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.10.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>规划、ReAct 与反思</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>三种组织任务的方法，各自增加的东西并不一样。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 320, height: 120, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>规划</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>把目标拆成可检查的子目标</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 320, height: 120, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>ReAct</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>推理与行动按真实结果交替</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 320, height: 120, background: '#ECF7F2', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>反思</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>回顾失败并提出调整方向</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 960, height: 48, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>三者都是组织任务的方法，不是能力开关</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

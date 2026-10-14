@@ -1,0 +1,56 @@
+<Slide notes={`这一节要带走三句话。
+
+第一句，先写问题。收到一句反馈，先把它写成现象、位置、证据、解释、建议和验收条件齐全的问题单，再谈修改。仅凭一个失败结果就定方案，等于用一次观察换一条规则。
+
+第二句，只改一处。改动要收窄到一层：改说明就只复查文档，改行为输入就做新的独立实验。同时动两个因素，下一轮结果就说不清来源。
+
+第三句，分开保存。维护说明和历史事实各归其位，旧输入和原始结果原样留着，新的一轮用新的身份登记。
+
+不管以后遇到什么评阅意见，只要这三句话还在，你就不会把"再优化一下"变成一次没有依据的改动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.9　迭代与维护</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节小结</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25 }}>记住三句话</Text>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF', width: 56 }}>一</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>先写问题</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>修改之前，先把现象写成别人能查的问题单：现象、位置、证据、解释、建议、验收条件。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B', width: 56 }}>二</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>只改一处</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>改动收窄到一层，下一轮才能解释得清；改行为输入就要有新的独立实验与对应证据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#CB6B28', width: 56 }}>三</Text>
+            <Box style={{ width: 940, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>分开保存</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>维护说明与历史事实各归其位，旧输入与原始结果原样留下，新的一轮用新身份登记。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 6 }}>第五章　5.9　迭代与维护　·　下一节：综合项目与后续方向</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 27</Text>
+    </Box>
+
+</Slide>

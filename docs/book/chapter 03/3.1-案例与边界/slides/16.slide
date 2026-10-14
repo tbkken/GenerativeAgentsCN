@@ -1,0 +1,71 @@
+<Slide notes={`一次活动里同时跑着三种时间，必须分开记录。
+
+第一种是虚拟时间，它决定世界里的日期、活动安排和等待的截止时刻，角色按它来判断现在几点、该不该出发。
+
+第二种是模型处理时间，是请求、生成和选择工具实际花掉的时间，它影响的是调用成本，不影响世界里的钟。
+
+第三种是墙钟时间，包含模型、工具、暂停和人工处理整个过程，是我坐在电脑前面真实经历的时间。
+
+三种时间对不上是正常的。比如模型思考两秒，世界里可能只过了一分钟；我暂停了半小时，世界里的钟没有停，但也没有继续走。写结论的时候要说清楚是在哪一种时间上得到的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.5　一次活动有三种时间</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三种时间要分开记录</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>同一个活动，三种时间各回答一个不同的问题。</Text>
+
+        <Box style={{ height: 124, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>虚拟时间</Text></Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>决定世界中的日期、活动安排与等待截止</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>角色按它判断现在几点、该不该出发</Text>
+            </Box>
+            <Box style={{ width: 240, height: 62, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>记录在世界时间与事件里</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 124, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>模型处理时间</Text></Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>请求、生成与工具选择实际花掉的时间</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>影响调用成本，不影响世界里的钟</Text>
+            </Box>
+            <Box style={{ width: 240, height: 62, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>记录在调用与用量里</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 124, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#20344B' }} />
+            <Box style={{ width: 190 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>墙钟时间</Text></Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>包含模型、工具、暂停与人工处理的过程</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>我真实经历的时间</Text>
+            </Box>
+            <Box style={{ width: 240, height: 62, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>记录在运行与人工流程里</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 14, color: '#546779', flex: 1, lineHeight: 1.5 }}>三种时间对不上是正常的；写结论时说清它取自哪一种时间，别把它们混在一个数字里。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

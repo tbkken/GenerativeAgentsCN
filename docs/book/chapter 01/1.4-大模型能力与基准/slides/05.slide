@@ -1,0 +1,69 @@
+<Slide notes={`判分方式大致四类，各有各的代价。
+
+选择题最常见，模型从几个选项里挑一个，判分完全自动化。代价是选项本身给了提示，选项越少越容易猜中，四个选项就有四分之一的运气分。
+
+自由作答要求模型自己写出答案，通常是精确匹配，差一个字符就算错。好处是没法猜，代价是对格式特别苛刻，有的基准规定结尾必须写成固定的字样，不照写就零分，哪怕推理全对。
+
+可执行任务是让它交一段代码或完成一次操作，实际跑一遍测试，全过才算对。它最接近真实使用的证据，但也最容易被运行环境和可用工具影响。
+
+最后一类是人类偏好，让不了解模型身份的评阅者成对比较两份输出，允许平局。它能评价没有唯一答案的任务，但偏好会随人群和任务变化。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>①　1.4.1　评估方法：判分方式决定分数能证明什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四种判分方式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 276, height: 306, background: '#EDF4FC', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>A</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>选择题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>从若干选项里挑一个，程序直接判对错。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.5 }}>代价：选项自带提示，四选一就有 25% 的运气分。</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 306, background: '#EDF4FC', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>B</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>自由作答</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>模型自己写出答案，一般做精确匹配。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.5 }}>代价：格式差一点就零分，推理对也可能不算。</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 306, background: '#ECF7F2', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 40, height: 40, background: '#26816B', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>C</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>可执行任务</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>交代码或完成操作，实际跑测试，全过才算对。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.5 }}>代价：结果受运行环境和可用工具影响。</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 306, background: '#F7F3E8', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 40, height: 40, background: '#546779', borderRadius: 8, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>D</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>人类偏好</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>评阅者成对比较两份输出，允许平局并写理由。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>代价：偏好随人群和任务变化，不等于事实正确。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>同一份能力用不同方式判分，得到的数字不可直接比较：猜得中不代表会，跑得过不代表别人读得懂</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 36</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,81 @@
+<Slide notes={`前面五节，我们把大模型是什么、能力从哪里来、怎么测量、当前水平如何，都过了一遍。走到这里，要换一个问法：不再问哪一个模型最强，而是问我手上这件事，哪一种配置更合适。
+
+这个转变很关键。追最强模型是一条永远追不完的路，因为榜单在变、版本在变，而你的任务只有一个。反过来，如果先把任务写清楚，把条件固定下来，选择就变成一件可以动手做完的事。
+
+这一节给出一套五步做法：写清可核验的目标，准备小而有区分度的任务集，固定比较条件，先看错误分布，最后按任务而不是按一个综合分下结论。它用的是青禾的虚构材料，不需要先搭建完整仿真系统，第二章之后可以用真实的 API 和产品把同一套练习再跑一遍。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px', justifyContent: 'center' }}>
+
+    <Box style={{ flexDirection: 'row', gap: 56, alignItems: 'center', height: 640 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 14, color: '#276FBF' }}>第一章　认识大模型，读懂能力与评价　·　1.6</Text>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>为自己的任务选择模型</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>不先找最强的模型，而是先把任务写成可以核对的样子。这份选择说明要能被另一个人看懂。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', paddingTop: 6 }}>
+                <Box style={{ width: 3, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>五步走完，才能回答：它凭什么适合我这件事。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 536, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>写清任务</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>把目标写成可核验的结果，再转成检查项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>备好题目</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>八项练习可改，二十四项评价先冻结</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>固定条件</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>材料、提示、工具与设置一致，说清比较单位</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>看错误分布</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>同样答对数，失败类型可能完全相反</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>按任务下结论</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>先定不可违反的条件，再比单位成功成本</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>01 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,48 @@
+<Slide notes={`API 那条路线是命令行式的，什么都看得见。WorkBuddy 那条路线不一样，它把任务放在一个工作空间里，用对话推进，所以约束要写在任务本身里。
+
+顺序是这样：先把本章的练习目录复制一份，选它作为任务工作空间，这样原始材料不会被改动。
+
+然后用 Ask 熟悉资料，先看清 data 目录里有什么。
+
+接着用 Plan 审阅一遍执行方案，看看助手打算怎么走。如果任务已经很明确，也可以直接使用默认 Agent，不必绕这一圈。
+
+两边用的判断标准是一样的：data 目录里的材料是权威来源，fixtures 里的答案是给程序自检用的，不能拿来当生成的依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.14.3　一次完整的 WorkBuddy 路线</Text>
+            <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15, textAlign: 'center' }}>把任务写成合同</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+
+            <Box style={{ width: 354, height: 110, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>先用 Ask 熟悉资料</Text>
+            </Box>
+            <Box style={{ width: 45, height: 110, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 354, height: 110, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>再用 Plan 审阅方案</Text>
+            </Box>
+            <Box style={{ width: 45, height: 110, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+
+            <Box style={{ width: 354, height: 110, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>最后提交任务合同</Text>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 16, color: '#546779', textAlign: 'center' }}>以 data/ 目录为准，不拿 fixtures/ 中的答案当生成依据。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 25</Text>
+    </Box>
+
+</Slide>

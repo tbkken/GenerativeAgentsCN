@@ -1,0 +1,66 @@
+<Slide notes={`位置想产生影响，前提是信息本身是真实的。这里有三条来源，每一条都有自己的边界。
+
+导览牌只按包内的主题表答复，遇到兴趣缺项先澄清，不许编造展品、捷径或者服务。介绍对象只解释自身主题，不泄漏人物的私人目标，并且按真实请求 ID 回复，不代替人物宣布已经决定了什么。
+
+讲解员温岚是并行的第三条来源，她实际帮助那些遇到她并且主动求助的人。这条路径同样有效，而且是合理的补救。
+
+三条来源加起来，保证人物拿到的主题介绍是真实发生过的，而不是被谁提前塞进共同记忆里的答案。这是整个实验能立住的基础。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>③　　4.3.3　相同 SOP，让位置通过真实信息起作用</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>让位置通过真实信息起作用</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>看见牌子只定位信息源，实际介绍来自查询回复；讲解员的真实帮助是另一条有效来源。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 12, marginTop: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 220, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#276FBF' }}>导览牌</Text>
+                </Box>
+                <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 888, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', padding: '0 22px' }}>
+                    <Text style={{ fontSize: 17, color: '#546779' }}>只按包内主题表答复，兴趣缺项先澄清，不编展品、捷径或服务</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 220, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#276FBF' }}>介绍对象</Text>
+                </Box>
+                <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+                </Box>
+                <Box style={{ width: 888, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', padding: '0 22px' }}>
+                    <Text style={{ fontSize: 17, color: '#546779' }}>只解释自身主题，不泄漏私人目标；按真实请求 ID 回复</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Box style={{ width: 220, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, color: '#26816B' }}>讲解员</Text>
+                </Box>
+                <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+                </Box>
+                <Box style={{ width: 888, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', padding: '0 22px' }}>
+                    <Text style={{ fontSize: 17, color: '#546779' }}>实际帮助遇到并且求助的人，是并行且有效的另一条来源</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,78 @@
+<Slide notes={`怎么判断远程工具这次调用到底成没成，要看你手里有什么证据。
+
+第一，看 mcp_list_tools 有没有把目标工具导入进来。如果目标工具根本不在列表里，后面的调用就不会发生。
+
+第二，看 mcp_call 的参数和结果对不对。参数是不是你要求的那几个，返回的时间区间和业务合同里说的一致不一致。
+
+最需要警惕的是第三类情况：连接出错、工具执行出错，或者模型只是用文字解释了一通。这些时候响应对象里可能照样有一段读起来很通顺的文字。只凭这段文字判断预约查询成功，是要出错的。
+
+还有一点，把审批设成从不询问，意思是调用者预先接受了相应的数据发送，它不是一种通用的排错手段。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.5　核对远程调用的证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>判断成功要看哪三处</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+            <Box style={{ width: 300, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas' }}>mcp_list_tools</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>导入了哪些工具</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>目标工具不在列表里，后面的调用根本不会发生</Text>
+            </Box>
+            <Box style={{ width: 140, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>先看清单</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#26816B' }} />
+            <Box style={{ width: 300, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas' }}>mcp_call</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>参数与结果</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>参数是不是要求的那几个，返回区间与业务合同是否一致</Text>
+            </Box>
+            <Box style={{ width: 140, height: 40, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>再看参数</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ width: 300, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>仅有文字解释</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不能当作成功证据</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>连接错误、执行错误或只有一段通顺文字时，不能只凭它判断查询成功</Text>
+            </Box>
+            <Box style={{ width: 140, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>别只看文字</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#20344B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>审批设为 never 不代表调用成功</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>它意味着调用者预先接受了数据发送，不是通用的排错手段。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 27</Text>
+    </Box>
+
+</Slide>

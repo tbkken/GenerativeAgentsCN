@@ -1,0 +1,80 @@
+<Slide notes={`两条路线的关系，是这样一张图。
+
+左边起点只有一份东西：同一组材料，需求、房间和预约都在里面。这份材料被两条路线共用，这是能比较的前提。
+
+一条是 API 路线，自己管理请求和执行，过程透明，什么都要自己写。另一条是 WorkBuddy 路线，用工作空间和已经接好的工具，上手快，但有些环节被封装起来了。
+
+两条路线最后汇到同一个地方——同一校验器。比较的时候，比的是对应的文件和实际的检查结果，不是谁说得更好听。
+
+还有一点必须分开：应用入口、账户和权限两条路线各自管理。聊天里说"已经完成了"，不能替代本次的文件和真实校验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.6　在 WorkBuddy 中完成第一次任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两条路线，共用材料，分别取证</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 400, height: 76, background: '#F7F3E8', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>同一组材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>需求、房间、已有预约</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 100 }} />
+            <Box style={{ width: 440, height: 28, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 72 }} />
+            <Box style={{ width: 440, height: 28, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text></Box>
+            <Box style={{ width: 100 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 100 }} />
+            <Box style={{ width: 440, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>API 路线</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>自己管理请求与执行，过程透明</Text>
+            </Box>
+            <Box style={{ width: 72 }} />
+            <Box style={{ width: 440, height: 108, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>WorkBuddy 路线</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>使用工作空间与已接入的工具</Text>
+            </Box>
+            <Box style={{ width: 100 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row' }}>
+            <Box style={{ width: 100 }} />
+            <Box style={{ width: 440, height: 28, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text></Box>
+            <Box style={{ width: 72 }} />
+            <Box style={{ width: 440, height: 28, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text></Box>
+            <Box style={{ width: 100 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 520, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '12px 18px', flexDirection: 'column', gap: 3, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>同一校验器</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>比对本次文件、报告与退出码</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 82, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', alignItems: 'center', gap: 20, marginTop: 10 }}>
+            <Box style={{ width: 4, height: 54, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>聊天中的成功声明，不能替代本次文件与真实校验</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>两条路线各自记录实际步骤；账户、权限与计费分别管理。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

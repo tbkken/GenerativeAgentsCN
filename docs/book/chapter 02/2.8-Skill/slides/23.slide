@@ -1,0 +1,60 @@
+<Slide notes={`还剩最后一组话题：装好之后，拿什么当证据。
+
+剩下的分成两头。一头是证据链——装上了没有、读到了没有、跑了没有、通过了没有，四件事要分开取证。另一头是边界——通用的名字不等于某个系统的合同，本系统的类型、键和依赖要求，要另做一遍。
+
+最后我会留五个问题，你可以照着检查自己写的 Skill。这五个问题不是理论，是为了让下一个人接手时不用再来问你一遍。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.8.6–2.8.7</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>取证、复用与边界</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>安装完成不是证据，安装成功之后还要逐项取证。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 264, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>装上了没有</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>宿主能否发现技能名称</Text>
+            </Box>
+            <Box style={{ width: 264, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>读到了没有</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>本次采用了哪份方法内容</Text>
+            </Box>
+            <Box style={{ width: 264, height: 92, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>跑了没有</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>真实命令与真实输出</Text>
+            </Box>
+            <Box style={{ width: 264, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>通过了没有</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>候选文件与业务报告</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 264, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>四段分别有证据，才谈得上复用</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 27</Text>
+    </Box>
+
+</Slide>

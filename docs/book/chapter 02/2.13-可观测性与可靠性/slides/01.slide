@@ -1,0 +1,60 @@
+<Slide notes={`我们接下来的问题很朴素：一次任务跑完之后，我凭什么说它做对了？可观测性回答前半段——经过了哪些步骤、哪里出错、时间花在哪里；评价回答后半段——结果是否满足目标。
+
+这两件事必须一起做，顺序也不能颠倒。看不到过程，评价就只能对着那份最终文件猜；只有过程没有判据，记录再多也换不出一句结论。
+
+还有一个容易忽略的地方：记录本身不会替我们判断。日志里写着「已完成」，那只是模型的一段输出；真正的预约冲突仍然要由材料和校验结果说话。后面我会把这些一步一步落回到青禾开放日这份排期上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px', justifyContent: 'center' }}>
+
+    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>第二章　从对话到智能体　·　2.13</Text>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>可观测性与可靠性</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 600 }}>把一次排期任务的过程记下来，把结果判出来，把失败查清楚，把时间、Token 与费用分开记账。</Text>
+            <Box style={{ flexDirection: 'row', gap: 16, marginTop: 6 }}>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>测的是哪一层</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>分母是什么</Text>
+                </Box>
+                <Box style={{ width: 190, height: 44, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>谁在证明做对了</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 240, height: 160, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>日志 Log</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>某个时刻发生了什么；单条消息说不清整件事</Text>
+                </Box>
+                <Box style={{ width: 240, height: 160, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>调用链 Trace</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同一次任务的步骤、父子关系与时间</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 20 }}>
+                <Box style={{ width: 240, height: 160, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>指标 Metric</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>多次任务整体怎样；说不出某一次为什么错</Text>
+                </Box>
+                <Box style={{ width: 240, height: 160, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>评价 Score</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>按哪条规则判为多少分，依据是什么</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 500, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>四种记录，四个不同的问题</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>混在一起看，最容易把「程序正常结束」当成「业务已经通过」。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

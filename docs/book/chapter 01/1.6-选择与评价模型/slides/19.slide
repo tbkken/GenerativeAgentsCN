@@ -1,0 +1,69 @@
+<Slide notes={`把选择落到数字上，来看一份纯教学假设的数据。二十四项评价，甲成功二十项，乙成功二十二项。
+
+先检查有没有不能接受的失败。甲有两次无依据的完成声明，也就是在没有依据的情况下宣布事情已经办成；乙这次没有出现。
+
+再看钱。甲的全部尝试费用是一点二零元，乙是三点三零元。但成功数不同，直接比总费用不公平，所以要用全部尝试费用除以成功任务数。甲是一点二零除以二十，等于零点零六元；乙是三点三零除以二十二，等于零点一五元。甲每成功一项更便宜，中位耗时八秒也比乙的十五秒快。
+
+那是不是选甲？不一定。如果任务只是帮人起草宣传语，甲值得进一步考察，因为人会在使用前阅读和修改。如果任务是自动处理预约状态，那两次无依据的完成声明就值得优先分析，不能被更低的费用掩盖。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.5　第五步：按任务选择，而不是按一个综合分选择</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>甲的每次成功更便宜，乙更稳</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>下面的表完全是教学假设，用于演示选择方法，不对应真实品牌或实测结果。</Text>
+
+        <Box style={{ flexDirection: 'row', height: 36, alignItems: 'center' }}>
+            <Box style={{ width: 300, paddingLeft: 18 }}><Text style={{ fontSize: 14, color: '#546779' }}>二十四项评价结果</Text></Box>
+            <Box style={{ width: 426, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>候选甲</Text></Box>
+            <Box style={{ width: 426, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>候选乙</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 58, alignItems: 'center' }}>
+            <Box style={{ width: 300, paddingLeft: 18 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>成功任务</Text></Box>
+            <Box style={{ width: 426, paddingRight: 12 }}><Box style={{ height: 58, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>20 / 24</Text></Box></Box>
+            <Box style={{ width: 426 }}><Box style={{ height: 58, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>22 / 24</Text></Box></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 58, alignItems: 'center' }}>
+            <Box style={{ width: 300, paddingLeft: 18 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>无依据的完成声明</Text></Box>
+            <Box style={{ width: 426, paddingRight: 12 }}><Box style={{ height: 58, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>2 项</Text></Box></Box>
+            <Box style={{ width: 426 }}><Box style={{ height: 58, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>0 项</Text></Box></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 58, alignItems: 'center' }}>
+            <Box style={{ width: 300, paddingLeft: 18 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>全部尝试总费用</Text></Box>
+            <Box style={{ width: 426, paddingRight: 12 }}><Box style={{ height: 58, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, color: '#20344B' }}>1.20 元</Text></Box></Box>
+            <Box style={{ width: 426 }}><Box style={{ height: 58, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, color: '#20344B' }}>3.30 元</Text></Box></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 58, alignItems: 'center' }}>
+            <Box style={{ width: 300, paddingLeft: 18 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>每项成功任务费用</Text></Box>
+            <Box style={{ width: 426, paddingRight: 12 }}><Box style={{ height: 58, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#276FBF' }}>0.06 元　＝ 1.20 ÷ 20</Text></Box></Box>
+            <Box style={{ width: 426 }}><Box style={{ height: 58, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#26816B' }}>0.15 元　＝ 3.30 ÷ 22</Text></Box></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 58, alignItems: 'center' }}>
+            <Box style={{ width: 300, paddingLeft: 18 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>端到端耗时中位数</Text></Box>
+            <Box style={{ width: 426, paddingRight: 12 }}><Box style={{ height: 58, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, color: '#20344B' }}>8 秒</Text></Box></Box>
+            <Box style={{ width: 426 }}><Box style={{ height: 58, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, color: '#20344B' }}>15 秒</Text></Box></Box>
+        </Box>
+
+        <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>人工数据。先确定不可违反的条件，再比较成本；两次无依据的完成声明不能被较低的单位成本掩盖，零次观察也不证明永不出错。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 27</Text>
+    </Box>
+
+</Slide>

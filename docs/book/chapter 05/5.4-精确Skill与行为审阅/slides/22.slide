@@ -1,0 +1,64 @@
+<Slide notes={`四类反例落成四类检查，每条都要指出问题出在哪一步、该往哪里追。
+
+第一条，咨询台一次发送「你要预约吗？去 A。」：确实问了问题，却在拿到关键回答前就给了建议，预定澄清策略没被执行。
+
+第二条，记忆里写着「窗口已确认」，可记录里只有一次 INTERACT 请求事实。进度被提前写成完成，要追查对象的实际回复和下一轮的接收。
+
+第三条，对照组新增了一个强模型审阅子 Skill，基线没有。即使效果更好，方法与依赖同时改变了，不能归因于那段决策正文。
+
+第四条查循环停止：同一目的已明确仍不断追问，属于行为偏离；人物被正确拒绝可能只是工具参数不合法，不能为让案例继续而绕过校验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.5　作者与观察者分别审什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类检查逐条走</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>每条反例都要能指出：问题出在哪一步，应该往哪里追。</Text>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 14, color: '#546779' }}>反例表现</Text></Box>
+            <Box style={{ width: 760 }}><Text style={{ fontSize: 14, color: '#546779' }}>为什么是问题，应该追查什么</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 280 }}>边问边猜</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', width: 760, lineHeight: 1.5 }}>一次发送「你要预约吗？去 A。」：确实问了问题，却在取得关键回答前已经建议，未执行预定澄清策略。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 280 }}>提前写完成</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', width: 760, lineHeight: 1.5 }}>记忆写「窗口已确认」，但只有 INTERACT 请求事实：应追查对象的实际回复与目标人物下一轮的实际接收。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 280 }}>额外加能力</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', width: 760, lineHeight: 1.5 }}>对照新增一个强模型审阅子 Skill，基线没有：即使效果更好，也已同时改变方法与依赖，不能归因于唯一决策段。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 280 }}>循环追问</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', width: 760, lineHeight: 1.5 }}>同一目的已经明确仍不断追问，属于行为偏离；正确的身份拒绝可能是工具参数不合法，不能为让案例继续而绕过校验。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 4 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', width: 200 }}>发现系统问题时</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 900 }}>按项目约定留证并停止相应验收，不在材料目录里偷偷修改运行事实。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 27</Text>
+    </Box>
+
+</Slide>

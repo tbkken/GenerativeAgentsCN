@@ -1,0 +1,55 @@
+<Slide notes={`初稿定稿前我会再走一遍四份全文，专门看「什么证据触发下一步」写清楚了没有。这一遍里最容易犯的错，是为了让对照好看而改掉人物的初始话语。
+
+比如孟川最初只说设施好像有问题，没有点明灯坏了。如果为了省事让他一开口就说「灯坏了」，那么澄清策略要处理的场景就不存在了，研究条件已经改变，后面无论测出什么都不能说明原来的问题。
+
+同样要注意导航知识。自然语言的回答里给出了地址，并不会自动更新人物已经知道的地址，四个 Arena 的已知地址要按两组相同的装配准备。写材料时顺手把知识补齐，看起来是善意，实际上是在两组之外又加了一个变量。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.4　其余三份材料怎样写完整</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>刻意含糊必须保留</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 620, height: 300, background: '#FFF4E6', borderRadius: 10, padding: '24px 26px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>一个看起来更省事的改法</Text>
+                <Box style={{ width: 40, height: 3, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.7 }}>为了让对照跑得更顺，让孟川一开口就说「灯坏了」。</Text>
+                <Box style={{ width: 500, height: 76, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>关键目的已经写在第一句话里，「先澄清」这一组就没有需要澄清的场景了。</Text>
+                </Box>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.6 }}>研究条件已经改变，结论无法归因。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 500, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>逐项检查触发证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>四份全文是否都明确了「什么证据触发下一步」。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>保留初始含糊</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>人物初始请求的刻意含糊是研究设定，不能在整理材料时被抹平。</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>地址不会自动更新</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>自然语言回答给出地址，不更新导航知识；四个 Arena 的已知地址按两组相同装配准备。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 27</Text>
+    </Box>
+
+</Slide>

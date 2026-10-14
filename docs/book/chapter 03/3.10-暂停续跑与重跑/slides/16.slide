@@ -1,0 +1,71 @@
+<Slide notes={`继续执行之后，我会依次核对四件事。
+
+第一，Run ID 和暂停前一致，Attempt ID 已经改变。这证明接的是同一段运行，但确实是新的一次尝试。
+
+第二，新 Attempt 的恢复边界是 k，第一条新的提交是 k 加 1。这证明是从已提交边界往下走，没有跳步。
+
+第三，虚拟时间只前进一个步长。暂停期间真实世界过了多久不重要，那段墙钟间隔不能混进虚拟时间。
+
+第四，移动、会话、对象状态和回复既没有重复也没有丢失。
+
+页面显示继续执行的时候，确认窗口要指向当前已提交边界和当前 Attempt。后端会同时核对这两个条件，防止有人打开旧的确认窗口，把已经提交的步骤又执行一遍。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.4　继续执行时验证四件事</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>继续之后，核对四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#276FBF', width: 44 }}>1</Text>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Run ID 与暂停前一致，Attempt ID 已改变</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>同一段运行接得上，但这是新的一次尝试。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#276FBF', width: 44 }}>2</Text>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>恢复边界为 k，第一条新提交为 k+1</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>从已提交边界往下走，中间没有跳步。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#26816B', width: 44 }}>3</Text>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>虚拟时间只前进一个步长</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>暂停的墙钟间隔没有混入虚拟时间。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+            <Text style={{ fontSize: 30, fontWeight: 'bold', color: '#26816B', width: 44 }}>4</Text>
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>移动、会话、对象状态和回复没有重复、没有丢失</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>逐项对到暂停前后记录的原始值。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.6 }}>确认窗口应指向当前已提交边界及当前 Attempt；后端同时核对这两个条件，避免打开旧确认窗口后重复执行已经提交的步骤。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

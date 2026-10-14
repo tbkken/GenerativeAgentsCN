@@ -1,0 +1,57 @@
+<Slide notes={`还有一种情况特别常见：委托人顺手加了两项要求——减少排队，或者自动完成申请。它们听起来都在同一个服务大厅里，所以我们容易顺口答应。
+
+但当前教案里既没有队列容量，也没有服务时长，排队问题无从测量；真实审批规则也没有，所以「申请通过」这件事在系统里根本没有对应的动作。
+
+有一种错误做法是在人物台词里补一句「排队结束了」或者「申请已经通过」，看起来交代过去了，其实机制一点没变。
+
+正确的处理是把这两项列入后续议题，并在本次说明里明确说出范围。承认做不到的事，比在故事里补一句台词诚实得多，也让接手的人少走弯路。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.1　将一句愿望改写成可回答的问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>明确说出这次不做什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>委托人还可能提出「减少排队」或「自动完成申请」。当前教案没有回答这两项要求所需的机制。</Text>
+
+        <Box style={{ width: 1152, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 200, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>减少排队</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>范围之外</Text>
+            </Box>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ width: 884, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.55 }}>教案里既没有队列容量，也没有服务时长</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>没有这两项参数，等待时间与队列长度都无从测量，队列优化也就没有判据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 200, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>自动完成申请</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>范围之外</Text>
+            </Box>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ width: 884, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.55 }}>没有真实审批规则，也没有对应的系统动作</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>只在人物台词里写「申请通过」，不会因此产生任何审批能力。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6, width: 1060 }}>把这两项列入后续议题，并在本次说明中明确范围——这比在故事里补一句台词诚实得多，也让接手的人少走弯路。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

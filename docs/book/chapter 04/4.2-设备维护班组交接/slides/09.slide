@@ -1,0 +1,103 @@
+<Slide notes={`沿宋青这条线看，消息有明确的先后：先真的问，才有资料；先真的整理并提交，才有保存；先真的收到保存确认，再真实开口通知；对方真实读到，才算收到；读过之后要复述并说出不确定性；最后还要自己去设备那里做一次现场复核。
+
+这里最容易被跳过的一环是「真实开口通知」。不能自己写完就当对方知道了，也不能假定对方已经理解。
+
+还有一条要分清：宋青后来独立查到的内容，可以补救遗漏，但不能算成「经交接到达」。记录台变成 recorded，只能证明正文存下来了，不能证明宋青读过、更不能证明他读懂了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.2.2　空间与角色：三人一直都在</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交接消息的条件顺序</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 264, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>虞诚　交班员</Text>
+            </Box>
+            <Box style={{ width: 264, height: 52, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>设备间 T-17</Text>
+            </Box>
+            <Box style={{ width: 264, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>资料区记录台</Text>
+            </Box>
+            <Box style={{ width: 264, height: 52, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>宋青　接班员</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 368, height: 180, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>查询设备资料</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>虞诚向 T-17 提出真实请求，设备按请求返回 K1—K5，不代写交接稿。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 180, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>提交交接正文</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>虞诚整理后提交实际正文；记录台只保存原文，把 empty 改为 recorded。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 180, background: '#F4F7FA', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, background: '#276FBF', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>真实开口通知</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>虞诚用真实 SPEAK 告诉宋青，不能假定对方已经理解或已经知道。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 368, height: 180, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, background: '#26816B', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#FFFFFF' }}>4</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>读取已保存的交接</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>宋青查询记录台，返回实际正文；对象不自动补上缺失的那几项。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 180, background: '#ECF7F2', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, background: '#26816B', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#FFFFFF' }}>5</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>复述并说出不确定</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>宋青向虞诚复述重要内容与不确定之处，有疑问继续追问。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 180, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, background: '#CB6B28', borderRadius: 15, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#FFFFFF' }}>6</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>独立现场复核</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>宋青提交规定的资料复核请求与一次外观核对 ACT；可补救，但不补记主指标。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 56, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>记录台变为 recorded 只证明保存，不证明宋青已读取或理解；独立查询能补救遗漏，却不能回填「经交接到达」。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.2 设备维护班组交接</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

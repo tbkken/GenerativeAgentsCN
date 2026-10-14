@@ -1,0 +1,58 @@
+<Slide notes={`三个知识块讲完了，现在轮到我们自己动手设陷。
+
+第一道练习是制造冲突。在示意图的练习副本上加一个容量数字，故意让它跟表格对不上，同时把原图留着做对照。我想看的是：助手会不会指出冲突，会不会把两个来源都列出来，会不会按题目指定的表格来源处理。
+
+第二道练习是制造缺失。把图里一个房间的名称遮住。好的回答应该把"能认出来的标注"和"不确定的区域"分开说，而不是从熟悉的场馆布局里，把缺的那块补出来。
+
+第三道练习是追问。为什么一张成功的网页截图，能证明页面已经显示，却不能证明后台预约已经提交？
+
+三道题都指向同一件事：把证据的边界说清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.11.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>制造冲突，也制造缺失</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>主动把错误与空白放进去，看它会不会指出来。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>练习一　容量冲突</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>指出冲突并列出两个来源</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>练习二　遮挡名称</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>可辨认与不确定要分开</Text>
+            </Box>
+            <Box style={{ width: 300, height: 56, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>练习三　追问截图</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>显示过，不等于提交过</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 300, height: 26, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>先让它说出依据，再判断这个依据够不够</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 26</Text>
+    </Box>
+
+</Slide>

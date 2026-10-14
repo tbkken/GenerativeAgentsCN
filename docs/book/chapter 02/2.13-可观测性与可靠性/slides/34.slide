@@ -1,0 +1,53 @@
+<Slide notes={`这一节讲完了，我把它收成三个反问。以后无论测什么、报什么分数，先问这三句。
+
+第一句：测的是哪一层？是模型的生成能力、工具的选参与时机、应用的控制逻辑，还是最终的筹备结果。层次不定下来，结论就没有边界。
+
+第二句：分母是什么？完成定义写了吗，样本范围说清了吗，那些失败的样本是不是还留在里面。分母动过，分数就不再是测量。
+
+第三句：谁在证明它做对了？是确定性程序给出的硬约束结论，是明确量表给出的人工评分，还是那个生成内容的模型自己说「我做得不错」。这三者的分量完全不同。
+
+课后请把离线测试跑一遍，再用合法与非法两个排期文件对照。然后设计五个还没有运行过的真实模型样本，先写下期望行为，再去执行。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.13　小结</Text>
+            <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#20344B', lineHeight: 1.25, textAlign: 'center' }}>记住三个反问</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 368, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>测的是哪一层</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>模型生成、工具参数、应用控制，还是最终筹备结果。测一层就固定其他层。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>分母是什么</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>完成定义、样本范围和失败样本有没有写下来；分母不能在跑完之后再改。</Text>
+            </Box>
+            <Box style={{ width: 368, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>谁在证明它做对了</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>确定性校验、明确量表，还是模型自己的总结。前两者才算证据。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 148, background: '#FFF4E6', borderRadius: 10, padding: '16px 24px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>本节练习</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>运行 python -m unittest discover -s tests -v，再执行合法与非法两个排期文件。</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>用两个离线 fixture 核对退出码、业务报告和空 Trace 标识，说明它们为什么不能被写成真实模型分数。</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>再设计五个尚未运行的真实模型样本，先写期望行为再执行；失败时保留原始结果，调整提示后使用新的实验编号。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 3, height: 26, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>下一节　2.14　技术选择与完整交付</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>34 / 34</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,84 @@
+<Slide notes={`这条往返链路有六个步骤，我按顺序走一遍。
+
+应用先把输入和工具定义发给模型：材料、约束、可用工具，以及每个工具要什么参数。
+
+模型回来的不是文字，而是一个 function_call 条目，写着工具名、JSON 参数和一个 call_id。
+
+应用拿到后先自检：工具在允许列表里吗？参数在范围内吗？有没有超出预算？检查通过，才去执行本地那个只读函数。
+
+工具返回真实结果，或者返回受控的错误。应用再用原来那个 call_id 把结果包成 function_call_output 送回模型。
+
+下一轮要保留完整的输出项，模型才能依据结果继续或结束。模型只提出调用，本章工具不会创建真实预约。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.1　先定义一个清楚且有限的工具</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次调用的六个往返步骤</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 340, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>应用 › 模型</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>输入与工具定义</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>材料、指令与工具说明</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>模型 › 应用</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>function_call</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>名称、JSON 参数、call_id</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>应用内部</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>校验这份请求</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>允许范围、参数与预算</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 44, height: 30, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 340, height: 130, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>应用 › 工具</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>实际执行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>调用只读查询或校验函数</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#26816B' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 130, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>工具 › 应用</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>工具实际结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>真实记录或受控错误</Text>
+            </Box>
+            <Box style={{ width: 44, height: 130, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 340, height: 130, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>应用 › 模型</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>function_call_output</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>匹配原来那个 call_id</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', height: 74 }}>
+            <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>下一轮保留完整输出项；依据结果继续或结束。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', height: 74 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>模型只提出调用；本章工具不创建真实预约。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 26</Text>
+    </Box>
+
+</Slide>

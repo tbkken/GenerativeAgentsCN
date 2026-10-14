@@ -1,0 +1,91 @@
+<Slide notes={`从起点 0 数到实际终点 3，一共是四个路径点、三条移动边。这个差一的关系最容易出错：把点数直接当成格数，就会多算一格。
+灰色标出的点 4 和点 5 还只是计划，不能拿它们宣布抵达；它们不进入实际路程，也不能当作已经走过的边。
+所以读的时候，先看青绿色的边有几条，那才是实际发生的位移。灰色段只表示后面的计划，不计入路程。
+另外，判到达率的时候还要多做一步：把已经提交的终点坐标放回集合区的语义范围里去判断，看它落不落得进去。人站在某个具体点上并不重要，重要的是那个坐标属于集合区。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.4　已执行边与剩余计划</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>点数不是格数</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>绿实线是已执行的移动边，灰色段只是计划，不进入实际路程。</Text>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }}>
+            <Box style={{ width: 150, height: 120, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>点 0</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>起点</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 120, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>点 1</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>已执行</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 120, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>点 2</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>已执行</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 120, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>点 3</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>实际终点</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#546779' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 120, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>点 4</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>计划段</Text>
+            </Box>
+            <Box style={{ width: 44, height: 120, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#546779' }}>›</Text>
+            </Box>
+            <Box style={{ width: 150, height: 120, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#546779' }}>点 5</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>计划段</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 32 }}>
+            <Box style={{ width: 560, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>4 个路径点，3 条移动边</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>点 0 到点 3 是已执行的位移</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 560, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 60, background: '#546779' }} />
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>点 4、点 5 只是计划</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不计实际路程，不能据此宣布抵达</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 84, height: 30, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5, flex: 1 }}>到达率还须把已提交的终点坐标放回集合区语义范围判断；站在哪个点上不要紧，坐标属于集合区才算数。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 26</Text>
+    </Box>
+
+</Slide>

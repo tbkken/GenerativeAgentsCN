@@ -1,0 +1,56 @@
+<Slide notes={`在 WorkBuddy 里，约束不能靠临时提醒，要写进任务本身。
+
+开头交代任务和材料：哪一天、哪个场地，data 下的哪几个文件是材料，哪个是预约事实；接了教学 MCP 就让它去查工具。
+
+最关键的一句是：读取以 data 目录为准，不使用 fixtures 里的答案作为生成依据。fixtures 是给程序自检的，不是给生成用的。
+
+接着约定产物和校验：先把约束与缺失项整理到 constraints.json，再提出 schedule.json，用校验器独立检查并保存报告；失败按真实错误改，最多三轮。
+
+constraints.json 是本次练习的自定义产物，不与排期 Schema 混用。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.3　一次完整的 WorkBuddy 路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一份可以照抄的任务合同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>向助手提交的合同，把材料来源、产物路径、校验方式与修正上限一次说清。</Text>
+
+        <Box style={{ height: 266, background: '#F4F7FA', borderRadius: 10, padding: '18px 24px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>请完成青禾社区学习中心 2026-10-17 的开放日筹备。</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>工作空间中的 data/brief.md、rooms.csv、rules.md、requests.csv 是任务材料，</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>data/availability.json 是本次教学预约事实；如果连接了教学 MCP，请查询对应工具。</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>读取文件时以 data/ 目录为准，不使用 fixtures/ 中的答案作为生成依据。</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>先整理约束和缺失项到 output/constraints.json，再提出 output/schedule.json。</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>用 validate_schedule.py 独立检查，保存 output/validation-report.json；</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>失败时按真实错误修改后重验，最多修正三轮，仍失败则说明未解决项。</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>最后生成 output/plan.md，引用材料与校验结果，只说明有证据支持的完成事项。</Text>
+            <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.5 }}>本任务只交付筹备文件。请保留候选、错误与修正记录，便于我复核。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>constraints.json 是这次练习的产物</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>用来展示约束整理，按"约束、来源、待确认项"组织，不要与排期 Schema 混淆。</Text>
+            </Box>
+
+            <Box style={{ width: 566, height: 130, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>API 主线没有这一步</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>API 主线直接读取同一组材料，没有把约束抽取当成必须由模型执行的前置步骤。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 25</Text>
+    </Box>
+
+</Slide>

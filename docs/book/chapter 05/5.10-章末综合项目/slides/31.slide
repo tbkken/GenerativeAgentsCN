@@ -1,0 +1,68 @@
+<Slide notes={`最后回到整本书的路径上。
+
+第一章我们认识模型，弄清它大致能做什么、不能做什么。第二章进入应用技术，看资料、工具和上下文怎样改变实际表现。第三章学仿真平台，知道系统怎样使用、资源怎样组织。第四章做实验案例，用一次只改一处的办法，把问题和证据连起来。第五章把这些落成一份别人能接手的交付。
+
+这条路径是连着的：用能力证据提出合理预期，用技术组织可执行的行为，用系统保存可核验的事实，用研究方法解释差异，最后把材料交给别人检查。
+
+所以最后的练习不是再加一个功能。它只需要你请接收者指出一条他最想相信的结论，然后让他独立找到足以支持或否定它的证据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>全书路径　·　第 1 — 5 章</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>全书路径</Text>
+
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>从认识模型到综合交付</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'flex-end', gap: 44, marginTop: 6 }}>
+
+            <Box style={{ width: 195, height: 108, background: '#F4F7FA', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 1 章</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>认识模型</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>能力与边界</Text>
+            </Box>
+
+            <Box style={{ width: 195, height: 124, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 2 章</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>应用技术</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>资料、工具、上下文</Text>
+            </Box>
+
+            <Box style={{ width: 195, height: 140, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 3 章</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>仿真平台</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>系统怎样使用</Text>
+            </Box>
+
+            <Box style={{ width: 195, height: 156, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 4 章</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>实验案例</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>一次只改一处</Text>
+            </Box>
+
+            <Box style={{ width: 195, height: 172, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>第 5 章</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>综合交付</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>别人能独立接手</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>最后的练习不是再加一个功能</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>请接收者指出一条最想相信的结论，并让他独立找到足以支持或否定它的证据</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目　·　全书完</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>31 / 31</Text>
+    </Box>
+
+</Slide>

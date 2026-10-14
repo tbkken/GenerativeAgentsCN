@@ -1,0 +1,58 @@
+<Slide notes={`最后说清一件事：通用的名字，不等于某个系统的合同。
+
+本系统把 Skill 按 atomic、pack、brain 这些类型管理，包内还有一个 skill_key。除了名字和目录，它还要处理依赖闭包、参与者身份和仿真能力。这些要求，通用的 Agent Skill 目录结构不会自动满足。第三章需要通过系统自己的资源和实验流程完成导入、装配和校验。
+
+还有版本这件事。OpenAI 上传服务里的 Skill 版本，是那个外部服务管理上传内容的方式；它不意味着本系统就应该引入一个业务 Revision。
+
+真正共同的东西只有一样：可复用的方法与材料。存储、身份、运行环境和权限，各按各的系统来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.7　与第三章中的 Skill 有何联系</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>通用的名字不等于系统合同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>同一个词，放到另一个系统里，往往还有一层没有写进目录的约定。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Text style={{ width: 200, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>类型与键</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>本系统按 atomic、pack、brain 等类型及包内 skill_key 管理 Skill。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Text style={{ width: 200, fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>额外合同</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>还要处理依赖闭包、参与者身份与仿真能力；通用目录结构不会自动满足这些合同。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+                <Text style={{ width: 200, fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>版本不是一回事</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>外部服务管理上传内容的版本，不等于本系统应引入业务 Revision。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 82, background: '#ECF7F2', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 50, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>共同点只有一样：可复用的方法与材料</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>存储、身份、运行环境与权限，以各自系统为准；导入与装配在第三章展开。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 27</Text>
+    </Box>
+
+</Slide>

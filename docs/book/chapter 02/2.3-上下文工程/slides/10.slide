@@ -1,0 +1,75 @@
+<Slide notes={`摘要写得好不好，我很反对只用「简短」这一个标准来评价。
+
+更实际的做法是给摘要规定固定字段，然后抽查：日期对不对，人数对不对，活动的持续时间有没有留下，来源写清了没有，还有哪些事没有完成。
+
+我给一个具体的后果。如果摘要把那个手作活动的六十分钟时长丢掉了，后面无论写得多流畅都补救不回来，因为后面所有的安排都建立在一个错误的时长上。
+
+所以检查摘要时我去核对的是这几项，而不是去评价它读起来顺不顺、是不是够短。字段固定了，抽查才有依据，摘要也才是一份可以交接的工作记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.2　长上下文不是无限记忆</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>摘要要能抽查，不只要短</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 340, flexDirection: 'column', gap: 14 }}>
+                <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>给摘要规定固定字段，然后抽查</Text>
+                <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+                <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>评价摘要的标准不是「够不够短」，而是「关键事实还在不在」。字段固定下来，抽查才有依据。</Text>
+            </Box>
+
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 10 }}>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Box style={{ width: 120 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>日期</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>活动发生在哪一天</Text></Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Box style={{ width: 120 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>人数</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>用哪一版数字，来自哪份材料</Text></Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                    <Box style={{ width: 120 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>持续时间</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>各项活动各占多久</Text></Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                    <Box style={{ width: 120 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>来源</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>事实依据出自哪份文件</Text></Box>
+                </Box>
+
+                <Box style={{ height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+                    <Box style={{ width: 120 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>未完成项</Text></Box>
+                    <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779' }}>还有哪些事情没有解决</Text></Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 30, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>摘要丢掉手作活动的六十分钟时长，后面写得再流畅也补救不回来。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,77 @@
+<Slide notes={`这一条流程图要分清两个确认，它们的对象完全不同。
+两个组都要先真实地问出 R1 到 R5，并且保留来源和限制强度。接下来就分岔了：基线组根据自己的理解，把收到的理由归纳一下，然后直接进入对同一个候选的逐人态度征询。对照组的绿色分支多一步：逐人复述自己对这个代表理由的理解，问一句「我理解得准确吗」，等本人真实确认或者修正，再按回复更新记录。
+两条路汇合之后，问的都是同一件事：你对这个候选是什么态度。
+如果候选改变了，必须回到征询这一步重新逐人问，旧候选的同意不能穿过去继续用。最后记录的是实际回应和分歧，只有三个人对同一候选都明确同意，才记一致意见。
+千万别把「理由没有补充」当成「同意这个候选」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.4　唯一变化：理由复述确认</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两类确认的对象不同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 14, color: '#546779' }}>图 4.6-2 语义重绘（示意）：绿色分支只属于对照组的理由复述确认</Text>
+
+        <Box style={{ height: 124, flexDirection: 'row' }}>
+            <Box style={{ width: 190, height: 124, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 12px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>收集理由</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>两组共同：实际询问 R1—R5</Text>
+            </Box>
+            <Box style={{ width: 44, height: 124, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 190, height: 124, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 12px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>复述确认</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>对照：逐人复述并问是否准确</Text>
+            </Box>
+            <Box style={{ width: 44, height: 124, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 190, height: 124, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 12px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>更新理由记录</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>据本人真实确认或修正</Text>
+            </Box>
+            <Box style={{ width: 44, height: 124, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 190, height: 124, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 12px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>征询态度</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>同一候选：同意／保留／反对</Text>
+            </Box>
+            <Box style={{ width: 44, height: 124, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 190, height: 124, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 6, padding: '0 12px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>记录分歧</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>未回应或待澄清如实标记</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 48, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 10 }}>
+            <Text style={{ fontSize: 17, color: '#276FBF' }}>↺</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>候选改变时回到「征询态度」重新逐人询问，不沿用对旧候选的同意</Text>
+        </Box>
+
+        <Box style={{ height: 104, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 104, background: '#FFF4E6', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>理由没有补充 ≠ 同意候选</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>复述确认只核对理解；两组汇合之后，才问对候选的态度。</Text>
+            </Box>
+            <Box style={{ width: 568, height: 104, background: '#ECF7F2', borderRadius: 10, flexDirection: 'column', justifyContent: 'center', gap: 6, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>两个确认都要真实回复</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不能由主持人代答；两个环节缺失任何一个，理由或态度都会失真。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

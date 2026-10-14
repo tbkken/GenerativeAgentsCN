@@ -1,0 +1,55 @@
+<Slide notes={`片段选好之后，还要注意上下文。同一段画面，截到哪一句、切在哪一刻，含义会变。
+
+如果只截出一句「请去 A 窗口」，就要说明在此之前是否已经澄清过目的。如果截出人物位于 A 服务区，就要说明这是实际坐标，还是仍在计划中的目标。最要避免的是把角色的行走计划剪接成已经发生的移动，或者把对象已生成的最后一轮回复剪成来访者已经收到——这两处差别，恰恰是判分的关键。
+
+展示可以加速播放、放大局部、隐藏与问题无关的面板，但需要保留原始文件并说明加工方式。为讲义裁剪的图片只是展示副本，不能替代 Run 导出；虚拟分钟、播放时长与运行耗时要分别标注。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.3　选择片段也需要规则</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>截出这一句，还要交代什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ width: 680, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>同一任务，要保留足够上下文</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Box style={{ height: 108, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>截出「请去 A 窗口」</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>要说明之前是否已经澄清目的，否则听众不知道这句建议从何而来。</Text>
+            </Box>
+            <Box style={{ height: 108, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>截出人物位于 A 服务区</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>要说明这是实际坐标，还是仍在计划中的目标。</Text>
+            </Box>
+            <Box style={{ height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能把计划剪成已发生</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不能把行走计划剪成已经发生的移动，也不能把对象已生成的最后一轮回复剪成来访者已经收到。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 444, height: 500, background: '#ECF7F2', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>可以加工，但要留底</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>展示可以加速播放、放大局部、隐藏与问题无关的面板。</Text>
+            <Box style={{ height: 74, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>裁剪的图片是展示副本，不替代 Run 导出。</Text>
+            </Box>
+            <Box style={{ height: 74, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>隐藏面板不能改变所展示事实的身份与含义。</Text>
+            </Box>
+            <Box style={{ height: 74, background: '#FFF4E6', borderRadius: 8, padding: '0 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>虚拟分钟、播放时长与运行耗时应分别标注。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 26</Text>
+    </Box>
+
+</Slide>

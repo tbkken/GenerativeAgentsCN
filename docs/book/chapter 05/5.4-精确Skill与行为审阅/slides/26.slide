@@ -1,0 +1,52 @@
+<Slide notes={`最后留两道练习，检验的是别人能不能读懂这组材料。
+
+第一道：请另一位读者只看两份咨询台全文和共同条件表，指出唯一的干预是什么。如果他能准确说出「决策段被替换了」，说明材料的差异写得足够清楚；如果他需要翻很多上下文，说明记录还不够直接。
+
+第二道更关键：再请他指出，哪些作者材料如果泄漏给咨询台，会让这项比较失去意义。比如评分表、四人真实目的的清单、或者答案提示。这些问题一旦进入咨询台的可见范围，它就不再是在信息不足的情况下做判断了。
+
+两道练习做完，我们对这份交付物的信心才是有依据的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.6　一次内容审阅怎样交付</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两道练习：找出干预与泄漏边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>练习检验的是别人能不能读懂这组材料，而不是作者自己觉得写清楚了。</Text>
+
+        <Box style={{ width: 1152, height: 176, background: '#EDF4FC', borderRadius: 10, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>一</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 6, width: 1040 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>指出唯一干预</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>请另一位读者只看两份咨询台全文和共同条件表，说出两组之间唯一被替换的部分是什么。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>能准确指出决策段，说明差异写清楚了；若需要翻看大量上下文，说明记录还不够直接。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 176, background: '#FFF4E6', borderRadius: 10, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>二</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 6, width: 1040 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>说出会让比较失效的泄漏</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>再请他指出：哪些作者材料如果泄漏给咨询台，会使这项比较失去意义。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>评分表、四人的真实目的清单、答案提示一旦可见，咨询台就不再是在信息不足时做判断。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', width: 1152 }}>参考：知识块 ④ 讲过「谁有权知道完整任务」；本题正是把它变成一次可执行的检查。</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 27</Text>
+    </Box>
+
+</Slide>

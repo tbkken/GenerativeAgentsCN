@@ -1,0 +1,72 @@
+<Slide notes={`整理子技能到底能做什么、不能做什么，边界必须画得很清楚，否则对照就变成了“偷偷加权限”。
+
+它能做的是：检索上次处理的日期和有效进度；第一次运行时先记下当前日期；把已有记忆按“已确认完成、待证据、未来承诺、下一周期活动”四类分开；输出一份带日期和来源的整理，标记本日整理成功；每个日期最多成功一次，失败要记下原因。
+
+它不能做的是：不执行任何世界动作，不替角色制造接受或完成的证据，不读取别人的记忆，也拿不到教师答案。要不要采纳它给的建议，由根 Brain 决定。
+
+这两组在更正、失效和完成证据上的处理规则完全相同。整理只改变以后能检索到的文本，不会平白多出事实，也不会让对照组更容易成功。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.3　整理子 Skill 的职责边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>子 Skill 只建议，不越权</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 420 }}>它只处理已有事实：把记忆按来源分开，输出一份可核查的整理，供根 Brain 决定是否采纳。</Text>
+            <Box style={{ width: 420, height: 130, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>什么时候被调用</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>首次发现当地日期变化，且本日尚未成功整理。每日期最多一次成功整理，失败记原因。</Text>
+            </Box>
+            <Box style={{ width: 420, height: 106, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>两组处理更正、失效与完成证据的规则相同，不给对照更大权限或更好事实。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B', width: 340 }}>它做什么</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', width: 344 }}>它不能做什么</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 340, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>检索上次处理日期与有效进度；第一次运行只记当前日期。</Text>
+                </Box>
+                <Box style={{ width: 344, height: 92, background: '#FFF4E6', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不替角色制造接受或完成证据；不新增历史事实。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 340, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>把已确认完成、待证据、未来承诺、下一周期活动分开。</Text>
+                </Box>
+                <Box style={{ width: 344, height: 92, background: '#FFF4E6', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不做世界动作；不能抵达后同轮替角色完成任务。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16 }}>
+                <Box style={{ width: 340, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>输出带日期与来源的整理，核对后保存并标记本日成功。</Text>
+                </Box>
+                <Box style={{ width: 344, height: 92, background: '#FFF4E6', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>不读他人记忆，不获教师答案；仍受公共调用预算与无进展规则约束。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 27</Text>
+    </Box>
+
+</Slide>

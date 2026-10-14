@@ -1,0 +1,72 @@
+<Slide notes={`一个模型"能做某件事"，这句话由三部分组成。第一是题目：到底问了什么，是在几个选项里挑，还是自己写出一段话。第二是作答：它交出什么形式，一个字母、一段文字，还是一段能运行的代码。第三是评分：谁来判对错，按什么规则判。
+
+这三处任何一处不同，结论就不同。让模型在四个选项里挑一个，猜中概率就有四分之一；等它写一段开放文字，判分就很难自动化。
+
+所以开放日这类任务，不能只问能不能写通知，还要问交给谁判、按什么标准判。形式约束可以程序检查，可时间地点是否真实、语气是否适合居民，得另设检查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>①　1.4.1　评估方法：把"能做"拆成可核查的三件事</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>题目、作答、评分</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#F7F3E8', borderRadius: 10, padding: '12px 22px' }}>
+            <Box style={{ width: 4, height: 30, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>一个分数好不好用，先看它有没有交代清楚这三件事</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 28, alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 660, flexDirection: 'column', gap: 16 }}>
+                <Box style={{ width: 660, height: 116, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                    <Text style={{ width: 110, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>题目</Text>
+                    <Text style={{ width: 474, fontSize: 15, color: '#546779', lineHeight: 1.55 }}>问了什么：从几个选项里挑一个，还是自己写出一段话，还是交一段能运行的代码</Text>
+                </Box>
+                <Box style={{ width: 660, height: 116, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                    <Text style={{ width: 110, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>作答</Text>
+                    <Text style={{ width: 474, fontSize: 15, color: '#546779', lineHeight: 1.55 }}>交出什么：一个字母、一段文本、一次工具调用记录，还是仓库里的一次修改</Text>
+                </Box>
+                <Box style={{ width: 660, height: 116, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                    <Text style={{ width: 110, fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>评分</Text>
+                    <Text style={{ width: 474, fontSize: 15, color: '#546779', lineHeight: 1.55 }}>谁判对错：程序判分、测试是否通过，还是让人成对比较并写明理由</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 464, height: 380, background: '#F4F7FA', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>同一个需求，证据不同</Text>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 92, height: 34, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>写通知</Text></Box>
+                    <Text style={{ width: 320, fontSize: 15, color: '#546779', lineHeight: 1.45 }}>形式约束——可程序检查</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 92, height: 34, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>算容量</Text></Box>
+                    <Text style={{ width: 320, fontSize: 15, color: '#546779', lineHeight: 1.45 }}>数值约束——要独立程序复核</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 92, height: 34, background: '#CB6B28', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 14, color: '#FFFFFF' }}>查预约</Text></Box>
+                    <Text style={{ width: 320, fontSize: 15, color: '#546779', lineHeight: 1.45 }}>状态变更——要工具执行记录</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#FFF4E6', borderRadius: 8, padding: '10px 14px' }}>
+                    <Box style={{ width: 4, height: 30, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>一句话全包的时刻，正是要拆开的时刻</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 36</Text>
+    </Box>
+
+</Slide>

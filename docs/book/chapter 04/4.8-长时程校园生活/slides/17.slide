@@ -1,0 +1,41 @@
+<Slide notes={`接下来看账怎么算。这一块的难点不在公式，而在分母从哪来。
+
+四个指标各有各的分母：重复执行率的分母是全部已提交的一次性任务实例；闭环率的分母就是三件初始任务；承诺按期兑现率的分母，是已经明确接受、而且截止时间落在窗口内的承诺；整理保真率的分母，是全部可以核验的整理声明。
+
+分母不一样，就不能互相推导。比如说一次性任务全部闭环，仍然可能反复重做；反过来，保真率很高，也不能推出闭环率就高。
+
+所以读比率的时候，我要求每份报告都把分子和分母的边界写出来，让读者自己判断这个数字在说什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3　　4.8.5</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>四个指标，{'\n'}说清分母从哪里来</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 960 }}>分母不同就不能互相推导：闭环率高不等于没有重复，保真率高也推不出任务办得好。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 10 }}>
+            <Box style={{ width: 264, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>重复 ÷ 已提交实例</Text>
+            </Box>
+            <Box style={{ width: 264, height: 72, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>闭环 ÷ 3 件初始任务</Text>
+            </Box>
+            <Box style={{ width: 264, height: 72, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>兑现 ÷ 窗口内承诺</Text>
+            </Box>
+            <Box style={{ width: 264, height: 72, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>可核验声明为分母</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 27</Text>
+    </Box>
+
+</Slide>

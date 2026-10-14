@@ -1,0 +1,43 @@
+<Slide notes={`第三个知识块讲的是长任务，也就是需要很多步骤才能完成的工作。
+
+这里最容易误读的地方，是把两个数字当成同一个意思。一部分任务做对了多少，和整个任务有没有做完，是两个不同的量：前者的分母是检查点，后者的分母是任务本身。一个系统可能大部分检查点都碰到了，却在一个关键约束上出错，最终交不出能用的东西。
+
+每一项任务都带一组加权检查点。部分得分汇总的是一项任务完成了多少；严格通过率要求所有检查点都满足才算通过。而且 strict 和 pass@1、pass^k 也不在同一个维度：strict 定义的是"一次任务什么时候算成功"，pass^k 关心的是"重复执行是不是一直成功"。
+
+把这两个层面分开，读数才不会串位。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.5.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>长任务要看"全部完成"</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>完成了多少，和有没有做完，是两个数。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'flex-end', gap: 40, height: 180 }}>
+            <Box style={{ flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 88, height: 128, background: '#276FBF', borderRadius: '6px 6px 0 0' }} />
+                <Text style={{ fontSize: 14, color: '#546779' }}>部分得分</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', justifyContent: 'flex-end', alignItems: 'center', gap: 8 }}>
+                <Box style={{ width: 88, height: 72, background: '#CB6B28', borderRadius: '6px 6px 0 0' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>严格通过</Text>
+            </Box>
+            <Text style={{ fontSize: 20, color: '#546779', lineHeight: 1.7 }}>同一批任务，两种口径</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 24</Text>
+    </Box>
+
+</Slide>

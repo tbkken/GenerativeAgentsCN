@@ -1,0 +1,67 @@
+<Slide notes={`取证表要填真实值。本章新案例尚未产生实际记忆节点，材料里不会预填节点 UUID、Step 编号或检索成功次数——这些字段都留待真实运行后填写。
+
+特别要保留那些“不好看”的结果：未取得答复、没有更新认识、更新后仍按旧计划行动。这些差异可能揭示提示词、检索或消息传递的问题，比只保存最顺利的一次运行更有教学价值。
+
+练习：为“听说活动取消”“已提交查询请求”“服务台回复没有取消”各写一条记忆内容。第一条是未经证实的消息，第二条是待确认进度，第三条有明确来源。参考答案要保留来源和不确定性——直接抄“活动取消了”而不标明听说，就把传闻错误升级成了事实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.5　在页面上检查一次认识更新</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>取证表填真实值，练习分三类</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 300, background: '#F7F3E8', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>取证表：填真实值</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>不预填节点 UUID、Step 编号或检索成功次数——本章新案例尚未产生实际记忆节点。</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>保留未取得答复、没有更新认识、更新后仍按旧计划行动的结果。</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>这些差异可能揭示提示词、检索或消息传递的问题，比只保存最顺利的一次运行更有教学价值。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 628, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>练习：三条消息，各写一条记忆内容</Text>
+
+            <Box style={{ height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>“听说活动取消”</Text>
+                <Box style={{ width: 170, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>未经证实的消息</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>“已提交查询请求”</Text>
+                <Box style={{ width: 170, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>待确认进度</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>“服务台回复没有取消”</Text>
+                <Box style={{ width: 170, height: 34, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>有明确来源</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.55, flex: 1 }}>直接抄“活动取消了”而不标明听说，会把传闻错误升级为事实。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

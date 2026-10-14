@@ -1,0 +1,98 @@
+<Slide notes={`接下来把六类材料摊开来看，每一类能说明什么，以及应该配什么样的标注。
+
+作者空间图说明的是预期的布局与功能区域，所以要注明「待制作草图，未验证系统寻路」。Skill 原文说明的是要求角色采用的方法，要标出文本来源、组别，以及是否与包内内容核对过。回放片段说明的是某个已提交窗口里实际发生的变化，必须写清 Run、Step 区间、虚拟时间和取材边界。
+
+调用记录是模型与工具的尝试、返回及错误，要标 Attempt、调用身份、有没有产生世界提交。人工算例只说明指标怎样计算，要标明「人工构造，无对应 Run」。分析结论比较特殊，它是我对证据的解释，那就必须写清支持它的记录、适用条件，以及仍然未知的地方。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.1　先告诉听众，他们正在看哪一种材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六类材料，各自保留身份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>先说明阶段，{'\n'}再让材料说自己是谁</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 340 }}>标注跟着材料走，读者在同一处就能看到来源。</Text>
+            <Box style={{ width: 340, height: 50, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center', marginTop: 6 }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>设计阶段</Text>
+            </Box>
+            <Box style={{ width: 340, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 340, height: 50, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>运行阶段</Text>
+            </Box>
+            <Box style={{ width: 340, height: 32, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Box style={{ width: 340, height: 50, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>交付阶段</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 784, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 28, flexDirection: 'row', padding: '0 14px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 13, color: '#546779' }}>材料</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>能说明什么</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 13, color: '#546779' }}>推荐标注</Text></Box>
+            </Box>
+
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', padding: '0 14px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>作者空间图</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>预期布局与功能区域</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>待制作草图，未验证系统寻路</Text></Box>
+            </Box>
+
+            <Box style={{ height: 68, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', padding: '0 14px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Skill 原文</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>要求角色采用的方法</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>文本来源、组别、是否与包内核对</Text></Box>
+            </Box>
+
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', padding: '0 14px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>回放片段</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>已提交窗口中实际发生的变化</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>Run、Step 区间、虚拟时间、取材边界</Text></Box>
+            </Box>
+
+            <Box style={{ height: 68, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', padding: '0 14px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>调用记录</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>模型与工具的尝试、返回及错误</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>Attempt、调用身份、是否产生世界提交</Text></Box>
+            </Box>
+
+            <Box style={{ height: 68, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', padding: '0 14px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>人工算例</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>指标如何计算</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 13, color: '#CB6B28', lineHeight: 1.45 }}>人工构造，无对应 Run</Text></Box>
+            </Box>
+
+            <Box style={{ height: 68, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', padding: '0 14px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ width: 170 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>分析结论</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>作者对证据的解释</Text></Box>
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.45 }}>支持记录、适用条件和仍未知之处</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 26</Text>
+    </Box>
+
+</Slide>

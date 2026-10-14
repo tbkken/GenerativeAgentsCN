@@ -1,0 +1,92 @@
+<Slide notes={`Brier 分数容易被误用。它把不同方面混在一起，所以看它的时候要往下再拆一层。
+
+办法是按预测概率分组。把报零点五到零点六的放在一组，零点六到零点七的放一组，零点七到零点八的再放一组，然后看每一组实际的成功率。如果报零点六的那组实际成功大约六成，报零点八的那组实际大约八成，校准就是好的。
+
+分组时一定要同时记录样本量。一组里只有两三道题，算出来的成功率抖得厉害，不能当结论。
+
+还要分清两件事：校准误差说的是“报出的概率准不准”，区分度说的是“能不能把难题和容易题分开”。Brier 同时反映这两类信息，所以不是纯粹的校准误差。
+
+如果所有任务都一律报同一个概率，即使整体频率碰巧对上，也识别不出哪些任务更难。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.7　自信是否可信</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>按预测概率分组再看一遍</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 170, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>校准的含义</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>报“有 80% 的把握”的判断，长期要约有 80% 正确，才符合概率校准的直观含义。</Text>
+            </Box>
+
+            <Box style={{ height: 170, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>说法不等于概率</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>模型说“我非常确定”本身没有可计算的概率意义；即便给出 0.8，也要用实际结果检验。</Text>
+            </Box>
+
+            <Box style={{ height: 140, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Brier 分数口径</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.65 }}>二元结果：第 i 项预测成功概率 pᵢ，成功记 yᵢ = 1，失败记 0，取各项 ( pᵢ − yᵢ )² 的平均。越小越好，范围为 0 到 1。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', height: 130, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 78, background: '#276FBF' }} />
+                <Box style={{ width: 160, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>按预测概率分组</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>0.5–0.6、0.6–0.7…</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>检查每一组的真实成功率；只看总体平均看不出校准好坏。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 130, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 78, background: '#276FBF' }} />
+                <Box style={{ width: 160, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同时记录样本量</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>每组有多少项</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>组内样本太少的成功率波动很大，不足以支撑结论。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 130, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 78, background: '#26816B' }} />
+                <Box style={{ width: 160, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>校准不是全部</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>还含区分能力</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>Brier 同时反映多个方面，不是纯粹的校准误差。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 100, background: '#FFF4E6', borderRadius: 10, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>一律报同一个概率</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>即使整体频率碰巧对上，也未必能识别哪些任务更难。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 31</Text>
+    </Box>
+
+</Slide>

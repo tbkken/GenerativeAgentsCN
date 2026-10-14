@@ -1,0 +1,71 @@
+<Slide notes={`分数本身不说明问题，条件才说明问题。
+
+举一个真实的例子：2026 年 9 月 1 日，Anthropic 发布系统卡，用 HLE 的 2,500 道题报告了 Claude Fable 5.1 的成绩——不允许使用工具是 60.9%，允许使用工具是 65.0%。这两个数字如果剥掉日期、题量和工具条件，就完全没法用：你不知道它是哪一天测的，也不知道允不允许搜索和代码执行。
+
+所以先养成一个习惯：看到百分比，先找它的日期、配置和出处。这三样找齐了，数字才有意义。
+
+缺一样怎么办？把缺的那一项写清楚，而不是自己替它补上。查阅日期不是调用日期，显示名不是固定快照，同一个名字的基准也可能已经换过题。本节要练的就是这个判断。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 280, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>第一章　认识大模型，读懂能力与评价　·　1.5</Text>
+        </Box>
+        <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>当前发展到什么水平</Text>
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.65, width: 960 }}>本节读的不是排行榜，而是一批带前提的公开成绩：每一项都有日期、有配置、有出处，也知道哪些字段没有披露。</Text>
+    </Box>
+
+    <Box style={{ height: 400, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ flex: 1, height: 336, background: '#EDF4FC', borderRadius: 14, padding: 26, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>Humanity’s Last Exam　2,500 题　·　报告日期 2026-09-01</Text>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>Claude Fable 5.1</Text>
+            <Box style={{ flexDirection: 'row', gap: 18, height: 128 }}>
+                <Box style={{ flex: 1, height: 128, background: '#FFFFFF', borderRadius: 10, justifyContent: 'center', alignItems: 'center', gap: 4, flexDirection: 'column' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不使用工具</Text>
+                    <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#276FBF' }}>60.9%</Text>
+                </Box>
+                <Box style={{ flex: 1, height: 128, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', alignItems: 'center', gap: 4, flexDirection: 'column' }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>使用工具</Text>
+                    <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#26816B' }}>65.0%</Text>
+                </Box>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 3, height: 20, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>厂商自报，本书未复测；精确调用日期与逐题消耗未在所引表中披露</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 460, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ height: 96, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>期</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>有日期</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>报告日期与调用日期分别记录</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 96, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>配</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>有配置</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>题集、工具、预算与推理设置</Text>
+                </Box>
+            </Box>
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>源</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>有出处</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>自报还是维护方公布，未披露项照写</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+</Slide>

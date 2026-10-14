@@ -1,0 +1,76 @@
+<Slide notes={`练习一，助手说手作室只能容纳十二人、已预约十点半、你一直喜欢简短报告。三句话各自的证据不同：容量要有效的场地资料或查询结果，预约完成要真实执行及状态证据，偏好要用户明确表达或可追溯的有效记忆。只在回答里写出这些文字，只能证明它说出来了。
+
+练习二，十条必需约束，输出十条，八条正确、两条不存在、漏掉两条。TP 是 8、FP 是 2、FN 是 2，所以准确率、召回率与 F1 都是零点八。但指标把约束按同一种单位计数，而预约冲突属于不可违反的边界，必须单独列出是否满足。
+
+练习三，独立成功概率零点八，两次机会里至少成功一次是零点九六，两次都成功是零点六四。重试时改提示、共享先前状态或服务配置变化，都会破坏独立同分布的假设。
+
+练习四、五没有唯一文字答案，重点是能否写清条件、证据、分母与失败处理。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.7　章末练习与参考思路</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五道练习</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ height: 98, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>找出信息来源</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>助手说「手作室只能容纳十二人；我已为你预约十点半；你一直喜欢简短报告。」分别列出三句话需要什么证据；仅在回答中出现这些文字，能证明哪一项已经成立？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 98, background: '#FFF4E6', borderRadius: 8, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 6, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>重新计算指标</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>十条必需约束，输出十条，八条正确、两条不存在，漏掉两条。计算 Precision、Recall 和 F1；若漏掉的恰好是预约冲突条件，为什么总体 F1 不能直接代表方案可执行？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 98, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>解释不同的成功率</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>每次独立成功概率为 0.8。给两次机会，至少成功一次与两次都成功的概率分别是多少？哪些因素会破坏独立且同分布的假设？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 98, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>阅读一张数据卡</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>从 1.5 选一条公开成绩，写出它能支持的一个结论和不能支持的两个结论；检查测量日期、工具条件及来源性质是否明确。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 98, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 36, height: 36, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+            </Box>
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>设计自己的小评价</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>选一个熟悉的资料整理任务，准备完整、缺失、矛盾、过期四种输入各一项；先写评分条件，再请求模型回答，不要看到结果才改「什么算成功」。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 27</Text>
+    </Box>
+
+</Slide>

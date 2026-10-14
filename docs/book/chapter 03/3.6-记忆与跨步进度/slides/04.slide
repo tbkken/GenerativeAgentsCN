@@ -1,0 +1,56 @@
+<Slide notes={`三类内容逐一对照。已提交的世界事实，比如某人移动到服务台附近、公告栏提交状态变化，保存在 StepResult 及相关事实记录里。角色的认识，比如许安相信手作活动按旧时间开始，属于该角色的私有记忆或初始人物资料。待确认进度，比如林岚已经提出更新请求、尚待对象回复，要明确标成待确认的私有便签。
+
+三类可以互相提供依据，却不能互相冒充。
+
+角色误信旧消息是可研究的行为现象；但回放若把这种误信画成公告已经改动，就破坏了事实边界。检验仿真结果时，要同时保留“人物认为怎样”和“世界实际怎样”的区别。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.1　三种容易混在一起的内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三类内容，各有去处</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 240 }}><Text style={{ fontSize: 14, color: '#546779' }}>内容</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>青禾案例中的例子</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>适合保存的位置</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 240 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>已提交的世界事实</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>某人移动到服务台附近；公告栏提交状态变化</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>StepResult 及相关事实记录</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 240 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>角色的认识</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>许安相信手作活动按旧时间开始</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>该角色的私有记忆或初始人物资料</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 240 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>待确认进度</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>林岚已经提出更新请求，尚待对象回复</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>明确标成待确认的私有便签</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', alignItems: 'center', marginTop: 6 }}>
+            <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>三者可以互相提供依据，却不能互相冒充</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>回放把角色的误信画成“公告已经改动”，就会破坏事实边界；检验仿真结果，要同时保留“人物认为怎样”和“世界实际怎样”。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 24</Text>
+    </Box>
+
+</Slide>

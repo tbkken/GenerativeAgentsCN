@@ -1,0 +1,62 @@
+<Slide notes={`前面讲的都是原理，最后落到可以动手的地方。WorkBuddy 的输入框里有一个「模式」入口，提供了三种任务模式。
+
+Ask，仅问答。它只回答，不动文件。适合拿来问问题，比如引用活动材料，问完成筹备还缺哪些东西，看看有没有遗漏预约事实。
+
+Agent 是默认模式。它会读文件、调工具、生成候选，按真实结果继续往下走。
+
+Plan，先给方案。它先把输入、步骤、产物和验收条件列出来，你审阅之后可以选「开始执行」，也可以「调整计划」。
+
+这里要说明一句：这是产品的交互流程，不是模型内部推理的显示开关。Plan 让你有机会在执行之前先看方案，这和「能不能看到模型在想什么」是两回事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.5　在 WorkBuddy 中体验三种任务模式</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>WorkBuddy 里的三种任务模式</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>输入框的「＋ → 模式」提供三个入口，默认是 Agent。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 26 }}>
+
+            <Box style={{ width: 352, height: 236, background: '#EDF4FC', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>01</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>Ask　仅问答</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>只回答问题，不动文件。适合核对材料、检查有没有遗漏的预约事实。</Text>
+            </Box>
+
+            <Box style={{ width: 352, height: 236, background: '#ECF7F2', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>02</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>Agent　默认模式</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>读取材料、调用工具、生成候选，按真实结果继续或停止。</Text>
+            </Box>
+
+            <Box style={{ width: 352, height: 236, background: '#FFF4E6', borderRadius: 10, padding: '20px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 44, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>03</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>Plan　先给方案</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>先列出输入、步骤、产物与验收条件，审阅之后再决定怎么做。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1108, height: 66, background: '#F7F3E8', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0px 22px', gap: 16 }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>Plan 的审阅动作</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>用户看完方案后，可以选「开始执行」，也可以「调整计划」。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>这是产品的交互流程，不是模型内部推理的显示开关。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

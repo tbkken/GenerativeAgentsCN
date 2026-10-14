@@ -1,0 +1,76 @@
+<Slide notes={`这两组命令最容易混。创建和启动的区别是：创建只把运行目录建出来，启动是创建之后直接执行。
+恢复和重跑的区别在身份：恢复保留原来的运行身份，重跑创建一个新身份。恢复一个运行包的时候，要先把它安全解压到一个新的可写目录，因为归档文件不能原地续写。恢复之后继续使用同一个运行编号，同时建立一个新的尝试。
+还有一个约束：步数参数不能突破实验包本身允许的最大步数。这意味着包的边界决定了你最多能跑到哪里，命令层面的参数只是在这个范围内调整。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.6　CLI 延伸：准确区分各条命令</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>create 与 start、resume 与 rerun</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 172, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>创建与执行</Text>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 240, height: 42, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>create</Text>
+                    </Box>
+                    <Box style={{ width: 274 }}>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>只创建运行目录，不执行</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 240, height: 42, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#26816B', fontFamily: 'Consolas, monospace' }}>start</Text>
+                    </Box>
+                    <Box style={{ width: 274 }}>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>创建之后直接执行</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 566, height: 172, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>身份保留与新身份</Text>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 240, height: 42, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#26816B', fontFamily: 'Consolas, monospace' }}>resume</Text>
+                    </Box>
+                    <Box style={{ width: 274 }}>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>保留原来的 Run 身份</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+                    <Box style={{ width: 240, height: 42, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace' }}>rerun</Text>
+                    </Box>
+                    <Box style={{ width: 274 }}>
+                        <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.4 }}>创建一个新的身份</Text>
+                    </Box>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>归档不能原地续写</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>恢复 .garun 要先安全解压到新的可写目录；恢复之后继续使用同一 Run ID，并建立新 Attempt。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 34, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>--steps 不能突破实验包允许的最大步数：包的边界决定上限，参数只在此范围内调整。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

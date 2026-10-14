@@ -1,0 +1,42 @@
+<Slide notes={`先看前两道练习。
+
+第一道是找出能力归属。助手从 PDF 找到房间容量，调用接口查预约，运行脚本后生成文件，要分别标出模型、资料检索、工具执行和应用校验各做了什么。
+
+参考思路：理解和组织输出由模型参与；找到材料靠实际读取或检索；接口和命令由宿主执行；容量与冲突由校验器判定。某一环节的结果不能替代另一环节的证据。
+
+第二道是设计一次失败。把手作候选放到 09:30 到 10:30，要求助手修正；再把人数改到超过房间容量且没有替代房间。
+
+参考思路：前者还有别的时段可用，可以修正；后者可能本来就不可行，应说明冲突和待调整条件，不能擅自减少人数。构造第二个任务时，要在材料副本里同步改需求。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.6　章末练习与参考思路</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>章末练习：找出能力归属，设计一次失败</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ height: 225, background: '#EDF4FC', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>练习一　找出能力归属</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>助手从 PDF 中找到房间容量，调用接口查询预约，运行脚本后生成文件。分别标出模型、资料检索、工具执行和应用校验承担的工作。</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>参考思路：理解与组织输出由模型参与；找到材料靠实际读取或检索机制；接口和命令由宿主执行；容量与冲突约束由校验器判定。某一环节的结果不能替代另一环节的证据。</Text>
+        </Box>
+
+        <Box style={{ height: 225, background: '#F4F7FA', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>练习二　设计一次失败</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>把手作候选放到 09:30—10:30，要求助手修正；再把参与人数改到超过房间容量且没有替代房间。两次任务应有什么不同结局？</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>参考思路：前者在原规则下有其他时段可用，可以修正；后者在给定材料下可能不可行，应说明冲突和待调整条件，不能擅自减少人数。构造第二个任务时，要在材料副本中同步变更需求。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 25</Text>
+    </Box>
+
+</Slide>

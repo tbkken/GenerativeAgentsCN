@@ -1,0 +1,55 @@
+<Slide notes={`这两件事在验收上不能互相代替。
+
+续跑要证明的是恢复准不准：身份有没有接上、恢复边界对不对、有没有把已经提交过的步骤再做一遍。它不回答“再跑一次结果会不会一样”。
+
+重跑要证明的是另一件事：在相同输入下重新执行会发生什么。即使输入和随机种子完全相同，再次调用远程模型也未必产生完全相同的文本和行为。
+
+所以一次续跑成功，不能拿来当作重跑结果一致的证据；反过来，重跑能跑通，也不能说明恢复边界是准的。
+
+写验收记录的时候，我会把这两类结论分开写，各自附上暂停前后和恢复前后的原始值。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.1　Run 与 Attempt 为什么需要分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>续跑与重跑不能互相代替</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 480, flexDirection: 'column', gap: 18 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 480 }}>两条路都能叫“再运行一次”，但它们产生的证据属于不同的问题，各自都要单独记录。</Text>
+            <Box style={{ width: 480, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>别把结论串号</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>重跑结果与旧 Run 是两段历史。即使输入相同，也不能把两次运行合并成一条记录。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 640, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 640, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>续跑能证明什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>run_id 接得上、Attempt 已更换、恢复边界落在 k、第一次新提交是 k+1；已经提交的动作没有重复。</Text>
+            </Box>
+
+            <Box style={{ width: 640, height: 132, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>重跑能证明什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>在相同的封存输入下重新执行会发生什么；新的 Run 从 Step 1 开始，产生属于自己的历史。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 58, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.6 }}>续跑跑通，不能说明重跑结果一致；重跑跑通，也不能说明恢复边界是准的。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

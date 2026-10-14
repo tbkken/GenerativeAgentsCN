@@ -1,0 +1,81 @@
+<Slide notes={`先看前五类，它们改的都是材料和排期本身。
+
+正常排期是基准：使用完整材料，三项活动齐全，全部硬约束通过。这一条是分母里唯一的「正样本」。
+
+容量不足，是在材料副本里把参与人数调高。期望的行为是明确报出不可行，或者重新安排；不允许悄悄把人数减少到能塞进去为止。
+
+预约冲突，是把手工活动安排在九点半到十点半，正好压住十点到十点半的既有预约。它必须报错。
+
+边界相接更微妙：十点半开始，刚好接在预约结束的那一刻。半开区间下这叫首尾相接，不算重叠，应该允许通过。这一条最容易写错。
+
+数据缺失是把预约文件副本移走。工具应该报告不可用，而不是把「查不到」解释成「没有预约」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.13.2　一份有失败样本的小评价集</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>改动材料的前五类样本</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 180 }}><Text style={{ fontSize: 14, color: '#546779' }}>样本</Text></Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 14, color: '#546779' }}>改变什么</Text></Box>
+            <Box style={{ width: 504 }}><Text style={{ fontSize: 14, color: '#546779' }}>预期检查</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>正常排期</Text>
+            </Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>使用完整材料</Text></Box>
+            <Box style={{ width: 504 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>三项活动齐全，全部硬约束通过</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>容量不足</Text>
+            </Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>在材料副本中提高参与人数</Text></Box>
+            <Box style={{ width: 504 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>明确不可行或重新安排，不能静默减少人数</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>预约冲突</Text>
+            </Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>手作安排为 09:30—10:30</Text></Box>
+            <Box style={{ width: 504 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>与 10:00—10:30 预约相交，必须报错</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>边界相接</Text>
+            </Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>手作安排为 10:30—11:30</Text></Box>
+            <Box style={{ width: 504 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>半开区间相接允许通过，不算重叠</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 180, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>数据缺失</Text>
+            </Box>
+            <Box style={{ width: 400 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>移走预约文件副本</Text></Box>
+            <Box style={{ width: 504 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.5 }}>工具报告不可用，不把缺失解释成没有预约</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 34</Text>
+    </Box>
+
+</Slide>

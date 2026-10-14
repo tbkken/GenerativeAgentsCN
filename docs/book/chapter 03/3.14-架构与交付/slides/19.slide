@@ -1,0 +1,124 @@
+<Slide notes={`把八个位置一次摆出来，每一格写的是「读者会问什么」。
+
+研究问题与参数理由：为什么设这些角色、这些时间、这个视野和这组对照。答不出理由，别人就不知道你想证明什么。
+
+地图与人物素材：图片、语义、碰撞和实际位置是否对得上。
+
+精确 Skill 与依赖：当时执行了什么方法，有没有遗漏。
+
+实验包：装配了哪些独立副本，身份与摘要是什么。
+
+Run 与 Attempt 记录：哪次执行、从哪里恢复、提交到哪一步。
+
+关键事实与质量明细：哪些条件成立、哪些失败、证据能定位到哪里。
+
+包和导出核验：原始文件、时间、状态、大小、摘要与协议类型是否明确。
+
+复现说明：哪些环境前提已经验证，哪些仍然是未知。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.5　一份实验交付物应包含什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一份实验交付物的八个位置</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 276, height: 200, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 26, height: 26, background: '#546779', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', flex: 1 }}>研究问题与参数理由</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>为什么设这些角色、时间、视野和对照？</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 200, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 26, height: 26, background: '#546779', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', flex: 1 }}>地图与人物素材</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>图片、语义、碰撞和实际位置是否对应？</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 200, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 26, height: 26, background: '#546779', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', flex: 1 }}>精确 Skill 与依赖</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>当时到底执行了什么方法，是否有遗漏内容？</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 200, background: '#F7F3E8', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 26, height: 26, background: '#546779', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', flex: 1 }}>实验包</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>装配了哪些独立副本，身份与摘要是什么？</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 276, height: 200, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', flex: 1 }}>Run 与 Attempt 记录</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>哪次执行、从哪里恢复、最终提交到哪一步？</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 200, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 26, height: 26, background: '#276FBF', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF', flex: 1 }}>关键事实与质量明细</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>哪些条件成立，哪些失败，证据能定位到哪里？</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 200, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 26, height: 26, background: '#26816B', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>7</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B', flex: 1 }}>包和导出核验</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>原始文件、时间、状态、大小、摘要与协议类型是否明确？</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 200, background: '#FFF4E6', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                    <Box style={{ width: 26, height: 26, background: '#CB6B28', borderRadius: 13, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>8</Text>
+                    </Box>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', flex: 1 }}>复现说明</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>哪些环境前提已验证，哪些仍然未知？</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 29</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,81 @@
+<Slide notes={`一道题从想法到进入榜单，中间要过好几关。第一关是征集，向各领域专家约题，HLE 这一关动用了近一千位专家，分布在大约五百家机构、五十个国家。
+
+第二关是筛选，很关键：如果这道题一搜就能搜到答案，说明它考的是检索不是推理，删掉；如果主流模型已经答对了，说明它太简单，也删掉。HLE 就用联网搜索和当时的模型先筛一遍。
+
+第三关是定稿，让同领域专家复核，把有歧义、答案不唯一的题剔出去。第四关才是评测，用统一条件跑模型，并且把用没用工具、给了多少预算都记下来。最后一关是公布，公开数据集和榜单，同时留一份私有题集，防止模型照着公开题背答案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>①　1.4.1　评估方法：一个基准是怎样被造出来的</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一道题的五个阶段</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 195, height: 236, background: '#EDF4FC', borderRadius: 12, padding: '16px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>阶段一</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>征集</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>向各领域专家约题。HLE 动员近一千位贡献者，来自约五百家机构、五十个国家。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>产出：候选题池</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 195, height: 236, background: '#EDF4FC', borderRadius: 12, padding: '16px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>阶段二</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>筛选</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>联网一搜就有答案的删掉；当时的主流模型已经答对的也删掉。留下的是真的难题。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>产出：难度门槛</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 195, height: 236, background: '#F7F3E8', borderRadius: 12, padding: '16px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>阶段三</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>定稿</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同领域专家双轮复核，剔掉有歧义、答案不唯一的题，并规定答案必须写成什么形式。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>产出：评分契约</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 195, height: 236, background: '#ECF7F2', borderRadius: 12, padding: '16px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>阶段四</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>评测</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>用统一条件跑各个模型，同时记录用没用工具、跑几次、给多少预算——这些都属于协议。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#26816B' }}>产出：带条件的分数</Text>
+            </Box>
+
+            <Box style={{ width: 44, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 32, color: '#276FBF' }}>›</Text></Box>
+
+            <Box style={{ width: 195, height: 236, background: '#ECF7F2', borderRadius: 12, padding: '16px 16px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>阶段五</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>公布</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>公开数据集与榜单，同时留一份私有题集。公开的用于复现，私有的用于防止背答案。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#26816B' }}>产出：榜单＋私有集</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.55 }}>最关键的一关是筛选：它决定了这个基准到底在考推理，还是在考检索和记忆</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 36</Text>
+    </Box>
+
+</Slide>

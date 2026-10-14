@@ -1,0 +1,71 @@
+<Slide notes={`做基准的机构大致四类。
+
+第一类是学术团队，高校和研究所的课题组，比如 GPQA 就是一批研究者做出来的，论文公开、方法可查。
+
+第二类是非营利组织，比如 ARC Prize Foundation，背后是 Chollet 发起的抽象推理竞赛。
+
+第三类是产业联合，典型是 HLE，由 CAIS 和 Scale AI 联合主办，出题靠全球专家网络，还设了奖金池。
+
+第四类是独立评测机构，比如 Epoch AI，自己跑模型也审计别人的基准。
+
+四类各有长短：学术严谨但资源有限，非营利目标纯粹但依赖资助，产业联合出题面广但要看动机，独立评测相对中立，也要看它公开到什么程度。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>②　1.4.2　评估机构：权威性与利益关系</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>谁在做基准</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 276, height: 306, background: '#EDF4FC', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 60, height: 26, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>学术</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>高校与研究所</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>课题组自己出题、自己验证，论文与题库一起公开。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.45 }}>代表：GPQA 的作者团队</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 306, background: '#ECF7F2', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 26, background: '#26816B', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>非营利</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>公益型基金会</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>以奖项与公开评测推动研究，不靠卖模型赚钱。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.45 }}>代表：ARC Prize Foundation</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 306, background: '#F7F3E8', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 26, background: '#546779', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>产业联合</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>机构与企业合办</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>一方出题网与评审，一方出平台与资助，规模做得很大。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>代表：CAIS × Scale AI</Text>
+            </Box>
+
+            <Box style={{ width: 276, height: 306, background: '#F4F7FA', borderRadius: 12, padding: '18px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 74, height: 26, background: '#276FBF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#FFFFFF' }}>独立</Text></Box>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>第三方评测机构</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>自己跑模型，也审计别人的基准，与厂商保持距离。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.45 }}>代表：Epoch AI</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>四类机构各有长处也各有局限；看一个基准，先看它属于哪一类、钱从哪里来</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 36</Text>
+    </Box>
+
+</Slide>

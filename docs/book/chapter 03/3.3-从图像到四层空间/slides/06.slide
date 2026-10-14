@@ -1,0 +1,145 @@
+<Slide notes={`坐标系统容易踩一个坑：把像素当距离。地图是 32×24 格、每格 32 像素，背景图是 1024×768 像素，这两组数字描述的是同一个空间，但人物的世界位置只用格坐标记录。
+
+图片的像素位置只是显示方式。把图放大两倍，角色不会因此一次走得更远；反过来，缩小图片也不会压缩移动预算。
+
+读任何配置时，先确认它写的是格还是像素：空间范围的 X、Y、W、H 都是格数，素材切片的尺寸也是格数，只有素材文件本身的分辨率才是像素。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.1　先把尺度定下来</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>格坐标与像素是两回事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>坐标怎么读</Text>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 400 }}>地图 32×24 格，每格 32 像素，完整背景 1024×768 像素。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 400 }}>格坐标从左上角开始：X 向右，Y 向下。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 400 }}>人物的世界位置以格坐标记录；图片的像素位置只是显示方式。</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 10 }}>
+                <Box style={{ width: 8, height: 8, background: '#276FBF', marginTop: 7 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6, width: 400 }}>保留静态几何图，是为了同时核对坐标、区域边界与门洞位置。</Text>
+            </Box>
+            <Box style={{ height: 64, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 16px' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>把图放大两倍，不会让角色一次走得更远。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+
+            <Box style={{ flexDirection: 'row' }}>
+                <Box style={{ width: 30 }} />
+                <Box style={{ padding: 2, flexDirection: 'row', gap: 2 }}>
+                    <Box style={{ width: 62, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>0</Text></Box>
+                    <Box style={{ width: 62, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>1</Text></Box>
+                    <Box style={{ width: 62, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>2</Text></Box>
+                    <Box style={{ width: 62, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>3</Text></Box>
+                    <Box style={{ width: 62, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>4</Text></Box>
+                    <Box style={{ width: 62, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>5</Text></Box>
+                    <Box style={{ width: 62, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>6</Text></Box>
+                    <Box style={{ width: 62, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>7</Text></Box>
+                </Box>
+                <Box style={{ width: 40, height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>X →</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 6 }}>
+                <Box style={{ padding: 2, flexDirection: 'column', gap: 2 }}>
+                    <Box style={{ width: 24, height: 62, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>0</Text></Box>
+                    <Box style={{ width: 24, height: 62, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>1</Text></Box>
+                    <Box style={{ width: 24, height: 62, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>2</Text></Box>
+                    <Box style={{ width: 24, height: 62, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>3</Text></Box>
+                    <Box style={{ width: 24, height: 62, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>4</Text></Box>
+                    <Box style={{ width: 24, height: 62, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 12, color: '#546779' }}>5</Text></Box>
+                </Box>
+
+                <Box style={{ width: 514, height: 386, background: '#B5C7D8', borderRadius: 4, padding: 2, flexDirection: 'column', gap: 2 }}>
+                    <Box style={{ flexDirection: 'row', gap: 2 }}>
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 2 }}>
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 2 }}>
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>(5, 2)</Text>
+                        </Box>
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 2 }}>
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 2 }}>
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                    </Box>
+                    <Box style={{ flexDirection: 'row', gap: 2 }}>
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                        <Box style={{ width: 62, height: 62, background: '#FFFFFF' }} />
+                    </Box>
+                </Box>
+            </Box>
+
+            <Text style={{ fontSize: 13, color: '#546779' }}>示意：局部网格（8×6），非完整地图；蓝色高亮格的坐标为 (5, 2)，每格 32 像素。</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 25</Text>
+    </Box>
+
+</Slide>

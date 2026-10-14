@@ -1,0 +1,44 @@
+<Slide notes={`最后一块，讲交出去的东西。这也是整节的落点：我们做这些整理，是为了让别人能接着做。
+
+接收者拿到资料集，应该能自己找到三种内容。第一种，本次采用的原文与来源，他能回查。第二种，整理后的明确条件，他知道这一轮是用什么跑的。第三种，冲突、假设和未完成事项，他清楚哪里还悬着。
+
+这三种缺一样，资料集就不完整。只有结论没有来源，他没法验证；只有原文没有整理，他要重新读一遍；没有未完成事项清单，他会以为一切都已确定，然后在错误的假设上继续往下做。
+
+所以交接的目标不是把材料交出去，而是让对方能解释你的决定。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4　　5.2.6</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>交给下一位作者的是什么</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>接收者要能自己找到三种内容：采用的原文与来源、整理后的明确条件、冲突与未完成事项。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>采用的原文与来源</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>整理后的明确条件</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>冲突与未完成事项</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 23</Text>
+    </Box>
+
+</Slide>

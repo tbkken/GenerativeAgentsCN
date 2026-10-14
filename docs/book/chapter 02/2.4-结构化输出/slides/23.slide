@@ -1,0 +1,66 @@
+<Slide notes={`这一节我们做的事情，可以用三个反问收住。
+
+第一，拿到结果之前先问：响应本身可用吗？状态是不是完成，有没有拒绝，有没有被中断。这一步没过，后面都不用谈。
+
+第二，写完合同之后问：这份合同写得够明确吗？必填项列全了吗，枚举封住了吗，额外字段禁止了吗，时间带时区了吗。写得越明确，程序替你挡住的错误就越多。
+
+第三，判定对错的时候问：谁来独立裁定业务规则？预约冲不冲突，不该由生成结果的模型自己下结论，要交给一段确定的程序。
+
+结构化输出不会让错误变得不可能，它让错误更容易被定位。这就是它的价值。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 200, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>3</Text>
+        <Box style={{ flexDirection: 'column', gap: 8 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.4 结构化输出　·　本节收束</Text>
+            <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三个反问</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 358, flexDirection: 'column', gap: 14 }}>
+
+        <Box style={{ height: 110, background: '#EDF4FC', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 90 }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>一</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>响应本身可用吗？</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>状态是否完成，有没有拒绝或中断。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 90 }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#276FBF' }}>二</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>这份合同写得够明确吗？</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>必填项、枚举、额外字段、时区，都要写清楚。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 110, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+            <Box style={{ width: 90 }}>
+                <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#26816B' }}>三</Text>
+            </Box>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>谁来独立裁定业务规则？</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>冲突不该由生成结果的模型自己下结论。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 82, flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+        <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>结构化输出不让错误变得不可能，它让错误更容易被定位。</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>青禾社区学习中心开放日　·　第二章 从对话到智能体　·　2.4 结构化输出</Text>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 23</Text>
+    </Box>
+
+</Slide>

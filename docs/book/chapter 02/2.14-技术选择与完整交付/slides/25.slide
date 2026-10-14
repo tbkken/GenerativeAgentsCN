@@ -1,0 +1,76 @@
+<Slide notes={`第二章到这里结束。十四节收成一句话：每一项技术都对应任务里的一个缺口，也都留下自己的证据。
+
+整章分成四段。请求与表达，从环境与第一次调用到 Prompt、上下文工程、结构化输出，解决话怎么说清楚。
+
+工具与执行，Function Calling、MCP、CLI 与 Shell、Skill，解决事情怎么真的做成。资料与自主，检索与 RAG、Agent 循环、多模态、多 Agent。
+
+诊断与收口，可观测性、评估与成本，最后落到技术选择与完整交付，解决怎么知道它真的做对了。
+
+第三章换一个世界，把同一个开放日交给可感知、可行动、可回放的环境。那时标准会多一条：不只文件要对，角色还要真的走过去。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>第二章　小结</Text>
+            <Text style={{ fontSize: 42, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2, textAlign: 'center' }}>十四节技术，一张缺口地图</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 130, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>2.1 – 2.4</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>请求与表达</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>环境与第一次调用 · Prompt · 上下文工程 · 结构化输出与业务校验</Text>
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 130, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>2.5 – 2.8</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>工具与执行</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>Function Calling · MCP · CLI 与 Shell · Skill</Text>
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ width: 130, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>2.9 – 2.12</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>资料与自主</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#276FBF' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>检索与 RAG · Agent 循环 · 多模态 · 多 Agent 工作流</Text>
+        </Box>
+
+        <Box style={{ height: 72, background: '#ECF7F2', borderRadius: 8, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ width: 130, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>2.13 – 2.14</Text>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>诊断与收口</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 18, color: '#26816B' }}>›</Text></Box>
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779' }}>可观测性、评估、可靠性与成本 · 技术选择与完整交付</Text>
+        </Box>
+
+        <Box style={{ height: 68, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>每一项技术都对应一个缺口，也都留下自己的证据</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>下一章把同一个开放日交给可感知、可行动、可回放的世界。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,100 @@
+<Slide notes={`这一节有六个知识块。它们回答的是同一个问题的不同侧面：我看到的这个结果，到底是谁做出来的。
+
+第一个知识块先把"不同完成方式"这件事摆出来。同一个任务，可以按时间轴逐条核对条件，也可以凭一句感觉给出结论。这两者的差别，就是后面所有讨论的起点。
+
+第二个知识块拆结构。从用户目标、组织输入、模型处理、实际执行到核验交付，把它拆成五个环节，看每一步由谁承接，以及模型提出请求和工具真的执行之间隔着什么。
+
+第三个知识块讲换条件。模型不动，只换它拿到的资料和可用的工具，结果会怎么变。这一步会带来一个重要的结论：评价对象变了，测的就不再是同一个东西。
+
+第四和第五个知识块处理名字和位置。模型、模型服务、产品、模型快照是四个不同的东西；开放权重、本地部署、云 API 也是不同的选择。名字混了，结论就会错。
+
+最后一个知识块给一个反问的方法：出了问题，先想换掉哪一层，结果会改变。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>能力不只来自模型，还来自它周围</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>这个结果，到底是谁做出来的？</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>六个知识块从"怎么看"走到"怎么查"：先看清同任务的多种完成方式，再拆开参与的角色，然后换条件、理名字、认位置，最后落到一个可以反复用的反问。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 11 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>同一个任务，可以有不同的完成方式</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>沿时间轴逐条核对条件，而不是凭感觉说"合适"</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一次任务背后的结构</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>目标、输入、模型、执行、核验，各由谁承接</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>工具会扩展能力，也会改变评价对象</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>模型不变，只换资料与工具，测到的东西就变了</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>模型名称、服务与产品不是同一个东西</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>四层名称各自记什么，混用会让结论失真</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>开放权重、本地部署与云服务</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>东西放在哪里，改变许可、性能与总成本</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 44, height: 44, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>换掉哪一层，结果会改变</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>从错误现象倒推该查哪一层，每次只改一个因素</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,52 @@
+<Slide notes={`还有一个必须提前写清的分支：找不到旧节点怎么办。
+
+两组都要先去检索那条真实的旧信念节点，用的是同一个固定问题和同样的 limit=8。如果找不到，两组的做法也一样——都追加新信念，不做替代。这个时候必须如实登记「干预未实施」，因为对照组实际上退化成了基线，这一批数据不能拿来证明替代有效。
+
+还有两条纪律：不能编造一个记忆 ID 来假装替代成功；也不能只给对照组额外查询机会，那样两组条件就不一样了。
+
+把这几种情况都写进预登记，是因为实验的价值在于条件真的被遵守，而不是结果看起来漂亮。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.4.4　唯一变化：追加还是替代当前信念</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>找不到旧节点，两组同样追加</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>替代要落在一条真实的旧节点上；找不到的时候，两组条件会重新合流。</Text>
+
+        <Box style={{ height: 112, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>两组都先找真实旧节点</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>同一个检索问题、同样的 limit=8；不允许编造记忆 ID 来凑出一次替代。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 112, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>找不到时，两组同样追加</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>这时对照实际退化为追加，两组写法一致，不做任何单边补偿。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 132, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>登记「干预未实施」</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>同一检索问题在 limit=8 下找不到旧节点时，这一条不能算替代成功；也不给对照额外查询机会，条件必须保持相同。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.4 通知纠错</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

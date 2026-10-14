@@ -1,0 +1,88 @@
+<Slide notes={`最后留一个练习：写一条真正可接手的维护任务。
+
+它要求以一个有出处的现象开头，说明准备修改哪份独立材料，需要验证什么，以及原证据放在哪里。
+
+判断标准其实很简单：接手的人读完这条任务，应该能够完成它，或者明确地把它退回来说明理由，而不需要靠猜测去重建项目历史。如果一条维护任务必须让别人先考古一遍，那它就不是交接，只是把问题转手。
+
+写的时候可以自问四句：现象有没有出处？改的是哪一份材料？验证什么才算通过？原证据在哪？四个问题都有答案，这条任务才算立得住。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.7　环境变化以后怎样接手</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>写一条真正可接手的维护任务</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 480, flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>练习：{'\n'}把反馈写成一条任务</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>接手者应能够完成这项任务，或者明确地把它退回来说明理由，而不需要靠猜测重建项目历史。</Text>
+            <Box style={{ width: 480, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>退不回来说明理由，就不是交接</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>必须让人先考古一遍的任务，只是把问题转手给了下一个人。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 640, height: 428, background: '#F4F7FA', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ width: 604, height: 44, background: '#276FBF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>维护任务单　四问</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 56, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>练习</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 604, height: 76, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>现象发生在哪里</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>要有出处：哪份记录、哪一次运行的哪一步</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 604, height: 76, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>准备修改哪份独立材料</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>公共资源、草稿副本还是另建的新草稿</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 604, height: 76, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>需要验证什么</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>下一次应看见哪些事实，怎样判断仍未解决</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 604, height: 76, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 32, height: 32, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>4</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>原证据在哪里</Text>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>写出具体位置，不写"参见相关材料"</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 27</Text>
+    </Box>
+
+</Slide>

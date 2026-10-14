@@ -1,0 +1,75 @@
+<Slide notes={`在地图编辑器里把对象配起来，步骤很直白。
+
+先选中四层结构里的公告栏，打开「对象 Skill」，绑定 qinghe-notice-board。服务台同理，绑 qinghe-helpdesk。
+
+绑定之后展开「感知与交互参数」，把感知范围、注意力带宽、交互说明、交互距离和默认请求填进去；「初始状态」里编辑那个 JSON 对象。
+
+这些数值不是随手写的，以本章案例材料为准。填完保存，最好关掉重开一次再核对，因为配置写错地方很容易看不出来。
+
+参数决定它能不能感知到你、能不能和你交互，配错了后面的情节根本走不通。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.5　在地图页面配置对象</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>绑定对象 Skill 与感知交互参数</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 640, height: 460, background: '#F4F7FA', borderRadius: 10, flexDirection: 'column' }}>
+
+            <Box style={{ width: 640, height: 52, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>地图编辑器 · 对象 Skill</Text>
+                <Box style={{ width: 56, height: 26, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, fontWeight: 'bold', color: '#FFFFFF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ padding: '16px 18px', flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 604, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>四层结构　→　公告栏</Text>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>已选中</Text>
+                </Box>
+                <Box style={{ width: 604, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>对象 Skill</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>qinghe-notice-board</Text>
+                </Box>
+                <Box style={{ width: 604, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>服务台</Text>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>qinghe-helpdesk</Text>
+                </Box>
+                <Box style={{ width: 604, height: 150, background: '#FFF4E6', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>展开「感知与交互参数」</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>感知范围　·　注意力带宽　·　交互说明{'\n'}交互距离　·　默认请求</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>「初始状态」编辑 JSON 对象；以本章案例材料为准，保存后重开核对。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 480, flexDirection: 'column', gap: 16 }}>
+
+            <Box style={{ width: 480, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>两条绑定</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>公告栏绑 qinghe-notice-board；服务台绑 qinghe-helpdesk。</Text>
+            </Box>
+
+            <Box style={{ width: 480, height: 150, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>参数以案例材料为准</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>保存后关掉重开再核对一次，避免填错位置却看不出来。</Text>
+            </Box>
+
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>入口参考：map-editor-v2.js</Text>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 31</Text>
+    </Box>
+
+</Slide>

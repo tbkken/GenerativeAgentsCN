@@ -1,0 +1,77 @@
+<Slide notes={`关于空值，我想强调一个常被忽略的点：null 本身也要有业务含义。
+
+举个书里的例子。「待确认负责人」这个字段允许为空，因为业务上确实可能还没定人，空着表示「待确认」，这是一个有信息量的状态。
+
+但本章的合同里根本没有这个字段——不需要，就不加。缺开始时间更不能算正式排程：时间空着，这场活动什么时候发生都不知道，它没有意义。
+
+所以规则是这样：缺资料的时候先阻断生成，把没解决的问题写进说明，让人去补。
+
+如果确实需要一份不完整的草稿，那就为草稿另外设计一份合同，把「这里可以空」写清楚。不要让「能空」变成「随便空」。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.2　设计适合程序使用的合同</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>null 也要有业务含义</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>空值要有含义</Text>
+            <Text style={{ fontSize: 17, color: '#276FBF', lineHeight: 1.75 }}>一个字段允许为空，前提是「空」本身在业务上说得通。</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>合同里写一个字段，是因为业务流程里真的需要它；不需要的字段，不该为了好看留在里面。</Text>
+        </Box>
+
+        <Box style={{ width: 740, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 240 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>「待确认负责人」可以为空</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>业务上确实可能还没定人，空着本身就是一种状态。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#CB6B28' }} />
+                <Box style={{ width: 240 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>缺开始时间不算正式排程</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>时间空着就不知道这场活动何时发生，这条记录没有意义。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 240 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>缺资料先阻断生成</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>未解决项写入说明；需要不完整草稿时，另设一份合同。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 106, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不要把「能空」变成「随便空」</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>本章的合同里并没有「待确认负责人」这个字段——不需要的字段就不加。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 23</Text>
+    </Box>
+
+</Slide>

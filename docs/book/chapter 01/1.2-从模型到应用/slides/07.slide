@@ -1,0 +1,53 @@
+<Slide notes={`上一段我们把条件核对了一遍。核对完发现一件事：这件事不是一个人做完的。
+
+所以接下来要拆结构。一个任务从提出到交付，中间经过好几个环节。我们要看清楚的是：每个环节由谁承接，以及相邻两个环节之间到底发生了什么样的交接。
+
+为什么这件事重要？因为一旦出了问题，你只有知道环节在哪，才可能定位到是哪一步没做到。如果只把它当成"AI 一次问答"，出了问题就只能笼统地说"它答错了"，没法修。
+
+这段会走完一整条链路，从用户目标一直到核验交付。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.2.2</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一次任务背后的结构</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>模型生成候选，宿主执行操作，独立核验决定能不能交付。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 168, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>目标</Text>
+            </Box>
+            <Box style={{ width: 30 }}><Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 168, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>输入</Text>
+            </Box>
+            <Box style={{ width: 30 }}><Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 168, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>模型</Text>
+            </Box>
+            <Box style={{ width: 30 }}><Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 168, height: 46, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>执行</Text>
+            </Box>
+            <Box style={{ width: 30 }}><Text style={{ fontSize: 20, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 168, height: 46, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>核验</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 22</Text>
+    </Box>
+
+</Slide>

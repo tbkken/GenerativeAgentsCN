@@ -1,0 +1,75 @@
+<Slide notes={`退出码只用一位数字，但它是这条命令最重要的结论。
+
+本书的校验器约定：0 表示规则检查全部通过；1 表示方案本身不合格，比如容量不够或者时间重叠；2 表示输入处理出错，文件读不到、JSON 格式不对都属于这一类。
+
+这三个数字是这本教材给这个程序定的合同，不是所有命令行程序的通用语义。别的工具可能用别的数字表示别的意思，甚至用负数。
+
+还有一条纪律：调用者要同时检查退出码和报告。有标准输出不等于成功，退出码是 0 也只说明规则检查通过了，不代表方案就是组织者想要的那个。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.7.1　读懂一条命令的六个部分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>退出码是本程序的合同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 36 }}>
+
+        <Box style={{ width: 372, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>0 · 1 · 2</Text>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>三个数字，三种结论</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.8 }}>退出码说明这次检查停在哪一类结果上：规则全过、方案不合格，还是输入根本没读进来。报告负责说明细节，退出码负责给出结论。</Text>
+        </Box>
+
+        <Box style={{ width: 744, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 64, height: 56, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>0</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>规则检查通过</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>日期、时长、容量、重叠等条件全部满足</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 64, height: 56, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>方案不合格</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>文件读到了，但方案本身违反已有规则</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 64, height: 56, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>输入处理错误</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>文件不存在，或 JSON 无法解析</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px' }}>
+                <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>这是本程序的合同，不是所有 CLI 的通用语义</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>调用者需要同时检查退出码和报告，不能看到有标准输出就判断成功。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

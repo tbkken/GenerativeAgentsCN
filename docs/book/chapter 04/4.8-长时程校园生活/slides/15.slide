@@ -1,0 +1,69 @@
+<Slide notes={`跨日和跨尝试都要留下证据，而且不同对象的证据链不一样。
+
+一次性任务的链条是：目标，请求或者发言，真实回复，完成便签，再到后续行为。承诺要多加一段：明确的接受、承诺者，以及完整的截止时间。整理的链条是：输入里实际包含哪些事实，输出的声明指向什么来源，之后有没有被真实检索和使用。恢复的链条是：同一个 run_id，新的 attempt_id，完整的恢复边界，以及下一次提交，消息和便签既不重复也不丢失。
+
+我特别说一条容易漏的：生成了一份总结，并不证明它影响了后面的决策。要看到它被真正检索并且用上了，链条才算接上。
+
+证据链不断，才能把“记得住”和“看起来记得住”分开。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.8.4　跨日、跨 Attempt 都保留证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类对象，四条证据链</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 720, flexDirection: 'column', gap: 12 }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>证据链一段都不能少</Text>
+
+            <Box style={{ width: 720, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 120, height: 30, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>一次性任务</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>目标 → 请求／发言 → 真实回复 → 完成便签 → 后续行为</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 120, height: 30, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>承诺</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>再加明确接受、承诺者与完整截止时间</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 120, height: 30, background: '#CB6B28', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>整理</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>输入实际含哪些事实 → 输出声明来源 → 之后真实检索／使用</Text>
+            </Box>
+
+            <Box style={{ width: 720, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 120, height: 30, background: '#546779', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>恢复</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1, lineHeight: 1.5 }}>同 run_id、新 attempt_id、完整恢复边界、下一提交；消息／便签不重复不丢失</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Box style={{ width: 400, height: 176, background: '#CB6B28', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#FFFFFF' }}>生成总结 ≠ 影响了决策</Text>
+                <Text style={{ fontSize: 15, color: '#FFF4E6', lineHeight: 1.6 }}>只有整理之后的检索与使用被记录下来，这条链才算接上。</Text>
+            </Box>
+            <Box style={{ width: 400, height: 148, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>恢复不是重灌答案</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>两组若研究恢复，用相同规则；只给对照暂停会混入另一个因素。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 27</Text>
+    </Box>
+
+</Slide>

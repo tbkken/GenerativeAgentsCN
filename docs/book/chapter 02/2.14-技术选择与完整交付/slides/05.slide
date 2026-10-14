@@ -1,0 +1,85 @@
+<Slide notes={`把所有技术摆成一张图看：左边是先找缺口，右边是五条不同的分支。这不是一条流水线，而是从同一个入口分出去的五条路。
+
+要求写得含糊、输出老是偏题，走要求与格式这条，用 Prompt 和例子去补，格式要让程序读得懂就再加结构化输出。
+
+需要当前预约这类外部事实，走资料与外部事实这条，靠检索、Function Calling 和 MCP。
+
+重复的计算、转换和检查很多，走可复用执行这条，用命令行和 Skill。
+
+输入本身是图、录音或者需要操作页面，那是额外感知与分工。最后一条是过程关联与诊断，它不解决任务本身，只解决哪一次出的错。
+
+五条分支可以只走一条，也可以组合，但每一条都要有对应的缺口。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.14.1　按问题选择技术</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一个缺口，对应一层技术</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 12 }}>
+
+        <Box style={{ width: 300, height: 280, background: '#276FBF', borderRadius: 10, padding: '24px 22px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>先找缺口</Text>
+            <Box style={{ width: 56, height: 3, background: '#FFFFFF' }} />
+            <Text style={{ fontSize: 14, color: '#EDF4FC', lineHeight: 1.7 }}>输入、事实、执行、方法、验证，五类缺口共用同一个入口。</Text>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF', lineHeight: 1.6 }}>按缺口取用，不是全部必经。</Text>
+        </Box>
+
+        <Box style={{ width: 44, height: 280, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+        </Box>
+
+        <Box style={{ width: 784, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>要求与格式</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>Prompt、上下文、Schema</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>资料与外部事实</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>检索、Function Calling、MCP</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>可复用执行</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>CLI、Skill、Agent 循环</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#EDF4FC', borderRadius: 8, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>额外感知与分工</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>多模态、计算机工具、多 Agent</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 88, background: '#ECF7F2', borderRadius: 8, padding: '12px 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 50, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>过程关联与诊断</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>可观测性、Langfuse</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.14 技术选择与完整交付</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 25</Text>
+    </Box>
+
+</Slide>

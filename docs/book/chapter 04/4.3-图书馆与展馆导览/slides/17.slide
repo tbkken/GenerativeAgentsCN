@@ -1,0 +1,72 @@
+<Slide notes={`路程到底怎么数，只有一条口径：计已经执行的相邻移动边。
+
+如果提交的 executed_path 里包含起点，那么 N 个点只产生 N−1 条边。如果数组里不含起点，要先把事实中的 from_coord 接进去，再数边。
+
+空路径、只有计划没有执行、以及被拒绝的请求，都不产生已执行路程，也不计入成本。
+
+还有一种情况要单独处理：如果有人超过 40 格之后才完成匹配，那就另报一条「超预算匹配」，不进入主要成功分子。
+
+为什么强调「已执行」？因为计划路径和实际走出来的路径经常不一样，只按计划算，会把只说不做的方案也算成成本。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.4　一个时间窗口，一个软步行预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>已执行路程怎么计</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 484, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>唯一口径</Text>
+            <Box style={{ width: 484, background: '#EDF4FC', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>含起点的 N 个点</Text>
+                <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.1 }}>N − 1</Text>
+                <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.5 }}>条相邻移动边</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>计的是已执行的边，不是计划里的边；起点计入点数，但不额外产生一条边。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 636, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>路径材料</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>怎么计</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>已提交 executed_path 且含起点</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>N 个点计 N−1 条相邻移动边</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>数组不含起点</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先接入事实中的 from_coord，再按相邻点对计边</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.4 }}>空路径／计划路径／被拒请求</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不产生已执行路程，也不计入成本</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 240 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.4 }}>超过 40 格之后才匹配</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>另报「超预算匹配」，不进入主要成功分子</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,48 @@
+<Slide notes={`费用也要说明来源，这一点经常被忽略。Token 数不会自动等于账单金额，估算用的单价也不等于实际价格；更要提醒的是，没有提交成功的调用仍然可能产生费用。如果只能拿到部分用量，就写清可观测的部分和缺失的范围，不要用一个精确的小数掩盖信息不全。
+
+将来取得重复运行之后，报告还要说明各个运行之间的分布和汇总方式。有一条底线：主要结论必须与全体样本一致。不能先用全部任务计算闭环率，再只对最快几个成功任务计算平均耗时，然后把两个数字并排放在一起，暗示这是一次全面改进。具体的计算口径沿用第四节的分析方法。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.4　让数字带着分母和条件出现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>费用与汇总口径也要写在旁边</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 28 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ height: 148, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Token 数不等于账单金额</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>用量与计费是两件事，报告里要写清口径。</Text>
+            </Box>
+            <Box style={{ height: 148, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>估算单价不等于实际价格</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>假设单价只能作为教学估算，不能当作账单。</Text>
+            </Box>
+            <Box style={{ height: 148, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>未提交的调用仍可能产生费用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>失败与重试都会留下成本，不能只统计成功调用。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 624, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ height: 300, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>只能获得部分用量时</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>写清可观测部分与缺失范围，不要用一个精确小数掩盖信息不全。费用说明不足，会让听众误以为总成本已经被完整核对。</Text>
+            </Box>
+            <Box style={{ height: 200, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>取得重复运行之后</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>报告需说明各 Run 的分布与汇总方式；主要结论应与全体样本一致。计算口径沿用 4.9。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 26</Text>
+    </Box>
+
+</Slide>

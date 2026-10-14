@@ -1,0 +1,90 @@
+<Slide notes={`不确定性这块的纪律，我列成四组对照。
+
+第一，先把每次 Run 的结果单独列出，再给中心值、范围和失败情况；要避免把同一 Run 里的角色和消息当独立样本，那样等于凭空放大样本量。
+
+第二，等有足够多独立 Run 之后按 Run 重采样，保留成对批次结构；要避免对三次演算就加显著性星号。
+
+第三，同批里同时含 A 和 B，次序事先定好，记录服务与版本变化；要避免上午全跑 A、下午全跑 B，那样时间与组别混在一起。
+
+第四，预算和停止规则要预登记，中途变更另立阶段；要避免重跑到满意为止、把原计划藏起来。
+
+区间反映的是给定设计下的估计不确定性，它不保证模型设定真实。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.6　独立重复、随机条件与不确定性</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四组「应做」与「避免」</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 12 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24, height: 30 }}>
+            <Box style={{ width: 564, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 20, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>应做</Text>
+            </Box>
+            <Box style={{ width: 564, flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 20, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>避免</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 84, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>先列每 Run 结果，再中心值、范围、失败</Text>
+            </Box>
+            <Box style={{ width: 564, height: 84, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>将同 Run 角色、消息当独立样本</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 84, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>足够独立 Run 后按 Run 重采样，保留成对批次结构</Text>
+            </Box>
+            <Box style={{ width: 564, height: 84, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>对三次演算加显著性星号</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 84, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>同批含 A/B，事先确定次序，记录服务与版本变化</Text>
+            </Box>
+            <Box style={{ width: 564, height: 84, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>上午全 A、下午全 B，把时间混为组别</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 84, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>预登记预算与停止规则，变更另立阶段</Text>
+            </Box>
+            <Box style={{ width: 564, height: 84, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>重跑到满意为止，隐藏原计划与原结果</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, flex: 1 }}>区间反映给定设计下的估计不确定性，不保证模型设定真实，也不把角色变成现实随机样本。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 25</Text>
+    </Box>
+
+</Slide>

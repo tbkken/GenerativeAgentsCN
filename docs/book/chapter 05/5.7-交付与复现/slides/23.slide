@@ -1,0 +1,60 @@
+<Slide notes={`这份记录不是写一次就完了。将来真的有导出以后，要逐项替换对应状态，同时保留交付日期和依据。也就是说，改的是状态，不是把整份记录重写一遍。
+
+可接手的交付，允许清楚地写「尚未验证」。这不是示弱，而是让接收者知道缺哪项材料、怎么继续、什么操作会产生新的世界事实。每一项复现承诺，都应该有对应的环境与验证记录在旁边。
+
+还有一个时间上的细节容易出错：文件的取材边界，和你在下载当下看到的页面最新 Step，可能并不相同。登记时要以实际导出来源为准。不要仅仅因为页面继续往前推进了，就把一份旧文件改记成更晚的边界。那样改出来的记录，看起来更完整，实际上已经失真了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.6　一份简短但可执行的交付记录</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>允许写「尚未验证」</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'stretch', gap: 32 }}>
+
+            <Box style={{ width: 400, height: 300, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>有了真实导出之后</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7 }}>逐项替换对应状态，保留交付日期和依据。改的是状态，不是把整份记录重写一遍。</Text>
+                <Box style={{ width: 356, height: 96, background: '#FFFFFF', borderRadius: 8, padding: '14px 16px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.6 }}>状态可以更新，历史和依据要留在原位。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 720, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>可接手的交付允许清楚地写「尚未验证」</Text>
+                <Box style={{ width: 676, height: 58, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 28, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 16, color: '#546779' }}>接收者应知道缺哪项材料、如何继续</Text>
+                </Box>
+                <Box style={{ width: 676, height: 58, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 16, color: '#546779' }}>什么操作会产生新的事实与新的消耗</Text>
+                </Box>
+                <Box style={{ width: 676, height: 58, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                    <Text style={{ fontSize: 16, color: '#546779' }}>每一项复现承诺都有对应的环境与验证记录</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>取材边界以实际导出来源登记</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>文件的取材边界与下载时页面最新 Step 可能不同；不要仅因为页面继续推进，就把旧文件改记成更晚的边界。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,79 @@
+<Slide notes={`把三类信息摊开看：最上面是同一个场所，往下分三条线。
+
+显示图像这条线管背景、人物和状态外观，核对的是素材、尺寸、锚点。空间语义这条线管 World 到 Game Object 的四层结构，核对层级、地址和对象绑定。碰撞与寻路这条线管可走格、阻挡格和门洞，核对实际端点与可走通路。
+
+三条线各自查完，还要汇到同一个结论上：画出的门不证明能通过，预览换图也不证明对象已经提交变化。可见图像永远不能代替语义录入、通路设置或世界提交。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.3.2　新建地图，导入整张背景</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一场所的三类地图信息</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 240, height: 56, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>同一场所</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 22, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 18, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 36, justifyContent: 'center' }}>
+
+            <Box style={{ width: 340, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 340, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>显示图像</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>背景、人物、状态外观</Text>
+                </Box>
+                <Box style={{ height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text></Box>
+                <Box style={{ width: 340, height: 72, background: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>核对素材、尺寸、锚点</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 340, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 340, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>空间语义</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>World → Sector → Arena → Game Object</Text>
+                </Box>
+                <Box style={{ height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#26816B' }}>↓</Text></Box>
+                <Box style={{ width: 340, height: 72, background: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>核对层级、地址、对象绑定</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 340, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ width: 340, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>碰撞与寻路</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>可走格、阻挡格、门洞</Text>
+                </Box>
+                <Box style={{ height: 20, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 16, color: '#276FBF' }}>↓</Text></Box>
+                <Box style={{ width: 340, height: 72, background: '#FFFFFF', borderRadius: 8, borderWidth: 1, borderColor: '#B5C7D8', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B' }}>核对实际端点与可走通路</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ marginTop: 14, height: 92, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 20px' }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>画出的门，不证明能通过；预览换图，不证明对象已提交变化</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可见图像不能代替四层语义录入、通路设置或世界提交。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.3 从图像到四层空间</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 25</Text>
+    </Box>
+
+</Slide>

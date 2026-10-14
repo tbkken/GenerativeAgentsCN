@@ -1,0 +1,57 @@
+<Slide notes={`决策段是两个标记之间的那几行正文，标记只是方便作者定位差异，不是新的运行协议。
+
+基线写的是：根据本次请求及此前实际获得的信息给出一次窗口建议；关键目的不明确时，选择最可能的窗口并说明这是推测；不要先发澄清问题。这几句就是两组唯一的变量。
+
+往下是回复和提交：分别组织答复，说明窗口、理由和下一步；通过 world-act 选择 ACT，并在同次 responses 里填上真实 request_id 与 message。
+
+最后是边界与停止：记忆在动作前保存，一次 world-act 成功后立即结束。「需要澄清时」这条共同提交规则不决定是否澄清，那个判断只由决策段承担。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.4.2　一份可直接审阅的咨询台全文</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>全文（下）：决策段与边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', width: 1152 }}>正文里的标记只供作者定位差异，不是新的运行协议。</Text>
+
+        <Box style={{ width: 1152, height: 186, background: '#20344B', borderRadius: 10, padding: '16px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 18, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>DECISION:START</Text>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>决策段</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#FFFFFF', lineHeight: 1.7 }}>根据本次请求及此前实际获得的信息给出一次窗口建议。{'\n'}关键目的不明确时，选择你认为最可能的窗口，明确说明这是推测；{'\n'}不要先发澄清问题。收到新的说明后可以修正建议。</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 18, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>DECISION:END</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 156, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>回复和提交</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>对本轮待处理的真实请求分别组织答复，说明窗口、理由和下一步。通过 world-act 选择 ACT，并在同次 responses 中为每条答复填写真实 request_id 与 message。</Text>
+            </Box>
+            <Box style={{ width: 560, height: 156, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>边界与停止</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>必要记忆在动作前保存，已收到的事实与尚未送达的答复计划分开写。一次 world-act 成功后立即结束，不提前宣布对方理解。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>职责要一处写清</Text>
+            <Text style={{ fontSize: 15, color: '#20344B' }}>「需要澄清时」的共同提交规则不负责决定是否澄清；这个判断只由决策段承担。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.4 精确 Skill 与行为审阅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,82 @@
+<Slide notes={`这七类作者资源，每一类都要找到可以核对的入口。
+
+Map 是本案例的场地，管图像、四层语义和通路。图像和 Spatial Asset 提供背景、物件外观和可复用空间内容，入口是当前地图编辑器的「素材」。
+
+Agent 是四位人物，在「智能体」页新建和直接编辑。Crowd 把四人组织成一次选择集，入口在「智能体 → 人群」。Skill 和 Brain 管理子任务方法、对象行为和决策。Model Preset 是聊天和 Embedding 的服务配置。
+
+最后一项特别说明：Evaluator 在后端有资源和入包合同，但当前导航没有专门的编辑页，所以不虚构点击流程。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.2　认识资源，不把源码合同当作已完成操作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>七类作者资源，各自核对什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ height: 28, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 14 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 13, color: '#546779' }}>资源</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>本案例的用途</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#546779' }}>可核对的入口或边界</Text></Box>
+        </Box>
+
+        <Box style={{ height: 64, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Map</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>学习中心的图像、四层语义与通路</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>基础配置「地图」，新建或打开地图</Text></Box>
+        </Box>
+
+        <Box style={{ height: 64, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>图像与 Spatial Asset</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>背景、物件外观和可复用的空间内容</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>当前地图编辑器「素材」可导入原图、创建切片</Text></Box>
+        </Box>
+
+        <Box style={{ height: 64, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Agent</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>林岚、周宁、陈晨、许安</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>「智能体」页新建和直接编辑</Text></Box>
+        </Box>
+
+        <Box style={{ height: 64, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Crowd</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>将这四人组织为一次选择集</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>「智能体 → 人群」，用 Agent 管理选择成员</Text></Box>
+        </Box>
+
+        <Box style={{ height: 64, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Skill 与 Brain</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>子任务方法、对象行为和人物决策</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>「技能／大脑」页签，行为编写在下一节之后</Text></Box>
+        </Box>
+
+        <Box style={{ height: 64, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#276FBF' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>Model Preset</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>聊天与 Embedding 服务配置</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>基础配置「模型」</Text></Box>
+        </Box>
+
+        <Box style={{ height: 64, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 14 }}>
+            <Box style={{ width: 4, height: 38, background: '#CB6B28' }} />
+            <Box style={{ width: 168 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>Evaluator</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>业务评价配置</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45 }}>当前导航没有专门的编辑页，不虚构点击流程</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,57 @@
+<Slide notes={`执行时最常听到的一句话是“没有进展”。但这句话本身不构成判断，它只是一个表象。
+
+停下来的原因至少可以分成五类：咨询台按预定策略猜错了窗口；工具正确拒绝了非法目标；模型请求反复失败或者重试在增加；路径事实、对象反馈或页面身份违反了合同；或者预算已经达到，但任务还没闭环。
+
+这五类要走的下一步完全不同。行为结果可以继续观察纠错与成本；正确拒绝要回去检查我们的输入，而不是直接判系统故障；请求失败要核对类型、预算和进展再决定；违反合同要停下来保存证据；预算达到就要把未完成状态交给负责人。
+
+如果对所有现象都用同一个动作，最常见的就是重跑一遍。重跑既掩盖了原因，也浪费了预算。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.5　执行与预算</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ⑤</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 80, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>⑤</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>五种现象，{'\n'}指向五种不同的处置</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>“没有进展”只是表象。先分清属于哪一种，再横向找到对应的下一步。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 18 }}>
+            <Box style={{ width: 216, height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>猜错窗口</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>保留并观察纠错</Text>
+            </Box>
+            <Box style={{ width: 216, height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>正确拒绝</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>检查真实输入</Text>
+            </Box>
+            <Box style={{ width: 216, height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>请求失败</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>核对类型与进展</Text>
+            </Box>
+            <Box style={{ width: 216, height: 92, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>违反合同</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>留证并停止该项验收</Text>
+            </Box>
+            <Box style={{ width: 216, height: 92, background: '#FFF4E6', borderRadius: 8, flexDirection: 'column', gap: 4, justifyContent: 'center', padding: '0 18px' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>预算已达到</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>记录未完成与决定</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 28</Text>
+    </Box>
+
+</Slide>

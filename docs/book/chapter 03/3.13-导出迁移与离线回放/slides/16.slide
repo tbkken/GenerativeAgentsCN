@@ -1,0 +1,77 @@
+<Slide notes={`拿到一个包之后，除了看它从哪里来，还要知道哪些内容不能当成既定事实。
+运行中还在变化的记忆，不能混成某个固定步骤的事实。未提交的模型轨迹或者日志，如果随包保留下来，只能当作过程审计，不能当成已经提交的结论。
+比对哈希可以判断两个文件是不是相同的字节，这一点对判断传输有没有损坏很有用，但它不能独立证明内容正确，也替代不了协议校验。协议自己的完整性检查还要核对成员、清单、身份、帧的连续性以及内嵌实验的摘要。
+所以在登记之外，这两件事要一起做。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.4　原始导出怎样登记</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>哪些内容不能当成既定事实</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 630, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>可变记忆不完备</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>运行中还在变化的记忆，不能混成固定 Step 的事实。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>未提交轨迹只作审计</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>未提交的模型 Trace 或日志若随包保留，只作过程审计。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 72, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>历史来源不明就写未知</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>不按文件修改时间推断取材边界，猜出来的边界不可用。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>哈希有它的边界</Text>
+                    <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>哈希一致只说明字节相同，不能独立证明内容正确。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 490, flexDirection: 'column', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>协议内部的完整性检查还要核对</Text>
+
+            <Box style={{ width: 490, height: 206, background: '#F4F7FA', borderRadius: 12, padding: '16px 22px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>├─ 成员</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>├─ 清单</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>├─ 身份</Text>
+                <Text style={{ fontSize: 15, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.9 }}>└─ 帧连续性与内嵌实验摘要</Text>
+            </Box>
+
+            <Box style={{ width: 490, height: 96, background: '#ECF7F2', borderRadius: 10, padding: '12px 20px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>两件事要一起做</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>传输后比哈希，再走一遍协议校验，缺一项都不算核对完成。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

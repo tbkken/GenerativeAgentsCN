@@ -1,0 +1,54 @@
+<Slide notes={`把关联响应用起来，有三件事并不会因此省掉。
+
+第一件，行为要求还得显式发送。每一轮都要问自己：这次的规定送到了吗？上一轮送过，不等于这一轮还有。
+
+第二件，Token 不免费。引用一个 ID 改变的是状态怎么传，语义上它仍然是把这些内容放进了这一轮的请求，费用和窗口都要照算。
+
+第三件，归属还得应用自己记。这个响应、这份资料属于哪个用户、哪个任务，必须由我们记录，否则很容易把青禾任务的资料接到另一位用户的对话里去。
+
+所以初学阶段，手工历史、响应链、持久会话这三样选定一种就够了，不要把三种方式同时叠在一件事上，那样出了问题很难定位。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.4　另一种方式：引用前一次响应</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>关联响应不等于省掉三件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>行为要求不自动继承</Text></Box>
+            <Box style={{ width: 1, height: 46, background: '#B5C7D8' }} />
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>每一轮都要显式发送 instructions，上一轮送过不等于这一轮还有</Text></Box>
+        </Box>
+
+        <Box style={{ height: 110, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>上下文 Token 不免费</Text></Box>
+            <Box style={{ width: 1, height: 46, background: '#B5C7D8' }} />
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>引用响应 ID 改变的是状态传递方式，窗口与费用照算</Text></Box>
+        </Box>
+
+        <Box style={{ height: 110, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+            <Box style={{ width: 280 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>归属仍由应用记录</Text></Box>
+            <Box style={{ width: 1, height: 46, background: '#B5C7D8' }} />
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>对象属于哪个用户、哪个任务，要防止把一个人的资料接到另一个人的对话里</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 34, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#276FBF', lineHeight: 1.55 }}>初学阶段选定一种状态管理方式即可，不必把手工历史、响应链和持久会话同时叠加。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 25</Text>
+    </Box>
+
+</Slide>

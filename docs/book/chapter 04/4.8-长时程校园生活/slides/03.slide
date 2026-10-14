@@ -1,0 +1,44 @@
+<Slide notes={`先解决一个前提问题：什么算同一件事。
+
+在这套设置里，World 是白榆校园，往下是学习生活区，再分成居住、阅览、讨论和公共休息四个相邻区域。三名学习者唐悠、顾澄和罗予各有一件自己的任务，休息区只有一个咨询台。这里没有课程表，也没有饥饿和疲劳的物理模型，休息和学习都是活动语义，不是生理需求。
+
+我要先把三件不同性质的事分开：一次性任务是办完就该结束的；周期活动每天都是新的一次，昨天晨读不代表今天晨读已完成；自愿承诺更复杂，得先有人邀请、再有本人明确接受，才算立起一条承诺。
+
+身份没分清，后面所有关于“有没有重复”“有没有丢”的判断都会错位。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>1　　4.8.1 — 4.8.2</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把三类事项分开，{'\n'}再把时间账算清</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>一次性任务看是否重做，周期活动看是不是新实例，自愿承诺先看有没有人真正接受。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 300, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>一次性：办完即结束</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>周期：新日期新实例</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>承诺：先接受才成立</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 27</Text>
+    </Box>
+
+</Slide>

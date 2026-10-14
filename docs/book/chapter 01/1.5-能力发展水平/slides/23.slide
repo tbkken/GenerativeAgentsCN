@@ -1,0 +1,70 @@
+<Slide notes={`最后交代一下这份快照的边界，也就是它没有回答什么。
+
+我没有用英语专家题的成绩去推断中文写作的水平，也没有用图表理解的分数去概括语音转录、语音生成和图像生成的全部水平。这些用途各自需要自己的当前数据和应用样本，不能借。
+
+同样地，模型费用和延迟也必须在选定接口、输入规模与并发条件下实测，光看单次调用的标价说明不了总成本。
+
+把话说回来：本节做的是把公开成绩读成有条件的证据。下一步是把它变成我们自己的判断——用我们自己的一小批任务去测，看看在我们这个场景里到底够不够用。这就是下一节的起点。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.6　把发展水平翻译成可用的判断</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节没有推断什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 40, height: 324 }}>
+
+            <Box style={{ flex: 45, flexDirection: 'column', gap: 12 }}>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 3, height: 22, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>没有推断的三件事</Text>
+                </Box>
+
+                <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>没有用英语专家题推断中文写作排名</Text>
+                </Box>
+
+                <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>没有用图表理解概括语音转录、语音生成与图像生成</Text>
+                </Box>
+
+                <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>没有把不同条件下的数值排成一条进步曲线</Text>
+                </Box>
+
+            </Box>
+
+            <Box style={{ flex: 55, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Box style={{ height: 130, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', justifyContent: 'center', gap: 5 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>这些用途需要各自的当前数据</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>中文写作、语音、图像生成都要用对应场景的应用样本重新测，不能从别的成绩借。</Text>
+                </Box>
+                <Box style={{ height: 130, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', justifyContent: 'center', gap: 5 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>费用与延迟要实测</Text>
+                    <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>模型费用和延迟需要在选定接口、输入规模和并发条件下测量，单次标价说明不了总成本。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 88, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 50, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6 }}>下一节从我们自己的少量任务开始，把公开成绩转化为可解释的选型证据。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

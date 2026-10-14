@@ -1,0 +1,57 @@
+<Slide notes={`第三章借了两个历史小案例来帮助理解。
+
+一个是晨间生活，它展示的是连续活动怎么进行，以及进度怎么被记住。另一个是穿门阅读，它展示的是门洞、移动预算，以及到达之后要执行的动作。
+
+这两个案例很有用，但它们的作用是讲解概念。
+
+它们的原始证据保留的是当时的历史含义，不能拿到今天来，和新案例拼成一次已经完成的开放日运行。这么拼出来的不是证据，是故事。
+
+还有两处具体情况要说明：晨间资料的配置目录是缺失的，阅读对照有一项没有闭环。这些会在对应的练习里讲清楚。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.7　开始前的自检</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>历史案例只保留历史含义</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>两个历史小案例用来讲解概念，不用来证明新案例已经跑通。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 250, background: '#F7F3E8', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>晨间生活</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>展示连续活动怎么进行、进度怎么被记住。</Text>
+                <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>已知缺口</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>配置目录缺失，会在相应练习里说明。</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 566, height: 250, background: '#F7F3E8', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B' }}>穿门阅读</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>展示门洞、移动预算与到达之后的动作。</Text>
+                <Box style={{ flex: 1, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>已知缺口</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>对照中有一项未闭环，会在相应练习里说明。</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '12px 20px' }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能拼成一次已完成的运行</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>它们的原始证据保留历史含义，与开放日案例各算各的。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

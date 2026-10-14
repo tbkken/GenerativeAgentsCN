@@ -1,0 +1,84 @@
+<Slide notes={`现在把观察窗口放到时间轴上。
+
+这一轮候选配置从 2026 年 10 月 17 日九点五十开始，带东八区时区，每个 Step 推进一分钟，一共请求 48 步。
+
+当前的调度器把开始时间对应成 Step 1，所以 Step 11 落在十点，那是原消息里手作体验开始的时间；Step 41 落在十点半，是候选调整开始的时间；Step 48 落在十点三十七，是观察窗口的终点。
+
+这条虚线伸出去，指向十一点半，也就是候选活动的结束时间，它在窗口之外。
+
+这很重要：窗口里能看到手作调到十点半以后有没有人到达、有没有开始，但窗口到十点三十七就结束了，它不能证明十一点半的活动已经完整结束。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.1.5　一次活动有三种时间</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>48 步落在哪里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>观察窗口覆盖到哪一步，就只证明到哪一步</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2026-10-17　+08:00　t(k) = 09:50 + (k−1) × 1 分钟　·　时间节点间距不按比例</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 240, height: 104, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>Step 1</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>09:50</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>配置起点</Text>
+            </Box>
+            <Box style={{ width: 44, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 104, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>Step 11</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>10:00</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>原消息开始</Text>
+            </Box>
+            <Box style={{ width: 44, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 104, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>Step 41</Text>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>10:30</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>候选调整开始</Text>
+            </Box>
+            <Box style={{ width: 44, height: 104, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 104, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 2, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>Step 48</Text>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>10:37</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>观察窗口终点</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 292 }} />
+            <Box style={{ width: 800, height: 66, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>11:30　候选活动结束</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>在观察窗口之外，虚线伸出窗口</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 540, height: 64, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>窗口内可观察</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>获知 · 移动 · 到达 · 开始</Text>
+            </Box>
+            <Box style={{ width: 540, height: 64, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>窗口不能证明</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>11:30 的活动已完整结束</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.1 把筹备方案放进一个会发生变化的世界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

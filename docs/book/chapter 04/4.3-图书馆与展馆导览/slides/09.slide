@@ -1,0 +1,69 @@
+<Slide notes={`在正式跑之前有三件事必须核对，而且顺序不能颠倒。
+
+第一是出生位置。四人从入口进入，但真正的出生点以空间选择器保存的结果为准，不能拿作者草图当事实。
+
+第二是视野。5 格现在只是候选值，我要先算清两个牌子位置相对实际出生点与通路的距离，再决定用不用。
+
+第三是注意力。8 也是候选值，先看候选有没有被截断，再谈结果。
+
+这里有一条容易误解：系统可见性由空间范围和候选截断决定，不等于人眼朝向、阅读距离或墙体遮挡，所以不能假定背对就一定看不见。
+
+如果两个位置都立刻可见，应该在业务比较之前就修订设计并记录，绝不能看完结果再回头挑位置。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.2　唯一干预：同一块非阻挡牌的位置</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先核对出生、视野与注意力</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>这三项决定「牌子会不会被看见」的前提是否成立，必须在正式比较之前核对完。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>核对项</Text></Box>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>候选值</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>怎样处理</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>出生位置</Text></Box>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>四人从入口进入</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>实际出生以空间选择器保存的结果为准；平面草图不含真实出生点，不能当作事实。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>视野</Text></Box>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>5 格（候选值）</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先核对两个位置相对实际出生与通路的距离，再确定取值。</Text></Box>
+            </Box>
+
+            <Box style={{ height: 84, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>注意力</Text></Box>
+                <Box style={{ width: 220 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>8（候选值）</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先看感知候选与实际返回有没有被截断；系统可见性由空间范围与候选截断决定，不等同人眼朝向或墙体遮挡。</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>若两组位置都立即可见，应在业务比较之前修订设计并记录；不能看完结果再挑位置，也不能假定「背对就看不见」。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

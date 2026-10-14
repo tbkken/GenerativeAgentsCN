@@ -1,0 +1,48 @@
+<Slide notes={`信息有了来源，接下来要看它怎么流动。
+
+在这个案例里，一次发言只能送达一个人。这听上去是技术细节，其实决定了整件事的评价方式：如果一句话只说到一名成员，那另外两个人的记忆里就没有这条信息。
+
+所以每一次条件都走三步：真实说出来、被某一个人收到、进入那个人的记忆。缺任何一步，这条信息在小组层面就等于没发生。
+
+到了定稿，还要再走一遍：主持人把同一份完整安排逐人说明。别人收没收到是要单独登记的，不是默认收到。
+
+这一段之后会看到，评价里为什么要把「真实准确表达过的条件数」和「方案得分」分成两个分母。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>②　4.5.3 — 4.5.4</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一次发言{'\n'}只送达一个人</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>被询问时真实 SPEAK，向一人说明条件编号、完整限制与来源；定稿后仍须逐人传达同一版本。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 10 }}>
+            <Box style={{ width: 340, height: 64, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#276FBF' }}>一次 SPEAK</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>一名接收者</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#546779' }}>›</Text>
+            </Box>
+            <Box style={{ width: 340, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#546779' }}>其余成员：不知道</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 14, color: '#546779', width: 900 }}>公开表达＝至少真实传给一名组内接收者，可审查，但不等于全员接收</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 26</Text>
+    </Box>
+
+</Slide>

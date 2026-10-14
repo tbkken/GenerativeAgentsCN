@@ -1,0 +1,97 @@
+<Slide notes={`把条件列成一张表，三个活动一起看。
+
+阅读分享 24 人 60 分钟，用阅读室，容量 30，24 不超过 30，这一条过。
+
+手作体验 10 人 60 分钟，用手作室，容量只有 12。10 不超过 12，也过，但余量比阅读分享小得多，后面排期时它最容易被挤住。
+
+交流活动 16 人 45 分钟，用交流室，容量 20，过。
+
+除了容量，还有两件事要记住：三个活动都必须落在 09:00 到 12:00 之间；手作室在 10:00 到 10:30 已经有预约，这段时间不属于我们。另外不同房间的活动可以同时举行，这道题也没有共享主持人或设备的约束。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.2　统一材料，才能比较结果</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三项活动与固定条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>阅读分享</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>reading_share</Text>
+            </Box>
+            <Box style={{ width: 230, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>人数与时长</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>24 人，60 分钟</Text>
+            </Box>
+            <Box style={{ width: 300, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>指定房间及容量</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>reading 阅读室，30 人</Text>
+            </Box>
+            <Box style={{ width: 130, height: 40, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>24 ≤ 30 通过</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>手作体验</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>craft_workshop</Text>
+            </Box>
+            <Box style={{ width: 230, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>人数与时长</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>10 人，60 分钟</Text>
+            </Box>
+            <Box style={{ width: 300, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>指定房间及容量</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>craft 手作室，12 人</Text>
+            </Box>
+            <Box style={{ width: 130, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>10 ≤ 12 通过</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>交流活动</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>exchange</Text>
+            </Box>
+            <Box style={{ width: 230, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>人数与时长</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>16 人，45 分钟</Text>
+            </Box>
+            <Box style={{ width: 300, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>指定房间及容量</Text>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>discussion 交流室，20 人</Text>
+            </Box>
+            <Box style={{ width: 130, height: 40, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>16 ≤ 20 通过</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 110, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px', alignItems: 'center', gap: 24, marginTop: 4 }}>
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>时间与场地条件</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>三个活动都要落在 09:00—12:00 内；不同房间的活动可以同时举行。</Text>
+            </Box>
+            <Box style={{ width: 1, height: 70, background: '#B5C7D8' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>手作室已有预约 10:00—10:30</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>这一段属于别人；此外本题没有共享主持人或共享设备约束。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 24</Text>
+    </Box>
+
+</Slide>

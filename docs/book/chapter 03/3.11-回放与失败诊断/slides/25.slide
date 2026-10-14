@@ -1,0 +1,67 @@
+<Slide notes={`如果后续在浏览器构建或者验收的过程中发现了真实的 bug，按仓库教材的约定，第一件事是停下来。
+
+具体说：停止该项构建或运行验收，先报告影响和证据。不要在问题还没被确认之前，就继续往下构建。报告时把影响范围说清楚，把手上能定位的证据一并交出来。
+
+然后有一条很硬的约束：在没有针对这个问题的明确决定之前，不修改产品、不绕过 UI，也不手工去改世界状态。绕过界面直接改状态，会让回放里的证据和实际操作彻底对不上，等于把诊断的依据毁掉。
+
+这一节讲的是怎么追事实，这条纪律其实是同一件事的另一面：宁可停下报告，也不要制造一个看起来对的画面。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.6 — 3.11.7　诊断之后怎么处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>发现真实 bug 时先停下</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 648, flexDirection: 'column', gap: 12 }}>
+            <Box style={{ width: 648, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>停止构建或运行验收</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>在问题确认之前不继续推进</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 648, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>先报告影响与证据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>说清影响范围，附上可定位的记录</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 648, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>未经明确决定不动手</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>不改产品、不绕过 UI、不手改世界状态</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 480, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ width: 480, height: 200, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>规则来源</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>仓库教材约定；本节只负责回放与诊断，验收纪律按该约定执行。</Text>
+            </Box>
+            <Box style={{ width: 480, height: 136, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>为什么这么严</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>绕过界面直接改状态，会让回放证据与实际操作对不上，诊断依据就被毁掉了。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>25 / 27</Text>
+    </Box>
+
+</Slide>

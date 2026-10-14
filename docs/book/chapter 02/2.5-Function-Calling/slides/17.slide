@@ -1,0 +1,58 @@
+<Slide notes={`本章把成功的判定放在应用这一侧，不放模型的措辞里。规则很简单：只有最后一次候选检查通过，才允许作为交付方案保存。
+
+这条规则要落到三件事上。
+
+候选通过检查，才允许保存，这是唯一的放行条件。
+
+候选没通过，就不许保存，哪怕工具调用全部成功。查询成功和方案可用是两回事。
+
+说明文件也要基于最终那一版候选来生成。这一点容易被忽略：如果文件是先写的，模型后来又改了候选，交付包里就会同时存在旧的文字说明和新的排期，两者对不上。
+
+把判定条件写成代码里的一个判断，而不是写在报告里的一句话。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.3　完整回路比单次请求重要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>成功条件放在应用里</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>只有最后一次候选检查通过，才允许作为交付方案保存。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 14 }}>
+            <Box style={{ height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+                <Text style={{ width: 230, fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>候选通过检查</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>允许保存为交付方案，这是唯一的放行条件</Text>
+            </Box>
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Text style={{ width: 230, fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>候选未通过检查</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>不得保存，即使工具调用全部成功；查到数据与方案可用是两回事</Text>
+            </Box>
+            <Box style={{ height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', gap: 18, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Text style={{ width: 230, fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>说明文件</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>基于最终候选生成，不把前一次失败方案的文字说明混进交付</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', height: 84 }}>
+            <Box style={{ width: 4, height: 50, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>判定条件要写成代码里的一个判断，不是报告里的一句话。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 26</Text>
+    </Box>
+
+</Slide>

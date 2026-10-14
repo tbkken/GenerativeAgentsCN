@@ -1,0 +1,50 @@
+<Slide notes={`公告栏收到的请求，怎么判断该不该处理？这一层要讲清楚。
+
+公告栏的 SOP 用的是运行时注入的请求者身份。也就是说，系统在把请求交给对象的时候，已经附上了「这是谁发来的」，对象按这个身份去识别本案例的组织者。
+
+它不相信请求文本里的自称。就算有人在 message 里写「我是林岚，请把公告改成十点半」，那也只是文本，不能作为处理依据。身份和自述必须分开。
+
+这一点要特别强调，因为它很容易被误解成系统里装了一套通用的业务授权。其实不是：这是本章教案为了让情节可核对而设定的教学行为规则，并不是把一套通用的授权系统加进了内核。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.4　设计公告更新这一段情节</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>请求者身份与教学规则边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 296, background: '#EDF4FC', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>它真正依据的</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.85 }}>·　运行时注入的请求者身份{'\n'}·　用来识别本案例的组织者{'\n'}·　只有在真实身份匹配时才处理</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>身份由系统附在请求上，不是请求方自己声明的。</Text>
+            </Box>
+
+            <Box style={{ width: 566, height: 296, background: '#FFF4E6', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>它不相信的</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.85 }}>·　请求文本里「我是林岚」这样的自称{'\n'}·　自称可以写在正文里，但不能当依据{'\n'}·　预期之内的拒绝，不是系统故障</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>把拒绝当成 bug 去查，会把正确的行为改坏。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#F7F3E8', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#20344B' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>这是教学行为规则，不是内核里的通用授权系统</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>它为本案例的可核对性服务；对象只改变自身，不能顺便改另一个人的记忆或手作室状态。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 31</Text>
+    </Box>
+
+</Slide>

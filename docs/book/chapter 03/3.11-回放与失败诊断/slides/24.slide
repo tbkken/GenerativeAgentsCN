@@ -1,0 +1,52 @@
+<Slide notes={`最后一个问题：已有的微案例还能不能用？
+
+「穿过门口，到阅读角看书」保留着正式八步的历史记录，可以用来学习导航证据和活动证据怎么分开，这是它仍然有价值的地方。
+
+但另外两条要格外小心。封门对照里的 B02-007，回放和导出核验还没有闭环，不能写成完整通过。晨间案例的历史导出，也不能证明当前的青禾地图、Brain 或模型已经通过。
+
+读任何历史记录之前，先核对取材日期、Run、精确 Skill 和参数，再判断它到底能支持哪一项结论。历史记录的价值在于它记录过什么，不在于它听起来和我们现在的目标有多接近。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.7　如何使用已有微案例</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>历史案例只保留历史含义</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>穿过门口，到阅读角看书</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>保留正式八步的历史记录，可用于学习导航证据与活动证据如何分开。</Text>
+                <Text style={{ fontSize: 13, color: '#276FBF' }}>可用：当教学材料</Text>
+            </Box>
+            <Box style={{ width: 564, height: 190, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>封门对照 · B02-007</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>回放和导出核验尚未闭环，不能写成完整通过。</Text>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>不可用：不能当作已通过的证据</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 110, background: '#F7F3E8', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>晨间案例的历史导出</Text>
+            <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不能证明当前青禾地图、Brain 或模型已经通过；它记录的是它自己那一次运行。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>先核对取材日期、Run、精确 Skill 和参数</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>再判断这条历史记录支持哪一项结论。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 27</Text>
+    </Box>
+
+</Slide>

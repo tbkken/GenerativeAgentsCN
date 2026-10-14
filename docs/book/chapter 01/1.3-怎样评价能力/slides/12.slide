@@ -1,0 +1,52 @@
+<Slide notes={`接下来这几件事，都属于同一个毛病：把链条上的某一环当成了终点。
+
+组织者要求通知里使用中文、包含日期、列出三个项目、以联系方式结尾。两份通知各有四条可检查的约束，一份全过，另一份过了三条。逐条算通过率是七比八，八成七五。可是“四条同时满足”的通知只有一份，两份里的一份，五成。
+
+再比如，助手调用改期工具，参数格式正确、工具也返回成功。这只能说明调用没错，不能说明“已经把这个活动移到能容纳全部报名者的空闲房间，并且没有动到别的安排”。
+
+证据也一样。检索命中了需要的材料，不代表回答正确引用了它；引用了，也不代表引用真的支持那句话。
+
+中间的比率用来定位失败，最后的任务成功率回答能不能交付，两类要一起保留。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 22 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.3.3　满足要求，是否就完成了任务　·　1.3.5　找到证据，还要用对证据</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>局部合格，不等于任务完成</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>逐条通过、工具成功、证据找全，都还有自己的分母；最终要看能不能交付。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 8 }}>
+            <Box style={{ width: 200, height: 58, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>逐约束通过率</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#B5C7D8' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 58, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>工具调用正确率</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#B5C7D8' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 58, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>任务成功率</Text>
+            </Box>
+            <Box style={{ width: 130 }} />
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 31</Text>
+    </Box>
+
+</Slide>

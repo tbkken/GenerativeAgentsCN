@@ -1,0 +1,49 @@
+<Slide notes={`结构拆完了，接下来做一件更有意思的事：把条件换掉，看结果会不会变。
+
+这是我们平时最常犯的一个错——看到一个结果，就下结论说"这个模型很行"或者"这个模型不行"。但如果我只换它周围的资料和工具，模型一点没动，结果就可能完全不同。
+
+所以接下来这段，要做一个对照：同一个模型，一组条件只给任务，另一组条件把应用能力补齐。这两组跑出来的东西，我们不能放在一起比较，因为它们测的根本不是同一件事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>1.2.3</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>工具会扩展能力，也会改变评价对象</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>保持模型不变，只改变它拿到的资料、可用工具和检查程序，结果会怎样变化？</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ flexDirection: 'column', gap: 8, width: 360 }}>
+                <Box style={{ height: 44, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', paddingLeft: 16 }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>只给任务</Text>
+                </Box>
+                <Box style={{ height: 44, background: '#F4F7FA', borderRadius: 6, justifyContent: 'center', paddingLeft: 16 }}>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>依赖已给输入</Text>
+                </Box>
+            </Box>
+            <Text style={{ fontSize: 24, color: '#276FBF' }}>⇄</Text>
+            <Box style={{ flexDirection: 'column', gap: 8, width: 360 }}>
+                <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', paddingLeft: 16 }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>容量表＋预约记录</Text>
+                </Box>
+                <Box style={{ height: 44, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', paddingLeft: 16 }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>真实查询工具</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 22</Text>
+    </Box>
+
+</Slide>

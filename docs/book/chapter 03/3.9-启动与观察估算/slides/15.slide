@@ -1,0 +1,59 @@
+<Slide notes={`某一步停得比较久，是很常见的现象，先别急着下结论。
+
+诊断里有三样东西可以对照。日志告诉你这一步走到哪里；模型调用记录告诉你请求的状态，请求开始的时候已经有 PHYSICAL_START 这一条记录，结束的时候再补上结果；检查点用来看进度落在哪一段。
+
+合起来才能判断：是模型确实慢，是正常等待，还是根本没有进展。如果看到有正在执行的请求，或者有连续的错误与重试，那就不是卡死，而是还在处理。
+
+顺序很重要：先看有没有正在进行的请求，再看有没有连续错误，最后才谈无进展。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.4　在页面中观察什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>某一步停得久，先查三件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>进入仿真诊断，先选对 Attempt</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>日志、模型调用与检查点合起来看，才能区分「模型慢」和「没有进展」</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 21 }}>
+            <Box style={{ width: 370, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>日志</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>先确认看的是哪一次 Attempt，再往下读</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>下载读取的是 Run 的进程日志文件</Text>
+            </Box>
+            <Box style={{ width: 370, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>模型调用</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>请求开始已有 PHYSICAL_START，结束时补结果</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>有正在执行的请求，就不是没有进展</Text>
+            </Box>
+            <Box style={{ width: 370, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>检查点</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>看这一步的进度落在哪一段</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>已有提交仍然需要逐条核对</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 78, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>PHYSICAL_START</Text>
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>请求开始时就写下这条记录，结束时再补上结果，中间的空档正是「正在处理」</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>先查有没有正在执行的请求、连续错误或重试，再判断是模型慢、正常等待还是无进展。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 23</Text>
+    </Box>
+
+</Slide>

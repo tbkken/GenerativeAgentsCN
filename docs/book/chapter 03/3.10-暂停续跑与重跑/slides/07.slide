@@ -1,0 +1,67 @@
+<Slide notes={`这里有一个时序上的细节很容易被跳过。
+
+底层的创建操作只创建 Run，这时候很可能还没有 Attempt；要等真正进入执行器，系统才会生成第一个 Attempt，从第一步开始。所以看到“创建成功”，只能说明这次运行已经被登记，不能说明它已经开始执行。
+
+重跑的时候还可以记录 origin_run_id，用来说明这次运行是从哪一次派生出来的。
+
+但要注意，origin_run_id 只说明来源，不代表两个 Run 是同一次运行。它们的 run_id 不同，历史就是两段，记录和统计也不能合并。
+
+把创建、执行、派生这三件事分开记，后面的排查才有依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.1　Run 与 Attempt 为什么需要分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>创建成功，不等于开始执行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 712, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 712, height: 118, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 60, background: '#B5C7D8' }} />
+                <Box style={{ flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>create 只创建 Run</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>这一步登记了一段具有固定输入和请求步数的仿真，还未必有 Attempt。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 712, height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>进入执行器才建立 Attempt</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>真正的第一次执行发生时，才生成首个 Attempt，从 Step 1 开始推进。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 712, height: 118, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+                <Box style={{ flexDirection: 'column', gap: 5 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>重跑可以留下 origin_run_id</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>它说明这次运行来自哪一次派生，是一条可追溯的来源线索。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 408, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ width: 408, height: 176, background: '#F7F3E8', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>两个 Run，两段历史</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>run_id 不同，说明它们是两段独立的历史。记录、统计与结论都不能因为共享输入就合并在一起。</Text>
+            </Box>
+            <Box style={{ width: 408, height: 152, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>来源不等于同一次运行</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>origin_run_id 只回答“从哪来”，不能因此把两个 Run 当成一个历史来看待。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

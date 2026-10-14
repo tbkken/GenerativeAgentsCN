@@ -1,0 +1,81 @@
+<Slide notes={`三条标着 SPEAK 的箭头表示真实传递。每一句条件都必须由持有者实际说出来，送到某一名接收者那里，才算真的发生过。
+
+共同题面那一头是输入来源。三个活动、三个时段、三间教室这些公共信息本来就该人人知道；私有限制不一样，只能从持有者那里来，不能从教师资料里补齐。
+
+等到形成定稿，还要再逐人传达一次。主持人知道，不等于全员知道；同一份方案向三个人各说一遍，也不能算成三项结论。
+
+另外提前说明一件事：这里的三个教室是纸上的候选值，不是仿真世界里真实的导航目标。我们没有建一个真实场地让角色走过去，选教室这个动作发生在方案文本里，不等于实际移动。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.2　信息分配示意</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三条真实 SPEAK 与一次逐人传达</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24, height: 96 }}>
+            <Box style={{ width: 368, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>温乔　私有 F1</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>阅读早于手作</Text>
+            </Box>
+            <Box style={{ width: 368, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>任新　私有 F2</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>拼图 11:00 开始</Text>
+            </Box>
+            <Box style={{ width: 368, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>白露　私有 F3、F4</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>手作→操作室；阅读→阅览室</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24, height: 40 }}>
+            <Box style={{ width: 368, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>↓ 真实双人 SPEAK</Text>
+            </Box>
+            <Box style={{ width: 368, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>↓ 真实双人 SPEAK</Text>
+            </Box>
+            <Box style={{ width: 368, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>↓ 真实双人 SPEAK</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24, height: 100 }}>
+            <Box style={{ width: 368, height: 100, background: '#F7F3E8', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>共同题面</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>三活动各 50 分钟{'\n'}三时段、三教室各一次</Text>
+            </Box>
+            <Box style={{ width: 44, height: 100, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 692, height: 100, background: '#EDF4FC', borderRadius: 8, padding: '12px 16px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>陶明　主持人　初始 0 条</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>无私有限制、无教师答案；保存实际取得的条件与来源，并据此提出候选</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 34, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#276FBF' }}>↓　形成定稿后再逐人传达</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '12px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>定稿形成后逐人传达：主持人知道 ≠ 全员知道</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>教室是纸上候选值，不是仿真中的实际导航目标</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 13, color: '#546779', marginTop: 12 }}>示意图：信息分配关系（重绘自图 4.5-1），非实际运行界面</Text>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 26</Text>
+    </Box>
+
+</Slide>

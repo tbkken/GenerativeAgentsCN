@@ -1,0 +1,67 @@
+<Slide notes={`一次运行做完以后，最容易犯的错是拿一张截图或者一段提示词去交差。截图只截到一个瞬间，提示词里面没有地图、素材、初始位置，也没有已经发生的事实。
+要真的把结果交给另一位读者，就得把三样东西分开打包：基础资源、实验输入、运行结果。它们的用途完全不同，接收者拿到之后能做的事也完全不同。
+还有一个经常被忽略的点：文件名只是名字。把结果压缩包改成运行包的后缀，并不会因此获得 Run 的协议内容。判断一个包是什么，要看清单里的 package_kind 和包内实际内容。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>第三章　在共同世界中行动：用完整案例学习 GenerativeAgentsCN　·　3.13</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 52, fontWeight: 'bold', color: '#20344B', lineHeight: 1.2 }}>导出、迁移{'\n'}与离线回放</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.7, width: 560 }}>把一次运行真正交到另一位读者手里：基础资源、实验输入、运行结果各自成包，并且说明对方能拿它做什么、不能承诺什么。</Text>
+            <Box style={{ flexDirection: 'row', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>包类型</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>内容合同</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>分层验收</Text>
+                </Box>
+                <Box style={{ width: 128, height: 42, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#CB6B28' }}>待核对项</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ width: 560, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 92, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>config</Text>
+                </Box>
+                <Text style={{ width: 76, fontSize: 15, color: '#546779', fontFamily: 'Consolas, monospace' }}>.zip</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.4 }}>资源内容与自身附件，用于资源交换</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 74, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 92, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>exp</Text>
+                </Box>
+                <Text style={{ width: 76, fontSize: 15, color: '#546779', fontFamily: 'Consolas, monospace' }}>.gaexp</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.4 }}>完整资源闭包与实验装配，用于固定实验</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 74, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 92, height: 44, background: '#20344B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>run</Text>
+                </Box>
+                <Text style={{ width: 76, fontSize: 15, color: '#546779', fontFamily: 'Consolas, monospace' }}>.garun</Text>
+                <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.4 }}>完整内嵌实验与执行事实，用于回放</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 68, background: '#FFF4E6', borderRadius: 10, padding: '8px 18px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>改名不会补齐协议</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>把结果 ZIP 改成 .garun，不会获得 Run 的内容合同</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+</Slide>

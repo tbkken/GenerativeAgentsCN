@@ -1,0 +1,110 @@
+<Slide notes={`同一份 Skill，装到不同的地方，机制是不一样的。三条路线机制不同，不能互相套用。
+
+路线一是原生托管：把目录或 ZIP 上传，服务返回一个 Skill 身份，再挂载到托管 Shell 里。路线二是本地 Shell：用的是本地真实存在的目录路径，写进 local 环境配置，执行仍然由应用自己完成。路线三是应用层 SOP 加载：应用自己读 SKILL.md，按需把内容加入提示，然后跑自己那套受控的工具循环。
+
+三组都在描述「怎么装」，但用的字段、路径和执行权限完全不同。最危险的做法，是把托管模式的 skill_reference 原样放进本地配置里，写完看着像对的，跑起来一定不对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.4–2.8.5　原生 Skills、本地 Shell 与应用层 SOP</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三条路线不能互相套用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>图 2.8-2：三条路线各自闭环，谁的写法只归谁用。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 368, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 368, height: 60, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>路线一　原生托管 Skill</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>上传目录 / ZIP（POST /v1/skills）</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>记录真实身份：Skill ID 与版本</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>挂载托管 Shell：skill_reference</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 368, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 368, height: 60, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>路线二　本地 Shell</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>本地 Skill 目录：真实存在的路径</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>local 环境技能配置</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>应用实际执行：处理 shell_call 与结果</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 368, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ width: 368, height: 60, background: '#ECF7F2', borderRadius: 10, justifyContent: 'center', padding: '0 18px' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>路线三　应用层 SOP 加载</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>应用自己读 SKILL.md</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>按需加入提示与资料</Text>
+                </Box>
+                <Box style={{ width: 368, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 22, height: 22, borderRadius: 11, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 12, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 13, color: '#20344B', lineHeight: 1.4, flex: 1 }}>自己的受控工具循环</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 82, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 50, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不能把某一组的上传、路径或执行权限直接套给另一组</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>三组都在说「怎么装」，但字段、路径与权限来源各不相同，写混了看着像对、跑起来一定不对。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,74 @@
+<Slide notes={`这三行出自 Anthropic 在 2026 年 9 月 1 日发布的系统卡，题集是 HLE 的 2,500 道题。
+
+请把注意力放在两列的差别上。左边是不使用工具的准确率，右边是使用工具的准确率。把工具条件并排摆出来，而不是藏进模型名后面的一行小字，是有意的：只有条件摆在台面上，你才能看出同一批题上工具打开之后发生了什么。
+
+再看来源性质：这是厂商自报，不是第三方复测。工具条件包含网页搜索、网页读取、程序化工具调用和代码执行；每题跨上下文的总 Token 上限是一百万，不做上下文压缩，判分用 Claude Opus 4.6。
+
+报告还说明了屏蔽基准答案来源和污染复查的方法。条件写得越清楚，我们才知道该信到什么程度。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.1　专家级问题已经能解决一部分，工具会改变能力边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>HLE：同一批题，两种工具条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 30, alignItems: 'center', padding: '0 18px' }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>模型完整名称</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>不使用工具：准确率</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>使用工具：准确率</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 88, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>Claude Fable 5.1</Text></Box>
+            <Box style={{ flex: 1, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>60.9%</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>65.0%</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 88, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>Claude Fable 5</Text></Box>
+            <Box style={{ flex: 1, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>57.8%</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>63.8%</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20, height: 88, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '0 18px' }}>
+            <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>Claude Opus 5</Text></Box>
+            <Box style={{ flex: 1, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>56.6%</Text>
+            </Box>
+            <Box style={{ flex: 1, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>63.6%</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 92, background: '#F7F3E8', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 52, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>来源性质：厂商自报，报告日期 2026-09-01，本书未复测</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>工具条件含网页搜索、网页读取、程序化工具调用与代码执行；每题跨上下文总 Token 上限 100 万，不做上下文压缩，判分使用 Claude Opus 4.6。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 24</Text>
+    </Box>
+
+</Slide>

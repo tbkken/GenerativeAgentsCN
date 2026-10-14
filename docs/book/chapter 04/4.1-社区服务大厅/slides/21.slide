@@ -1,0 +1,62 @@
+<Slide notes={`我想特别强调一件事：相同的百分之七十五，可能来自完全不同的过程。
+
+第一种可能，是对照组多问了几轮，把原本会走错窗口的人问对了，闭环是靠澄清换来的。第二种可能，是基线那组走错之后，窗口解释分工并把人转介回来，闭环是靠补救换来的。第三种可能，是总请求数和重复次数本身不同，比率偏偏凑到同一个数。
+
+所以说，不能凭一个比率就宣布哪个策略更好。
+
+要把时延、重复说明负担和调用次数放在一起解释。如果对照组的闭环高了，但时延和负担都明显上升，那就得说清换来了什么、又付出了什么。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.1.6　相同的比率不代表相同的结论</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>相同的 75%，可能来自不同原因</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+            <Box style={{ width: 380, flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+                <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>75%</Text>
+                <Text style={{ fontSize: 16, color: '#546779' }}>相同的闭环率</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>分母仍是四项任务</Text>
+            </Box>
+
+            <Box style={{ width: 740, flexDirection: 'column', gap: 16 }}>
+                <Box style={{ width: 740, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 130 }}>更多澄清</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>对照多问几轮，把原本会走错窗口的人问对了。</Text>
+                </Box>
+                <Box style={{ width: 740, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 130 }}>窗口补救</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>走错之后被窗口解释分工并转介回正确路径。</Text>
+                </Box>
+                <Box style={{ width: 740, height: 106, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                    <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 130 }}>口径变化</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>总咨询次数不同，比率恰好凑到同一个数值。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 6, flex: 1 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>结论待核：不凭单一比率宣布优劣</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>必须结合时延、重复说明负担与调用次数一起解释。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.1 社区服务大厅</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

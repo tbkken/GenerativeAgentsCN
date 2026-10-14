@@ -1,0 +1,85 @@
+<Slide notes={`五种现象，对应五种处理方式。
+根本没有替代通路，属于装配不满足题目。这时候要留证据，但绝对不能改 Run 的碰撞去冒充原来那份对照，那会把整组数据变成假的。
+路存在而角色反复询问，要去看他的行为和调用预算，这属于行为层面的分析。缺少目标知识、被系统正确拒绝，这是合同边界，系统做得对，不该自动报成 bug。
+已经执行的路径穿过了阻挡格，要核对事实，按项目规则停止验收并报告。开始了 MOVE 但没有到达，要去查实际路程、剩余路径和观察窗口，这和「从未启动」是两回事。
+另外，两组全到达也是有效结果，可以用路程解释代价，但不能事后换指标。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.7.6　五种现象与对应处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>五种现象，五种归因</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', gap: 28 }}>
+
+        <Box style={{ width: 700, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, height: 26 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>观察到的现象</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>解释与处理</Text></Box>
+            </Box>
+
+            <Box style={{ height: 82, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>根本没有替代通路</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>装配不满足题目，留证；不改 Run 碰撞冒充原对照</Text></Box>
+            </Box>
+
+            <Box style={{ height: 82, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 46, background: '#276FBF' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>路存在但反复询问</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>分析角色行为与调用预算，不是环境缺陷</Text></Box>
+            </Box>
+
+            <Box style={{ height: 82, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 46, background: '#26816B' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>缺目标知识被正确拒绝</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>合同边界，系统行为正确，不自动报 bug</Text></Box>
+            </Box>
+
+            <Box style={{ height: 82, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>已执行路径穿阻挡格</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>核对事实，按项目规则停止验收并报告</Text></Box>
+            </Box>
+
+            <Box style={{ height: 82, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 46, background: '#546779' }} />
+                <Box style={{ width: 200 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>开始 MOVE 但未到达</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.4 }}>查实际路程、剩余路径与窗口，区别于未启动</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 424, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>结果边界</Text>
+
+            <Box style={{ width: 424, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>两组全到达也有效</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>可以用路程解释代价；没有差异本身就是一个需要解释的结果。</Text>
+            </Box>
+
+            <Box style={{ width: 424, height: 150, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不得事后换指标</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>也不得删掉不按预想走的人。预登记的判分口径要一直用到底。</Text>
+            </Box>
+
+            <Box style={{ width: 424, height: 150, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#546779' }}>此案无疏散模型</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>没有现实疏散、容量或物理运动模型，不能据此推断场地安全。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.7 场地临时关闭演练</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,73 @@
+<Slide notes={`本地 stdio 这一路，关键在「谁启动谁」。
+
+桌面宿主按配置里的命令和参数，在本机启动一个 Python 进程。这个进程就是 MCP 服务端，双方在同一台计算机上通信。
+
+传输用的是进程的标准输入和标准输出。宿主从标准输出读协议消息、往标准输入写请求，所以标准输出在这段里是协议通道，不是给人看的日志。
+
+这带来一个很常见的坑：随手写一句打印，把「服务启动了」打到标准输出，就把协议数据污染了。消息里混进一行普通文本，宿主解析就会失败，而且报错信息往往指向别处。
+
+还有一个好用的判断：启动后终端停在那里不输出自然语言，通常只是它在等待输入，并不等于故障。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.3　本地 stdio</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>进程的标准输入与输出</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 48 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 0 }}>
+            <Box style={{ width: 500, height: 86, background: '#EDF4FC', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>本地宿主</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>读者电脑上的桌面应用</Text>
+            </Box>
+            <Box style={{ width: 500, height: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>↓　command 与 args 启动</Text>
+            </Box>
+            <Box style={{ width: 500, height: 86, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>Python MCP 进程</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>本机启动的服务端</Text>
+            </Box>
+            <Box style={{ width: 500, height: 60, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>↕　标准输入 / 输出传协议消息</Text>
+            </Box>
+            <Box style={{ width: 500, height: 72, background: '#F7F3E8', borderRadius: 8, padding: '0 16px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>同一台计算机</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>整条链路不出本机</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 604, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 604, height: 122, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>标准输出是协议通道</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>宿主从标准输出读协议消息、往标准输入写请求，所以它在这里不是给人看的日志。</Text>
+            </Box>
+
+            <Box style={{ width: 604, height: 122, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>调试信息写标准错误</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>日志通道与协议通道必须分开，否则协议消息里会混进不属于协议的内容。</Text>
+            </Box>
+
+            <Box style={{ width: 604, height: 122, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不要随手打印「服务启动了」</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>这行普通文本会进入协议数据，宿主侧解析失败，而报错信息往往指向别处。</Text>
+            </Box>
+
+            <Box style={{ width: 604, height: 88, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>等待输入不等于故障</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>终端不输出自然语言，通常只是它在等宿主发协议请求。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 27</Text>
+    </Box>
+
+</Slide>

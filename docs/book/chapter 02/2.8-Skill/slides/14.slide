@@ -1,0 +1,82 @@
+<Slide notes={`先读文件，再本地执行，这两步不要跳。
+
+第一组检查看三件事：脚本能不能找到 references；Schema 和方案结构是不是一致；整个流程有没有偷偷依赖仓库外面的隐含文件。这三条任意一条不通过，这个包换一台机器就会出问题。
+
+第二组检查看一致性。教学包里的规则，和示例目录里的规则应该是一样的。配套的离线测试会检查关键副本，就是为了避免出现讲解一套规则、实际执行另一套规则的情况。这种不一致很隐蔽，光看代码看不出来。
+
+本地执行还有一个额外好处：它会逼你确认运行环境。脚本要的 Python 版本、依赖库有没有装，只有真的跑一遍才知道。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.3　先验证方法，再安装</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先读配套文件，再在本地执行</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>本地能跑起来、规则前后一致，这两条比「看起来写得很好」重要得多。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 40 }}>
+
+            <Box style={{ width: 632, flexDirection: 'column', gap: 10 }}>
+
+                <Box style={{ flexDirection: 'row', gap: 16, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>能找到 references</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>脚本按自身位置定位 references，不依赖当前工作目录。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 16, height: 100, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Schema 与方案一致</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>schedule.schema.json 与实际产出的字段结构对得上。</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 16, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center' }}>
+                    <Box style={{ width: 4, height: 60, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>不依赖仓库外文件</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>没有隐含的外部路径，换一台机器也能完整跑通。</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+            <Box style={{ width: 480, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+                <Box style={{ width: 480, height: 52, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 12, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 26, background: '#26816B' }} />
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>两套规则要一致</Text>
+                </Box>
+
+                <Box style={{ width: 480, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>教学包中的规则与示例目录中的规则应保持一致，配套离线测试会检查关键副本。</Text>
+                </Box>
+
+                <Box style={{ width: 480, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>脚本要求的运行环境也要一并确认：解释器、依赖库是否已经装好。</Text>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, height: 76, background: '#FFF4E6', borderRadius: 8, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 46, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5 }}>讲解一套规则、实际执行另一套，是最难被发现的一类问题。</Text>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 27</Text>
+    </Box>
+
+</Slide>

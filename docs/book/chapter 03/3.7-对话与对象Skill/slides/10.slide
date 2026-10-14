@@ -1,0 +1,84 @@
+<Slide notes={`人物这一侧先拟好动作：world-act 发出 INTERACT，带上真实的 selection_key 与请求。MCP 校验通过后回一个 accepted，人物这一轮就结束；此时还没有任何对象动手。
+
+接着调度器与世界层接手，把待处理请求连同 request_id 交给对象根 Skill。对象在自己的轮次里发出 world-act，带上动作与 responses，再收到第二次 accepted。
+
+随后世界执行，请求与答复随同一个 Step 一起落盘。只有目标人物下一轮在 external_observations 里看到真实答复，才说明他确实收到了；回复只投给真实接收者，不广播。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.2　INTERACT 只负责发出请求</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>对象交互的整段链路</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+
+        <Box style={{ flexDirection: 'row', height: 150 }}>
+            <Box style={{ width: 220, height: 150, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>人物 Brain</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>world-act：INTERACT{'\n'}带真实 selection_key 与 request</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 220, height: 150, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>MCP 校验</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>accepted：人物本轮结束{'\n'}返回已选动作，供调度执行</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 150, background: '#EDF4FC', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>调度与世界执行</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>把待处理请求交给对象{'\n'}interaction_requests 与 request_id</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 240, height: 150, background: '#ECF7F2', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>对象根 Skill</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>world-act：自身动作 + responses{'\n'}accepted：对象本轮结束</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 86, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>整步持久提交　StepResult：人物与对象的本步事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>人物提出的请求与对象提交的答复，随同一个 Step 一起落盘。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 26, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 86, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#26816B' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>目标人物下一轮　external_observations：真实答复</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>仅真实接收者，恰好一次，不广播。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>请求被接受　≠　业务答复已经收到</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>纵向距离不是实测耗时；在发请求的同一轮就总结「已确认」，跨过了尚未发生的处理过程。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 31</Text>
+    </Box>
+
+</Slide>

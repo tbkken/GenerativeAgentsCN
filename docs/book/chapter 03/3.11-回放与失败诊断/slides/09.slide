@@ -1,0 +1,59 @@
+<Slide notes={`还有一类情况需要说清楚，因为它最容易被读反。
+
+当历史事实本身仍然完整，但里面旧的 Skill 执行字段已经不再满足当前的执行校验时，回放仍然只读这些既有事实。这不代表回放要跟着放宽校验，也不代表可以容忍损坏的内容。
+
+要分清三件事：一是回放读取，二是新跑或恢复时的执行校验，三是包协议与内容完整性。测试专门覆盖的是「历史事实与执行校验分离」，不是协议或内容的容错。
+
+所以看到「旧字段不满足当前校验」时，正确的处理是把它记下来、说明范围，而不是顺手改掉历史，或者扩大回放权限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.2　Replay 为什么不重新思考</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>事实仍完整，协议不因此放宽</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 14, color: '#546779' }}>情形</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>应当怎样</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 14, color: '#546779' }}>不能推论成什么</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>历史事实完整，旧 Skill 执行字段不再满足当前校验</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>Replay 仍只读既有事实</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>不等于允许读取不受支持的旧版包协议</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B', lineHeight: 1.5 }}>新跑或恢复需要判断执行要求</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>回放读取与执行校验分开判断</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>不等于回放可以放宽自己的校验</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Box style={{ width: 300 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>内容已经损坏</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>不因「历史」二字而容忍</Text></Box>
+            <Box style={{ width: 420 }}><Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>不等于可以拿公共资源里的同名图片补上缺失素材</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>隔离测试覆盖的是「历史事实与执行校验分离」，不是包协议容错，也不是内容容错。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 27</Text>
+    </Box>
+
+</Slide>

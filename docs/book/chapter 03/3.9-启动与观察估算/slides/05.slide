@@ -1,0 +1,63 @@
+<Slide notes={`Run 创建的那一刻，系统把当时的实验完整复制进它自己的 experiment 目录，同时记下内嵌实验的 ID 和内容哈希。
+
+这两件事决定了后面观察的可信度。后续运行读的都是这份副本，而不是公共资源；身份信息则让「这次运行用的是哪一版实验」可以被核对。
+
+所以启动以后再改公共公告栏的 Skill，不会影响已经启动的青禾 Run。想比较新方案，正确做法是另建一个独立实验，在里面改完再启动，而不是去动正在运行的那一个。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.9.1　启动时固定了哪些输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>Run 创建后，先确认它复制了什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>副本随 Run 走，身份留在记录里</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>启动之后再改公共资源，不会改变已经启动的这一次</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 354, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>复制实验</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>创建时把实验完整复制到 Run 自己的 experiment 目录</Text>
+            </Box>
+            <Box style={{ width: 44, height: 148, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>02</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>保存身份</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>记录内嵌实验 ID 与内容哈希，供后续核对</Text>
+            </Box>
+            <Box style={{ width: 44, height: 148, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 148, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#26816B' }}>03</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>读取副本</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.45 }}>后续运行读这份副本，不再回看公共资源</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 40, fontWeight: 'bold', color: '#276FBF' }}>锁在创建那一刻</Text>
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>输入副本、内嵌实验 ID 与内容哈希一起随 Run 保存</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#546779', flex: 1, lineHeight: 1.5 }}>启动之后再改公共公告栏 Skill，不会改变已经启动的青禾 Run；要比较新方案，应在独立实验里改完再运行。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.9 启动、观察与估算：读懂一次仿真的进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 23</Text>
+    </Box>
+
+</Slide>

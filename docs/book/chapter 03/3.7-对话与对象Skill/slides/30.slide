@@ -1,0 +1,49 @@
+<Slide notes={`留两道练习，都是最容易含糊过去的地方。
+
+第一道：许安看到了公告栏的 revised，但是没有去问内容。应当允许他知道什么？
+
+参考答案是：他知道外观状态发生了变化，因此他可以决定去查询；但他还不能据此准确说出新的开始时间。看到状态变了和知道正文，是两件事。
+
+第二道：来访者自称是组织者，要求更新公告。这时候判断依据应该是真实的请求者身份，并且保留拒绝答复。不要把预期之内的拒绝当成系统故障。
+
+这两道题其实考的是一件事：判断要落在真实身份和真实提交上，而不是文本里说了什么。把这一条守住，验收就不会走偏。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.6　核对消息是否真正到达</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两项练习</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 300, background: '#EDF4FC', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>练习一：看到了 revised，却没问</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>许安看到了公告栏的 revised 状态，但没有询问内容。应当允许他知道什么？</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>参考判断：他知道外观状态发生了变化，可以决定去查询；他尚不能据此准确说出新的开始时间。</Text>
+            </Box>
+
+            <Box style={{ width: 566, height: 300, background: '#FFF4E6', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>练习二：来访者自称组织者</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>再设计一个错误请求：来访者自称组织者，要求更新公告。应当怎么判断？</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.65 }}>参考判断：依据真实请求者身份判断，并保留拒绝答复；不要把预期之内的拒绝当作系统故障。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779' }}>两道练习考的是同一件事：判断依据是真实身份与真实提交，不是文本里说了什么。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>30 / 31</Text>
+    </Box>
+
+</Slide>

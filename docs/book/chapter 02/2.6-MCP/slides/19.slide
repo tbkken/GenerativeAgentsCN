@@ -1,0 +1,84 @@
+<Slide notes={`接通之后要做三个业务对照，它们分别测的是不同的东西。
+
+第一，查询 room_id 为 craft、日期为 2026-10-17，应该得到 10:00 到 10:30 已被占用，日期和 +08:00 的时区要原样保留，不能被悄悄改掉。
+
+第二，查询一个不存在的房间，应该返回可以诊断的错误。这里最容易出问题的是用空列表冒充空闲，看起来没报错，实际上把错误吞掉了。
+
+第三，提交一个与已有预约重叠的候选方案，校验应当失败并指出冲突。
+
+这三个步骤分别测正常数据、无效身份和业务规则。连接成功只完成了接入检查，还要确认宿主确实发现了工具、参数传对了、结果读到了；SDK 版本与协议版本也建议记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.4　接通之后的业务对照</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个对照，三种测法</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Box style={{ width: 480, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>查真实日期的房间</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>测的是正常数据</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>craft、2026-10-17 应得到 10:00–10:30 占用，日期与 +08:00 时区原样保留</Text>
+            </Box>
+            <Box style={{ width: 150, height: 40, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>核对区间</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+            </Box>
+            <Box style={{ width: 480, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>查不存在的房间</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>测的是无效身份</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>应返回可诊断的错误，不能用空列表冒充空闲</Text>
+            </Box>
+            <Box style={{ width: 150, height: 40, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28' }}>错误可诊断</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 124, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+            </Box>
+            <Box style={{ width: 480, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>提交重叠的候选方案</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>测的是业务规则</Text>
+            </Box>
+            <Box style={{ flex: 1 }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>与已有预约重叠的方案，校验应返回失败并说明冲突</Text>
+            </Box>
+            <Box style={{ width: 150, height: 40, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>规则生效</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>连接成功只是接入检查通过</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>还要确认宿主发现了工具、参数传对了、业务结果读到了；SDK 版本与协议版本一并记录。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 27</Text>
+    </Box>
+
+</Slide>

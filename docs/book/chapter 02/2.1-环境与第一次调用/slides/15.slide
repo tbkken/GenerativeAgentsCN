@@ -1,0 +1,68 @@
+<Slide notes={`这一段是本章最核心的一次调用，我逐行说清楚。
+
+前面两行是导入。client 这一行有两个参数：timeout 设成 45 秒，max_retries 设成 0。关闭自动重试是故意的——调试时我宁愿看到最原始的那一次错误。
+
+然后是 responses.create，它接收三样东西。model 来自环境变量，决定用哪个模型。instructions 是本次行为要求，写的是"资料不足时明确说明，不编造预约事实"。input 是本次任务内容，列出需要确认的五类信息。
+
+最后两行打印结果，output_text 方便读文本，usage 用来看实际用量。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.1.4　配置 API，再执行最小调用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>最小调用的四个要素</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 20, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>示例关闭 SDK 自动重试，让最初的错误更容易定位。</Text>
+        </Box>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '18px 24px', flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#20344B' }}>import os</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#20344B' }}>from openai import OpenAI</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#546779' }}>client = OpenAI(timeout=45.0, max_retries=0)</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#20344B' }}>response = client.responses.create(</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#276FBF' }}>    model=os.environ['OPENAI_MODEL'],</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#276FBF' }}>    instructions='你是活动筹备助手。资料不足时明确说明，不编造预约事实。',</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#276FBF' }}>    input='请列出为社区学习中心安排开放日需要确认的五类信息。',</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#20344B' }}>)</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#26816B' }}>print(response.output_text)</Text>
+            <Text style={{ fontSize: 13, fontFamily: 'Consolas', color: '#26816B' }}>print(response.usage)</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 273, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>model</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>这次用哪个模型，取自 OPENAI_MODEL 环境变量。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>instructions</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>本次行为要求：资料不足时明确说明，不编造预约事实。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>input</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>本次任务内容：列出需要确认的五类信息。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 150, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>usage</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>观察实际用量；响应还带状态与工具项，后续章节展开。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.1 环境与第一次调用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

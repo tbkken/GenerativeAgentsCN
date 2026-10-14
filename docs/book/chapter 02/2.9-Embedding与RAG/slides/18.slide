@@ -1,0 +1,90 @@
+<Slide notes={`两条路线怎么比？关键不在于哪条更高级，而在于比较的条件要对等。
+
+自己检索这边，切分单位和编号由你决定，向量存在内存或自己的库里，相似度排序完全可见，可以写进清单。核对的时候，用的是这套流程自己产生的证据。
+
+托管那边，切分和索引交给服务端，检索同时用语义和关键词，由服务端执行。你要做的是打开 include，把引用注解逐条看一遍。
+
+比较时最容易出问题的地方是题目不一样。这边问三个问题，那边问五个；或者这边检查了引用支持，那边只看答案读起来顺不顺。这样比出来的结论没有意义。同一套题目、同一套支持性检查，才能谈效果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.4　托管 File Search 是另一条实现路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>自行检索与托管检索怎样比较</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, background: '#F4F7FA', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 34, background: '#276FBF' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>自行检索</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>每一步都看得见</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>切分</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>自己决定切分单位与片段编号</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>向量</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>自己在内存或自己的库里保存</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>检索</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>相似度排序可写进检索清单</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>代价</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>代码与维护都落在自己身上</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 564, background: '#F4F7FA', borderRadius: 10, padding: 16, flexDirection: 'column', gap: 10 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 4, height: 34, background: '#26816B' }} />
+                    <Box style={{ flexDirection: 'column', gap: 2 }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>托管检索</Text>
+                        <Text style={{ fontSize: 14, color: '#546779' }}>把机制交给服务端</Text>
+                    </Box>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>切分</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>文件上传后由服务端处理</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>向量</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>索引保存在服务端向量存储里</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>检索</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>综合语义与关键词，由服务端执行</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10, height: 72, background: '#FFFFFF', borderRadius: 6, padding: '10px 14px' }}>
+                    <Text style={{ width: 56, fontSize: 14, color: '#546779' }}>代价</Text>
+                    <Text style={{ flex: 1, fontSize: 14, color: '#20344B', lineHeight: 1.5 }}>文件上传与保留范围要自己管理</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 86, background: '#EDF4FC', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>两条路线要用同一套题目与支持性检查</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>题目不同、检查项不同，比出来的结论没有意义；本章配套主示例采用前一种透明的小型实现。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 25</Text>
+    </Box>
+
+</Slide>

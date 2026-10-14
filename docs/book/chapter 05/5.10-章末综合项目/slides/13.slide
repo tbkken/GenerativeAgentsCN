@@ -1,0 +1,53 @@
+<Slide notes={`真正配置两组之后，还有一步不能省：核对共同条件和包内差异。
+
+容易出错的地方在于，公共资源里那个最新的 Skill，并不能证明已经封存的实验用的也是它。资源在公共层被编辑过，实验内的物理副本不会自动跟着变化。所以交付时要说明，实际生效的是哪一份包内副本。
+
+如果发现导入副本和书面设计不一致，把差异写下来，同时写清楚它会影响什么。不要静默覆盖，也不要在报告里假装没有发生。
+
+需要调整已经封存的实验时，要创建一份独立草稿，重新走一遍实验和运行安排。既有运行所依据的内容不要改写，因为那些结论当时是建立在那份内容之上的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.3　第二份交付：行为与对照</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>书面设计与导入副本可能不一致</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>真正配置两组之后，把书面设计与实际生效的那一份包内副本逐项对照</Text>
+
+        <Box style={{ width: 1152, flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 566, height: 300, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#276FBF' }}>书面设计</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>交付文档里写下的约定</Text>
+                <Box style={{ width: 522, height: 168, background: '#FFFFFF', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.72 }}>咨询台　缺少关键目的时先澄清{'\n'}窗口职责　A 场地使用 / B 设施问题{'\n'}人物资料　仅本人目的与首次话语{'\n'}观察窗口　76 步，09:00—10:15{'\n'}干预段　仅一段替换，其余保持一致</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 566, height: 300, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B' }}>导入副本</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>实际生效的那一份，必须能指认</Text>
+                <Box style={{ width: 522, height: 168, background: '#FFFFFF', borderRadius: 8, padding: '14px 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.72 }}>最新公共 Skill　不等于已封存实验所用{'\n'}包内副本　说明是哪一份、在什么位置{'\n'}共同条件　逐项核对，不只核对干预段{'\n'}差异　写下位置与影响，不静默覆盖{'\n'}封存实验　调整时新建独立草稿</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>公共资源更新，不会自动改变既有实验里的物理副本</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>需要调整封存实验时创建独立草稿，不能改写既有 Run 所依据的内容</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 31</Text>
+    </Box>
+
+</Slide>

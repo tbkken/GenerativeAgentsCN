@@ -1,0 +1,71 @@
+<Slide notes={`结果不合预期的时候，我们要能说出可能的原因，并且知道去查哪一份证据。
+
+如果是两个位置都可见、注意力在返回时被截断，那就去比对感知候选与实际返回。
+
+如果是查过了还是选错，那就去看请求、回复和目标判断这三步。
+
+如果是讲解员已经补救过，或者重复询问花了时间，那就去看实际对话和时序。
+
+如果是语义与图像不一致、碰撞格被改、出生点变了，这些都属于装配问题，必须先记录下来，不能伪装成空间干预的效果。
+
+最后一条提醒：一次干预只改一个因素，出了问题才有办法把原因落到具体那一项上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.7　失败解释与下一轮练习</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>失败解释：可能机制与应查证据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>结果不合预期时，先分清是感知、信息、对话还是装配出了问题。</Text>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>可能机制</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>应查证据</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>两处均可见、注意力截断</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>比对感知候选与实际返回，看候选是否被裁掉</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>查过仍然选错</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>调请求、回复与目标判断三份记录</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>讲解员已补救或重复询问耗时</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>看实际对话与时序，不能只按是否见牌归因</Text></Box>
+            </Box>
+
+            <Box style={{ height: 78, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Box style={{ width: 280 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>语义／图像不一致、碰撞或出生改变</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先记录为装配问题，不伪装成空间干预效果</Text></Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>每次尽量只改变一个因素，才可能把原因落到具体那一项上。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,61 @@
+<Slide notes={`代码里有一个参数容易被过度解读，就是 store=False。
+
+它表示不使用该响应对象的默认存储方式，仅此而已。它不是「这次请求没有发到服务端」，更不是「服务方不会处理我的数据」。网络请求该发生还是发生了。
+
+所以从这一个开关，我们不能推导出整个服务的数据处理政策。数据怎么保存、保存多久、能不能用于其他用途，这些要看服务方的文档约定，不能靠一个参数去猜。
+
+书稿里用这种方式来讲手工管理，是为了把状态放在应用这一侧，让你看清每一步实际带上了什么。至于具体的数据约定，那是另一件事，要单独查。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.3.3　OpenAI API：手工保留多轮状态</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>store=False 说明了什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ flex: 58, flexDirection: 'column', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>它能说明的一件事</Text>
+
+            <Box style={{ height: 124, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', justifyContent: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>不使用该响应对象的默认存储方式</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>这一次由应用自己保管历史，而不是交给默认通道</Text>
+            </Box>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28', marginTop: 6 }}>它不能说明的两件事</Text>
+
+            <Box style={{ height: 124, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', justifyContent: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>不代表网络请求没有发生</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>请求照常发出并返回，只是没有走默认保存</Text>
+            </Box>
+
+            <Box style={{ height: 124, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', justifyContent: 'center', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>不能据此推导数据政策</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.55 }}>整个服务如何处理数据，要另查服务文档</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flex: 42, height: 420, background: '#F4F7FA', borderRadius: 12, padding: 24, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>一个参数能承担多少判断</Text>
+            <Box style={{ height: 1, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>参数名描述的是这一个请求对象的行为，不是整个服务的承诺。</Text>
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>把后者说成前者，会让学生把技术开关误当成合规结论。</Text>
+            <Box style={{ flex: 1 }} />
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 30, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>本书用它说明手工管理方式，数据约定另查官方文档。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 25</Text>
+    </Box>
+
+</Slide>

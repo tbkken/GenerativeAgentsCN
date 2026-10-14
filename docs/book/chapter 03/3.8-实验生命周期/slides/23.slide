@@ -1,0 +1,68 @@
+<Slide notes={`操作过程中，界面上的信息偶尔会互相打架，这时候的顺序很重要。
+
+如果页面徽标、当前所选的实验和操作提示对不上，先停下来查清实际对象和实际状态，不要继续用更多操作去覆盖证据。多操作几次，线索就被搅乱了。
+
+如果提示已经创建仿真，但状态刷新失败，做法是重新进入那个仿真核对，不要因为界面还没刷新就连续再点执行。一次请求的结果和运行的当前状态是两回事。
+
+归档之后在默认范围里找不到某份实验，先确认当前的范围和筛选条件，而不是急着重建一份同名实验。重建出来的是一份新身份，原来的证据就对不上了。
+
+把这些核对做完，才会有一份可以进入运行观察、边界明确的实验材料。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.8.5　在练习副本中理解归档、恢复和删除</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>证据冲突时先查清对象</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#20344B', lineHeight: 1.6, width: 1152 }}>界面给出的信息不一致时，处理顺序比操作数量更重要。</Text>
+
+        <Box style={{ width: 1152, height: 30, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 14, color: '#546779', width: 320 }}>冲突现象</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 360 }}>先查什么</Text>
+            <Text style={{ fontSize: 14, color: '#CB6B28', width: 400 }}>不要做什么</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 320, lineHeight: 1.5 }}>页面徽标、所选实验与操作提示互相冲突</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 360, lineHeight: 1.5 }}>先查清实际对象与实际状态</Text>
+            <Box style={{ width: 400, height: 64, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>不继续用更多操作覆盖证据</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 320, lineHeight: 1.5 }}>提示已创建仿真，但状态刷新失败</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 360, lineHeight: 1.5 }}>重新进入该仿真核对</Text>
+            <Box style={{ width: 400, height: 64, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>不因未刷新而连续再次点击执行</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 100, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 15, color: '#20344B', width: 320, lineHeight: 1.5 }}>归档后在默认范围里找不到实验</Text>
+            <Text style={{ fontSize: 14, color: '#546779', width: 360, lineHeight: 1.5 }}>确认当前范围与筛选条件</Text>
+            <Box style={{ width: 400, height: 64, flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>不重复创建一份同名实验</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>完成这些核对，才有一份可以进入运行观察的、边界明确的实验材料。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.8 草稿、副本、预检与封存</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 24</Text>
+    </Box>
+
+</Slide>

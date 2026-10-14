@@ -1,0 +1,57 @@
+<Slide notes={`还有一个门槛：别只看每个人的自述，要看有没有真正的一来一回。
+
+什么才算？一名 Agent 提出一个问题，另一名 Agent 在自己的行动里做出回答。提问有身份，回答有自己的动作，这条链才闭合。
+
+反过来说，如果只有一个角色在消息里写下两个人的引号台词，那也只形成了这个角色的一条发言。它不能证明对方参与了会话，更不能证明对方听到过。
+
+这种偏差很常见：模型把整个场景写得非常完整，台词、语气、来回都很像，但没有通过工具让其他参与者真的动起来。
+
+所以验收的时候不要被文本的完整度骗过去。要问一句：另一方的动作在哪儿？如果找不到，这段对话就没有真的发生。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.6　核对消息是否真正到达</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>至少一段真正的一来一回</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>验收时还要确认：至少有一段真正的一来一回。</Text>
+
+        <Box style={{ flexDirection: 'row', height: 196 }}>
+            <Box style={{ width: 520, height: 196, background: '#EDF4FC', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>一方提出问题</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>用 world-act 的 SPEAK 或 INTERACT，把问题真的交给对方；提问者身份留在动作里。</Text>
+            </Box>
+            <Box style={{ width: 44, height: 196, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 520, height: 196, background: '#ECF7F2', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>另一方在自己的行动中回答</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>对方必须用自己的动作提交答复，答复再进入提问者的下一轮观察。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>一个角色写下的两段引号台词，只形成他本人的一条发言</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>常见偏差：模型写出了完整场景，却没有通过工具让其他参与者实际行动。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>要问一句：另一方的动作在哪儿？找不到，这段对话就没有真的发生</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>28 / 31</Text>
+    </Box>
+
+</Slide>

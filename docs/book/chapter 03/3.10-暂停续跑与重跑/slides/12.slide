@@ -1,0 +1,68 @@
+<Slide notes={`这里要讲清楚一条纪律：宁可给出诊断，也不要悄悄退回去。
+
+当前的恢复选择器要求存在最新已提交边界的完整快照。如果这个快照缺失，或者核验对不上，它会报告诊断，而不是自动挑一个更早的快照继续往下跑。
+
+为什么不能退？假设已经提交到第 12 步，手上只有第 10 步的完整快照。如果直接从 11 重新执行，那些已经提交过的活动、记忆和回复就可能被再做一遍。表面上跑得下去，实际数据已经重复了。
+
+所以恢复材料有缺口的时候，正确的动作是停下来，把缺失和不一致记录下来，交给后续的处理决定。把已经完成的步骤重新执行一遍，是填不上这个缺口的。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.2　已提交边界比画面进度更重要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>快照缺失，宁可诊断</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 656, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 656, height: 108, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>要求对着最新已提交边界</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>恢复选择器只认最新已提交边界的完整快照，不认随便一个较早的快照。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 656, height: 108, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>缺失或不一致时给诊断</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>报告缺口并停下来，不静默回退到更早的步骤上继续执行。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 656, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 56, background: '#B5C7D8' }} />
+                <Box style={{ flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不能靠重做已完成步骤来填</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>把已经提交的动作再执行一遍，只会让数据重复，补不上恢复材料的缺口。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 464, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 464, height: 168, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>举例</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>已经提交到 Step 12，却只有 Step 10 的完整快照。这时不能从 11 重新做起。</Text>
+            </Box>
+
+            <Box style={{ width: 464, height: 168, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>为什么不能从 11 做起</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>可能重复此前已经提交的活动、记忆和回复，最终状态看起来正常，事实却已经被改写。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

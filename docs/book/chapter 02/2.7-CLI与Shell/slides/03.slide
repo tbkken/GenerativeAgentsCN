@@ -1,0 +1,57 @@
+<Slide notes={`一条命令看起来只是一行字，但它其实是一份合同。
+
+我发出请求的时候要交代清楚三件事：运行哪一段程序、带上哪些参数；以哪个目录为起点，依赖和变量从哪里来；以及允许它跑多久。这三样决定了进程能不能正确地启动。
+
+进程跑完之后，同样有三路信息回来。标准输出装主要结果，比如校验报告；标准错误装诊断信息，比如文件读不到；退出码则是一个状态标记，说明这次检查通过、不合格，还是输入本身有问题。
+
+把这份合同记牢，后面判断「到底哪一步出了问题」才有依据。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.7.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>读懂一条命令的六个部分</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>参数、工作目录、输出、错误与退出码合成一份进程合同。</Text>
+
+        <Box style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+            <Box style={{ width: 174, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>程序与 argv</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 174, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>cwd 与环境</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 174, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>时间边界</Text>
+            </Box>
+            <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 174, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>stdout 结果</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 174, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>stderr 诊断</Text>
+            </Box>
+            <Box style={{ width: 12 }} />
+            <Box style={{ width: 174, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>退出码</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

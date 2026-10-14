@@ -1,0 +1,74 @@
+<Slide notes={`取消这一块最容易出错的地方，是把界面的反馈当成了事实。
+
+按下取消之后，至少要把五项记下来：请求发出的时刻、请求时已经提交到第几步、最终状态是什么、最终的提交边界在哪里，以及在途的那个模型请求最后是怎么结束的。
+
+为什么一定要记在途请求的结束方式？因为按钮返回成功，只证明取消这个控制请求被提交了，它不能证明远端推理已经终止。这两件事之间隔着一次网络请求，可能很快就断开，也可能要等一段时间。
+
+还要记住：取消用于结束当前这次运行的意图，但它已经提交的历史仍然有分析价值。所以在验收记录里，“已提交取消请求”和“模型请求已结束”是两条独立的证据，不能合并成一条。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.5　取消请求与「立即停止」需要分别验证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>按钮成功，只证明提出了取消</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 632, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 632, height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 260 }}>请求时刻</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>控制请求被提交的时间点</Text>
+            </Box>
+
+            <Box style={{ width: 632, height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 260 }}>请求时的已提交 Step</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>按下取消那一刻的边界</Text>
+            </Box>
+
+            <Box style={{ width: 632, height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B', width: 260 }}>最终状态</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>运行最后停在哪个状态</Text>
+            </Box>
+
+            <Box style={{ width: 632, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 260 }}>最终提交边界</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>取消之后事实停在第几步</Text>
+            </Box>
+
+            <Box style={{ width: 632, height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28', width: 260 }}>在途模型请求的结束方式</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>中止、超时，还是正常返回</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 488, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 488, height: 206, background: '#FFF4E6', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>按钮成功不等于远端已停</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>不能把按钮返回成功当作远端推理已经终止的证明。请求被记录下来，和推理真正停止，是两件事。</Text>
+            </Box>
+
+            <Box style={{ width: 488, height: 180, background: '#EDF4FC', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', gap: 10, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>已提交历史仍然有用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>取消结束的是当前这次运行的意图；在它之前已经提交的事实，依然可以拿来做分析。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,69 @@
+<Slide notes={`评分口径的变化和系统故障是两种完全不同的情况。
+
+先说评分口径。如果只是明确了"确认下一步"需要哪些实际内容，原来的结果仍然可以复核，不需要抹掉。新评分要作为有出处的分析材料保存，写清新规则的适用范围和重新评分依据。它不能写回历史 Run，冒充系统当时的评价。
+
+再说系统问题。如果发现对象回复重复、帧身份不一致或者页面选错了 Run，这些属于软件故障，要停止相应案例的验收并报告，修复必须得到针对这个问题的明确决定。
+
+这里有一条底线：不能靠改人物目标绕开故障，也不能拿一次新运行成功，就宣布原来的问题已经解决。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.9.2　不同变更需要不同的验证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>评分口径与系统问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 258, background: '#F4F7FA', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 8 }}>
+            <Box style={{ width: 1116, height: 30, flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>评分口径变化：保留原结果，新增独立说明</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 108, height: 26, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#276FBF' }}>不重跑</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 1116, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>原结果仍可复核，新的评分作为有出处的分析材料保存</Text>
+            </Box>
+            <Box style={{ width: 1116, height: 60, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 32, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>写明新规则的适用范围，以及重新评分的依据</Text>
+            </Box>
+            <Box style={{ width: 1116, height: 60, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>不能写回历史 Run，冒充系统当时的评价</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 232, background: '#FFF4E6', borderRadius: 12, padding: 18, flexDirection: 'column', gap: 8 }}>
+            <Box style={{ width: 1116, height: 30, flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>真实系统问题：先停验、留证、报告</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ width: 168, height: 26, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#CB6B28' }}>须有明确决定</Text>
+                </Box>
+            </Box>
+            <Box style={{ width: 1116, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 28, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>回复重复、帧身份不一致、页面选错 Run，都要停止相应案例的验收</Text>
+            </Box>
+            <Box style={{ width: 1116, height: 52, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 28, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>不能以改人物目标绕过故障，也不能把一次新运行成功当作原问题已解决</Text>
+            </Box>
+            <Box style={{ width: 1116, height: 44, background: '#FFFFFF', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>修复须得到针对该问题的明确决定，按项目操作约定处理。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.9 迭代与维护</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 27</Text>
+    </Box>
+
+</Slide>

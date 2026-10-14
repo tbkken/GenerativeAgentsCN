@@ -1,0 +1,105 @@
+<Slide notes={`看左边这条问题：「哪里能做手工体验」。这个问题里根本没有出现「手作室」「使用说明」这些字眼，如果只用关键词去比对，材料里那份讲房间怎么用的文件是碰不到的。
+
+Embedding 换了一个办法：把问题和每个片段都变成向量，然后看它们的方向是否接近。方向近的排前面，所以那份使用说明被排到了第一位。
+
+这里要特别小心一件事：相似度高，只说这两段在讲同一类事情，不代表它能回答问题。容量表同样排得靠前，因为它也在谈场地，但它给不出时间。
+
+工程上还有一处细节：回答用的模型和向量用的模型是两套，环境变量要分开配。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.1　Embedding 为什么适合找相近内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>语义相近，字面未必相同</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', height: 372 }}>
+
+            <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>学生提问</Text>
+                <Box style={{ width: 340, height: 150, background: '#EDF4FC', borderRadius: 8, padding: '16px 18px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.4 }}>哪里能做{'\n'}手工体验？</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>转成问题向量 q</Text>
+                </Box>
+                <Box style={{ width: 340, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>问题里没有出现「手作室」「使用说明」这些字，关键词匹配碰不到那份材料。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 60, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 24, color: '#26816B' }}>›</Text>
+                <Text style={{ fontSize: 12, color: '#26816B' }}>取前 k</Text>
+            </Box>
+
+            <Box style={{ width: 752, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 110, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px' }}>
+                    <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>手作室使用说明</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>讲的是同一间房，字面不同，方向却接近</Text>
+                    </Box>
+                    <Box style={{ width: 176, flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>相似度排序　第 1 位</Text>
+                        <Box style={{ width: 176, height: 8, background: '#D8E6E0', borderRadius: 4 }}>
+                            <Box style={{ width: 160, height: 8, background: '#26816B', borderRadius: 4 }} />
+                        </Box>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 110, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px' }}>
+                    <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>场地容量表</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>也在谈场地，但记的是容量，答不了时间</Text>
+                    </Box>
+                    <Box style={{ width: 176, flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>相似度排序　第 2 位</Text>
+                        <Box style={{ width: 176, height: 8, background: '#E1EAF5', borderRadius: 4 }}>
+                            <Box style={{ width: 104, height: 8, background: '#276FBF', borderRadius: 4 }} />
+                        </Box>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 110, background: '#F4F7FA', borderRadius: 8, padding: '14px 18px' }}>
+                    <Box style={{ width: 4, height: 62, background: '#B5C7D8' }} />
+                    <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>志愿者排班</Text>
+                        <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>只提到人手，和这个问题关系较远</Text>
+                    </Box>
+                    <Box style={{ width: 176, flexDirection: 'column', gap: 6 }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>相似度排序　第 3 位</Text>
+                        <Box style={{ width: 176, height: 8, background: '#E6ECF2', borderRadius: 4 }}>
+                            <Box style={{ width: 56, height: 8, background: '#B5C7D8', borderRadius: 4 }} />
+                        </Box>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 116, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px' }}>
+            <Box style={{ width: 4, height: 72, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>训练让语义相关的文本在向量空间中更接近</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>所以「哪里能做手工体验」有机会命中「手作室使用说明」，即使两者没有完全相同的字词。</Text>
+            </Box>
+            <Box style={{ width: 1, height: 72, background: '#B5C7D8' }} />
+            <Box style={{ width: 336, flexDirection: 'column', gap: 4, paddingRight: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>两个模型分开配置</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>回答用 OPENAI_MODEL；向量用 OPENAI_EMBEDDING_MODEL，例如 text-embedding-3-small。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 25</Text>
+    </Box>
+
+</Slide>

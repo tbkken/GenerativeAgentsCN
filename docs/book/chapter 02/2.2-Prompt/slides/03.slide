@@ -1,0 +1,52 @@
+<Slide notes={`先说第一个知识块，也是后面所有讨论的起点。
+
+同样一句“帮我安排开放日”，在不会追问的人手里只是一个愿望，在会追问的人手里是一份任务说明。差别不在措辞，而在有没有把那几个必须回答的问题答完。
+
+这段内容要建立的是一个习惯：拿到任何一句模糊的需求，先把它拆成六个问题——要交付什么、依据哪些材料、必须满足什么、输出长什么样、哪些东西不能假设、最后用什么判通过。
+
+六个问题里，前面四个定义任务本身，后面两个界定边界。答不出来的那一行，就是这次任务最容易出问题的地方。接下来我们把这六项逐格摆开看。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.2.1</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>六个问题构成一份任务说明</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>把愿望拆成六个能被回答的问题，前四项定义任务，后两项界定边界。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 12 }}>
+            <Box style={{ width: 100, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>目标</Text>
+            </Box>
+            <Box style={{ width: 100, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>输入</Text>
+            </Box>
+            <Box style={{ width: 100, height: 46, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>约束</Text>
+            </Box>
+            <Box style={{ width: 100, height: 46, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>输出</Text>
+            </Box>
+            <Box style={{ width: 100, height: 46, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>假设</Text>
+            </Box>
+            <Box style={{ width: 100, height: 46, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#26816B' }}>验收</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.2 Prompt：把愿望写成可以检查的任务</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>03 / 24</Text>
+    </Box>
+
+</Slide>

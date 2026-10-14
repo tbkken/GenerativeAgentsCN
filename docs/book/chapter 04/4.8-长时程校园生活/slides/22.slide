@@ -1,0 +1,38 @@
+<Slide notes={`第四块要解决的是“什么时候停下来”。这件事必须在开跑之前定好，不能跑着跑着再改。
+
+我会先算清楚覆盖了多少小时，再拿调用除以人时，得到单位成本。同时把轮次数和请求数分开报，把估算和真实用量分开报。
+
+然后设定停下来重评的条件。我给每组的第一个运行准备了一组可选的预算草案，达到其中任何一个阈值，就计划暂停、记录边界、重新评估。
+
+需要强调的是，这是我作为作者的监控规则，不是软件界面上自动执行的硬限额。跑到一半或者正在收尾的时候，仍然可能继续消耗资源。事前把规则写清楚、两组一致，才能避免事后挑对自己有利的口径。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>4　　4.8.6 — 4.8.7</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>预算在长跑之前固定，{'\n'}失败沿五步定位</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>先定好停下来的条件，再开始跑；出了问题，沿记忆链路一段一段往回查。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, marginTop: 10 }}>
+            <Box style={{ width: 340, height: 68, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#276FBF' }}>2000 物理尝试</Text>
+            </Box>
+            <Box style={{ width: 340, height: 68, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#CB6B28' }}>400 万 Token</Text>
+            </Box>
+            <Box style={{ width: 340, height: 68, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, color: '#26816B' }}>2 小时执行墙钟</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.8 长时程校园生活</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 27</Text>
+    </Box>
+
+</Slide>

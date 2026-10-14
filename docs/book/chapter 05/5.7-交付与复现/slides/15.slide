@@ -1,0 +1,63 @@
+<Slide notes={`只读核验有一个很实际的好处：它不需要模型凭据。
+
+只要程序、包和素材满足读取要求，就可以在没有密钥、也连不上远程服务的机器上完成。这正是很多交付的第一次接收能做到的事——对方先确认「我拿到的东西是完整的、说得通的」，再决定要不要投入算力和费用去重跑。
+
+Replay 的能力边界要说清楚：它只读事实，不加载 Brain，也不重新推理。所以一次回放通过，证明的是当时的记录能被正确读出，而不是模型行为被复现了。
+
+还有一层容易被跳过。如果在回放里看见 H3 出现在 B 窗口附近，这只是现象；要评价闭环，还得去查实际的回复内容和确认消息，看这条建议是不是真的被采纳了。顺序不能反。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.4　接收方先做只读核验</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>不需要凭据，也证明不了行为</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 512, height: 400, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>只读核验的前提</Text>
+            <Box style={{ width: 468, height: 42, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>程序、包与素材满足读取要求</Text>
+            </Box>
+            <Box style={{ width: 468, height: 42, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>不需要模型凭据，也不必访问远程服务</Text>
+            </Box>
+            <Box style={{ width: 468, height: 42, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 22, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>可以在离线机器上完成第一轮接收</Text>
+            </Box>
+            <Box style={{ width: 468, height: 92, background: '#ECF7F2', borderRadius: 8, padding: '12px 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.6 }}>离线读取不调用模型，因此不产生请求与费用；连接验证和正式执行才可能计费。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 608, height: 400, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>Replay 只做什么</Text>
+            <Box style={{ width: 564, height: 42, background: '#ECF7F2', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 22, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>只读事实，不加载 Brain，不重新推理</Text>
+            </Box>
+            <Box style={{ width: 564, height: 42, background: '#ECF7F2', borderRadius: 8, padding: '0 14px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 22, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>回放通过，证明的是记录能被读出</Text>
+            </Box>
+            <Box style={{ width: 564, height: 92, background: '#FFF4E6', borderRadius: 8, padding: '12px 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>看见 H3 在 B 窗口附近，还要查实际回复与确认，才能评价闭环。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 62, background: '#FFFFFF', borderRadius: 8, padding: '12px 14px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>它证明不了模型行为的重新运行，也替代不了一次真实的重新执行。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 24</Text>
+    </Box>
+
+</Slide>

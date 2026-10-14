@@ -1,0 +1,59 @@
+<Slide notes={`SWE-bench 这类任务的形式是这样的。给的是一份真实的代码仓库，加上一条用自然语言写的问题记录，比如报名程序在重复点击后会产生两条记录。
+
+要求是：在仓库里找到出问题的地方，读懂现有代码，改好，并提交一个补丁。判分不是看补丁像不像人写的，而是实际跑一遍测试，既要求修复问题的那组测试通过，也要求原本的回归测试不被破坏。
+
+代码排版整洁、注释充分、看起来很像标准答案，都不能代替行为检查。一个补丁只要能让测试全过，它就对系统有效，哪怕写法不那么漂亮。
+
+还要注意，这类成绩是模型和整套执行环境的共同表现：搜索方式、可用工具、反馈轮数、总预算，都会改变结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>④　1.4.4　样本展示：从写出函数到修复真实问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>SWE-bench：任务怎么构成</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Text style={{ width: 130, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>给什么</Text>
+            <Text style={{ width: 942, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>一份真实的代码仓库，加一条用自然语言写的问题记录（例如"重复点击后会产生两条记录"）</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+            <Text style={{ width: 130, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>要什么</Text>
+            <Text style={{ width: 942, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>在仓库里定位问题、读懂现有代码、修改实现，并提交一个可以应用的补丁</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '14px 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+            <Text style={{ width: 130, fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>怎么判</Text>
+            <Text style={{ width: 942, fontSize: 15, color: '#546779', lineHeight: 1.5 }}>实际跑测试：既要求修复问题的一组测试通过，也要求原有回归测试不被破坏</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 176, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>为什么要可执行证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>代码排版整洁、注释充分、写法接近人工答案，都不能代替行为检查。测试全过才算有效，不过就是无效。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#546779' }}>测试只覆盖写进断言的行为，不含可维护性与安全属性</Text>
+            </Box>
+            <Box style={{ width: 568, height: 176, background: '#FFF4E6', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>成绩受什么影响</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>搜索代码的方式、允许调用的工具、可以迭代几轮、总预算多少——这些都属于运行条件，必须一并记录。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>它是模型与整套执行环境的共同表现</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 36</Text>
+    </Box>
+
+</Slide>

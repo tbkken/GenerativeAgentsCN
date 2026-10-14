@@ -1,0 +1,39 @@
+<Slide notes={`把这一节收一收，记住三件事。
+
+第一，两组之间只换了咨询台的一段判断方法：目的不明的时候，是先给一次标明推测的建议，还是先只追问缺的那一个字段。地图、人物、模型和窗口规则都没动。
+
+第二，分母不因为等待而缩小。没有走完的任务仍然留在四项任务里，比率要按真实的分母算。
+
+第三，相同的比率不等于相同的结论。七成五可能来自澄清，可能来自窗口补救，也可能只是口径不同，必须结合时延、重复说明负担和调用次数一起解释。
+
+下一节我们去看设备维护班组的交接，看清单式的整理能不能减少遗漏。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>4.1　社区服务大厅</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>记住三件事</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF', marginBottom: 6 }} />
+
+        <Box style={{ width: 1152, height: 100, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>只改一段判断方法</Text>
+            <Text style={{ fontSize: 16, color: '#546779', flex: 1 }}>其余条件两组相同：地图、人物、模型、依赖、窗口规则与留存设置。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>分母不因等待缩小</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>未走完的任务仍留在四任务分母里。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>相同比率 ≠ 相同结论</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>结合时延、重复负担与调用一起解释。</Text>
+            </Box>
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779', marginTop: 8 }}>下一节：设备维护班组交接 —— 清理式交接与关键事实到达</Text>
+
+    </Box>
+
+</Slide>

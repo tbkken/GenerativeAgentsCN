@@ -1,0 +1,80 @@
+<Slide notes={`最后把教案落实成能用的材料，一共四步。
+
+第一，每个案例独立保存 map、agents、skill、settings 和 verification，把正文里的事实与 SOP 片段落实成完整资源。
+
+第二，按第三章的流程，通过浏览器上传、绑定、装配、保存、预检、封存和运行。这篇文章本身不是可以导入的实验包，它只负责把条件和判据说清楚。
+
+第三，发现实际问题时，登记入口、动作、预期与实际、以及对应的 Experiment、Run、Attempt、Step 和证据，并按逐问题的规则停止相应的验收。合理拒绝、静态不可达和业务失败要分别解释。
+
+第四，用实验计划开题，用报告模板交付全部结果和局限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.3　从教案到作者材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把教案落实为可以运行的作者材料</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 36 }}>
+
+        <Box style={{ width: 400, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>正文说清条件，资源包才谈得上运行</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75 }}>材料描述可借鉴 ODD 对目的、实体、尺度、过程、初态与输入的写法，但本章不是完整 ODD 认证，也不替换本项目文件合同。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '14px 18px' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.65 }}>本文不是可导入实验包；八个案例尚无实测效果、成本或成功率可供引用。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 716, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>每案独立保存五类资源</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>map / agents / skill / settings / verification；把事实与 SOP 片段落实为完整资源。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>按第三章流程装配</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>上传、绑定、装配、保存、预检、封存和运行。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>逐问题登记，分别解释失败</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>登记入口、动作、预期／实际、Experiment／Run／Attempt／Step 和证据；合理拒绝、静态不可达、业务失败分别解释。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>用计划开题，用模板交付</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>用实验计划开题，用报告模板交付全部结果和局限。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 20</Text>
+    </Box>
+
+</Slide>

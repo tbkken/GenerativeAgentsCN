@@ -1,0 +1,77 @@
+<Slide notes={`整理完之后怎么自检？四条条件式检查，遇到就直接处理，不用开会讨论。
+
+发现没有来源的数值，退回，标注为作者设定或待确认。发现两份分工不一致，记录影响并确定本次采用者。发现一句话暗含运行成功，比如写成已经得到回复，就要求实际证据；没有证据就改回目标或候选。发现材料混进另一个人物的私人目的，留给下一节拆分，不要整份投进共同 Brain。
+
+再留一道练习：把“余真会帮助所有人快速完成业务”拆成材料与假设。思路是，余真的职责与帮助条件可以写入人物材料；但所有人、快速、完成业务都不是已取得的结果，本案只以咨询闭环评价。你再找一个应保留的空白，比如周澈还没填写活动人数，说明它为什么不该被擅自补齐。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.6　交给下一位作者的应是什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>条件式检查：发现什么，就怎么处理</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ width: 1152, height: 86, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 490, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>发现一个没有来源的数值</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 618, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#26816B', lineHeight: 1.5 }}>退回，标注为作者设定或待确认</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 86, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 490, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>发现两份分工不一致</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 618, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#26816B', lineHeight: 1.5 }}>记录影响，并确定本次采用者</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 86, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 490, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>发现一句话暗含运行成功</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 618, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#26816B', lineHeight: 1.5 }}>要求实际证据；没有就改回目标或候选</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 86, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 490, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>发现材料混入另一个人物的私人目的</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 618, padding: '0 20px' }}>
+                <Text style={{ fontSize: 16, color: '#26816B', lineHeight: 1.5 }}>留给下一节拆分，不整份投入共同 Brain</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 6, justifyContent: 'center', marginTop: 4 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>练习</Text>
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>把“余真会帮助所有人快速完成业务”拆成材料与假设：职责和帮助条件写入人物材料，“所有人”“快速”“完成业务”不是已取得的结果。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 23</Text>
+    </Box>
+
+</Slide>

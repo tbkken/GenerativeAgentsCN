@@ -1,0 +1,60 @@
+<Slide notes={`接收方走完前面那些步骤之后，才可以动笔写下复现结论。而且措辞要节制。
+
+在记录好的环境里回放通过、从某个边界续跑通过，这两句话是可以写的，前提是每一项都有对应的环境与验证记录。反过来，如果只完成了材料核对，那就应该明确写「尚未验证」，把缺口写清楚。
+
+有两种句式一定要避免。第一种，用一次新 Run 顺利结束，来代替旧 Run 的恢复验证——这是两件不同的事，新 Run 成功说明不了旧 Run 能被恢复。第二种，用一次回放通过，来代替模型行为的重新运行——回放只读事实，它压根没有调用模型。
+
+记住一句话：交付承诺以实际接收记录为准。没做过的，就不要写成做过了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.7.5　正式复现是一项单独工作</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>复现承诺要写到什么程度</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 560, height: 380, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>可以写</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>前提是每一项都有对应的环境与验证记录。</Text>
+            <Box style={{ width: 516, height: 58, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>在所记录环境中回放通过</Text>
+            </Box>
+            <Box style={{ width: 516, height: 58, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>从某边界续跑通过</Text>
+            </Box>
+            <Box style={{ width: 516, height: 58, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 28, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>明确写出「尚未验证」与缺口</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 560, height: 380, background: '#FFF4E6', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不能替代</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>一次成功，不代表另一件事也完成了。</Text>
+            <Box style={{ width: 516, height: 78, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 470 }}>一次新 Run 顺利结束，不能代替旧 Run 的恢复验证</Text>
+            </Box>
+            <Box style={{ width: 516, height: 78, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, width: 470 }}>一次回放通过，不能代替模型行为的重新运行</Text>
+            </Box>
+            <Box style={{ width: 516, height: 58, background: '#FFFFFF', borderRadius: 8, padding: '0 16px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 4, height: 28, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>交付承诺以实际接收记录为准</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 24</Text>
+    </Box>
+
+</Slide>

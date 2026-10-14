@@ -1,0 +1,58 @@
+<Slide notes={`检索清单读完之后，接着看回答有没有越过证据的范围。这里有三件事要分清。
+
+第一，能查到什么。生成答案的时候，问题、被选中的片段和来源 ID 要明确分开，提示里要求答案只依据这些证据，缺失就说明不足。
+
+第二，还要查什么。即使答案引用了一个合法的 chunk_id，仍然要回到那一段，看它是不是真的支持这句话。引用合法，只说明编号存在，不说明断言成立。
+
+第三，不能由它推定什么。rooms.csv 里的容量记录，不能证明手作室十点半是空闲的——它只说明了能坐多少人。
+
+另外提醒一句：取前 3 是一个可调整的练习值，未必能把需求、容量、开放时间和预约全都找回来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.3　做一个看得见每一步的小型检索器</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>检索清单与证据范围</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#276FBF' }} />
+                <Text style={{ width: 176, fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>能查到什么</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>问题、被选片段与来源 ID 被明确区分，答案只依据这些证据，缺失时说明不足。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 96, background: '#F4F7FA', borderRadius: 8, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#26816B' }} />
+                <Text style={{ width: 176, fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>还要查什么</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>即使答案引用了一个合法编号，也要回到片段，检查它是否真的支持这条断言。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 96, background: '#FFF4E6', borderRadius: 8, padding: '14px 20px' }}>
+                <Box style={{ width: 4, height: 62, background: '#CB6B28' }} />
+                <Text style={{ width: 176, fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>不能由它推定</Text>
+                <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>房间容量记录只能说明能坐多少人，不能证明手作室十点半没有预约。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px' }}>
+            <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>运行后先读检索清单，再检查答案是否越过证据范围</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>取前 3 是可调整的练习值，未必找全需求、容量、开放时间与预约；不要预设一条命令就能得到完整排程。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 25</Text>
+    </Box>
+
+</Slide>

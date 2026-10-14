@@ -1,0 +1,81 @@
+<Slide notes={`光把链路走一遍还不够，我们还要能从它身上问出问题来。五个环节，每个都有它该回答的疑问。
+
+用户目标这一环，要问的是：哪些要求还没说清？回到青禾这件事，比如老年人是不是需要减少换房间，这种偏好如果没说出来，后面就无法被满足。
+
+输入组织这一环，问的是：哪些材料跟这次决策有关？房间表、预约记录、旧消息的摘要，都要在这步被选进来。
+
+生成与调用这一环，问的是：谁提出请求，谁实际执行？模型提出查询请求，真正去查的是宿主。
+
+过程管理这一环，问的是：还差什么，什么时候结束？有没有漏检查的约束，出错怎么处理，预算还剩多少。
+
+最后一环，核验与交付，问的是：哪条证据支持"完成"这个说法？是文件、校验报告，还是预约系统里的状态。
+
+五个问题问下来，你就能判断这次任务到底做没做完。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.2　一次任务背后的结构</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>读这张图，抓五个问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 440, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>每一步，都要能问出一个问题</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.8 }}>沿图看输入、候选、实际执行与核验各由哪里承接。这张图是应用组织的示意，不要求每个系统都做成固定的流水线。</Text>
+            <Box style={{ background: '#FFF4E6', borderRadius: 10, padding: '16px 20px' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.7 }}>模型请求不等于工具执行，文件生成不等于业务完成。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 680, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ flexDirection: 'row', padding: '0 16px', gap: 14 }}>
+                <Box style={{ width: 110 }}><Text style={{ fontSize: 14, color: '#546779' }}>环节</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>要问的问题</Text></Box>
+                <Box style={{ width: 228 }}><Text style={{ fontSize: 14, color: '#546779' }}>青禾例子</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 90, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>用户目标</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>哪些要求还没说清？</Text></Box>
+                <Box style={{ width: 228, background: '#FFFFFF', borderRadius: 6, padding: '8px 12px' }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>老年人是否需要减少换房间</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 90, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>输入组织</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>哪些材料与本次决策有关？</Text></Box>
+                <Box style={{ width: 228, background: '#FFFFFF', borderRadius: 6, padding: '8px 12px' }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>房间表、预约、旧消息摘要</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 90, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>生成与调用</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>谁提出请求，谁实际执行？</Text></Box>
+                <Box style={{ width: 228, background: '#FFFFFF', borderRadius: 6, padding: '8px 12px' }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>模型请求查询；宿主执行工具</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 90, background: '#F4F7FA', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>过程管理</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>还差什么，何时结束？</Text></Box>
+                <Box style={{ width: 228, background: '#FFFFFF', borderRadius: 6, padding: '8px 12px' }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>未检查约束、错误处理、预算</Text></Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 90, background: '#ECF7F2', borderRadius: 10, padding: '0 16px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 110 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>核验与交付</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>哪条证据支持"完成"？</Text></Box>
+                <Box style={{ width: 228, background: '#FFFFFF', borderRadius: 6, padding: '8px 12px' }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>文件、校验报告、预约系统状态</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 22</Text>
+    </Box>
+
+</Slide>

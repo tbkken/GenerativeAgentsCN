@@ -1,0 +1,44 @@
+<Slide notes={`这里要防住一个很常见的误读。
+第一种情形：同一个 Run 的状态是 COMPLETED，可是行为质量上还有告警。这完全正常，因为执行有没有完成，和过程中有没有出现问题，本来就是两个独立的问题。四十八步走完，不代表每一步都干净。
+第二种情形反过来：没有基础告警，但业务评价还没有执行。这时候「没有发现问题」只说明这一层没查出问题，业务目标有没有达到，仍然是一个未回答的问题。
+所以把「没有发现问题」解释成「所有目标达成」，就等于把没检查的内容算成了合格。我的要求是：任何一项未执行的评价，都要保留成未执行，不能默认通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.1　三层评价各回答一个问题</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把「没有发现问题」读成「目标达成」</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 260, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>可以发生的情形一</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>同一个 Run 是 COMPLETED，{'\n'}同时存在行为告警</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>执行是否完成，和过程中有没有问题，是两个独立的问题，两者可以同时成立；四十八步走完，不代表每一步都干净。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 260, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>可以发生的情形二</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>没有基础告警，{'\n'}但业务评价尚未执行</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>没有发现问题，只说明这一层没有查出问题；业务目标有没有达到，仍然是一个没有被回答的问题。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 120, background: '#FFF4E6', borderRadius: 10, padding: '20px 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 68, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>未检查过的内容，不能计入成功</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>任何一个未执行的评价项都保留为未执行，而不是默认合格；把「没有发现问题」说成「所有目标达成」，正是这类错误的典型写法。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

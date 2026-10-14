@@ -1,0 +1,53 @@
+<Slide notes={`这段请求里有两处值得注意。
+
+第一处是工具声明：类型写成 file_search，然后把向量存储的 ID 传进去，再用一个参数限制最多取回多少条结果。
+
+第二处是 include。加上它，应用才能在响应里拿到这次实际检索到的东西。很多人只把返回的文字打印出来就结束了，那样你看到的只是答案，看不到依据。
+
+还有一步别忘了：返回里的引用注解要逐条看。文字说得再顺，也不能替代「它到底引了哪一段」。
+
+最后是数据边界。托管路线会上传文件、在服务端建立资源，上传范围和保留要求得按自己的资料情况管理，不能交给提示词。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.4　托管 File Search 是另一条实现路线</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>请求里的工具声明</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 350, background: '#F4F7FA', borderRadius: 8, padding: 20, flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45 }}>response = client.responses.create(</Text>
+            <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.45, paddingLeft: 20 }}>model=os.environ["OPENAI_MODEL"],</Text>
+            <Text style={{ fontSize: 14, color: '#276FBF', lineHeight: 1.45, paddingLeft: 20 }}>instructions="依据资料回答并引用来源；资料不足时明确说明。",</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45, paddingLeft: 20 }}>input="青禾活动的开放时间和人数约束是什么？",</Text>
+            <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45, paddingLeft: 20 }}>{'tools=['}{'{'}</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45, paddingLeft: 40 }}>"type": "file_search",</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45, paddingLeft: 40 }}>"vector_store_ids": [os.environ["OPENAI_VECTOR_STORE_ID"]],</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45, paddingLeft: 40 }}>"max_num_results": 5,</Text>
+            <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.45, paddingLeft: 20 }}>{'    '}{'}'}{'],'}</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.45, paddingLeft: 20 }}>include=["file_search_call.results"],</Text>
+            <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.45 }}>)</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 130, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>include 让应用拿得到检索结果</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>加上它才能看到这次实际依据了什么，而不是只看到答案文字。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 130, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>还要看返回的引用注解</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>逐条查看它引了哪一段；托管检索的文件上传与保留范围由自己管理。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 25</Text>
+    </Box>
+
+</Slide>

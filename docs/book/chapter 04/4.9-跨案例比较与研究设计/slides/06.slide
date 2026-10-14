@@ -1,0 +1,105 @@
+<Slide notes={`这六行数据是整节的地基，我逐列说清楚。
+
+每行代表一次独立 Run，每次 Run 里有四项任务，统一从开始观察到第 60 虚拟分钟。A 组是基线，B 组加了澄清。
+
+第三列是「闭环任务数除以四」：A01 两项、A02 三项、A03 一项；B 组分别是三项、三项、两项。
+
+第四列是已经闭环的那些任务的用时，用逗号分开。注意这里的时延是从 Run 开始算到闭环，跟前面大厅案例里「首次咨询到有效回应」不是同一个起止点。
+
+最后两列分别数逻辑调用和物理尝试，物理尝试永远不少于逻辑调用，因为一次调用可能重试。
+
+六行总量：A 组 6 项闭环，B 组 8 项闭环。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.9.2　完整人工比较数据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六行人工比较数据</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 10 }}>
+
+        <Box style={{ width: 1152, height: 60, background: '#F7F3E8', borderRadius: 8, padding: '0 20px', flexDirection: 'column', gap: 2, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>人工汇总，不是 Run 结果；每行一次独立 Run，每次四项任务，统一观察至第 60 虚拟分钟。</Text>
+            <Text style={{ fontSize: 14, color: '#546779' }}>时延＝Run 开始 → 闭环；未闭环的任务没有完成时间，只单列数量，不补时点。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, flexDirection: 'row', padding: '0 18px', gap: 16, alignItems: 'center', height: 26 }}>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 14, color: '#546779' }}>教学行</Text></Box>
+            <Box style={{ width: 60 }}><Text style={{ fontSize: 14, color: '#546779' }}>组别</Text></Box>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 14, color: '#546779' }}>闭环／任务</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 14, color: '#546779' }}>已闭环时延（分钟）</Text></Box>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 14, color: '#546779' }}>未闭环</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 14, color: '#546779' }}>逻辑调用</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 14, color: '#546779' }}>物理尝试</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>A01</Text></Box>
+            <Box style={{ width: 60 }}><Box style={{ width: 40, height: 28, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>A</Text></Box></Box>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 16, color: '#20344B' }}>2 / 4</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B' }}>8，12</Text></Box>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, color: '#CB6B28' }}>2</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>120</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>132</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>A02</Text></Box>
+            <Box style={{ width: 60 }}><Box style={{ width: 40, height: 28, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>A</Text></Box></Box>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 16, color: '#20344B' }}>3 / 4</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B' }}>7，11，17</Text></Box>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, color: '#CB6B28' }}>1</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>140</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>154</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>A03</Text></Box>
+            <Box style={{ width: 60 }}><Box style={{ width: 40, height: 28, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>A</Text></Box></Box>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 16, color: '#20344B' }}>1 / 4</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B' }}>6</Text></Box>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, color: '#CB6B28' }}>3</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>110</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>125</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>B01</Text></Box>
+            <Box style={{ width: 60 }}><Box style={{ width: 40, height: 28, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>B</Text></Box></Box>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 16, color: '#20344B' }}>3 / 4</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B' }}>10，14，19</Text></Box>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, color: '#CB6B28' }}>1</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>160</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>170</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>B02</Text></Box>
+            <Box style={{ width: 60 }}><Box style={{ width: 40, height: 28, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>B</Text></Box></Box>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 16, color: '#20344B' }}>3 / 4</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B' }}>9，13，18</Text></Box>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, color: '#CB6B28' }}>1</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>155</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>166</Text></Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 62, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>B03</Text></Box>
+            <Box style={{ width: 60 }}><Box style={{ width: 40, height: 28, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>B</Text></Box></Box>
+            <Box style={{ width: 130 }}><Text style={{ fontSize: 16, color: '#20344B' }}>2 / 4</Text></Box>
+            <Box style={{ width: 320 }}><Text style={{ fontSize: 16, color: '#20344B' }}>12，16</Text></Box>
+            <Box style={{ width: 90 }}><Text style={{ fontSize: 16, color: '#CB6B28' }}>2</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>165</Text></Box>
+            <Box style={{ width: 110 }}><Text style={{ fontSize: 16, color: '#20344B' }}>180</Text></Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.9 跨案例比较与研究设计</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 25</Text>
+    </Box>
+
+</Slide>

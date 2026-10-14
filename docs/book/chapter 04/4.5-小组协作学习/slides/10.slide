@@ -1,0 +1,94 @@
+<Slide notes={`讨论从头到尾有八个动作，我按顺序念一遍。
+
+先理解共同题面和自己手上的条件卡，不知道的就保持未知，不要自己编一个。
+
+被问到时真实发言，把条件编号、完整限制和来源一起说清楚。
+
+遇到含糊或者冲突，向实际来源追问，不要从教师资料里补齐。
+
+主持人保存收到的条件和来源，据此提出候选，必要的时候逐人说明。
+
+成员只按自己已经拿到的限制去检查候选，指出冲突，也要指出还有哪些不知道。
+
+准备结束时，主持人按照本组的方法核对一遍，然后通过真实发言给出一份标明「最终方案」的完整安排。
+
+最后再逐人传达同一个版本，修改的话要说明新旧关系；按事实更新记忆，成功完成世界动作后结束这一轮。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.3　双人交谈与最终版本</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>讨论的八个动作</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>先弄清自己知道什么，再讲清楚，再核对，最后定稿并传达。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 560, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>理解共同题面和自己的条件卡；不知道的保持未知</Text>
+                </Box>
+                <Box style={{ width: 560, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>被询问时真实 SPEAK，向一人说明条件编号、完整限制与来源</Text>
+                </Box>
+                <Box style={{ width: 560, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55, flex: 1 }}>遇含糊或冲突向实际来源追问，不从教师资料补齐</Text>
+                </Box>
+                <Box style={{ width: 560, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>主持人保存收到的条件与来源，提出候选，必要时逐人说明</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 560, flexDirection: 'column', gap: 12 }}>
+                <Box style={{ width: 560, height: 104, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>5</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>成员仅按已获限制检查候选，指出冲突及还不知道什么</Text>
+                </Box>
+                <Box style={{ width: 560, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>6</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>准备结束时，主持人按本组方法核对，通过真实发言给出标明「最终方案」的完整安排</Text>
+                </Box>
+                <Box style={{ width: 560, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>7</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>再逐人传达同一最终方案；修改时说明新旧关系</Text>
+                </Box>
+                <Box style={{ width: 560, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>8</Text>
+                    </Box>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, flex: 1 }}>按事实更新记忆；成功 world-act 后结束本轮</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 26</Text>
+    </Box>
+
+</Slide>

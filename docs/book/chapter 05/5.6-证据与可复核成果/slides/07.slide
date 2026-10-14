@@ -1,0 +1,59 @@
+<Slide notes={`拿到摘要以后，要先分清它能管什么、不能管什么。
+
+摘要可以核对字节是否与原始文件相同，可以判断文件有没有被替换或重新打包，也可以确认手上这两份材料是不是同一份。这三件事它做得很可靠，而且是纯机器可重复的。
+
+但它不能证明业务真实发生过，不能证明两组条件只差一个因素，更不能证明结论正确。哈希算得再准，也只说明文件没被改动。
+
+还有一件事要顺手做掉：普通结果 ZIP、正式的 .gaexp 和 .garun 要分开标注。改后缀不能改变类型，底层拥有的能力也不代表页面上已经存在同名按钮，这两句要写进材料说明里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.6.1　先把原始文件和分析工作分开</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>摘要能核对什么，不能证明什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 700, height: 140, background: '#ECF7F2', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>摘要能核对</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, width: 664 }}>字节是否与原始文件相同 · 文件有没有被替换或重新打包 · 手上两份材料是不是同一份</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>摘要不能证明</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55, width: 664 }}>业务是否真实发生过 · 两组条件是否只差一个因素 · 结论是否正确</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 148, background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>三类包分开标注</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55, width: 664 }}>普通结果 ZIP · 正式 .gaexp · .garun</Text>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.5, width: 664 }}>改后缀不能改变类型，底层能力也不代表页面已有同名按钮。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 428, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>哈希算得准，也只说明文件没被改</Text>
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 428 }}>来源核验与业务核验是两件事。前者靠字节，后者要靠已提交事实和记录身份，不能互相代替。</Text>
+            <Box style={{ width: 428, height: 120, background: '#FFF4E6', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>最容易越界的一步</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>把「文件完整」直接读成「实验成立」，中间跳过的正是事实核查。</Text>
+            </Box>
+            <Box style={{ width: 428, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '14px 16px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>包与复现边界</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>归档包的拆解与重新执行条件，第三章已逐项说明。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.6 证据与可复核成果</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

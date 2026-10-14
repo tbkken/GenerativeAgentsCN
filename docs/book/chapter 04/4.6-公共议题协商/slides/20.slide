@@ -1,0 +1,60 @@
+<Slide notes={`有一种写法看起来很圆满，但它是另一个结论歪曲：写「大家基本同意 D」。
+这句话错在哪里？三个人并没有对 D 都明确同意。何澄同意，秦川因为不能口头交流而保留，宋遥因为不能完整参加而反对。把他们写成「基本同意」，等于把两条真实的分歧抹掉了。
+正确的改法有三条。第一，逐个写清每个人的实际态度，谁同意、谁保留、谁反对。第二，写清保留和反对的具体原因，尽量保留原话。第三，如果最后没有可接受的方案，就照实写没有，不要补一个看起来体面的结论。
+要记住：准确留下全部分歧、没有达成方案，本身也可以是较高的记录质量。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.6.6　人工判分：全员回应，不等于理由完整</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>「大家基本同意」是另一个歪曲</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ height: 400, flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 504, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28' }}>不能这样写</Text>
+                <Box style={{ width: 504, height: 300, background: '#FFF4E6', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                    <Box style={{ width: 132, height: 30, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#FFFFFF' }}>错误写法</Text>
+                    </Box>
+                    <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.3 }}>「大家基本同意 D」</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>三人并未对 D 全部明确同意：秦川保留、宋遥反对；这句话把两条真实分歧抹平了。</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>记录看起来圆满了，结论却不再对应真实发生过的回应。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 616, flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>应该怎样改写</Text>
+                <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>逐个写清每个人的实际态度：同意、保留还是反对</Text>
+                </Box>
+                <Box style={{ height: 92, background: '#F4F7FA', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>写清保留与反对的具体原因，尽量保留原话与硬条件</Text>
+                </Box>
+                <Box style={{ height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 18px' }}>
+                    <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>没有可接受方案就照实写没有，不补一个体面的结论</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 60, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, flex: 1 }}>准确留下全部分歧、没有达成可接受方案，本身也可以是较高记录质量；一致意见的有无，与记录质量高低是两件事。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.6 公共议题协商</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

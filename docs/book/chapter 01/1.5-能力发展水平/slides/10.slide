@@ -1,0 +1,67 @@
+<Slide notes={`视频不能只看一个总分。
+
+同一份 2026 年 9 月的方法报告里，LVBench 的静态设置是 87.1%，并且明确写了 Gemini 使用 1,024 帧。结果表里还列出了另一个 agentic 设置的 87.8%，但方法正文只明确说明无工具测量，没有交代 agentic 那一次是怎么跑的。
+
+所以我不拿后面这个 87.8% 去做"工具带来收益"的对照——那等于替报告补写一套它没说过的流程。
+
+真正要记住的是：抽多少帧、能不能按需回看、能不能听音频，都是理解视频成绩的一部分。1,024 帧是一个具体配置，换了帧数，同一段视频能被回答的问题就变了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.2　多模态已经能处理复杂材料，整份交付仍需验收</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>视频成绩要连着帧数一起读</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ flex: 45, height: 400, background: '#F4F7FA', borderRadius: 12, padding: 26, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>LVBench　·　静态设置　·　Gemini 3.8 Flash</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 10 }}>
+                <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.05 }}>87.1%</Text>
+            </Box>
+            <Box style={{ width: 80, height: 4, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4 }}>
+                <Box style={{ height: 40, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>1,024 帧</Text>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779' }}>本次使用的帧数</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>方法正文说明为不使用工具测量。</Text>
+        </Box>
+
+        <Box style={{ flex: 55, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 22, background: '#276FBF' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>三件不能被省略的事</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>抽多少帧：帧数是理解视频成绩的一部分，不是技术细节。</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>是否按需回看：能不能在需要时重新查看某一段画面。</Text>
+            </Box>
+
+            <Box style={{ height: 84, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>是否能听音频：声音信息在不在这次输入里。</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 3, height: 56, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>结果表另列 agentic 设置 87.8%，但方法正文只明确说明无工具测量，本节不用它作工具收益对照。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 24</Text>
+    </Box>
+
+</Slide>

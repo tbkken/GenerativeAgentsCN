@@ -1,0 +1,55 @@
+<Slide notes={`最后一个练习是做对照：在独立的工作区副本里，把预约文件移走，而且不接预约工具。
+
+这个时候正确的表现是什么？答案应该保留「预约待核对」，而不能因为材料里还有别的讲房间的文字，就推测出某个时段空闲。相似文档看起来相关，但它没有预约记录这份信息。
+
+更重要的是一种态度：把文件缺失记录成输入变化。输入变了，结论能覆盖的范围也就变了，这一点要写下来，而不是悄悄用别的文档把空补齐。
+
+还有一句反过来的提醒：靠提示要求它别编造，不等于资料已经到位。提示词管得住表达方式，管不住材料里到底有没有这份信息。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.9.5　用文件搜索完成相同的取证任务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>缺资料对照：把缺失记成输入变化</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 20, height: 128, background: '#FFF4E6', borderRadius: 10, padding: '16px 22px' }}>
+            <Box style={{ width: 4, height: 84, background: '#CB6B28' }} />
+            <Box style={{ width: 320, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>缺资料对照</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>在独立工作区副本中做</Text>
+            </Box>
+            <Box style={{ width: 1, height: 84, background: '#B5C7D8' }} />
+            <Text style={{ flex: 1, fontSize: 15, color: '#546779', lineHeight: 1.6 }}>移走预约文件，且不接预约工具。这时材料里仍有房间、容量和开放时间，但没有任何一条预约记录。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 176, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>应该保留「预约待核对」</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不能由相似文档推测空闲。讲同一间房的说明文字看起来相关，但它没有回答这个时段有没有人用过。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 176, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>把文件缺失记录为输入变化</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>输入变了，结论能覆盖的范围也跟着变；这个变化要写进记录，而不是悄悄用别的文档补上。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 120, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px' }}>
+            <Box style={{ width: 4, height: 74, background: '#26816B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>提示词管不住材料里有没有这份信息</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>靠提示要求它不要编造，不等于资料已经补齐；检索之前就要把范围与授权定好。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.9 Embedding 与 RAG：先找依据，再组织答案</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 25</Text>
+    </Box>
+
+</Slide>

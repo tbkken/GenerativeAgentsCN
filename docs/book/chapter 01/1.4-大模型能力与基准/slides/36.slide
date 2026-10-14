@@ -1,0 +1,90 @@
+<Slide notes={`这一节我们走了六步。
+
+第一步问方法，这个分数是怎么评出来的，是选择题还是可执行任务，由谁判对错。第二步问机构，这个基准是谁做的，题目公开吗，有没有第三方审过。第三步问样本集，一共多少题，覆盖什么领域，看的是哪一层。第四步读真题，题面长什么样，答案要写成什么形式。第五步看得分，在什么协议、什么时间、哪个来源下，谁排第一。第六步看错题，是模型真不会，还是题目本身有错。
+
+六步走完，你就有了一个固定的检查顺序。任何一句"某模型在某某榜上多少分"，你都能把它还原成具体的题目、条件和时间。
+
+下一节换个角度：不再看单个基准，而是看这些分数背后，各家模型在能力上呈现出的整体面貌。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.4　小结</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>六步之后，你该带走什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center', background: '#F7F3E8', borderRadius: 10, padding: '10px 22px' }}>
+            <Box style={{ width: 4, height: 28, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.45 }}>听到任何一句"某模型拿了多少分"，按这六问依次过一遍</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 58, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>① 方法</Text>
+            </Box>
+            <Box style={{ width: 812, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>这个分数怎么评出来的？选择题还是可执行任务？谁判对错？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 58, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>② 机构</Text>
+            </Box>
+            <Box style={{ width: 812, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>基准是谁做的？题目和判分公开吗？有没有第三方审计过？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 58, background: '#EDF4FC', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>③ 样本集</Text>
+            </Box>
+            <Box style={{ width: 812, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>一共多少题？覆盖哪些领域？看的是哪一层？当前是第几版？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 58, background: '#F7F3E8', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#546779' }}>④ 样本与答案</Text>
+            </Box>
+            <Box style={{ width: 812, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>题面长什么样？答案要写成什么形式？有没有部分分？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 58, background: '#ECF7F2', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>⑤ 领先模型与得分</Text>
+            </Box>
+            <Box style={{ width: 812, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>什么协议下、哪一天的快照、由哪个来源给出的分数？人类参照是哪一组人？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 340, height: 58, background: '#FFF4E6', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>⑥ 尚未解决的错题</Text>
+            </Box>
+            <Box style={{ width: 812, height: 58, background: '#F4F7FA', borderRadius: 8, padding: '0 18px', flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779' }}>是模型真不会，还是题目、判分有缺陷，还是训练数据里见过答案？</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'center', background: '#F4F7FA', borderRadius: 10, padding: '10px 22px' }}>
+            <Box style={{ width: 4, height: 28, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>下一节 1.5 换一个角度：不看单个基准，看这些分数背后的能力快照</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>36 / 36</Text>
+    </Box>
+
+</Slide>

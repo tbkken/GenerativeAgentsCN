@@ -1,0 +1,74 @@
+<Slide notes={`三种「记住」汇到一个地方：继续工作之前，先核对。
+
+会话上下文里装的是上一轮的查询结果、模型提出的候选方案。它只在实际传入这次请求的时候才可用，而且旧结果可能已经过期了。
+
+应用任务状态由程序记录：哪份候选通过了校验、还缺什么、预算还剩多少。恢复的时候，仍然要检查输入有没有变化。
+
+长期记忆可以跨任务检索，比如「用户偏好用中文表格汇报」。但记忆不能覆盖当次规则，规则永远优先。
+
+举一个能说明区别的例子：「用户喜欢上午活动」可以是记忆；「10:00 手作室空闲」应当是带日期和来源的查询事实。把后者长期保存却没有有效期，下一次开放日就容易复用一条过期的预约。
+
+这正是「继续工作前核对」存在的理由。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.10.4　三种「记住」不能混在一起</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>会话、任务状态与长期记忆</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>三种来源汇到同一个动作：继续工作前，先核对事实。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 600, flexDirection: 'column', gap: 16 }}>
+                <Box style={{ width: 600, height: 96, background: '#EDF4FC', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>会话上下文</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>上轮查询结果、模型提出的候选方案</Text>
+                </Box>
+                <Box style={{ width: 600, height: 96, background: '#ECF7F2', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>应用任务状态</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>哪份候选通过校验、还缺什么、剩余预算</Text>
+                </Box>
+                <Box style={{ width: 600, height: 96, background: '#F7F3E8', borderRadius: 8, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>长期记忆</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>跨任务读取的偏好，例如用中文表格汇报</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 22, height: 320 }} />
+            <Box style={{ width: 44, height: 320, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text></Box>
+            <Box style={{ width: 22, height: 320 }} />
+
+            <Box style={{ width: 464, height: 320, background: '#FFF4E6', borderRadius: 12, padding: '24px 24px', flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.4 }}>继续工作前核对</Text>
+                <Box style={{ width: 64, height: 4, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>事实是否过期？</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>输入是否变化？</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>偏好不能覆盖当次规则；旧结果不能当成当前状态。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 60, background: '#ECF7F2', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0px 20px', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>偏好</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>「用户喜欢上午活动」可以长期保存</Text>
+            </Box>
+            <Box style={{ width: 564, height: 60, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', padding: '0px 20px', gap: 12 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>「10:00 手作室空闲」必须带日期与来源</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,54 @@
+<Slide notes={`接下来这一步是很多项目失败的地方：范围没有先选清。
+
+写项目约定的时候，首先要决定交什么。是只交一份可以审阅的设计，还是还要交真实运行和接收记录？这两种范围的完成材料完全不同。
+
+设计交付要求问题与方法说清范围、判据和计划，输入材料给出精确文字与依赖，运行证据写明待执行，接收范围停在纸面审读。运行交付在前三项上都要真实：实际保存的实验副本、全部 Run 与判分，再加上实际约定的核查。
+
+两者都可以成为合格成果，关键是名称要和证据相称。本章的示例目前还处在设计准备阶段，所以只能按设计交付来谈。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.1　项目范围与完成条件</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ②</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 96, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>②</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一页项目约定，两种交付范围</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 900 }}>先定交付范围，再谈要准备哪些材料。设计交付检查完整性，运行交付再要求真实配置与全部运行。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', marginTop: 8 }}>
+            <Box style={{ width: 460, height: 190, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>设计交付</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>问题与方法　范围、判据、计划</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>输入材料　精确文字与依赖</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>运行证据　明确待执行</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>接收范围　纸面审读</Text>
+            </Box>
+            <Box style={{ width: 44, height: 190, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#B5C7D8' }}>|</Text>
+            </Box>
+            <Box style={{ width: 460, height: 190, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>运行交付</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>问题与方法　同样需要</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>输入材料　实际保存的实验副本</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>运行证据　全部 Run 与判分</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>接收范围　实际约定的核查</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

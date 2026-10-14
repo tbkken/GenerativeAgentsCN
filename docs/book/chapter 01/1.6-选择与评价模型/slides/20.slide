@@ -1,0 +1,62 @@
+<Slide notes={`真正做决定的时候，顺序不能反。要先把不可违反的条件定下来，再去看成本。反过来做，很容易被一个便宜的价格吸引，最后发现它连门槛都过不了。
+
+具体怎么写呢？比如事先要求：关键约束必须通过独立检查，检查不通过就停止交付。写下来之后，再比较通过了这条流程的任务成功率、时间和成本。这样比较的才是同一件事。
+
+这里要补一句：独立检查本身也要验证。不能假定写了一个检查程序，它就永远正确。检查器也有它自己的错误率，它也会漏掉某些冲突。
+
+还有一种情况值得说：有时候适合用不同的模型承担不同的任务。起草文本和检查复杂冲突，对模型的要求确实不一样。但增加分工也会增加输入传递、结果整合和调用成本。
+
+最重要的提醒是，这种组合应当被当成一个全新的候选，重新评价，而不是把两个单独模型各自最好的成绩加在一起。那种加法在现实里不成立。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.5　第五步：按任务选择，而不是按一个综合分选择</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先定不可违反的条件</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>最终选择应结合可接受条件，而不是临时为喜欢的候选调权重。</Text>
+
+        <Box style={{ height: 230, background: '#F4F7FA', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>事先写下硬条件，再比较成本</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>例如：关键约束必须通过独立检查，失败时停止交付</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>然后比较通过该流程的任务成功率、时间和成本</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>独立检查本身也要验证，不能假定写了检查器就永远正确</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 230, background: '#F4F7FA', borderRadius: 12, padding: '22px 26px', flexDirection: 'column', gap: 10 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>有时适合不同模型承担不同任务</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>起草文本与检查复杂冲突，可能有不同要求</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>分工也会增加输入传递、结果整合和调用成本</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 4, height: 40, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B' }}>把这种组合当成一个新候选重新评价，不把最好成绩相加</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 27</Text>
+    </Box>
+
+</Slide>

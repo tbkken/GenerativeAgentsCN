@@ -1,0 +1,121 @@
+<Slide notes={`新建智能体在基础配置的「智能体」页，按钮是「＋ 新建智能体」。表单分成两个页签。
+
+第一个是身份页：显示名称、年龄、当前目标，还要选择头像和行走图。第二个是「特质与计划」页：天生特质、背景经历、生活方式、日常计划和长程目标。
+
+这两页的字段合起来，就是这个人物的全部资料。四位人物的写作方向，应该和角色资料一起保存下来，不要只留在聊天记录里。
+
+有一点要提前说：公共 Agent 不保存出生位置。当前的公共编辑器会隐藏「初始位置与空间」这个页签，等进入实验以后，再给人物副本装配空间。
+
+所以顺序是：先上传图片、保存公共人物、重开确认，然后才加入人群。不要因为本地有素材文件，就当成已经上传。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.3　创建四位人物，描述动机而非强制剧情</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>「＋ 新建智能体」的表单结构</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ width: 1152, height: 48, background: '#276FBF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 18px' }}>
+                <Text style={{ fontSize: 15, color: '#FFFFFF' }}>基础配置　·　智能体　·　新建智能体</Text>
+                <Box style={{ width: 76, height: 22, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 380, flexDirection: 'row' }}>
+
+                <Box style={{ width: 200, height: 380, background: '#EDF4FC', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 8 }}>
+                    <Text style={{ fontSize: 12, color: '#546779' }}>页签</Text>
+                    <Box style={{ width: 176, height: 34, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>身份</Text>
+                    </Box>
+                    <Box style={{ width: 176, height: 34, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>特质与计划</Text>
+                    </Box>
+                    <Text style={{ fontSize: 12, color: '#546779', marginTop: 4 }}>说明</Text>
+                    <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>两个页签的字段合起来，才是这个人物的完整资料。</Text>
+                </Box>
+
+                <Box style={{ width: 952, height: 380, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 10 }}>
+
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#20344B' }}>填写两个页签</Text>
+
+                    <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+                        <Box style={{ width: 440, flexDirection: 'column', gap: 8 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>身份</Text>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>显示名称</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>林岚</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>年龄</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>按角色资料填写</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>当前目标</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>核对开放信息</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>头像</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#B5C7D8' }}>选择图片</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>行走图</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#B5C7D8' }}>四方向图片</Text></Box>
+                            </Box>
+                        </Box>
+
+                        <Box style={{ width: 440, flexDirection: 'column', gap: 8 }}>
+                            <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>特质与计划</Text>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>天生特质</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>细心，爱追问</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>背景经历</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>做过社区活动志愿</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>生活方式</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>习惯早到现场</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>日常计划</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>上午先看公告栏</Text></Box>
+                            </Box>
+                            <Box style={{ width: 440, height: 50, background: '#FFFFFF', borderRadius: 6, flexDirection: 'row', alignItems: 'center', padding: '0 14px', gap: 10 }}>
+                                <Box style={{ width: 96 }}><Text style={{ fontSize: 13, color: '#546779' }}>长程目标</Text></Box>
+                                <Box style={{ flex: 1 }}><Text style={{ fontSize: 13, color: '#20344B' }}>完成一次开放日组织</Text></Box>
+                            </Box>
+                        </Box>
+
+                    </Box>
+
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 72, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>公共 Agent 不保存出生位置</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>先上传图片、保存公共人物、重开确认，再加入人群；本地有素材文件不等于已经上传。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>11 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,62 @@
+<Slide notes={`看到失败，不能只记一个失败就完事，要把每一个失败归到具体的类别里。
+
+青禾这个练习可以用这几类：事实错误、约束遗漏、结构错误、工具结果误用、无依据完成、未完成。归类的意义在于，不同类的失败后果不一样。事实错误和约束遗漏会直接让方案不可用，结构错误往往还能让程序接手修正。
+
+一次结果可能同时涉及多个问题，要事先说明是允许多标签，还是只指定一个主要原因；允许多标签时，不能把标签总数当成失败任务数。
+
+开放部分用简短量表并保留评语与依据。条件允许时让评阅者不知道候选的名字，对相同样本独立评分，这样能减少品牌和风格偏好。
+
+重试规则也要事先定：允许一次修正时，可以评价最多一次修正后的成功率，但首轮成功率和额外成本要一起保留。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.4　第四步：先看错误分布，再看总分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>归类失败，规定重试</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>每个失败都要归类，统计口径事先说清楚。</Text>
+
+        <Box style={{ height: 118, background: '#F4F7FA', borderRadius: 8, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>先按类别记录失败</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>事实错误、约束遗漏、结构错误、工具结果误用、无依据完成、未完成</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>说明是允许多标签，还是只指定一个主要原因</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 118, background: '#F4F7FA', borderRadius: 8, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>有确定答案的部分优先用可重复检查</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>表达与解释质量用简短量表，保留评语与依据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>条件允许时让评阅者不知道候选名称，对相同样本独立评分</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 118, background: '#F4F7FA', borderRadius: 8, padding: '16px 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>事先规定重试如何处理</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>允许一次修正时，可评价最多一次修正后的成功率</Text>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.55 }}>同时保留首轮成功率与额外成本；用过多次人工反馈的答案不能标成一次生成成功</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>不能把多标签总数误称为失败任务数；带主观成分的评分不会自动变得客观。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>17 / 27</Text>
+    </Box>
+
+</Slide>

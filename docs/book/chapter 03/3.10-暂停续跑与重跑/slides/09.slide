@@ -1,0 +1,52 @@
+<Slide notes={`很多人判断进度是看画面：谁走到哪了、谁说了什么。但系统判断的是另外一套东西。
+
+假设最后完整提交的是第 k 步，模型已经开始计算第 k 加 1 步。这时候界面上可能出现新的日志，甚至出现一段临时的文本，但这些都是还没提交的计算。
+
+回放能看到的可见事实仍然只到第 k 步。第 k 加 1 步的那部分内容，不能作为已经完成的动作被重建出来。
+
+我把这个区别当成一条纪律：任何关于“已经发生了什么”的结论，都要回到已提交边界上找依据，而不是回到画面上找。画面可以用来发现问题，但不能用来下结论。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.2　已提交边界比画面进度更重要</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>画面上有，不等于已提交</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 18 }}>
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75, width: 500 }}>模型已经开始算下一步，界面可能已经能看到新的痕迹；但只要这一帧没有提交，它就不属于可见事实。</Text>
+            <Box style={{ width: 500, height: 178, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>未提交的计算</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>第 k+1 步的计算结果、日志与临时文本都还没有提交，不能作为已经完成的动作被重建。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 620, height: 134, background: '#F4F7FA', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>画面上可能看到</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>第 k+1 步正在计算的迹象、运行日志、尚未定稿的临时文本</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 36, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#546779' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 134, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>回放可见的事实</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>只到已经提交的第 k 步；恢复也只能从这个边界往下接</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 24</Text>
+    </Box>
+
+</Slide>

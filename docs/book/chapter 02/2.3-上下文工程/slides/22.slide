@@ -1,0 +1,54 @@
+<Slide notes={`最后一个知识块是一次练习，也是这一节的自我检查。
+
+我会让你为当前任务写一份不超过两百字的交接摘要，然后把它交给一个独立的任务。这里的关键词是「独立」：第二个任务只能看到这份摘要和它自己引用的资料，看不到你们之前的对话。
+
+检查的清单有五项：活动日期留住了没有，三项活动的时长有没有，房间限制写清了没有，预约状态是不是标的「待查」，待交付的东西说明白了吗。
+
+然后让第二个任务根据摘要回答：还需要读取哪些文件才能往下做。
+
+这份练习真正检验的不是你的文笔，而是你对任务状态的把握。一个只会复述结论的摘要，会让第二个任务误以为事情已经办完了。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.3.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>失败诊断与练习</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#CB6B28' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>写一份不超过两百字的交接摘要，交给一个独立任务。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 300, height: 76, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>交接摘要 ≤ 200 字</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>五个关键项要在里面</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 76, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>独立任务</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>看不到之前的对话</Text>
+            </Box>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 300, height: 76, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>指出还需读哪些文件</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>这是检验点</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.3 上下文工程</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 25</Text>
+    </Box>
+
+</Slide>

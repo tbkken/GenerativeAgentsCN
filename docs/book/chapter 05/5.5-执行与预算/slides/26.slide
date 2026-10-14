@@ -1,0 +1,70 @@
+<Slide notes={`交接记录可以写成一段短文，但六个问题都要落地。
+
+当前完成到哪个阶段：是在材料审阅、浏览器配置，还是已经进到运行观察。所选实验与 Run 的身份是什么：这里要特别小心，如果还没有创建 Run，就明确填“未创建”，不要拿教学编号去代替 UUID。最后完整提交在哪里：指的是最后一个已经完整提交的边界，而不是最后一次尝试。已经触发了哪项预算规则：是物理尝试阈值、费用复核阈值，还是某个数据缺口。还有哪些在途或待核对的事项。下一步由谁处理：接手人具体是谁。
+
+这六问从阶段一直问到责任人，读完一段话，接手的人就知道自己站在哪里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.6　执行日志最后要留下什么</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>交接记录要回答的六件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6, width: 1152 }}>一段短文就够，但这六问都要答。尚未创建 Run 时，身份一栏明确填“未创建”，不以教学编号代替 UUID。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 216, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF' }}>01</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>完成到哪个阶段</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>材料审阅、浏览器配置、执行准备、运行观察、结果收集还是交付检查。</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 216, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#CB6B28' }}>02</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>实验与 Run 身份</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>写所选实验与 Run 的标识；还没有就填“未创建”。</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 216, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF' }}>03</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>最后完整提交位置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>指最后一个完整提交的边界，而不是最后一次尝试。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+
+            <Box style={{ width: 373, height: 216, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#CB6B28' }}>04</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>已触发哪项预算规则</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>物理尝试阈值、费用复核阈值、两小时复核点或数据缺口。</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 216, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF' }}>05</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>在途与待核对事项</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>哪些请求还没有回来、哪些数字还没有确认。</Text>
+            </Box>
+
+            <Box style={{ width: 373, height: 216, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#26816B' }}>06</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>下一步由谁处理</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5, flex: 1 }}>写清接手人是谁，而不是“待定”或一个岗位名称。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 28</Text>
+    </Box>
+
+</Slide>

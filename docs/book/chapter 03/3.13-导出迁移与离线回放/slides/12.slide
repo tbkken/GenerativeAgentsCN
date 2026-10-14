@@ -1,0 +1,93 @@
+<Slide notes={`这四个文件各自能先确认什么，要对清楚，因为这是交付时最常被夸大的一段。
+结果压缩包可以用来分享指定边界的结果材料和报告，但它不能承诺完整正式包校验，也不能一键恢复。检查点压缩包可以用来检查一个恢复快照里有哪些成员、内容是什么，但它不能独立替代一个完整运行。
+正式实验包交换的是已经封存的实验输入，它不说明这个实验运行成功过，也不说明模型现在可用。正式运行包交换的是经过协议封存的运行，它同样不说明目标机器一定具备执行环境。
+说到底，先确认用途，再谈承诺，后缀本身什么都不保证。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.3　“下载全部”为什么不等于正式 Run 包</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四类文件能先确认什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>左边是要先确认的用途，右边是仅凭后缀不能承诺的能力。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 18, padding: '0 20px' }}>
+            <Box style={{ width: 272 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>得到的文件</Text>
+            </Box>
+            <Box style={{ width: 474 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>可以先确认的用途</Text>
+            </Box>
+            <Box style={{ width: 330 }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不能仅凭后缀承诺的能力</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 250 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas, monospace' }}>结果 ZIP</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>分享指定边界的结果材料与报告</Text>
+                </Box>
+                <Box style={{ width: 330 }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>完整正式包校验、一键恢复</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Box style={{ width: 250 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas, monospace' }}>检查点 ZIP</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>检查一个恢复快照的成员与内容</Text>
+                </Box>
+                <Box style={{ width: 330 }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>独立替代完整 Run</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ width: 250 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas, monospace' }}>正式 .gaexp</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>交换封存实验输入</Text>
+                </Box>
+                <Box style={{ width: 330 }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>已运行成功或模型可用</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Box style={{ width: 4, height: 52, background: '#26816B' }} />
+                <Box style={{ width: 250 }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B', fontFamily: 'Consolas, monospace' }}>正式 .garun</Text>
+                </Box>
+                <Box style={{ flex: 1 }}>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>交换经过协议封存的 Run</Text>
+                </Box>
+                <Box style={{ width: 330 }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>目标机器必然具备执行环境</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

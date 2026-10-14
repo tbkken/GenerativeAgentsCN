@@ -1,0 +1,62 @@
+<Slide notes={`接收这件事可以拆成三个动作。
+
+第一个动作是只拿入口。作者把交付入口给出去，不口头补充，看接收者能不能自己找到项目范围、组别差异、材料来源、原始文件和已知限制。这一步暴露的通常是索引问题，而不是能力问题。
+
+第二个动作是顺着证据定位。随机选一项需求，从需求—证据矩阵出发，找到支持它的材料。这里的难点在于结论和原始事实之间往往隔着几层整理，接收者要能一路走下去。
+
+第三个动作是写下实际检查结果。写清检查了什么、完成到哪一层、哪里还没执行。
+
+再往下如果约定核对运行成果，还要核对文件类型、身份和哈希。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.5　第四份交付：接收与反馈处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>接收者只拿入口，不听口头补充</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>接收者独立完成三个动作，作者的讲解不算在交付里</Text>
+
+        <Box style={{ width: 1152, flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 354, height: 232, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>1</Text>
+                <Box style={{ width: 40, height: 4, background: '#276FBF', marginTop: 2 }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF', marginTop: 6 }}>只拿交付入口</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不听作者口头补充，独立找到项目范围、组别差异、材料来源、原始文件与已知限制</Text>
+            </Box>
+            <Box style={{ width: 44, height: 232, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 232, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#26816B', lineHeight: 1.0 }}>2</Text>
+                <Box style={{ width: 40, height: 4, background: '#26816B', marginTop: 2 }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B', marginTop: 6 }}>顺着矩阵定位证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>随机选一项需求，从需求—证据矩阵一路走到支持它的原始材料</Text>
+            </Box>
+            <Box style={{ width: 44, height: 232, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 30, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 354, height: 232, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>3</Text>
+                <Box style={{ width: 40, height: 4, background: '#CB6B28', marginTop: 2 }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28', marginTop: 6 }}>写下实际检查结果</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>写清检查了什么、完成到哪一层、哪里还没有执行、证据是否足够</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'column', gap: 4, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>若约定接收运行成果，再核对实际文件类型、身份与哈希</Text>
+            <Text style={{ fontSize: 15, color: '#546779' }}>按接收检查表完成约定层次；随机抽一项判分，要能定位到原始事实</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 31</Text>
+    </Box>
+
+</Slide>

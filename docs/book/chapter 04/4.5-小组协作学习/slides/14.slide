@@ -1,0 +1,67 @@
+<Slide notes={`现在把两组摆在一起看。
+
+相同的部分很长：题面一样，条件卡一样，允许追问、也允许澄清，模型一样，位置一样，资料对象一样，讨论窗口和依赖关系都一样。这些必须对齐，否则我们不知道差别从哪来。
+
+不同只有一处。基线段在出现冲突或者准备定稿的时候，凭已经收到的信息自己整理方案和说明，不调用核对子技能。
+
+对照段在同一时刻调用它，把共同题面、已收到的限制及来源、当前候选一起传进去；同一份候选和同一组条件只核对一次，然后按返回的缺口决定是追问、修订还是定稿。
+
+代价也要如实保留：额外调用、更晚定稿、以及仍然出错，全都记下来，不抹掉。这才是我们要观察的东西。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.4　唯一变化：是否显式调用核对子 Skill</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>相同条件与唯一差异</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, height: 72, background: '#F4F7FA', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 44, background: '#B5C7D8' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>共同条件：两组完全一致</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>相同题面、卡片、询问澄清策略、模型、位置、对象、窗口与依赖</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+
+            <Box style={{ width: 560, height: 296, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>基</Text>
+                    </Box>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>基线段</Text>
+                </Box>
+                <Box style={{ width: 4, height: 20, background: '#276FBF' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.75, flex: 1 }}>存在冲突或准备定稿时，依据已收到信息自行整理方案与说明。{'\n\n'}不调用逐项核对子 Skill；该追问的仍然可以追问，也仍然知道共有四条私有限制。</Text>
+            </Box>
+
+            <Box style={{ width: 560, height: 296, background: '#ECF7F2', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 12 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                    <Box style={{ width: 44, height: 44, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>对</Text>
+                    </Box>
+                    <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>对照段</Text>
+                </Box>
+                <Box style={{ width: 4, height: 20, background: '#26816B' }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.75, flex: 1 }}>同一时刻调用逐项核对子 Skill，传入共同题面、已收到限制及来源、当前完整候选。{'\n\n'}同候选与同条件集合只核对一次，据返回缺口决定追问、修订或定稿。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#FFF4E6', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5, flex: 1 }}>额外调用、晚定稿和仍出错都保留 —— 这些代价本身就是要观察的结果</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 26</Text>
+    </Box>
+
+</Slide>

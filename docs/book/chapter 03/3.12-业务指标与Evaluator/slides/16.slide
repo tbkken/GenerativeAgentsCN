@@ -1,0 +1,58 @@
+<Slide notes={`在当前默认路径下，一次 Run 上的评价状态只会有这几种，它们之间不能互相改写。
+COMPLETED 说的是执行完成了，但它推不出业务已经通过，这两件事要分开写。
+WARNING 说的是有确定性问题，它可以和 COMPLETED 同时存在，并不改变这个 Run 是否完成。
+SKIPPED 说的是相应评价没有被执行，注意措辞是「没有执行」，不是「没有关系」。
+NOT_EVALUATED 是未评估：没有确定性告警、同时评价被跳过时，系统给出的就是它。
+最要紧的一条：NOT_EVALUATED 不算通过，SKIPPED 也不算通过。评价数据不可用或投影失败时，要记录原因，不能改写成通过。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.12.5　Evaluator 的资源、方法与实际执行</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四种状态，不能互相改写</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779' }}>当前默认路径下，一次 Run 的评价只会落到这几种状态上，它们之间不能互相改写。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 276, height: 200, background: '#EDF4FC', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#276FBF' }}>COMPLETED</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>执行完成</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>Run 正常结束；它不能推出业务已经通过</Text>
+            </Box>
+            <Box style={{ width: 276, height: 200, background: '#FFF4E6', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>WARNING</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>有确定性问题</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>可以和完成状态同时存在；它不改变 Run 是否完成</Text>
+            </Box>
+            <Box style={{ width: 276, height: 200, background: '#F4F7FA', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#546779' }}>SKIPPED</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>评价未执行</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>相应评价没有被执行，就保持未执行</Text>
+            </Box>
+            <Box style={{ width: 276, height: 200, background: '#F7F3E8', borderRadius: 10, padding: '18px 16px', flexDirection: 'column', gap: 8, alignItems: 'center' }}>
+                <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#CB6B28' }}>NOT_EVALUATED</Text>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>未评估</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.55 }}>没有确定性告警，并且评价被跳过时的结果</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>NOT_EVALUATED 不算通过</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>评价数据不可用或投影失败时，要记录原因，不能把它改写成通过。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.12 业务指标、行为质量与 Evaluator</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 24</Text>
+    </Box>
+
+</Slide>

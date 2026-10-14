@@ -1,0 +1,67 @@
+<Slide notes={`词法匹配直接影响了检索怎么写。查询里带上“手作活动、公告、待确认进度”这样的明确名称，通常比一句含蓄的“刚才那件事”更容易命中相关节点。
+
+两个不要。不要指望同义改写和指代省略还能召回——它们可能降低命中；也不要用写入几十条同义句的办法提高“命中率”——重要事实会被重复便签淹没。
+
+还要记住空结果的含义：工具只返回最多 limit 条匹配记忆，检索不到，不证明这个人从未经历相关事情。
+
+稳妥做法是围绕当前目标用明确名称；检索不到时，结合本轮输入判断是否需要重新咨询。当前实现和中文切分规则，都在 FileMemoryStream 的 search 与 _tokens 里。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.6.3　当前检索实现不是向量数据库</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>这如何影响检索的写法</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24 }}>
+
+        <Box style={{ width: 630, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+            <Box style={{ height: 96, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>明确名称优于含蓄指代</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>检索“手作活动、公告、待确认进度”，通常比“刚才那件事”更便于找到相关节点</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>改写与省略会漏</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>同义改写、指代省略和大量无关便签，仍可能降低召回</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>空结果不是“从未发生”</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>工具只返回最多 limit 条匹配记忆，检索不到不证明没经历过</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'column', justifyContent: 'center', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>不要刷几十条同义句</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>想靠重复便签提高“命中率”，重要事实反而会被淹没</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 498, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 260, background: '#ECF7F2', borderRadius: 10, padding: '22px 24px', flexDirection: 'column', gap: 12, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>稳妥做法</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>围绕当前目标使用明确名称；检索不到时，结合本轮输入判断是否需要重新咨询。</Text>
+                <Box style={{ height: 52, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#26816B' }}>明确名称　＋　本轮输入　＋　必要时再咨询</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 56, background: '#B5C7D8' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6, flex: 1 }}>当前实现和中文切分规则：FileMemoryStream.search 与 _tokens</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.6 记忆与跨步进度</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 24</Text>
+    </Box>
+
+</Slide>

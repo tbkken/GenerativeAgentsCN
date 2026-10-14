@@ -1,0 +1,54 @@
+<Slide notes={`接下来这一块，处理的是最容易被含糊过去的部分：那些“暂时这么定”的条件。
+
+我先说清一件事：本轮采用的值，不是从真实大厅统计里估计出来的。五名 Agent、三个对象、二十乘十六格地图、四个 Arena、七十六步，这些都是作者为这次实验选定的条件。承认这一点，不会让实验变差，反而让它可解释。
+
+既然它们是选择，就必须能检查。第一步，把假设写在材料表上，不要藏在正文里。第二步，写明它为什么这么处理。第三步，写清楚需要什么证据才能推翻它。第四步，只有证据到手，状态才从“未检查”变成有依据的结论。
+
+我想强调第三步。没有写清证据的假设，会一直含糊下去，谁也说不清什么时候该改。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 640, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Text style={{ fontSize: 15, color: '#276FBF' }}>3　　5.2.4 — 5.2.5</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把假设写成可检查的约束</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 940 }}>本轮采用的条件由作者选定，不是从真实大厅统计中估计出来的；既然它是选择，就必须写下什么证据能改变它。</Text>
+
+        <Box style={{ flexDirection: 'column', gap: 10, marginTop: 10 }}>
+
+            <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF', width: 40 }}>1</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 300 }}>暂时这样处理</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>假设写在材料表上，不藏在正文里，也不靠口头记忆</Text>
+            </Box>
+
+            <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF', width: 40 }}>2</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 300 }}>写明为什么</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>每条都要能解释它服务哪一个判断</Text>
+            </Box>
+
+            <Box style={{ width: 1152, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#26816B', width: 40 }}>3</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 300 }}>需要什么证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>具体到配置、地图路径、资源内容或运行记录</Text>
+            </Box>
+
+            <Box style={{ width: 1152, height: 76, background: '#F4F7FA', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#276FBF', width: 40 }}>4</Text>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B', width: 300 }}>证据到手才改变状态</Text>
+                <Text style={{ fontSize: 15, color: '#546779', flex: 1 }}>状态从“未检查”改成有依据的结论，而不是感觉更可信</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 23</Text>
+    </Box>
+
+</Slide>

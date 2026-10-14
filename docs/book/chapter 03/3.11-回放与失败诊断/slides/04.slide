@@ -1,0 +1,105 @@
+<Slide notes={`顺着这条链往下走，就能确定回放边界。
+
+最左边是根 Skill 发起世界动作调用，接着 MCP 校验身份、权限和参数。校验通过以后出现 accepted，它只表示动作选择被接受，根 Skill 这一轮就结束了，世界还没有变化。这一步最容易被误读。
+
+再往下才是世界提交，形成真实变化，然后由 StepResult 统一记录本步的状态、事件、效果和会话。往下的持久提交帧与独立校验记录、检查点或恢复快照，才推进可见状态与 committed_step，回放只读这段边界以内的东西。
+
+还有一条也要记住：事件配上非空的结构化载荷，才能确定性重建；而 Thought、计划和临时文本不进入回放归约。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.1　一条动作怎样成为可回放事实</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>从动作选择到已提交事实</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 194, height: 150, background: '#EDF4FC', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>根 Skill 调用</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>world-act</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 150, background: '#EDF4FC', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>MCP 校验</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>身份 · 权限 · 参数</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 150, background: '#FFF4E6', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>accepted</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>动作选择被接受{'\n'}根 Skill 本轮结束</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 150, background: '#EDF4FC', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>World Commit</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>形成真实变化</Text>
+            </Box>
+            <Box style={{ width: 44, height: 150, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 194, height: 150, background: '#ECF7F2', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>StepResult</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>统一状态、事件、{'\n'}效果与会话</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 34, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 40, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>accepted 只是「被接受」；越过持久边界之后的记录，才进入正式回放</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 253, height: 116, background: '#F4F7FA', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>持久提交帧</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>与独立校验记录</Text>
+            </Box>
+            <Box style={{ width: 44, height: 116, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 253, height: 116, background: '#F4F7FA', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>检查点 / 恢复快照</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>发布完整状态</Text>
+            </Box>
+            <Box style={{ width: 44, height: 116, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 253, height: 116, background: '#F4F7FA', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>推进可见状态</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>与 committed_step</Text>
+            </Box>
+            <Box style={{ width: 44, height: 116, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 253, height: 116, background: '#ECF7F2', borderRadius: 8, padding: 12, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>Replay</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>只读已提交边界</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 680, height: 76, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>Event 加上非空 structured_payload，才支持确定性重建</Text>
+            </Box>
+            <Box style={{ width: 448, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.5 }}>Thought、计划与临时文本：不进入回放归约</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>04 / 27</Text>
+    </Box>
+
+</Slide>

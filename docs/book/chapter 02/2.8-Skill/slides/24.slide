@@ -1,0 +1,70 @@
+<Slide notes={`怎么证明一个装好的 Skill 真的起作用了？我把证据拆成四段，一段一段取。
+
+第一段，装上了没有：宿主能不能发现这个技能名称，有没有出现在已安装列表里。第二段，读到了没有：这一轮实际采用的是哪份方法内容，看的是读取结果，而不是安装完成的提示。第三段，跑了没有：有没有真实的命令与输出，脚本到底执行过没有。第四段，通过了没有：候选文件和业务报告能不能对上，检查项是不是真的通过。
+
+这四段之间：装上了不会自动保证读到了，读到了也不自动保证跑了。所以「继续取证，不自动保证」要一直挂在心里。
+
+还有一条旁路：用托管 Shell 时，产物要按工具结果取回，聊天里的文字不会自动变成你机器上的文件。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.8.6　在 WorkBuddy 中安装和复用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>安装、读取、执行、通过分别取证</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.6 }}>图 2.8-3：四段证据逐段向下，装上了不会自动保证读到了。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>已安装？</Text>
+            <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>宿主可以发现技能名称，它出现在已安装列表里。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, paddingLeft: 22 }}>
+            <Box style={{ width: 3, height: 20, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 14, color: '#CB6B28' }}>继续取证，不自动保证 →</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>已读取？</Text>
+            <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>核对本次实际采用的方法内容，而不是安装提示。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 74, background: '#EDF4FC', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 19, fontWeight: 'bold', color: '#276FBF' }}>已执行？</Text>
+            <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>核对真实的命令与输出，脚本确实被运行过。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 18, height: 74, background: '#ECF7F2', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>4</Text>
+            </Box>
+            <Text style={{ width: 200, fontSize: 19, fontWeight: 'bold', color: '#26816B' }}>已通过？</Text>
+            <Text style={{ flex: 1, fontSize: 15, color: '#546779' }}>匹配候选文件与业务报告，检查项确实通过。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14, height: 74, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ flex: 1, fontSize: 14, color: '#546779', lineHeight: 1.5 }}>若使用托管 Shell：按工具结果取回产物；Chat 里的文字不会自动成为本机文件。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.8 Skill：把一套方法做成可以重复使用的材料包</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 27</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,98 @@
+<Slide notes={`检索只解决了“材料有没有进来”，回答阶段还要把可核验的陈述拆开检查。
+
+假设答案里有五条需要外部证据的陈述，其中四条附上了引用，一条没有。四条里真正得到支持的是三条，第四条虽然贴了引用，但引用并不支持它。
+
+两个率的分母不一样。引用支持率的分母是“带有引用的可核验陈述数”，四条里三条被支持，七成五——贴出来的引用有多少真的撑得住那句话。证据覆盖率的分母是“全部需要外部证据的陈述数”五条，三条被支持，六成。
+
+这两个口径是本书选定的，不是所有榜单通用的定义。完全没有引用时支持率没有定义；只要还有需要证据的陈述，覆盖率就是零。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.5　找到证据，还要用对证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>找全之后，还要用对</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B', marginBottom: 6 }}>五条需证据的陈述</Text>
+
+            <Box style={{ flexDirection: 'row', height: 60, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>1</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>原安排的时间</Text>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>有引用·被支持</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 60, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>2</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>原安排的地点</Text>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>有引用·被支持</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 60, background: '#ECF7F2', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>3</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>最新房间占用通知</Text>
+                <Text style={{ fontSize: 13, color: '#26816B' }}>有引用·被支持</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 60, background: '#FFF4E6', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>4</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>改期后的房间</Text>
+                <Text style={{ fontSize: 13, color: '#CB6B28' }}>有引用·未被支持</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', height: 60, background: '#F4F7FA', borderRadius: 8, padding: '0 16px', alignItems: 'center', gap: 10 }}>
+                <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#546779' }}>5</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>是否影响其他活动</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>没有引用</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ height: 170, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>引用支持率</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 100, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#20344B' }}>3 / 4</Text>
+                    </Box>
+                    <Text style={{ fontSize: 22, color: '#546779' }}>=</Text>
+                    <Box style={{ width: 130, height: 40, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>75%</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>得到所附引用充分支持的陈述数 ÷ 带有引用的可核验陈述数</Text>
+            </Box>
+
+            <Box style={{ height: 170, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>证据覆盖率</Text>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 100, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 17, color: '#20344B' }}>3 / 5</Text>
+                    </Box>
+                    <Text style={{ fontSize: 22, color: '#546779' }}>=</Text>
+                    <Box style={{ width: 130, height: 40, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>60%</Text>
+                    </Box>
+                </Box>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>得到所附引用充分支持的陈述数 ÷ 全部需要外部证据的陈述数</Text>
+            </Box>
+
+            <Box style={{ height: 132, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>两个边界，两条纪律</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>没有附引用时，支持率未定义；只要仍有需证据的陈述，覆盖率就是 0。这是本书选定的口径，并非所有榜单通用。引用来自一份旧通知，也可能不适用于已经改期的活动——“有出处”不能替代时效与冲突核验。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 31</Text>
+    </Box>
+
+</Slide>

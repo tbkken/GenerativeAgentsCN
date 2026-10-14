@@ -1,0 +1,72 @@
+<Slide notes={`把两条路线各自的职责并排看。
+
+函数调用回答三件事：模型怎样提出一个带参数的请求，应用怎样执行并把结果返回，以及范围到哪里为止——它止于一次调用的往返。
+
+MCP 在此基础上多回答三件事：应用怎样连接一个能力提供者，怎样发现对方提供哪些工具，以及怎样调用、怎样把结果传回来。它管的是连接本身，而不是某一次请求的内容。
+
+两者并不冲突。业务函数可以先被 Python 直接调用，同一份代码再交给 MCP 服务去暴露，两条路径共用同一份业务校验代码。
+
+要分开处理的是外围那一层。函数调用的包装器和 MCP 服务各自负责自己的参数处理、协议转换和错误转换；业务规则只有一份，不能复制成两份各自维护。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.6.2　Function Calling 与 MCP 怎样配合</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>两者分别回答什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 48, justifyContent: 'center' }}>
+
+            <Box style={{ width: 552, height: 330, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>Function Calling 回答</Text>
+                <Box style={{ width: 508, height: 74, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>模型怎样提出请求</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>提出一个带参数的工具请求</Text>
+                </Box>
+                <Box style={{ width: 508, height: 74, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>应用怎样返回结果</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>执行函数，把结果送回模型</Text>
+                </Box>
+                <Box style={{ width: 508, height: 74, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>范围到哪里为止</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>止于一次调用的往返</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 552, height: 330, background: '#ECF7F2', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>MCP 进一步约定</Text>
+                <Box style={{ width: 508, height: 74, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>怎样连接提供者</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>宿主连接一个能力提供方</Text>
+                </Box>
+                <Box style={{ width: 508, height: 74, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>怎样发现能力</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>列出对方提供的工具与描述</Text>
+                </Box>
+                <Box style={{ width: 508, height: 74, background: '#FFFFFF', borderRadius: 8, padding: '0 14px', flexDirection: 'column', justifyContent: 'center', gap: 2 }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>怎样调用与回传</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>发起调用，接收协议结果</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#F4F7FA', borderRadius: 8, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#20344B' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>两者配合，不互相替代</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>业务函数可以先被 Python 直接调用，再由 MCP 服务暴露；两条路径复用同一份业务校验代码。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.6　MCP：让工具以共同的方式接入应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>10 / 27</Text>
+    </Box>
+
+</Slide>

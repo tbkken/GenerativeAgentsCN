@@ -1,0 +1,92 @@
+<Slide notes={`现在说第二个问题：容量。
+
+这一次送进模型的东西，包括我的指令、之前的对话历史、应用读进来的资料和工具返回的结果，再加上留给我生成内容的空间，它们共用的是同一份容量。这份容量就是上下文窗口。
+
+请注意两件事。
+
+第一，窗口是有限的。当要放的内容超过窗口，它不会自动挤进去，而是需要应用先做筛选或者截断。哪些留下、哪些丢掉，直接决定了模型这次能看到什么。
+
+第二，窗口大不等于长期记忆。这一段对话结束以后，里面的内容就不在这个上下文里了。下一次提问，除非应用重新把材料读进来，否则模型不会"记得"。
+
+所以回到青禾那件事：我后来把房间容量表放进对话，模型这轮能用上它。但我不能假定下一轮它还能用——除非应用又读了一次。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.1.2　Token：文字怎样变成可计算的输入</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>上下文预算是有限的</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', gap: 24 }}>
+
+        <Box style={{ flexDirection: 'column', gap: 16 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>上下文窗口：本次计算能容纳的信息范围</Text>
+
+            <Box style={{ flexDirection: 'row', gap: 6 }}>
+                <Box style={{ width: 220, height: 116, background: '#BCD4ED', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>指令</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>这一次要我做什么</Text>
+                </Box>
+                <Box style={{ width: 230, height: 116, background: '#D4E7DF', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>历史消息</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>之前几轮说过的话</Text>
+                </Box>
+                <Box style={{ width: 356, height: 116, background: '#F0D8BD', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>资料 ／ 工具结果</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>应用读进来的房间表、预约查询返回的记录</Text>
+                </Box>
+                <Box style={{ width: 280, height: 116, background: '#E6ECF1', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>生成内容所需空间</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>留给我写答案的那一部分</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 22, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>超过这条边界的内容不会进入本次计算，需要先筛选或截断输入。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flex: 1, background: '#F4F7FA', borderRadius: 10, padding: '20px 24px', flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Box style={{ width: 26, height: 26, borderRadius: 13, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>四类内容共用一份容量</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>指令、消息、资料和生成空间互相争用，不是各自独立。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Box style={{ width: 26, height: 26, borderRadius: 13, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>放不下就要取舍</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>应用会筛选或截断，哪些内容留下会直接影响这一轮的回答。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 14, alignItems: 'flex-start' }}>
+                <Box style={{ width: 26, height: 26, borderRadius: 13, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 2 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>大窗口不等于长期记忆</Text>
+                    <Text style={{ fontSize: 16, color: '#546779' }}>本轮结束后的内容不在上下文里，需要应用再次读入。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.1 从一个回答出发</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 26</Text>
+    </Box>
+
+</Slide>

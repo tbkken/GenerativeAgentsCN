@@ -1,0 +1,94 @@
+<Slide notes={`我们先给自己一张地图。这一节我分四块来讲。
+
+第一块是一轮闭环：观察、决定、执行、核验这四个动作分别由谁承接，其中核验最容易被忽略。
+
+第二块是三种组织任务的方法——规划、ReAct 和反思，它们各自增加的是什么，还有一个很实际的判断：什么时候固定的工作流就已经够用了。
+
+第三块是把停止条件写进程序：什么叫成功、什么叫继续、什么叫有原因地停止，以及轮数、工具请求数和实际执行数为什么必须分开记。
+
+第四块讲三种「记住」的边界，最后回到可以动手体验的三种任务模式。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节地图</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>本节要看清的四件事</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 24 }}>
+
+        <Box style={{ width: 306, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>四个知识块</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.75 }}>从「一轮闭环怎么转起来」，到「凭什么更聪明」、「什么时候停」，最后到「什么算记得」。</Text>
+            <Box style={{ flexDirection: 'column', gap: 10, marginTop: 4 }}>
+                <Box style={{ width: 200, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', padding: '0px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>① 谁承接哪一步</Text>
+                </Box>
+                <Box style={{ width: 200, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', padding: '0px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>② 凭什么更聪明</Text>
+                </Box>
+                <Box style={{ width: 200, height: 30, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', padding: '0px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#276FBF' }}>③ 什么时候停</Text>
+                </Box>
+                <Box style={{ width: 200, height: 30, background: '#FFF4E6', borderRadius: 6, justifyContent: 'center', padding: '0px 14px' }}>
+                    <Text style={{ fontSize: 14, color: '#CB6B28' }}>④ 什么算记得</Text>
+                </Box>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 822, flexDirection: 'column', gap: 18 }}>
+
+            <Box style={{ flexDirection: 'row', gap: 18 }}>
+                <Box style={{ width: 402, height: 251, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>①</Text>
+                        </Box>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>从一次回答到闭环</Text>
+                    </Box>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>观察、决定、执行、核验四个动作谁来做；为什么核验最容易被跳过，也最不能跳过。</Text>
+                </Box>
+                <Box style={{ width: 402, height: 251, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>②</Text>
+                        </Box>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>三种组织任务的方法</Text>
+                    </Box>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>规划、ReAct 与反思各增加什么；什么时候固定工作流就已经够用，不必上循环。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', gap: 18 }}>
+                <Box style={{ width: 402, height: 251, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+                        </Box>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>把停止条件写进程序</Text>
+                    </Box>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>成功、继续与有原因地停止；轮数、工具请求数、实际执行数为什么不能混用上限。</Text>
+                </Box>
+                <Box style={{ width: 402, height: 251, background: '#FFF4E6', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                    <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                        <Box style={{ width: 44, height: 44, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#FFFFFF' }}>④</Text>
+                        </Box>
+                        <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>三种「记住」与体验</Text>
+                    </Box>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.7 }}>会话上下文、应用任务状态、长期记忆的边界，以及 WorkBuddy 三种任务模式。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.10 Agent 循环、规划与记忆</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 24</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,71 @@
+<Slide notes={`恢复这件事有一条硬边界：不能用一次新建 Run 来代替。
+
+续跑和新建是两种不同的操作，产生的东西也不同。续跑保持原来的 Run 身份，只是在里面产生新的 Attempt，所以这次运行仍然属于同一个实验、同一份输入。如果修改了输入之后再运行，那就要使用一个新的独立实验，因为在独立实验里改完再启动，才不会污染原来的那份记录。
+
+反过来做，就会出现一个说不清的 Run：它的前半段用的是旧输入，后半段是新输入，任何结论都追不到唯一的一份输入上。
+
+还有一条记录习惯值得坚持：写下“为什么采取这一步”，而不只是写下“已经重启”。下一位负责人真正需要的是你的判断理由，而不是一个动作名。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.5.5　故障决策应指向不同的下一步</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>修复与恢复的边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 420, flexDirection: 'column', gap: 16, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 26, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>续跑还是新建，{'\n'}先分清改了没有</Text>
+            <Box style={{ width: 60, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.7, width: 420 }}>判断标准只有一条：输入有没有变。输入没变就续跑，输入变了就另起一个独立实验。</Text>
+            <Box style={{ width: 420, height: 88, background: '#F7F3E8', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 20px' }}>
+                <Box style={{ width: 4, height: 52, background: '#546779' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>记录「为何采取这一步」，比只记「已经重启」有用。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 14 }}>
+
+            <Box style={{ width: 700, height: 128, background: '#ECF7F2', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+                <Box style={{ width: 190, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>续跑</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>输入没有变</Text>
+                </Box>
+                <Box style={{ width: 4, height: 68, background: '#26816B' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>保持原来的 Run 身份，只产生新的 Attempt；这次运行仍属于同一份输入。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 128, background: '#EDF4FC', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 18, padding: '0 22px' }}>
+                <Box style={{ width: 190, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>另起实验</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>输入已经变了</Text>
+                </Box>
+                <Box style={{ width: 4, height: 68, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>修改输入后再运行，应使用新的独立实验，保留原来的历史输入与结果。</Text>
+            </Box>
+
+            <Box style={{ width: 700, height: 112, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 64, background: '#CB6B28' }} />
+                <Box style={{ flexDirection: 'column', gap: 4, flex: 1 }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>恢复不能用一次新建 Run 代替</Text>
+                    <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>否则会出现一个前后输入不一致的运行，结论追不到唯一一份输入。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 96, background: '#F4F7FA', borderRadius: 10, flexDirection: 'row', alignItems: 'center', gap: 16, padding: '0 22px' }}>
+                <Box style={{ width: 4, height: 52, background: '#276FBF' }} />
+                <Text style={{ fontSize: 16, color: '#20344B', flex: 1, lineHeight: 1.5 }}>控制与恢复的限制条件，应随执行计划一起交给接手者。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.5 执行与预算</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>24 / 28</Text>
+    </Box>
+
+</Slide>

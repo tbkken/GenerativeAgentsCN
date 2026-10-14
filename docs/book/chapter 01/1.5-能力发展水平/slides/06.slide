@@ -1,0 +1,65 @@
+<Slide notes={`同一个 Fable 5.1，不使用工具时 HLE 准确率 60.9%，使用工具之后 65.0%，相差 4.1 个百分点。
+
+这 4.1 说了一件有用的事：允许查资料、执行计算、回头继续检查，系统能解决的问题范围确实会变宽。但它推不出"只要接上搜索，所有问题都会提高 4.1 个百分点"——两种条件虽然都设了总预算上限，实际消耗的工具耗时和 Token 并不因此相等，工具本身也可能带来错误资料、搜索遗漏和新的调用失败。
+
+还有一层要交代：这组成绩是在带生产防护的系统配置下测的。防护介入时，网络安全任务转由 Claude Opus 4.8 接替，生物任务转由 Claude Opus 5 接替，所以里面包含已说明的应用层行为。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.1　专家级问题已经能解决一部分，工具会改变能力边界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>工具确实改变了能力边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 40 }}>
+
+        <Box style={{ width: 360, height: 440, background: '#EDF4FC', borderRadius: 12, padding: 26, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 15, color: '#546779' }}>同一个 Claude Fable 5.1</Text>
+            <Box style={{ flexDirection: 'row', alignItems: 'flex-end', gap: 8 }}>
+                <Text style={{ fontSize: 72, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.05 }}>4.1</Text>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#546779', lineHeight: 1.6 }}>个百分点</Text>
+            </Box>
+            <Box style={{ width: 64, height: 4, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.75 }}>60.9%（不使用工具）{'\n'}→ 65.0%（使用工具）</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>允许查资料、执行计算并继续检查，系统能处理的问题范围变宽。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+                <Box style={{ width: 3, height: 22, background: '#26816B' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>这组差值能说明什么</Text>
+            </Box>
+
+            <Box style={{ height: 96, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.6 }}>在这组条件下，可访问的证据与计算工具共同拓展了系统解决问题的能力。</Text>
+            </Box>
+
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12, marginTop: 4 }}>
+                <Box style={{ width: 3, height: 22, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#CB6B28' }}>不能由此推出什么</Text>
+            </Box>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>不能反推"接入搜索，所有问题都会提高 4.1 个百分点"。</Text>
+            </Box>
+
+            <Box style={{ height: 80, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>两种条件虽同为预算上限，实际工具耗时与 Token 消耗并不相等。</Text>
+            </Box>
+
+            <Box style={{ height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>带生产防护的系统配置：防护介入时网络安全任务转由 Claude Opus 4.8、生物任务转由 Claude Opus 5 接替，成绩含应用层行为。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>06 / 24</Text>
+    </Box>
+
+</Slide>

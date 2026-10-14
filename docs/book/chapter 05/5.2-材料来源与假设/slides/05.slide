@@ -1,0 +1,95 @@
+<Slide notes={`这四句话来自四个不同的地方，所以它们不能合成一列。
+
+A 窗口提供场地使用咨询，是本案约定的业务范围。孟川发现东侧一盏灯不亮，是人物初始材料里的虚构经历。地图采用二十乘十六格，是作者的空间方案。
+
+而孟川已经在 B 窗口得到回复，这句话不一样：它必须等运行事实支持。服务大厅现在还没有新 Run，它只能是待运行支持。
+
+四句话都能进项目资料，来源也说得清，但不能合并成一列“已验证事实”。合并之后来源没了，适用范围没了，出了问题也回查不了。
+
+还要注明适用范围：是只用于这次虚构咨询，还是只说明历史案例的某一次 Run。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.2.1　先给每句话标明性质</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同一批材料，四个来源</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 24, alignItems: 'center' }}>
+
+        <Box style={{ width: 700, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 700, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>“A 窗口提供场地使用咨询”</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>本案约定的业务范围</Text>
+                </Box>
+                <Box style={{ width: 108, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>场景设定</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 104, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>“孟川发现东侧一盏灯不亮”</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>人物初始材料中的虚构经历</Text>
+                </Box>
+                <Box style={{ width: 108, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#276FBF' }}>人物材料</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 104, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#26816B' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>“地图采用 20×16 格”</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>作者的空间方案</Text>
+                </Box>
+                <Box style={{ width: 108, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#26816B' }}>作者假设</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 700, height: 104, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 56, background: '#CB6B28' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.5 }}>“孟川已在 B 窗口得到回复”</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>必须等待运行事实支持</Text>
+                </Box>
+                <Box style={{ width: 108, height: 40, background: '#FFFFFF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, fontWeight: 'bold', color: '#CB6B28' }}>待运行支持</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 428, flexDirection: 'column', gap: 14, justifyContent: 'center' }}>
+
+            <Box style={{ width: 428, height: 140, background: '#F4F7FA', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>共同的底线</Text>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.7 }}>这些话都可以进入项目资料，但不能合并成一列“已验证事实”。</Text>
+            </Box>
+
+            <Box style={{ width: 428, height: 148, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#276FBF' }}>四个抽屉</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.7 }}>采用的场景设定、作者假设、待核实事项、实际观察，分开放。</Text>
+            </Box>
+
+            <Box style={{ width: 428, height: 124, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 15, color: '#CB6B28' }}>还要注明适用范围</Text>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>只用于这次虚构咨询，还是只说明历史案例的某一次 Run。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.2 材料来源、假设与可用范围</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>05 / 23</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,57 @@
+<Slide notes={`清单和包，是同一件事的两面。
+
+一面是把需求、证据和文件对上。一份能接手的交付，要能说明 A 窗口处理使用咨询、B 窗口处理已有设施问题，两组共有四项需求，只有咨询台是否先澄清目的这一处不同；而精确的策略片段、每个人物的私人目的、空间方案和运行参数，都要有固定出处。
+
+另一面是认清手上到底是什么包。当前协议里，普通的结果 ZIP 和 config、exp、run 三种正式包同时存在，后缀长得像，能力却完全不同。接收者只有先看清包类型，才知道自己能导入、能运行，还是只能回放。
+
+两件事合起来，接收者才不会拿着一个结果压缩包，却以为可以接着跑实验。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>第五章　5.7　交付与复现</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>知识块 ②</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>②</Text>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>一张清单与四类文件</Text>
+
+        <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 18, color: '#546779', lineHeight: 1.7, width: 1000 }}>材料要能对上需求与证据，也要认得出自己是什么包。类型认错，后面的导入、运行和回放就全走偏。</Text>
+
+        <Box style={{ width: 1152, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 16, color: '#20344B' }}>清单七项：项目说明 · 输入清单 · 身份登记 · 结果索引 · 证据材料 · 原始导出 · 接手说明</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 276, height: 56, background: '#F7F3E8', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#CB6B28' }}>普通结果 ZIP</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#276FBF' }}>config 资源包</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#26816B' }}>exp 实验包</Text>
+            </Box>
+            <Box style={{ width: 276, height: 56, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B' }}>run 运行包</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.7 交付与复现</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 24</Text>
+    </Box>
+
+</Slide>

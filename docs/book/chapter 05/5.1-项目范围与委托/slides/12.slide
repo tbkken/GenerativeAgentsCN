@@ -1,0 +1,76 @@
+<Slide notes={`我用需求编号 R3「结果可追溯」来演示这条链。
+
+R3 的含义是任何一个得分都能被复查。它的判据是适配回复加上确认，也就是教师先定义什么算正确。判据对应的来源，是实际运行里真实出现的身份与事实。最后的接收检查，是由别人在材料里定位到这些内容，并自己判断一次。
+
+四步走下来，咨询闭环这一项得分就不再是一个孤立的数字，而是一条可以走回去的路径。
+
+还要强调一点：R 编号只是文档索引，不是系统资源 ID，系统身份必须等它真正创建之后再登记。把它当成系统状态机会让范围失控。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.1.3　把需求连到证据，而不只连到文件名</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一项得分怎样回到事实</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6, width: 1152 }}>用需求编号 R3「结果可追溯」演示：咨询闭环这一分数，怎样一路查回实际回复与确认。</Text>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+
+            <Box style={{ width: 250, height: 158, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>需求编号</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>R3 可追溯</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>任一得分可复查</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 158, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 250, height: 158, background: '#EDF4FC', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>判据</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>适配回复 ＋ 确认</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>教师先定义何为正确</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 158, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 250, height: 158, background: '#F4F7FA', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>来源</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>真实身份与事实</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>实际运行中的身份与事实</Text>
+            </Box>
+
+            <Box style={{ width: 44, height: 158, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#26816B' }}>›</Text>
+            </Box>
+
+            <Box style={{ width: 250, height: 158, background: '#ECF7F2', borderRadius: 10, padding: '18px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779' }}>接收检查</Text>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>他人定位并判断</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>别人能找到并自己判断</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 56, background: '#276FBF' }} />
+            <Box style={{ flexDirection: 'column', gap: 4, width: 1060 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>R 编号只是文档索引，不是系统资源 ID</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>系统身份须在实际创建后登记，也不需要为它增加新的内核状态机。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.1 项目范围与委托</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

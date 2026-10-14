@@ -1,0 +1,56 @@
+<Slide notes={`状态提交之后，往两个方向分出去，这两条路要分开看。
+
+第一条是公告栏的 state_images 匹配。公告栏换上了修订后的画面，其他人在世界里能看到一个不一样的状态标签。这只说明外观变了。
+
+第二条是访客自己提出真实的查询。他问了，才收到正式的内容答复，这时候才算真正知道通知正文写了什么。
+
+关键就在这两句：看到 revised，不等于读到通知正文。回复只向真实请求者投递，不会顺手告诉所有人。
+
+另外提醒一句，服务台那个 ready 也只是一个公开状态标签，画面沿用背景里的默认外观，它是另一项外观配置。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.7.4　设计公告更新这一段情节</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>提交之后的两个分支</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ width: 1152, height: 76, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 44, background: '#26816B' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>世界执行并整步提交：公告栏状态 original → revised</Text>
+        </Box>
+
+        <Box style={{ height: 30, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 566, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>分支一：公告 state_images 匹配</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>画面切换，其他人在世界里能看到 revised 的状态标签。</Text>
+            </Box>
+            <Box style={{ width: 566, height: 152, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>分支二：访客提出真实查询</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>收到正式内容答复之后，才真正获知通知正文。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 92, background: '#FFF4E6', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 18 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>外观改变不等于读到正文</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>回复只向真实请求者投递；看到 revised 与知道新的开始时间，是两件事。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.7 对话与对象 Skill：让信息通过真实交互传播</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 31</Text>
+    </Box>
+
+</Slide>

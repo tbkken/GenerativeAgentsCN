@@ -1,0 +1,45 @@
+<Slide notes={`最后一块要回答一个很实际的问题：这套协作到底值不值得保留。
+
+我的建议是用同一批任务去比较单 Agent 和多 Agent，而不是挑一次展示。要记录的指标有六个：最终正确率、漏检数、误报数、总 Token、总耗时，以及人工复核时间。
+
+这里有一个容易被忽略的成本：并行通常只缩短了彼此独立的那部分等待，而两个审阅加一次汇总，Token 开销还是要相加的。省下的时间和多花的费用，得放在一起看。
+
+换句话说，判断标准不是"多 Agent 看起来更聪明"，而是它在你自己的任务集上，能不能用可接受的成本换来更少的漏检。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', justifyContent: 'center', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100 }} />
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.12.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>如何判断协作值得保留</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>用同一任务集对比，而不是挑一次成功案例。</Text>
+
+        <Box style={{ marginTop: 8, flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 330, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>同一任务集</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>收益与代价一起记</Text>
+            </Box>
+            <Box style={{ width: 330, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不能只看一次结果</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.12 多 Agent 协作与工作流</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 25</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,118 @@
+<Slide notes={`人群工作区分三步走。
+
+第一步，切换到「人群」页签，点击「＋ 新建人群」，填写名称和用途。第二步，用「创建并管理 Agent」进入成员管理，勾选四位公共 Agent。第三步，点击「应用到人群草稿」，再按页面保存。
+
+保存完不要就走开，重开之后要逐一核对：名称对不对，稳定身份对不对，成员数量是不是四条独立记录。
+
+这里有一个容易误解的地方：重复选择同一个公共 Agent，后端会去重，只算一次；但如果不同的资源携带了相同的身份标识，系统会明确拒绝，而且不会靠显示名称去合并。
+
+我们这个案例四个姓名不一样，看起来不会撞，但仍然要核对它们是四条独立的记录。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.2.4　用 Crowd 组织一次选择</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>人群工作区：三步完成一次选择</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ width: 1152, flexDirection: 'column', gap: 8 }}>
+
+            <Box style={{ width: 1152, height: 44, background: '#276FBF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: '0 18px' }}>
+                <Text style={{ fontSize: 14, color: '#FFFFFF' }}>基础配置　·　智能体　·　人群</Text>
+                <Box style={{ width: 76, height: 22, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 12, color: '#276FBF' }}>示意</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 1152, height: 196, background: '#F4F7FA', borderRadius: 8, padding: 14, flexDirection: 'column', gap: 10 }}>
+
+                <Box style={{ flexDirection: 'row', gap: 10 }}>
+                    <Box style={{ width: 120, height: 30, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>智能体</Text>
+                    </Box>
+                    <Box style={{ width: 120, height: 30, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>人群</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 268, height: 40, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>林岚　组织者</Text>
+                    </Box>
+                    <Box style={{ width: 268, height: 40, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>周宁　志愿者</Text>
+                    </Box>
+                    <Box style={{ width: 268, height: 40, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>陈晨　阅读访客</Text>
+                    </Box>
+                    <Box style={{ width: 268, height: 40, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#26816B' }}>许安　手作访客</Text>
+                    </Box>
+                </Box>
+
+                <Box style={{ flexDirection: 'row', gap: 12 }}>
+                    <Box style={{ width: 220, height: 38, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#FFFFFF' }}>应用到人群草稿</Text>
+                    </Box>
+                    <Box style={{ width: 110, height: 38, background: '#FFFFFF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 13, color: '#546779' }}>保存人群</Text>
+                    </Box>
+                </Box>
+
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 36 }}>
+
+            <Box style={{ width: 360, height: 150, background: '#EDF4FC', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>新建人群</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>点击「＋ 新建人群」，填写名称和用途</Text>
+            </Box>
+
+            <Box style={{ width: 360, height: 150, background: '#EDF4FC', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>管理成员</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>用「创建并管理 Agent」进入成员管理，选择四位公共 Agent</Text>
+            </Box>
+
+            <Box style={{ width: 360, height: 150, background: '#ECF7F2', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 30, height: 30, borderRadius: 6, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>应用并保存</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>点击「应用到人群草稿」，再按页面保存；重开后逐一核对名称、稳定身份和成员数量</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 1152, height: 70, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4, height: 42, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>同一公共 Agent 只展开一次；不同资源携带相同标识则明确拒绝</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>不能靠显示名称合并；四个姓名不同，也仍需核对四条独立记录。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 22</Text>
+    </Box>
+
+</Slide>

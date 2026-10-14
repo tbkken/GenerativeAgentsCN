@@ -1,0 +1,61 @@
+<Slide notes={`同一类模型在两个版本上的成绩，落差说明问题。
+
+在 Verified 上，前沿模型能拿到八成上下；在难度更高、做了抗污染设计的 Pro 版上，同一模型掉到四成五左右，中间差三十五个百分点。这不是退步，而是两个测试问的不是同一件事。
+
+原因有几层。第一层是污染：Verified 的题来自公开仓库，仓库和修复记录都在训练数据里，审计发现模型只看任务编号就能复述答案。第二层是题目本身有缺陷，最难的那批未解决问题里，接近六成的测试用例有问题。第三层是脚手架差异：Verified 混进了各家自调的框架，Pro 用统一脚手架，比的是模型本身。
+
+两个榜上的分数都是真实的，关键是它们测的不是同一件事。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>⑤　1.4.5　领先模型：同一模型，两个版本，两个世界</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>SWE-bench：80.9% 与 45.9%</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 340, fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>Verified（500 题，2026-02 退役）</Text>
+            <Box style={{ width: 668, height: 34, background: '#FFF4E6', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 540, height: 34, background: '#CB6B28', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 100, fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>80.9</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+            <Text style={{ width: 340, fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>Pro（1,865 题，统一脚手架）</Text>
+            <Box style={{ width: 668, height: 34, background: '#ECF7F2', borderRadius: 6, flexDirection: 'row' }}>
+                <Box style={{ width: 307, height: 34, background: '#26816B', borderRadius: 6 }} />
+            </Box>
+            <Text style={{ width: 100, fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>45.9</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '14px 22px', alignItems: 'center' }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.5 }}>同一个模型、同一类任务，差 35 个百分点——这不是退步，是两个测试问的不是同一件事</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 16 }}>
+            <Box style={{ width: 568, height: 176, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>落差从哪里来</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>题目来自公开仓库，修复记录早已进入训练数据；被审计发现，模型看任务编号就能复述标准答案。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>各家还能自调执行框架，让分数混入脚手架工程。</Text>
+            </Box>
+            <Box style={{ width: 568, height: 176, background: '#F4F7FA', borderRadius: 12, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Pro 做了什么不同</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>覆盖多种编程语言，包含从未公开的私有代码库，结构上阻断污染；统一脚手架与轮次上限，比的是模型本身。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 13, color: '#26816B' }}>但 Pro 也被列入了"有问题"名单，仍需带保留地读</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>27 / 36</Text>
+    </Box>
+
+</Slide>

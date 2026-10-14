@@ -1,0 +1,85 @@
+<Slide notes={`这三个来源回答的范围不一样，必须提前写清楚。
+
+导览牌只按包内主题表答复。如果有人问的主题不在表里，它要先澄清，不能自己编一个展品、一条捷径或者一项服务出来。介绍对象只解释自身那一个主题，不会泄漏别人的私人目标。讲解员温岚的回应内容和导览牌一致，但她从休息区开始活动，只帮实际遇到并且主动求助的人，不逐人广播。
+
+还有一条统一规则：所有回复都按真实请求 ID 返回，谁也不代替人物宣布他已经决定了什么。
+
+把范围划清楚，是为了保证「发现导览牌」带来的是真实信息，而不是被事先安排好的答案。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.3.3　相同 SOP，让位置通过真实信息起作用</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>各说各的那一份</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 508, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 15, color: '#276FBF' }}>回答范围先划清</Text>
+            <Box style={{ width: 508, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 14 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, color: '#20344B', flex: 1 }}>导览牌只回答主题表里已有的内容</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, color: '#20344B', flex: 1 }}>介绍对象只解释自身那一个主题</Text>
+                </Box>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                    <Box style={{ width: 34, height: 34, background: '#26816B', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, color: '#20344B', flex: 1 }}>讲解员只帮实际遇到并主动求助的人</Text>
+                </Box>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.5 }}>兴趣缺项先澄清：不编展品、不编捷径、不编服务。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 612, background: '#F4F7FA', borderRadius: 10, padding: '14px 20px', flexDirection: 'column', gap: 10 }}>
+
+            <Box style={{ height: 26, flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4 }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>来源</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>它只说什么</Text></Box>
+            </Box>
+
+            <Box style={{ height: 70, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>导览牌</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>按包内主题表答复；兴趣缺项先澄清，不编展品、捷径或服务</Text></Box>
+            </Box>
+
+            <Box style={{ height: 70, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 36, background: '#276FBF' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>介绍对象</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>只解释自身主题，不泄漏人物的私人目标；乙厅无真实手作器材</Text></Box>
+            </Box>
+
+            <Box style={{ height: 70, background: '#FFFFFF', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 36, background: '#26816B' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#26816B' }}>讲解员温岚</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>回应内容同导览牌；从休息区开始，不逐人广播</Text></Box>
+            </Box>
+
+            <Box style={{ height: 70, background: '#FFF4E6', borderRadius: 8, flexDirection: 'row', alignItems: 'center', gap: 14, padding: '0 14px' }}>
+                <Box style={{ width: 4, height: 36, background: '#CB6B28' }} />
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>统一回复规则</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>按真实请求 ID 回复，不代替人物宣布已决定，不提前泄漏主题</Text></Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.3 图书馆与展馆导览</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

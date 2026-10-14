@@ -1,0 +1,50 @@
+<Slide notes={`这几条命令围绕实验和运行。实验这边，验证命令检查一个实验目录或者实验包能不能通过，封存命令把实验目录写成正式的实验包。
+运行这边，创建命令只建立一个新的运行目录，启动命令在创建之后直接执行。状态命令读取一个运行或者运行包的摘要，暂停、取消、恢复分别对应三种不同的处置。
+有两处边界要记住：一是参数以当前解析器为准，不要按记忆里的旧接口去写；二是尖括号表示待替换的路径或者整数，不是可以直接粘贴的字面内容。
+本次案例的配置和运行仍然走浏览器界面，命令留着理解协议。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.13.6　CLI 延伸：准确区分各条命令</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>实验与运行命令</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 380, flexDirection: 'column', gap: 16 }}>
+
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>命令速查（实验与运行）</Text>
+
+            <Box style={{ width: 380, height: 140, background: '#EDF4FC', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>本次仍走浏览器</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.6 }}>案例的配置、运行与验收由浏览器完成，不能用这些命令绕过缺失的页面步骤。</Text>
+            </Box>
+
+            <Box style={{ width: 380, height: 140, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>参数以当前解析器为准</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.6 }}>不按记忆里的旧命令接口书写；尖括号表示待替换的路径或整数。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 740, background: '#F4F7FA', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', gap: 2 }}>
+            <Text style={{ fontSize: 14, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.95 }}>ga experiment validate ＜实验目录或 .gaexp＞</Text>
+            <Text style={{ fontSize: 14, color: '#276FBF', fontFamily: 'Consolas, monospace', lineHeight: 1.95 }}>ga experiment seal ＜实验目录＞ ＜输出 .gaexp＞</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.95 }}>ga run create ＜实验包＞ ＜新 Run 目录＞ [--steps N]</Text>
+            <Text style={{ fontSize: 14, color: '#26816B', fontFamily: 'Consolas, monospace', lineHeight: 1.95 }}>ga run start ＜实验包＞ ＜新 Run 目录＞ [--steps N]</Text>
+            <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.95 }}>ga run status ＜Run 目录或 .garun＞</Text>
+            <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.95 }}>ga run pause ＜Run 目录＞</Text>
+            <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.95 }}>ga run cancel ＜Run 目录＞</Text>
+            <Text style={{ fontSize: 14, color: '#546779', fontFamily: 'Consolas, monospace', lineHeight: 1.95 }}>ga run resume ＜Run 目录＞</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.13 导出、迁移与离线回放</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 24</Text>
+    </Box>
+
+</Slide>

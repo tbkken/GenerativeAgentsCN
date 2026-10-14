@@ -1,0 +1,67 @@
+<Slide notes={`一次读图请求其实只有四项要交代清楚。
+
+model 决定这次用哪个模型，而它必须支持视觉输入，否则图片这一项不会被处理。
+
+instructions 是本次的行为要求，这里写的是"描述可见信息，区分图片观察与未知事实"。这句话不是客套，它直接决定模型会不会把推测说成观察。
+
+input 是一条 user 消息，里面装两个内容项：input_text 提出要问的问题，input_image 给出要看的那张图。图片那一项用的是脚本生成的数据 URL。
+
+图像尺寸、细节设置和输入用量都会影响耗时和费用。宁可清晰、方向正确，也不要把关键文字压到认不出来。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.11.2　OpenAI API：把图片作为输入内容</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>一次读图请求的四个要素</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 4, height: 20, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28' }}>图片尺寸、细节设置与输入用量会影响耗时和费用；先用清晰、方向正确、信息充分的图。</Text>
+        </Box>
+
+        <Box style={{ background: '#F4F7FA', borderRadius: 10, padding: '18px 24px', flexDirection: 'column', gap: 3 }}>
+            <Text style={{ fontSize: 15, fontFamily: 'Consolas', color: '#20344B' }}>response = client.responses.create(</Text>
+            <Text style={{ fontSize: 15, fontFamily: 'Consolas', color: '#276FBF' }}>    model         = model　　# 必须支持视觉输入</Text>
+            <Text style={{ fontSize: 15, fontFamily: 'Consolas', color: '#276FBF' }}>    instructions  = '描述可见信息，区分图片观察与未知事实。'</Text>
+            <Text style={{ fontSize: 15, fontFamily: 'Consolas', color: '#20344B' }}>    input         = 一条 user 消息，content 里有两个内容项</Text>
+            <Text style={{ fontSize: 15, fontFamily: 'Consolas', color: '#20344B' }}>        type      = input_text　　列出图中的房间，说明哪些预约事实无法从图中判断</Text>
+            <Text style={{ fontSize: 15, fontFamily: 'Consolas', color: '#26816B' }}>        type      = input_image　图片内容，用脚本生成的 image_data_url</Text>
+            <Text style={{ fontSize: 15, fontFamily: 'Consolas', color: '#20344B' }}>)</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+
+            <Box style={{ width: 273, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>model</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>这次用哪个模型，必须是账户可用且支持视觉输入的模型。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>instructions</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>本次行为要求：只说可见信息，把图片观察和未知事实分开。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 148, background: '#EDF4FC', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>input_text</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>本次要问的问题：列出房间，并说明哪些预约事实图里答不了。</Text>
+            </Box>
+
+            <Box style={{ width: 273, height: 148, background: '#ECF7F2', borderRadius: 10, padding: '16px 18px', flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>input_image</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.55 }}>要看的那张图，内容来自脚本生成的 image_data_url。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.11 多模态与计算机交互</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,109 @@
+<Slide notes={`条件式 SOP 的完整走法。
+
+先读上下文：身份、虚拟时间、位置、上轮活动和外部观察。再检索与当前目标有关的私有记忆，感知附近实际存在的人物、空间和对象，并核实上轮的待确认事项。
+
+存在冲突或选择困难，就按需调用子 Skill 取得建议，并回判断。然后选择一个当前可执行的动作：需要移动便先移动，需要咨询便先发请求，尚未得到答复便保留不确定性。
+
+必要的待确认便签要写在动作之前，然后才调用一次 world-act。动作被成功接受，本轮立即结束，结果仍须整步提交核验；被拒绝才回到读取与检索，并受 max_hops 与无进展检查约束——SOP 绕不过内核上限。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.4.2　把 SOP 写成条件与证据</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>条件式 SOP：成功 world-act 后本轮结束</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', marginLeft: 238, alignItems: 'center' }}>
+            <Box style={{ width: 230, height: 52, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>存在冲突或选择困难？</Text>
+            </Box>
+            <Box style={{ width: 38, height: 52, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 310, height: 52, background: '#ECF7F2', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#26816B' }}>按需调用子 Skill　取得建议</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', marginLeft: 470, alignItems: 'center', height: 26 }}>
+            <Box style={{ width: 44, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>↓</Text>
+            </Box>
+            <Text style={{ fontSize: 13, color: '#546779' }}>建议并入下一步判断；无冲突则直接选择</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Box style={{ width: 200, height: 112, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>读取本轮上下文</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>身份、虚拟时间、位置、上轮活动、外部观察</Text>
+            </Box>
+            <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 112, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>检索与感知</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>私有记忆、现场人物空间，核实待确认事项</Text>
+            </Box>
+            <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 112, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>选择有依据的下一步</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>可移动、咨询、活动或等待</Text>
+            </Box>
+            <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 112, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>必要便签写在动作前</Text>
+                <Text style={{ fontSize: 13, color: '#546779', lineHeight: 1.5 }}>待确认事项先落盘，再提交动作</Text>
+            </Box>
+            <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, color: '#276FBF' }}>›</Text>
+            </Box>
+            <Box style={{ width: 200, height: 112, background: '#20344B', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>调用一次 world-act</Text>
+                <Text style={{ fontSize: 13, color: '#B5C7D8', lineHeight: 1.5 }}>动作由内核检查合法性后提交</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center', gap: 0, marginTop: 6 }}>
+            <Box style={{ width: 250, height: 64, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28' }}>动作被成功接受？</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 0 }}>
+                <Text style={{ fontSize: 12, color: '#26816B' }}>是</Text>
+                <Text style={{ fontSize: 18, color: '#26816B' }}>›</Text>
+            </Box>
+            <Box style={{ width: 310, height: 64, background: '#26816B', borderRadius: 8, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>立即结束本轮</Text>
+                <Text style={{ fontSize: 12, color: '#ECF7F2' }}>结果仍须整步提交核验</Text>
+            </Box>
+            <Box style={{ width: 44, height: 64, flexDirection: 'column', justifyContent: 'center', alignItems: 'center', gap: 0 }}>
+                <Text style={{ fontSize: 12, color: '#CB6B28' }}>否</Text>
+                <Text style={{ fontSize: 18, color: '#CB6B28' }}>›</Text>
+            </Box>
+            <Box style={{ width: 250, height: 64, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>回到读取与检索</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 88, background: '#FFF4E6', borderRadius: 10, flexDirection: 'row', alignItems: 'center', padding: '0 18px', gap: 14 }}>
+            <Box style={{ width: 4, height: 48, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>max_hops 与执行器的无进展检查约束调用循环</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>既限制工具循环，也累计整棵调用树的工具次数；检查完全重复与无进展调用；SOP 不可绕过限制。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.4 Brain 与 Skill</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>08 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,91 @@
+<Slide notes={`先把两项指标的定义说清楚。
+
+OSWorld 2.0 把 Agent 放进真实运行的 Ubuntu 虚拟机，通过截图、鼠标和键盘完成较长任务，再检查一组带权重的结果检查点。Partial score 汇总一项任务完成了多少；Strict pass rate 要求全部检查点都满足才算通过。
+
+读法很明确：按每个模型相邻的两根柱子读，不要把部分得分当成全部任务的通过率。
+
+三行数据出自同一份系统卡，日期 2026 年 9 月 1 日，题集是 2026 年 8 月任务发布版及后续修复，共 108 项任务，五次独立运行的 pass@1 取平均，1080p，每题最多 500 个动作。旧模型是在同一修订条件下重测的，报告明确说不能与较早任务文件的成绩比较。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.5.3　长任务的进步，要看"全部完成"而不只看局部得分</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>部分得分与严格通过率</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 10 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 40, height: 310, justifyContent: 'center' }}>
+
+            <Box style={{ width: 320, height: 310, flexDirection: 'row', gap: 24, justifyContent: 'center', alignItems: 'flex-end' }}>
+                <Box style={{ width: 100, flexDirection: 'column', gap: 6, justifyContent: 'flex-end' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', textAlign: 'center' }}>77.9</Text>
+                    <Box style={{ width: 100, height: 280, background: '#276FBF', borderRadius: 4 }} />
+                </Box>
+                <Box style={{ width: 100, flexDirection: 'column', gap: 6, justifyContent: 'flex-end' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', textAlign: 'center' }}>41.7</Text>
+                    <Box style={{ width: 100, height: 150, background: '#CB6B28', borderRadius: 4 }} />
+                </Box>
+            </Box>
+
+            <Box style={{ width: 320, height: 310, flexDirection: 'row', gap: 24, justifyContent: 'center', alignItems: 'flex-end' }}>
+                <Box style={{ width: 100, flexDirection: 'column', gap: 6, justifyContent: 'flex-end' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', textAlign: 'center' }}>72.9</Text>
+                    <Box style={{ width: 100, height: 262, background: '#276FBF', borderRadius: 4 }} />
+                </Box>
+                <Box style={{ width: 100, flexDirection: 'column', gap: 6, justifyContent: 'flex-end' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', textAlign: 'center' }}>36.1</Text>
+                    <Box style={{ width: 100, height: 130, background: '#CB6B28', borderRadius: 4 }} />
+                </Box>
+            </Box>
+
+            <Box style={{ width: 320, height: 310, flexDirection: 'row', gap: 24, justifyContent: 'center', alignItems: 'flex-end' }}>
+                <Box style={{ width: 100, flexDirection: 'column', gap: 6, justifyContent: 'flex-end' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF', textAlign: 'center' }}>75.4</Text>
+                    <Box style={{ width: 100, height: 271, background: '#276FBF', borderRadius: 4 }} />
+                </Box>
+                <Box style={{ width: 100, flexDirection: 'column', gap: 6, justifyContent: 'flex-end' }}>
+                    <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#CB6B28', textAlign: 'center' }}>39.6</Text>
+                    <Box style={{ width: 100, height: 142, background: '#CB6B28', borderRadius: 4 }} />
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ height: 2, background: '#B5C7D8' }} />
+
+        <Box style={{ flexDirection: 'row', gap: 40, height: 28, justifyContent: 'center' }}>
+            <Box style={{ width: 320, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Claude Fable 5.1</Text></Box>
+            <Box style={{ width: 320, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Claude Fable 5</Text></Box>
+            <Box style={{ width: 320, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Claude Opus 5</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 24, height: 26 }}>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 26, height: 14, background: '#276FBF', borderRadius: 3 }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>部分得分 Partial score</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                <Box style={{ width: 26, height: 14, background: '#CB6B28', borderRadius: 3 }} />
+                <Text style={{ fontSize: 15, color: '#546779' }}>严格通过率 Strict pass rate</Text>
+            </Box>
+            <Text style={{ fontSize: 14, color: '#546779' }}>指标单位：原报告数值（%）；柱高按数值等比绘制</Text>
+        </Box>
+
+        <Box style={{ height: 88, background: '#F7F3E8', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 52, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 3 }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>厂商自报，报告日期 2026-09-01，共 108 项任务，本书未复测</Text>
+                <Text style={{ fontSize: 15, color: '#546779' }}>任务版本为 2026 年 8 月发布版及后续修复；同一修订条件下重测，五次独立运行 pass@1 取平均，1080p，每题最多 500 个动作，最高推理努力等级；不可直接与较早任务文件的成绩比较。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.5 怎样说明"当前发展到什么水平"</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>12 / 24</Text>
+    </Box>
+
+</Slide>

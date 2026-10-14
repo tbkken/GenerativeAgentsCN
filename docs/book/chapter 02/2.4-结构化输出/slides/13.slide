@@ -1,0 +1,54 @@
+<Slide notes={`第三个问题是把合同放进请求。
+
+OpenAI 的 Responses 接口里，控制输出格式的参数放在 text 下面的 format 里。type 指定 json_schema，name 给这份合同起个名字，strict 决定要不要严格按合同生成，schema 就是合同本身。
+
+这四个参数各有分工：type 回答用哪种格式，name 是这次请求里这份合同的标识，strict 决定约束有多硬，schema 是具体规则。
+
+把这四件事分开讲，是因为很多同学在这里出问题——不是合同写错了，而是参数放错了位置。位置对了，模型才会真的按合同生成候选。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 300, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 44, height: 44, background: '#276FBF', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#FFFFFF' }}>③</Text>
+            </Box>
+            <Text style={{ fontSize: 15, color: '#546779' }}>2.4.3　OpenAI API：使用 Responses 的 text.format</Text>
+        </Box>
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>把合同放进请求</Text>
+        <Text style={{ fontSize: 17, color: '#546779' }}>四个参数各有分工，位置放对了，约束才会真的生效。</Text>
+    </Box>
+
+    <Box style={{ height: 340, background: '#EDF4FC', borderRadius: 14, padding: 24, justifyContent: 'center' }}>
+        <Box style={{ flexDirection: 'row', gap: 20 }}>
+            <Box style={{ width: 261, height: 238, background: '#FFFFFF', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontFamily: 'Consolas, monospace', fontWeight: 'bold', color: '#276FBF' }}>type</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>用哪种格式：这里取 json_schema。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"json_schema"</Text>
+            </Box>
+            <Box style={{ width: 261, height: 238, background: '#FFFFFF', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontFamily: 'Consolas, monospace', fontWeight: 'bold', color: '#276FBF' }}>name</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>这份合同在本次请求里的标识。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B' }}>"open_day_schedule"</Text>
+            </Box>
+            <Box style={{ width: 261, height: 238, background: '#FFFFFF', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontFamily: 'Consolas, monospace', fontWeight: 'bold', color: '#276FBF' }}>strict</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>是否严格按合同生成结果。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B' }}>True</Text>
+            </Box>
+            <Box style={{ width: 261, height: 238, background: '#FFFFFF', borderRadius: 10, padding: 18, flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 18, fontFamily: 'Consolas, monospace', fontWeight: 'bold', color: '#276FBF' }}>schema</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>合同本身，由脚本从文件读入。</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B' }}>schema</Text>
+            </Box>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 23</Text>
+    </Box>
+
+</Slide>

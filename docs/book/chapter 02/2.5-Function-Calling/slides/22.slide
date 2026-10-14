@@ -1,0 +1,63 @@
+<Slide notes={`配套程序里有三个保护参数，我建议把它们记住，因为它们代表了三种不同的"停"。
+
+第一个是八，最多八轮模型响应。模型每提出一次新的请求就算一轮。
+
+第二个是十六，最多十六条进入处理的工具请求。注意这个口径：计数在参数解析与执行前递增，也就是说，被拦下、被拒绝的请求一样计数。它不是成功执行的次数。
+
+第三个是三，同一个函数带着同一组参数累计出现第三次，就在执行前触发无进展保护，标记为未执行。为什么按"函数加参数"来数？因为这样连两个工具交替重复也能发现。
+
+达到上限就报告已经完成的内容和停止的原因。最后提醒一句：这些是配套程序的保护参数，不是 OpenAI 的统一限制。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.5.4　参数错误、工具失败与无进展</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个保护参数</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, background: '#F4F7FA', borderRadius: 10, padding: '10px 20px' }}>
+            <Box style={{ width: 3, height: 26, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779' }}>本章教学上限分开计数：模型响应与工具请求各记各的。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 36 }}>
+            <Box style={{ width: 360, height: 260, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>8</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>轮模型响应</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>最多八轮模型请求</Text>
+            </Box>
+            <Box style={{ width: 360, height: 260, background: '#EDF4FC', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.0 }}>16</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>条工具请求</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>十六条进入处理的工具请求</Text>
+            </Box>
+            <Box style={{ width: 360, height: 260, background: '#FFF4E6', borderRadius: 12, padding: 20, flexDirection: 'column', gap: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 88, fontWeight: 'bold', color: '#CB6B28', lineHeight: 1.0 }}>3</Text>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>次无进展拦截</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>同一函数与参数累计第三次</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center', gap: 36 }}>
+            <Box style={{ width: 360, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>计数在参数解析与执行前递增，不能当成成功执行次数。</Text>
+            </Box>
+            <Box style={{ width: 360, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>达到上限就报告已完成内容与停止原因。</Text>
+            </Box>
+            <Box style={{ width: 360, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '12px 16px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5, textAlign: 'center' }}>这是配套程序的保护参数，不是 OpenAI 的统一限制。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.5 Function Calling</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>22 / 26</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,53 @@
+<Slide notes={`证据段的六分钟怎么用，我给两个版本。
+
+如果已经有真实运行，优先挑一项闭环、一项未闭环的任务，分别定位入口请求、建议、移动、窗口回复和实际确认。某一类样本不存在，就明确说未观察到，不要额外重跑来凑展示类别，那会让听众误以为样本是自然出现的。两段片段讲完，再给全体任务的汇总，让局部和整体各归其位。
+
+如果还没有运行，就用完全相同的顺序展示待采集证据，用人工题演练判分，并且清楚说明没有结果。用同样的结构讲空状态，听众不会误以为漏讲了什么。
+
+最后六分钟交给解释与讨论，结束时留下报告入口和接收检查范围，让听众有机会自己回来核对。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.8.2　用一条问题线组织二十分钟</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>证据与讨论各占六分钟</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', gap: 14 }}>
+            <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>这两段最容易被挤掉</Text>
+            <Box style={{ width: 72, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.75, width: 500 }}>可它们恰恰决定听众信不信这个结果：证据决定他能看到什么，讨论决定他能追问到哪里。</Text>
+            <Box style={{ height: 140, background: '#FFF4E6', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>样本不存在就说未观察到</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>不额外重跑来凑展示类别，否则样本看起来像是自然出现的。</Text>
+            </Box>
+            <Box style={{ height: 140, background: '#F4F7FA', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#20344B' }}>结束时留下入口</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>给出报告入口与接收检查范围，让听众可以继续核对。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', gap: 14 }}>
+            <Box style={{ height: 250, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>8—14 分钟　证据</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>已有真实运行：优先选择一项闭环和一项未闭环的任务，分别定位入口请求、建议、移动、窗口回复与实际确认，随后显示全体任务汇总。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>尚无运行：以相同顺序展示待采集证据，使用人工题演练判分，并清楚说明没有结果。</Text>
+            </Box>
+            <Box style={{ height: 250, background: '#ECF7F2', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>14—20 分钟　解释与讨论</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>澄清多花的轮次是否值得；哪些失败可能来自消息截断或模型偏离；哪些问题现有教案没有回答。</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>讲稿不需要讲遍所有模块，第三章已有相应章节，可在附页给出定位。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.8 汇报与质疑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>09 / 26</Text>
+    </Box>
+
+</Slide>

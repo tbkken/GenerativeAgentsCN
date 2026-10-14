@@ -1,0 +1,61 @@
+<Slide notes={`固定条件之前，先要明确一件事：你比较的单位到底是什么。
+
+你可以比较两个裸模型在相同输入下的表现，比如同一个提示、同样的工具限制，看谁答得更好。你也可以比较两个已经配置好工具的完整应用，比如两个都能查预约、都能读写文件的助手，看谁的端到端表现更好。
+
+这两种问题都合理，没有哪种更高明。但报告必须说清楚比的是哪一种，否则读的人根本不知道那些差异意味着什么。
+
+如果比模型，就尽量固定材料、提示、工具、输出限制、采样设置，以及每项任务允许尝试的次数。如果比应用，那就把各自的检索、工具和执行策略一并记录下来，因为这些本来就是应用能力的一部分，不能当成噪声抹掉。
+
+还有一处要老实：不同服务对推理预算用的档位名称不一样，名字相同不代表算力相同，所以只能按各自可用的配置比较整体质量与成本，不要叫成严格等算力比较。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.6.3　第三步：固定比较条件</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>比较模型，还是比较应用</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Text style={{ fontSize: 17, color: '#546779' }}>两种比较单位都合理，但报告必须说清楚比的是哪一种。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+
+            <Box style={{ width: 564, height: 300, background: '#EDF4FC', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#276FBF' }}>比较两个裸模型</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>固定材料与提示版本</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>固定可用工具与输出限制</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>固定采样设置</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>固定每项任务允许的尝试次数</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>测到的是模型本身的表现。</Text>
+            </Box>
+
+            <Box style={{ width: 564, height: 300, background: '#ECF7F2', borderRadius: 12, padding: '24px 26px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 22, fontWeight: 'bold', color: '#26816B' }}>比较两个完整应用</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>记录各自的检索策略</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>记录各自可用的工具</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>记录各自的执行策略</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>这些差异不能当成噪声抹掉</Text>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.6 }}>测到的是整条链路的表现。</Text>
+            </Box>
+
+        </Box>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>多轮任务：每项评价从相同的初始状态开始，不让后一项继承前一项的答案，也不让第二个候选看到第一个候选的错误分析。</Text>
+
+        <Box style={{ height: 84, background: '#FFF4E6', borderRadius: 10, padding: '0 24px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 3, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#CB6B28', lineHeight: 1.6 }}>两个服务对推理预算采用不同档位名称，名称相同不代表计算量相同。可以按各自实际可用的配置比较整体质量与成本，但应避免称为严格等算力比较。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 27</Text>
+    </Box>
+
+</Slide>

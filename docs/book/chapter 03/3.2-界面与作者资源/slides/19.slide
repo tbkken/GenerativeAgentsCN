@@ -1,0 +1,56 @@
+<Slide notes={`最后一个知识块讲核对方式。同一份作者材料，需要从三个方向分别看。
+
+第一个方向是稳定 ID，它回答「这是哪一个资源」。第二个方向是内容摘要，用来辨识实际保存了什么内容。第三个方向是实验装配，它指定人物在青禾的初始位置和已经知道的空间。
+
+这三条分支回答的是不同的问题，不能互相代替。改名不是发布新版本，保存也不是建立一个业务 Revision。代码里的并发控制字段，是为了避免覆盖同时发生的编辑，不能据此发明出「发布后自动跟随最新」这种资源关系。
+
+所以修改人物资料和改变它的落点，要在各自对应的范围里分别确认。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Text style={{ fontSize: 15, color: '#546779' }}>3.2.6　稳定身份、直接编辑与整理资源</Text>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>3.2.6</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>同一份材料，要分别核对</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>身份、内容、装配回答三个不同的问题。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'column', alignItems: 'center', gap: 12 }}>
+            <Box style={{ width: 480, height: 56, background: '#F7F3E8', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B' }}>同一份作者材料</Text>
+            </Box>
+            <Box style={{ width: 480, height: 28, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+            <Box style={{ flexDirection: 'row', gap: 24 }}>
+                <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>稳定 ID</Text>
+                </Box>
+                <Box style={{ width: 300, height: 56, background: '#EDF4FC', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#276FBF' }}>内容摘要</Text>
+                </Box>
+                <Box style={{ width: 300, height: 56, background: '#ECF7F2', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 15, color: '#26816B' }}>实验装配</Text>
+                </Box>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.2 认识界面与作者资源</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 22</Text>
+    </Box>
+
+</Slide>

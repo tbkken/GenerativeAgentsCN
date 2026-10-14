@@ -1,0 +1,82 @@
+<Slide notes={`这个核对子技能的能力边界同样重要，因为它决定了我们到底在测什么。
+
+它只读输入里已经有的规则，不新增任何未知条件。也就是说，白露那两条没传过来，它不会因为「教室里通常怎么安排」就补一条上去。
+
+它不写记忆。核对的结果不会写回任何一个角色的记忆里，角色的知识来源仍然是真实发言。
+
+它也不执行任何世界动作：不移动、不交付，只是把缺口和待询问的问题返回给主持人。
+
+最后一条最要紧：它不猜教师答案。没有收到白露的两条限制，它就老实标缺口，而不是从标准答案倒推。
+
+这样两组之间差别才干净：对照段多出来的是一次显式核对，而不是更多正确答案、更多时间或者更强的模型。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.5.4　唯一变化：是否显式调用核对子 Skill</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>子 Skill 不做什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ width: 1152, height: 64, background: '#EDF4FC', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>只列输入中已有的规则，逐项标出满足、冲突或缺信息，并说明有依据的推导</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 148, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>增</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不新增未知条件</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>输入里没有的规则不补进来；「现实中通常这样」不构成条件</Text>
+            </Box>
+            <Box style={{ width: 560, height: 148, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>记</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不写记忆</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>核对结果不写回任何角色的记忆；知识仍来自真实发言</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ width: 560, height: 148, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 34, height: 34, background: '#276FBF', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>动</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>不执行世界动作</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>不移动、不交付，只把待询问的问题交回主持人</Text>
+            </Box>
+            <Box style={{ width: 560, height: 148, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 8 }}>
+                <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+                    <Box style={{ width: 34, height: 34, background: '#CB6B28', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                        <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>猜</Text>
+                    </Box>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>不猜教师答案</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.6 }}>没收到白露两条限制就标缺口，不倒推标准答案</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 66, background: '#F4F7FA', borderRadius: 10, padding: '12px 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#B5C7D8' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5, flex: 1 }}>两组都知道共有四条私有限制，也都能追问；对照只多一次显式核对，不多正确答案、时间或更强模型</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.5 小组协作学习：把分散条件变成有依据的结论</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>13 / 26</Text>
+    </Box>
+
+</Slide>

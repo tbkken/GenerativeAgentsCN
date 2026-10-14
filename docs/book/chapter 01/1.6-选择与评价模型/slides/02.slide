@@ -1,0 +1,104 @@
+<Slide notes={`选模型这件事，最怕的是从结论开始。看到某个榜单第一，就先认定它，然后再去找理由。往回收一步，把选择变成七个可以依次完成的知识块。
+
+先把目标写成可核验的结果。写一份好方案这句话太软，它可以指文字好看，也可以指方案已经被相关系统保存。先把任务限定死，检查项才立得住。接着准备题目，八项练习用来改提示和评分规则，二十四项评价在开始比较之前冻结，两者不能混在一起算成绩。
+
+然后固定条件。比较的是两个裸模型，还是两个已经配好工具的应用，这个必须说清楚，否则差异是从哪来的就讲不清。再往后看失败分类，而不是只看总分。最后按任务下结论，并为活动助手和仿真角色分别写一份选择说明。七个知识块之后，有五道练习，把方法落到自己手上。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>本节导读</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>七个知识块，走完一次完整的选择</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 40 }}>
+
+        <Box style={{ width: 340, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+            <Text style={{ fontSize: 25, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>它凭什么适合我这件事？</Text>
+            <Box style={{ width: 56, height: 3, background: '#26816B' }} />
+            <Text style={{ fontSize: 17, color: '#546779', lineHeight: 1.75 }}>从把目标写清楚开始，一路走到写下一份别人能看懂的选择说明。前五块是五步做法，第六块把它们装进本书的两类任务里，第七块交给你自己动手。</Text>
+        </Box>
+
+        <Box style={{ flex: 1, flexDirection: 'column', justifyContent: 'center', gap: 6 }}>
+
+            <Box style={{ height: 66, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>01</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>把目标写成可核验的结果</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>写清做什么、不做什么，再把它转成五项检查项</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>02</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>准备小而有区分度的任务集</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>八项练习可以反复改，二十四项评价在比较前冻结</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>03</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>固定比较条件</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>先说明比的是裸模型还是完整应用，再固定其余条件</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>先看错误分布，再看总分</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>同样答对二十项，失败类型可能完全不同</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>05</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>按任务选择，而不是按一个综合分选择</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>先定不可违反的条件，再比每项成功任务的花费</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#26816B', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>06</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>为两类任务分别写选择说明</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>活动助手与仿真角色，任务不同，要看的证据也不同</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 66, flexDirection: 'row', gap: 16, alignItems: 'center' }}>
+                <Box style={{ width: 40, height: 40, borderRadius: 8, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#FFFFFF' }}>07</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 3 }}>
+                    <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>章末练习与参考思路</Text>
+                    <Text style={{ fontSize: 15, color: '#546779' }}>五道练习，把这一套方法落到自己的任务上</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.6 为自己的任务选择模型</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>02 / 27</Text>
+    </Box>
+
+</Slide>

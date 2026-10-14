@@ -1,0 +1,59 @@
+<Slide notes={`这里有一条必须写明说出来的实现边界。
+
+当前取消路由做的事情是写入一个文件标志，Scheduler 在步骤边界检查这个控制信号。也就是说，取消能在步骤之间生效，这一点是可以从代码里核查到的。
+
+但前端取消提示里写着“立即终止、丢弃未提交步骤”，这句话比刚才那条执行链能证明的行为要强。项目合同要求的是取消能够中断模型等待，而不只是在步骤结束的时候检查一遍。这一项应作为独立待验收问题保存；我没有做长请求取消实验，也没有修改产品。
+
+两条恢复条件也要记住：Web 的恢复接口允许已暂停或者失败的运行恢复，已经取消的运行不在其中；对于还没有提交过检查点的第 0 步情况，不能预设页面一定提供继续按钮。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.10.5　取消请求与「立即停止」需要分别验证</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>取消的实现边界</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 712, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 712, height: 132, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>已核查的执行链</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>取消路由写入文件标志，Scheduler 在步骤边界检查控制信号；这一步可以从代码里核查到。</Text>
+            </Box>
+
+            <Box style={{ width: 712, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>提示文字比执行链说的话更强</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>前端提示里“立即终止、丢弃未提交 Step”的表述，超出了这条执行链能够证明的行为范围。</Text>
+            </Box>
+
+            <Box style={{ width: 712, height: 132, background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>合同要求：能中断模型等待</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>项目合同要求取消能够中断模型等待，而不只是在步骤结束时检查一遍，这一项应作为独立待验收问题保存。</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 408, flexDirection: 'column', gap: 12 }}>
+
+            <Box style={{ width: 408, height: 196, background: '#EDF4FC', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>哪条路径可以恢复</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>Web 恢复接口允许 PAUSED 或 FAILED，并要求存在可恢复边界；已经取消的 Run 不在这条页面恢复路径中。</Text>
+            </Box>
+
+            <Box style={{ width: 408, height: 196, background: '#F4F7FA', borderRadius: 10, padding: '20px 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>Step 0 没有检查点</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.65 }}>还没有提交过检查点的第 0 步情况，不能预设页面一定提供继续按钮。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.10 暂停、取消、续跑与重跑</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>21 / 24</Text>
+    </Box>
+
+</Slide>

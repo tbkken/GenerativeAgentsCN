@@ -1,0 +1,43 @@
+<Slide notes={`同一个工具字段，可以落在两种完全不同的执行位置上。
+
+托管模式把命令交给服务方的容器，读者不用操心运行环境，但也拿不到自己机器上的文件。本地模式把命令交回给调用者的执行环境，能碰到本机磁盘，代价是应用要自己完成请求、执行和回传的完整回路。
+
+这两种位置不是前后两个阶段，而是两种选择。选了哪一种，就要按那一种去核对证据。
+
+方向还是那句话：先看清命令在哪台机器上跑，再谈它跑出了什么结果。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 18 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>⑤</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.7.5</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>OpenAI 原生 Shell 工具的两种位置</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>是 Responses 的工具能力；两种位置，两种证据口径。</Text>
+
+        <Box style={{ marginTop: 10, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 16 }}>
+            <Box style={{ width: 496, height: 92, background: '#EDF4FC', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#276FBF' }}>托管 container_auto</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>在 OpenAI 管理的容器中执行</Text>
+            </Box>
+            <Box style={{ width: 44, height: 92, justifyContent: 'center', alignItems: 'center' }}><Text style={{ fontSize: 26, color: '#276FBF' }}>›</Text></Box>
+            <Box style={{ width: 496, height: 92, background: '#ECF7F2', borderRadius: 8, flexDirection: 'column', gap: 6, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#26816B' }}>本地 local</Text>
+                <Text style={{ fontSize: 14, color: '#546779' }}>由调用者的执行环境处理请求</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.7 CLI 与 Shell</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 24</Text>
+    </Box>
+
+</Slide>

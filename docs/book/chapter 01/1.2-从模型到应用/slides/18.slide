@@ -1,0 +1,96 @@
+<Slide notes={`四种方式一个一个看。
+
+开放权重，说的是可以按相应条件获得参数文件。但这里有一个很大的错觉要拆掉：拿到参数文件，不等于训练资料和全部权利都开放。要核对的是许可、训练资料的开放程度，以及使用权利的边界在哪里。
+
+本地部署，把推理放在自己控制的设备或环境里。它看上去解决了数据外流的问题，但要核对的东西反而更多：硬件够不够、内存够不够、安装和维护谁来做、数据在里面怎么流动、实测性能到底怎么样。
+
+云 API，由远程服务处理请求。要核对接口有哪些限制、数据是怎么约定的、网络条件如何、费用怎么算。
+
+混合使用，是把不同任务分给不同环境。这时候要分别看每一类任务的质量、数据要求和总成本。
+
+最后提醒一句：本地不天然更快、更准、更便宜。这些都要实测。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.2.5　开放权重、本地部署与云服务</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>四种方式，各要核对什么</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Box style={{ flexDirection: 'row', gap: 32 }}>
+            <Box style={{ flex: 45 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>概念　·　说明了什么</Text></Box>
+            <Box style={{ flex: 55 }}><Text style={{ fontSize: 15, fontWeight: 'bold', color: '#546779' }}>还要核对什么</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 92 }}>
+
+            <Box style={{ flex: 45, flexDirection: 'row', height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#26816B' }} />
+                <Box style={{ width: 108 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>开放权重</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>可以按相应条件获得参数文件</Text></Box>
+            </Box>
+
+            <Box style={{ flex: 55, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>许可、训练资料与使用权利开放到何种程度</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 92 }}>
+
+            <Box style={{ flex: 45, flexDirection: 'row', height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#26816B' }} />
+                <Box style={{ width: 108 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>本地部署</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>在自己控制的设备或环境中推理</Text></Box>
+            </Box>
+
+            <Box style={{ flex: 55, height: 92, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>硬件、内存、安装、维护、数据流与实测性能</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 92 }}>
+
+            <Box style={{ flex: 45, flexDirection: 'row', height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Box style={{ width: 108 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>云 API</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>由远程服务处理请求</Text></Box>
+            </Box>
+
+            <Box style={{ flex: 55, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>接口限制、数据约定、网络条件与费用</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 32, height: 92 }}>
+
+            <Box style={{ flex: 45, flexDirection: 'row', height: 92, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 14 }}>
+                <Box style={{ width: 4, height: 54, background: '#276FBF' }} />
+                <Box style={{ width: 108 }}><Text style={{ fontSize: 19, fontWeight: 'bold', color: '#20344B' }}>混合使用</Text></Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>不同任务分配给不同环境</Text></Box>
+            </Box>
+
+            <Box style={{ flex: 55, height: 92, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.55 }}>每类任务的质量、数据要求与总成本</Text>
+            </Box>
+
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 14, background: '#FFF4E6', borderRadius: 10, padding: '14px 20px', alignItems: 'center' }}>
+            <Box style={{ width: 3, height: 34, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, color: '#CB6B28', lineHeight: 1.6 }}>开放权重不等于训练资料和全部权利都开放；本地也不天然更快、更准或更便宜。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.2 从模型到应用</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 22</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,73 @@
+<Slide notes={`恢复的时候，要检查的东西远不止人物坐标。
+
+第一是请求身份：这个 request_id 对应的到底是哪一次咨询，不能被当成另一次。
+
+第二是待投递回复：对象已经产生但目标还没收到的那些内容，必须还挂在待投递的位置上。
+
+第三是对象状态：公告栏这些对象走到哪一步了。
+
+第四是会话，第五是记忆进度——人物自己的记忆走到哪一轮。
+
+这五项一起核对，才能从一致的提交边界继续走下去。目标是既不重复投递，也不永久漏掉。
+
+还有一点特别重要：验证必须用同一个 Run、新的 Attempt 的真实记录，不能用一次新建 Run 的成功来代替。新 Run 成功，证明不了旧 Run 能恢复。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.3　从一条咨询看跨步反馈</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>恢复要核对的不只是坐标</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+        <Text style={{ fontSize: 15, color: '#546779' }}>五项一起看，才能从一致的提交边界继续。</Text>
+
+        <Box style={{ flexDirection: 'row', gap: 18 }}>
+            <Box style={{ width: 216, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>请求身份</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>是哪一次咨询</Text>
+            </Box>
+            <Box style={{ width: 216, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>待投递回复</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>回复了但还没送到</Text>
+            </Box>
+            <Box style={{ width: 216, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>对象状态</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>公告栏走到哪一步</Text>
+            </Box>
+            <Box style={{ width: 216, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>会话</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>会话内容与轮次</Text>
+            </Box>
+            <Box style={{ width: 216, height: 96, background: '#EDF4FC', borderRadius: 10, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>记忆进度</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>人物记忆到哪一轮</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', gap: 24 }}>
+            <Box style={{ width: 564, height: 196, background: '#ECF7F2', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>从一致的提交边界继续</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>不能把已交付的消息再发一次，也不能把未交付的消息永久漏掉。恢复的目标是「不重不漏」。</Text>
+            </Box>
+            <Box style={{ width: 564, height: 196, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>用什么记录来验证</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7 }}>必须是同一个 Run、新的一次 Attempt 的真实记录。一次新建 Run 的成功，替代不了旧运行能恢复。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ height: 72, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 46, background: '#546779' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6, flex: 1 }}>只比较人物坐标是不够的；请求、待投递回复、对象状态、会话与记忆进度都要对得上。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>14 / 29</Text>
+    </Box>
+
+</Slide>

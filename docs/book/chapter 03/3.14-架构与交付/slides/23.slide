@@ -1,0 +1,79 @@
+<Slide notes={`把这三个问题落成能动手的实验，关键在「只改什么」。
+
+公告栏放远一些这一组，可测的是信息更新延迟；要改的只有公告栏在地图上的位置，人物、时间、视野都保持原样。
+
+志愿者更主动询问这一组，可测的是按旧安排行动的比例；要改的是志愿者的咨询倾向，其他条件不动。
+
+视野与注意力这一组，可测的是咨询渠道的选择分布；要改的是视野半径和注意力相关参数。
+
+每组都要先给出可测量的假设，只改变清楚的因素，保留其他条件，也要保留失败的 Run——失败的运行同样是一条证据。
+
+原实验封存之后，创建新的独立实验来记录这次的修改内容，而不是在旧包上直接改。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.14.6　从已有能力走向新场景</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>三个可以动手的问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+
+        <Box style={{ width: 364, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B', lineHeight: 1.4 }}>先提假设，{'\n'}再动一个因素</Text>
+            <Box style={{ width: 64, height: 4, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.7, width: 364 }}>三个方向都从已经跑通的能力出发，只需要改一处参数或一处位置，剩下的一律保持原样。</Text>
+            <Box style={{ background: '#F7F3E8', borderRadius: 10, padding: '14px 18px', flexDirection: 'column', gap: 4 }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#20344B' }}>失败 Run 也保留</Text>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>保留其他条件与失败运行，才算是一次可比较的改动。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 768, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ width: 768, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 290, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>把公告栏放远一些</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>可测的是信息更新延迟</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>走过去要更多步，消息会不会更晚被看到？</Text></Box>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 13, color: '#276FBF' }}>只改公告栏位置</Text></Box>
+            </Box>
+
+            <Box style={{ width: 768, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 64, background: '#276FBF' }} />
+                <Box style={{ width: 290, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>志愿者更主动地询问</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>可测的是按旧安排行动的比例</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>多问一句，会不会少一些照着旧安排走的情况？</Text></Box>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 13, color: '#276FBF' }}>只改询问倾向</Text></Box>
+            </Box>
+
+            <Box style={{ width: 768, height: 108, background: '#F4F7FA', borderRadius: 10, padding: '0 20px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 64, background: '#26816B' }} />
+                <Box style={{ width: 290, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>视野与注意力降低</Text>
+                    <Text style={{ fontSize: 14, color: '#546779' }}>可测的是咨询渠道的选择分布</Text>
+                </Box>
+                <Box style={{ flex: 1 }}><Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.6 }}>看得更少之后，会更依赖面对面，还是更依赖公告？</Text></Box>
+                <Box style={{ width: 150 }}><Text style={{ fontSize: 13, color: '#26816B' }}>只改视野与注意力</Text></Box>
+            </Box>
+
+            <Box style={{ width: 768, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 4, height: 60, background: '#CB6B28' }} />
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6, flex: 1 }}>原实验封存后，创建新的独立实验记录修改内容；这不是在旧包上建立业务 Revision，也不是覆盖旧运行证据。</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.14 沿着一次行动理解架构，整理可交付的实验</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>23 / 29</Text>
+    </Box>
+
+</Slide>

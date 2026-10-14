@@ -1,0 +1,69 @@
+<Slide notes={`把委托改写成一句能被回答的话，靠的不是措辞漂亮，而是把三样东西写清楚。
+
+共同条件要写全：四项咨询需求、服务分工与人物信息、观察窗口。唯一改变的地方要写准：只把入口咨询台的一次窗口建议，换成缺少关键目的时先澄清。结果的用途也要写明，用来讨论信息缺失与服务策略，不是评判工作人员的表现。
+
+还有一条边界要守住：不能拿这个教学实验推定现实大厅的业务处理效率。
+
+改写时有三条不能松。保留第四章的四项咨询需求，不改变其中的正确窗口映射，不把评分答案分发给来访者。如果确实需要改任务，那就要当作自己的新设计，重新说明分母、共同条件和评价范围。这样写，结果和预期不一样，也是一项发现。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.10.2　第一份交付：问题和材料</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把委托改写成可回答的问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', alignItems: 'center', gap: 32 }}>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>从委托目标到研究问题</Text>
+
+            <Box style={{ width: 620, height: 80, background: '#F4F7FA', borderRadius: 10, padding: '14px 22px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>为研讨准备一份可接手的仿真项目，比较直接建议与先澄清目的这两种入口咨询策略，成果用于教学中的方案探索。</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#276FBF' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 150, background: '#EDF4FC', borderRadius: 10, padding: '18px 22px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 16, color: '#20344B', lineHeight: 1.75 }}>在给定的四项咨询需求、服务分工、人物信息与观察窗口下，把入口咨询台的一次窗口建议替换为缺少关键目的时先澄清，咨询闭环、错误窗口请求与咨询负担会出现什么差异？</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 30, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 20, color: '#26816B' }}>↓</Text>
+            </Box>
+
+            <Box style={{ width: 620, height: 56, background: '#ECF7F2', borderRadius: 8, padding: '0 20px', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>写成可回答的问题之后，项目才有判据，也才允许结果与预期不一样</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>改写时必须守住的三条边界</Text>
+
+            <Box style={{ width: 500, height: 96, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>需求与映射不动</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>保留第四章四项咨询需求，不改变其中的正确窗口映射</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 96, background: '#FFF4E6', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#CB6B28' }}>评分答案不外发</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>不把评分答案分发给来访者，角色只依据实际信息行动</Text>
+            </Box>
+
+            <Box style={{ width: 500, height: 96, background: '#F4F7FA', borderRadius: 10, padding: '16px 20px', flexDirection: 'column', gap: 6, justifyContent: 'center' }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>改任务等于新设计</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.45 }}>重新说明分母、共同条件与评价范围，不默默替换条件</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.10 章末综合项目</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>07 / 31</Text>
+    </Box>
+
+</Slide>

@@ -1,0 +1,58 @@
+<Slide notes={`最后留一个练习。
+
+有人建议：把窗口分工写进所有来访者的目标里，这样保证没有人走错。这听起来是在提高成功率，实际上是在改研究条件——两组来访者一开始就都知道答案，澄清策略这个变量就没了。你要能说明它改变了什么，也要能指出正确的分工应该留在哪些材料里：咨询台、两个窗口的根 Skill，以及余真的资料，而不是来访者的目标。
+
+第二个动作是请另一位读者只看分配表，看他能不能指出缺口，比如第五个人被遗漏、把对象当成 Agent、两组用了不同的图片或视野。
+
+能指出缺口，正是作者评审的价值。但要注意，评审通过不等于运行验收通过，两件事不能互相替代。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>5.3.6　用状态表避免「文件有了就是完成了」</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>把缺口指出来，也是评审</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ width: 1152, height: 130, background: '#F7F3E8', borderRadius: 12, padding: '22px 28px', flexDirection: 'column', gap: 8, justifyContent: 'center' }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>练习</Text>
+            <Text style={{ fontSize: 21, fontWeight: 'bold', color: '#20344B', lineHeight: 1.35 }}>有人建议把窗口分工写进所有来访者的目标，保证无人走错</Text>
+            <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.5 }}>先判断它会改变什么，再说明正确分工应该留在哪些材料中。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 1030 }}>说明这样写会怎样改变研究条件：两组来访者一开始就知道了答案。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 1030 }}>指出正确分工应该留在咨询台、两个窗口的根 Skill 以及余真的资料里。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 84, background: '#F4F7FA', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 32, height: 32, borderRadius: 6, background: '#276FBF', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#20344B', width: 1030 }}>请另一位读者只看分配表，找出「第五个人被遗漏」「对象当成 Agent」等问题。</Text>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 26px', flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+            <Box style={{ width: 4, height: 44, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28', width: 1076 }}>能够指出缺口，正是作者评审的价值；它仍不是运行验收通过。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>5.3 作者资源与信息边界</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>26 / 27</Text>
+    </Box>
+
+</Slide>

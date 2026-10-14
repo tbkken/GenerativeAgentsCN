@@ -1,0 +1,89 @@
+<Slide notes={`请求发回来以后，处理顺序很重要，分三步。
+
+第一步看响应状态。response.status 不等于 completed 就直接抛错，因为拿到的可能是被截断的结果。
+
+第二步看有没有拒绝。拒绝的内容会出现在 output 的 refusal 部分，要显式判断并抛错——拒绝的文字不能当作排程结果。
+
+第三步才是解析 JSON，用 json.loads 把 output_text 变成结构化数据。
+
+还有一条纪律：中断时不要自己补括号、补引号硬凑成合法 JSON，那不是模型的输出。
+
+完整实现还应该保留 incomplete_details 和请求信息，用来区分预算不足、内容受限还是别的异常。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>2.4.3　使用 Responses 的 text.format</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>先看状态与拒绝，再解析</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'row', gap: 32 }}>
+
+        <Box style={{ width: 500, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>三步，顺序不能反</Text>
+
+            <Box style={{ height: 118, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>1</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>先看响应状态</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>status 不是 completed，就不要往下走。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#FFF4E6', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#CB6B28', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>2</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>再看有没有拒绝</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>拒绝文字不能充当排程，要显式抛错。</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ height: 118, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+                <Box style={{ width: 40, height: 40, background: '#276FBF', borderRadius: 20, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 18, fontWeight: 'bold', color: '#FFFFFF' }}>3</Text>
+                </Box>
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 4 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>最后解析 JSON</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>用 output_text 解析，不自行补括号凑合法。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+        <Box style={{ width: 620, flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
+
+            <Box style={{ height: 280, background: '#F4F7FA', borderRadius: 12, padding: '20px 22px', flexDirection: 'column', justifyContent: 'center' }}>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B', lineHeight: 1.85 }}>{'if response.status != "completed":'}</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#CB6B28', lineHeight: 1.85 }}>{'    raise RuntimeError(f"响应未完成：{response.status}")'}</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B', lineHeight: 1.85 }}>{'for item in response.output:'}</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B', lineHeight: 1.85 }}>{'    if item.type == "message":'}</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B', lineHeight: 1.85 }}>{'        for part in item.content:'}</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#20344B', lineHeight: 1.85 }}>{'            if part.type == "refusal":'}</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#CB6B28', lineHeight: 1.85 }}>{'                raise RuntimeError("模型返回拒绝，未生成候选方案")'}</Text>
+                <Text style={{ fontSize: 14, fontFamily: 'Consolas, monospace', color: '#276FBF', lineHeight: 1.85 }}>{'schedule = json.loads(response.output_text)'}</Text>
+            </Box>
+
+            <Box style={{ height: 120, background: '#EDF4FC', borderRadius: 10, padding: '16px 20px', flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+                <Box style={{ width: 4, height: 68, background: '#276FBF' }} />
+                <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>完整实现还要留证据</Text>
+                    <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>保留可获得的 incomplete_details 与请求信息，用于区分输出预算不足、内容限制和其他异常。</Text>
+                </Box>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.4 结构化输出</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>15 / 23</Text>
+    </Box>
+
+</Slide>

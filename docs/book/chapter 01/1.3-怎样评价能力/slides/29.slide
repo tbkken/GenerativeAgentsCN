@@ -1,0 +1,90 @@
+<Slide notes={`把两个区间画在同一条轴上，差别一眼就看得出来。
+
+左边那条是八道对十道。在独立、来自同一目标任务总体这样的二项抽样假设下，它对应的百分之九十五区间大约是四十九到九十四点三。这个区间宽得几乎覆盖了一半的可能，意思是这批数据几乎没把答案框住。
+
+右边那条是八十道对一百道。同样的算法，区间大约是七十一到八十六点七，窄了很多。样本增加使区间收窄，所以“测了多少道题”和“测出来是多少”一样重要。
+
+百分之九十五置信区间的含义是：按相同的抽样与计算方式反复做很多次，长期大约有百分之九十五的这类区间会覆盖总体真值。它不是下一题答对的概率。若这十道题都取自同一份通知、内容高度相关，更不能凭这个公式宣称已精确测出实际能力。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>1.3.9　分数有多稳，证据能说明多远</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>同为 80%，两段区间不一样宽</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 16 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 28 }}>
+            <Box style={{ width: 110 }} />
+            <Text style={{ fontSize: 14, color: '#546779' }}>在正文的独立二项抽样假设下，95% Wilson 区间的宽度对比</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'flex-end', height: 24 }}>
+            <Box style={{ width: 110 }} />
+            <Box style={{ width: 820, flexDirection: 'row', justifyContent: 'space-between' }}>
+                <Text style={{ fontSize: 13, color: '#546779' }}>0%</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>25%</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>50%</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>75%</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>100%</Text>
+            </Box>
+            <Box style={{ width: 160 }} />
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 62 }}>
+            <Box style={{ width: 110, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF' }}>8 / 10</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>点估计 80%</Text>
+            </Box>
+            <Box style={{ width: 820, flexDirection: 'row', height: 44 }}>
+                <Box style={{ width: 402 }} />
+                <Box style={{ width: 371, height: 44, background: '#276FBF', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 14, color: '#FFFFFF' }}>49.0% — 94.3%</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+            </Box>
+            <Box style={{ width: 160, justifyContent: 'center', paddingLeft: 16 }}>
+                <Text style={{ fontSize: 14, color: '#276FBF' }}>宽 45.3 个点</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', height: 62 }}>
+            <Box style={{ width: 110, flexDirection: 'column', gap: 2 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B' }}>80 / 100</Text>
+                <Text style={{ fontSize: 13, color: '#546779' }}>点估计 80%</Text>
+            </Box>
+            <Box style={{ width: 820, flexDirection: 'row', height: 44 }}>
+                <Box style={{ width: 583 }} />
+                <Box style={{ width: 128, height: 44, background: '#26816B', borderRadius: 6, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ fontSize: 13, color: '#FFFFFF' }}>71.1—86.7</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+            </Box>
+            <Box style={{ width: 160, justifyContent: 'center', paddingLeft: 16 }}>
+                <Text style={{ fontSize: 14, color: '#26816B' }}>宽 15.6 个点</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 70, background: '#F4F7FA', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 40, background: '#276FBF' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>两条区间都以 80% 为中心，但一条散得几乎覆盖一半可能，一条收得很紧——样本增加使区间收窄。</Text>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16, height: 120, background: '#FFF4E6', borderRadius: 10, padding: '0 22px' }}>
+            <Box style={{ width: 4, height: 76, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 5 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#CB6B28' }}>95% 置信区间说的是长期覆盖率</Text>
+                <Text style={{ fontSize: 15, color: '#546779', lineHeight: 1.55 }}>按相同抽样与计算方式反复进行，长期约 95% 的这类区间会覆盖总体真值。它不是说下一题有 95% 的概率答对；若十题全取自同一份通知、内容高度相关，更不能仅凭独立抽样公式宣称已精确测出实际能力。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.3 怎样把“聪明”变成可测量的问题</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>29 / 31</Text>
+    </Box>
+
+</Slide>

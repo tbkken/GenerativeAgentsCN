@@ -1,0 +1,62 @@
+<Slide notes={`先看前两类，它们最容易被误判成故障。
+
+第一类是正确的边界处理。请求超过硬上限的视野时，运行时会把实际半径限制在上限以内；对不可合法交互的对象构造目标，或者在同一个轮次里第二次提交世界动作，可能被明确拒绝。这些拒绝会被记录成质量告警，但不自动等于系统存在缺陷。所以要去看真实的 MCP 输入和返回，把范围裁剪和错误拒绝分开。
+
+第二类是行为问题。许安已经确认手作改到十点半，却仍在此前按旧安排正式开始；周宁反复检索同样的空记忆；Brain 达到循环上限以后回退到等待。这些情况下系统可能在正常运行，需要分析的是 SOP、输入或模型决策。改动方案要形成新实验，原 Run 保留。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>3.11.5　分清四类问题再处理</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>边界处理与行为问题</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 20px', gap: 16 }}>
+            <Box style={{ width: 4 }} />
+            <Box style={{ width: 240 }}><Text style={{ fontSize: 14, color: '#546779' }}>这类问题</Text></Box>
+            <Box style={{ width: 430 }}><Text style={{ fontSize: 14, color: '#546779' }}>典型情形</Text></Box>
+            <Box style={{ width: 380 }}><Text style={{ fontSize: 14, color: '#546779' }}>处理口径</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 186, background: '#ECF7F2', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 120, background: '#26816B' }} />
+            <Box style={{ width: 240 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#26816B', lineHeight: 1.45 }}>正确的边界处理</Text>
+            </Box>
+            <Box style={{ width: 430 }}>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>视野超过硬上限时运行时把半径限制在上限以内；对不可合法交互的对象构造目标、同一轮第二次提交世界动作，可能被明确拒绝。</Text>
+            </Box>
+            <Box style={{ width: 380 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>拒绝被记录为质量告警，不自动等于系统缺陷；要检查真实 MCP 输入与返回，区分范围裁剪和错误拒绝。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 186, background: '#EDF4FC', borderRadius: 10, padding: '0 20px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 120, background: '#276FBF' }} />
+            <Box style={{ width: 240 }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#276FBF', lineHeight: 1.45 }}>行为问题</Text>
+            </Box>
+            <Box style={{ width: 430 }}>
+                <Text style={{ fontSize: 14, color: '#20344B', lineHeight: 1.6 }}>许安已确认手作改为 10:30，仍在此前按旧安排正式开始；周宁反复检索同样的空记忆；Brain 达到循环上限后回退等待。</Text>
+            </Box>
+            <Box style={{ width: 380 }}>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.6 }}>系统可能正常运行，需要分析 SOP、输入或模型决策；修改方案应形成新实验，保留原 Run。</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ width: 1152, height: 76, background: '#FFF4E6', borderRadius: 10, padding: '0 22px', flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+            <Box style={{ width: 4, height: 40, background: '#CB6B28' }} />
+            <Text style={{ fontSize: 15, color: '#20344B', flex: 1 }}>本例没有改变手作地点：提前到场或准备，都不等于按旧时间开始活动。</Text>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>3.11 回放事实与失败诊断</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>19 / 27</Text>
+    </Box>
+
+</Slide>

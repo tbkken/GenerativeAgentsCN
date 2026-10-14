@@ -1,0 +1,68 @@
+<Slide notes={`再看两种不同形式的题。
+
+左边是 MMLU-Pro，它是多选题，选项从原来的四个扩展到最多十个，覆盖十四个学科。选项一多，靠蒙得分的概率就低了。代价是仍给了答案线索，模型只要挑一个就行。
+
+右边是 AIME，美国数学邀请赛。它的特点是答案永远是零到九百九十九之间的一个整数，所以判分特别干净：要么对，要么错，不用人来评。评测时通常按固定年份的题集核对最终答案。比如 2025 年第一卷第一题，答案就是 70。
+
+两种题放在一起能看出，题型不同，能证明的东西也不同。选择题证明能选对，简答题证明能自己给出答案。真实咨询里，我们更需要后一种。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>④　1.4.4　样本展示：选一个，和写出一个</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>MMLU-Pro 与 AIME</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center' }}>
+
+        <Box style={{ flexDirection: 'row', gap: 28, alignItems: 'flex-start' }}>
+
+            <Box style={{ width: 660, height: 404, background: '#EDF4FC', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 10 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>MMLU-Pro：十选一</Text>
+                <Box style={{ flexDirection: 'row', gap: 8 }}>
+                    <Box style={{ width: 148, height: 30, background: '#FFFFFF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>10 个选项</Text></Box>
+                    <Box style={{ width: 148, height: 30, background: '#FFFFFF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>14 个学科</Text></Box>
+                    <Box style={{ width: 148, height: 30, background: '#FFFFFF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>约 1.2 万题</Text></Box>
+                    <Box style={{ width: 148, height: 30, background: '#FFFFFF', borderRadius: 6, alignItems: 'center', justifyContent: 'center' }}><Text style={{ fontSize: 13, color: '#276FBF' }}>偏推理</Text></Box>
+                </Box>
+                <Box style={{ background: '#FFFFFF', borderRadius: 8, padding: '14px 16px', flexDirection: 'column', gap: 6 }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>题面形式（示意）</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.55 }}>给一道学科问题，附十个候选选项，要求选出一个并给出选项字母。</Text>
+                </Box>
+                <Text style={{ fontSize: 14, color: '#546779', lineHeight: 1.5 }}>选项多，猜中概率从四分之一降到十分之一；代价是仍给了答案线索，不必自己写答案。</Text>
+                <Box style={{ flex: 1 }} />
+                <Box style={{ flexDirection: 'row', gap: 12, alignItems: 'center', background: '#FFF4E6', borderRadius: 8, padding: '10px 14px' }}>
+                    <Box style={{ width: 4, height: 32, background: '#CB6B28' }} />
+                    <Text style={{ fontSize: 14, color: '#CB6B28', lineHeight: 1.4 }}>仍有运气成分：十选一也有一成的基线</Text>
+                </Box>
+            </Box>
+
+            <Box style={{ width: 464, height: 404, background: '#ECF7F2', borderRadius: 12, padding: '18px 20px', flexDirection: 'column', gap: 12 }}>
+                <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#20344B' }}>AIME：整数答案</Text>
+                <Box style={{ flexDirection: 'column', gap: 6, background: '#FFFFFF', borderRadius: 8, padding: '14px 16px' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>答案规则</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>答案永远是 0 到 999 之间的一个整数，不需要人工评阅。</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 6, background: '#FFFFFF', borderRadius: 8, padding: '14px 16px' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>评测口径</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>按固定年份题集核对最终答案，报告准确率或重复采样通过率。</Text>
+                </Box>
+                <Box style={{ flexDirection: 'column', gap: 6, background: '#FFFFFF', borderRadius: 8, padding: '14px 16px' }}>
+                    <Text style={{ fontSize: 13, color: '#546779' }}>举例</Text>
+                    <Text style={{ fontSize: 15, color: '#20344B', lineHeight: 1.5 }}>2025 年 AIME 第一卷第一题，答案是 70。</Text>
+                </Box>
+                <Box style={{ flex: 1 }} />
+                <Text style={{ fontSize: 14, color: '#26816B', lineHeight: 1.45 }}>判定干净，但年份、题集与采样次数必须一起写出来</Text>
+            </Box>
+
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>1.4 从榜单到证据</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>20 / 36</Text>
+    </Box>
+
+</Slide>

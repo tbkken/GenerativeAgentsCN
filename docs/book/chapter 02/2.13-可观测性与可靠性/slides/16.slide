@@ -1,0 +1,49 @@
+<Slide notes={`分数出来之后，遇到失败，下一步是定位，不是解释。
+
+最容易犯的错误是读模型的总结然后接受它。模型会给你一段听起来很合理的理由，但那段文字只是它自己的一次输出，不是执行过程的证据。它说的和实际发生的，可能完全不是一回事。
+
+真正可靠的做法是反过来走：从错误产物出发，一步一步往回查，看它经过了哪些环节、每一步的真实输入输出是什么。
+
+这里有个细节要提醒：倒查的箭头表示的是排查次序，不是执行顺序。执行是从前到后，排查是从后到前。这两件事混在一起想，最容易在错的环节上浪费时间。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 20 }}>
+
+        <Box style={{ flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 56, height: 56, borderRadius: 10, background: '#CB6B28', justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 28, fontWeight: 'bold', color: '#FFFFFF' }}>04</Text>
+            </Box>
+            <Text style={{ fontSize: 16, color: '#546779' }}>2.13.4</Text>
+        </Box>
+
+        <Text style={{ fontSize: 56, fontWeight: 'bold', color: '#20344B', lineHeight: 1.15 }}>调试时从结果倒查</Text>
+
+        <Box style={{ width: 640, height: 4, background: '#276FBF' }} />
+
+        <Text style={{ fontSize: 19, color: '#546779', lineHeight: 1.7 }}>从错误产物出发，逐项核对交付控制、数据、上下文和请求链。</Text>
+
+        <Box style={{ marginTop: 6, flexDirection: 'row', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 520, height: 56, background: '#EDF4FC', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#276FBF' }}>交付控制 › 工具数据 › 模型上下文 › 请求链</Text>
+            </Box>
+            <Box style={{ width: 44, height: 56, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 26, color: '#CB6B28' }}>←</Text>
+            </Box>
+            <Box style={{ width: 460, height: 56, background: '#FFF4E6', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 16, fontWeight: 'bold', color: '#CB6B28' }}>错误产物：手作与既有预约冲突</Text>
+            </Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', justifyContent: 'center' }}>
+            <Box style={{ width: 820, height: 54, background: '#F4F7FA', borderRadius: 8, justifyContent: 'center', alignItems: 'center' }}>
+                <Text style={{ fontSize: 17, fontWeight: 'bold', color: '#20344B' }}>箭头表示排查次序，不是实际执行顺序</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>2.13 可观测性、评估、可靠性与成本</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>16 / 34</Text>
+    </Box>
+
+</Slide>

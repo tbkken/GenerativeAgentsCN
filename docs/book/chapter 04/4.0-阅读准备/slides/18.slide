@@ -1,0 +1,54 @@
+<Slide notes={`有三件事必须分开看：实验的 Run 状态、系统本身的质量，以及业务分数。
+
+Run 状态说的是这次实验跑完没跑完，它是一条流程记录。系统质量看的是权限、请求、路径、提交和恢复身份这些环节正不正常。业务分数看的是任务、访客、关键事实这一层实际做到了什么，它来自判分表。
+
+最容易写错的两句是：状态显示完成，不代表任务真的完成了；状态显示未评估，也不代表通过。写完报告一定要回头核对这两条。
+
+本章的评分表是人工或独立分析材料，不宣称业务 Evaluator 已经自动执行。`} style={{ width: 1280, height: 720, background: '#FFFFFF', flexDirection: 'column', padding: '20px 64px' }}>
+
+    <Box style={{ height: 100, flexDirection: 'row', alignItems: 'center', gap: 20 }}>
+        <Box style={{ width: 4, height: 44, background: '#276FBF' }} />
+        <Box style={{ flexDirection: 'column', gap: 4 }}>
+            <Text style={{ fontSize: 14, color: '#546779' }}>4.0.3　报告里最容易写错的两句</Text>
+            <Text style={{ fontSize: 34, fontWeight: 'bold', color: '#20344B' }}>Run 状态、系统质量与业务分数分开看</Text>
+        </Box>
+    </Box>
+
+    <Box style={{ height: 540, flexDirection: 'column', justifyContent: 'center', gap: 12 }}>
+
+        <Box style={{ flexDirection: 'row', padding: '0 18px', gap: 16 }}>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 14, color: '#546779' }}>分开看的三件事</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 14, color: '#546779' }}>它回答什么问题</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 88, background: '#F4F7FA', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#20344B' }}>Run 状态</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>这次实验跑完没跑完，是一条流程记录</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 88, background: '#EDF4FC', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#276FBF' }}>系统质量</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>权限、请求、路径、提交与恢复身份是否正常</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', height: 88, background: '#ECF7F2', borderRadius: 10, padding: '0 18px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 200 }}><Text style={{ fontSize: 18, fontWeight: 'bold', color: '#26816B' }}>业务分数</Text></Box>
+            <Box style={{ flex: 1 }}><Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.6 }}>任务、访客、关键事实这一层实际做到了什么，来自判分表</Text></Box>
+        </Box>
+
+        <Box style={{ flexDirection: 'row', background: '#FFF4E6', borderRadius: 10, padding: '18px 22px', alignItems: 'center', gap: 16 }}>
+            <Box style={{ width: 4, height: 64, background: '#CB6B28' }} />
+            <Box style={{ flex: 1, flexDirection: 'column', gap: 6 }}>
+                <Text style={{ fontSize: 19, fontWeight: 'bold', color: '#CB6B28' }}>COMPLETED ≠ 任务完成，NOT_EVALUATED ≠ 通过</Text>
+                <Text style={{ fontSize: 16, color: '#546779', lineHeight: 1.65 }}>本章评分表是人工或独立分析材料，不宣称业务 Evaluator 已自动执行。</Text>
+            </Box>
+        </Box>
+
+    </Box>
+
+    <Box style={{ height: 40, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Text style={{ fontSize: 14, color: '#546779' }}>4.0 阅读准备</Text>
+        <Text style={{ fontSize: 14, color: '#546779' }}>18 / 20</Text>
+    </Box>
+
+</Slide>
