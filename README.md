@@ -35,6 +35,16 @@ ga studio serve
 
 打开 [Studio](http://127.0.0.1:8000/)。健康检查地址是 [api/studio/health](http://127.0.0.1:8000/api/studio/health)。Web 默认使用 var/generative-agents.db 和 var/；启动参数见 `ga studio serve --help`。
 
+Windows 也可使用根目录的 `restart-web.bat` 启动或重启 Web。首次使用先安装项目；以下命令无需激活虚拟环境：
+
+~~~powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -e ".[runtime,studio,web]"
+.\restart-web.bat
+~~~
+
+脚本优先使用仓库的 `.venv\Scripts\python.exe`，没有该环境时才使用 PATH 中的 Python，并在停止旧服务前检查项目和 Web 依赖。若提示 `No module named 'generative_agents'`，表示所选 Python 尚未安装项目，按脚本显示的安装命令补齐即可。后台进程提前退出时会立即显示错误和日志路径；仅进程创建成功不代表服务可用，须看到健康检查通过的 `[OK]` 提示。启动日志位于 `var/logs/`。
+
 依赖统一在 pyproject.toml 声明。仅检查包或回放时安装 `.`；运行仿真使用 `.[runtime]`；完整 Studio 使用 `.[runtime,studio,web]`；开发测试再加 `dev`。源码统一放在 `src/generative_agents/`，命令从安装后的包加载，可在任意工作目录运行。
 
 **创建第一个实验**
