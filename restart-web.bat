@@ -12,14 +12,25 @@ set "GA_RESTART_DATABASE_URL=sqlite:///%~dp0var/generative-agents.db"
 set "GA_RESTART_DATABASE_URL=%GA_RESTART_DATABASE_URL:\=/%"
 set "GA_RESTART_STDOUT=%~dp0var\logs\web.stdout.log"
 set "GA_RESTART_STDERR=%~dp0var\logs\web.stderr.log"
+set "GA_RESTART_PREFLIGHT_LOG=%~dp0var\logs\web.preflight.log"
 
 if not exist "%GA_RESTART_LOG_DIR%" mkdir "%GA_RESTART_LOG_DIR%"
 
-where python >nul 2>nul
-if errorlevel 1 (
-    echo [ERROR] Python was not found in PATH.
-    exit /b 1
-)
+rem Resolve one interpreter for both the import check and the background service.
+set "GA_RESTART_PYTHON=%~dp0.venv\Scripts\python.exe"
+if exist "%GA_RESTART_PYTHON%" goto python_ready
+set "GA_RESTART_PYTHON="
+for /f "delims=" %%P in ('where python 2^>nul') do if not defined GA_RESTART_PYTHON set "GA_RESTART_PYTHON=%%P"
+if defined GA_RESTART_PYTHON goto python_ready
+echo [ERROR] No Python interpreter was found in .venv or PATH.
+echo [ERROR] Install Python 3.11 or newer, then follow the installation steps in README.md.
+exit /b 1
+
+:python_ready
+echo [INFO] Using Python: "%GA_RESTART_PYTHON%"
+echo [INFO] Checking the installed Web entry point...
+"%GA_RESTART_PYTHON%" -m generative_agents.adapters.web.main --help >"%GA_RESTART_PREFLIGHT_LOG%" 2>&1
+if errorlevel 1 goto import_failed
 
 echo [INFO] Checking port %GA_RESTART_PORT%...
 
@@ -53,16 +64,15 @@ echo [INFO] Starting Web service in the background...
 set "GA_RESTART_WEB_PID="
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "$ErrorActionPreference = 'Stop';" ^
-    "$pythonPath = Join-Path $env:GA_RESTART_PROJECT_ROOT '.venv/Scripts/python.exe'; if (-not (Test-Path -LiteralPath $pythonPath)) { $pythonPath = (Get-Command python).Source };" ^
     "$arguments = @(" ^
     "  '-m', 'generative_agents.adapters.web.main'," ^
-    "  '--database-url', $env:GA_RESTART_DATABASE_URL," ^
-    "  '--var-dir', $env:GA_RESTART_VAR_DIR," ^
+    "  '--database-url', ([char]34 + $env:GA_RESTART_DATABASE_URL + [char]34)," ^
+    "  '--var-dir', ([char]34 + $env:GA_RESTART_VAR_DIR + [char]34)," ^
     "  '--host', '127.0.0.1'," ^
     "  '--port', $env:GA_RESTART_PORT," ^
     "  '--max-concurrent-runs', '2'" ^
     ");" ^
-    "$webProcess = Start-Process -FilePath $pythonPath -ArgumentList $arguments -WorkingDirectory $env:GA_RESTART_PROJECT_ROOT -WindowStyle Hidden -RedirectStandardOutput $env:GA_RESTART_STDOUT -RedirectStandardError $env:GA_RESTART_STDERR -PassThru;" ^
+    "$webProcess = Start-Process -FilePath $env:GA_RESTART_PYTHON -ArgumentList $arguments -WorkingDirectory $env:GA_RESTART_PROJECT_ROOT -WindowStyle Hidden -RedirectStandardOutput $env:GA_RESTART_STDOUT -RedirectStandardError $env:GA_RESTART_STDERR -PassThru;" ^
     "Set-Content -LiteralPath (Join-Path $env:GA_RESTART_VAR_DIR 'web.pid') -Value $webProcess.Id -Encoding ascii"
 
 if errorlevel 1 (
@@ -80,17 +90,42 @@ if not defined GA_RESTART_WEB_PID (
 
 echo [INFO] New Web process started. PID=%GA_RESTART_WEB_PID%
 echo [INFO] Waiting for the health endpoint...
+echo [INFO] Health URL: http://127.0.0.1:%GA_RESTART_PORT%/api/studio/health
 
-for /L %%I in (1,1,30) do (
-    powershell -NoProfile -ExecutionPolicy Bypass -Command ^
-        "try { Invoke-RestMethod -Uri ('http://127.0.0.1:' + $env:GA_RESTART_PORT + '/api/studio/health') -TimeoutSec 2 | Out-Null; exit 0 } catch { exit 1 }"
-    if not errorlevel 1 goto service_ready
-    powershell -NoProfile -ExecutionPolicy Bypass -Command "Start-Sleep -Seconds 1"
-)
+powershell -NoProfile -ExecutionPolicy Bypass -Command ^
+    "$ErrorActionPreference = 'Stop';" ^
+    "$healthUrl = 'http://127.0.0.1:' + $env:GA_RESTART_PORT + '/api/studio/health';" ^
+    "$lastHealthError = 'No health response was received.';" ^
+    "$watch = [Diagnostics.Stopwatch]::StartNew();" ^
+    "while ($watch.Elapsed.TotalSeconds -lt 30) {" ^
+    "  if (-not (Get-Process -Id ([int]$env:GA_RESTART_WEB_PID) -ErrorAction SilentlyContinue)) { Write-Host ('[ERROR] Web process exited before becoming healthy. PID=' + $env:GA_RESTART_WEB_PID); exit 1 };" ^
+    "  $remaining = 30 - $watch.Elapsed.TotalSeconds; if ($remaining -lt 1) { break };" ^
+    "  try {" ^
+    "    $health = Invoke-RestMethod -Uri $healthUrl -TimeoutSec ([int][Math]::Min(2, [Math]::Floor($remaining)));" ^
+    "    if ($health.status -eq 'ok' -and $health.runtime_truth -eq 'files' -and $health.database_owner -eq 'ga_studio' -and (Get-Process -Id ([int]$env:GA_RESTART_WEB_PID) -ErrorAction SilentlyContinue)) { exit 0 };" ^
+    "    $lastHealthError = 'Unexpected health response: ' + ($health | ConvertTo-Json -Compress -Depth 3)" ^
+    "  } catch { $lastHealthError = $_.Exception.Message };" ^
+    "  Start-Sleep -Milliseconds 250" ^
+    "};" ^
+    "Write-Host '[ERROR] The service did not pass its health check within 30 seconds.';" ^
+    "Write-Host ('[ERROR] Health URL: ' + $healthUrl);" ^
+    "$lastHealthError = $lastHealthError -replace '\s+', ' ';" ^
+    "Write-Host ('[ERROR] Last health failure: ' + $lastHealthError.Substring(0, [Math]::Min(500, $lastHealthError.Length))); exit 1"
+if not errorlevel 1 goto service_ready
 
-echo [ERROR] The service did not pass its health check within 30 seconds.
-echo [ERROR] Log: %GA_RESTART_STDERR%
+echo [ERROR] stdout log: "%GA_RESTART_STDOUT%"
+echo [ERROR] stderr log: "%GA_RESTART_STDERR%"
 if exist "%GA_RESTART_STDERR%" powershell -NoProfile -Command "Get-Content -LiteralPath $env:GA_RESTART_STDERR -Tail 30"
+exit /b 1
+
+:import_failed
+echo [ERROR] The Web entry point could not be imported by this Python interpreter:
+echo [ERROR] "%GA_RESTART_PYTHON%"
+echo [ERROR] Log: "%GA_RESTART_PREFLIGHT_LOG%"
+if exist "%GA_RESTART_PREFLIGHT_LOG%" type "%GA_RESTART_PREFLIGHT_LOG%"
+echo [ERROR] Install the project and Web dependencies in Command Prompt ^(cmd.exe^):
+echo   cd /d "%GA_RESTART_PROJECT_ROOT%"
+echo   "%GA_RESTART_PYTHON%" -m pip install -e ".[runtime,studio,web]"
 exit /b 1
 
 :service_ready
