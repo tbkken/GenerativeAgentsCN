@@ -8,6 +8,8 @@ from datetime import datetime, timedelta, timezone
 from types import SimpleNamespace
 from uuid import uuid4
 
+import httpx
+
 from generative_agents.ga_protocol.schemas.experiment import make_blank_definition
 from generative_agents.ga_runtime.engine.configuration import ConfigAdapter
 from generative_agents.ga_runtime.engine.world import Game
@@ -345,7 +347,7 @@ class _RetryingLLM(LLMModel):
         """为本测试模块封装 ``_completion`` 辅助步骤，减少重复的场景搭建代码。"""
         self.calls += 1
         if self.calls == 1:
-            raise RuntimeError("temporary failure")
+            raise httpx.ConnectError("temporary connection failure")
         self._last_usage = {
             "prompt_tokens": 3,
             "completion_tokens": 2,

@@ -567,7 +567,8 @@ class SimulationContext:
     control: RunControl
     logger: logging.LoggerAdapter
     memory_stream: Any | None = None
-    skill_mcp: Any | None = None
+    skill_interfaces: Any | None = None
     brain_runtime: Any | None = None
     object_skill_runtime: Any | None = None
+    execution_trace: Any | None = None
     metadata: Mapping[str, Any] = field(default_factory=dict)

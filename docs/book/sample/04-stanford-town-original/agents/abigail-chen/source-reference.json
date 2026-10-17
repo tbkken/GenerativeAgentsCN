@@ -1,0 +1,365 @@
+{
+  "document_kind": "historical-source-reference-not-ga-package",
+  "preparation_status": "materials-only-not-imported",
+  "display_name": "阿比盖尔",
+  "source_asset_key": "阿比盖尔",
+  "source_asset_key_language": "zh",
+  "documented_english_name": "Abigail Chen",
+  "proposed_stable_key": "abigail-chen",
+  "stable_key_provenance": "Derived in this preparation from the English full name in chapter_15; the local original assets use Chinese directory keys.",
+  "english_name_source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\docs\\book\\manuscript\\part_03\\chapter_15.md",
+  "source_agent_json": {
+    "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿比盖尔\\agent.json",
+    "json_pointer": "",
+    "sha256": "7b96938e3f1924d6fad3ada0b12859c9f4d721d1b7eb72ae74a04565f424c8af"
+  },
+  "source_agent_core_unmodified": {
+    "name": "阿比盖尔",
+    "portrait": "assets/village/agents/阿比盖尔/portrait.png",
+    "coord": [
+      36,
+      18
+    ],
+    "currently": "阿比盖尔正在为客户做一个动画项目。她也在尝试不同的工具和技术来创造互动艺术。",
+    "scratch": {
+      "age": 25,
+      "innate": "思想开放、好奇、坚定",
+      "learned": "阿比盖尔是一位数字艺术家和动画师，她喜欢探索如何使用技术来表达想法。她一直在寻找结合艺术和技术的新方法。",
+      "lifestyle": "阿比盖尔在午夜前后上床睡觉，早上8点左右醒来，下午6点左右吃晚饭。",
+      "daily_plan": ""
+    },
+    "spatial": {
+      "address": {
+        "living_area": [
+          "the Ville",
+          "艺术家共居空间",
+          "阿比盖尔的房间"
+        ]
+      },
+      "tree": {
+        "the Ville": {
+          "艺术家共居空间": {
+            "阿比盖尔的房间": [
+              "床",
+              "书桌",
+              "壁橱"
+            ],
+            "阿比盖尔的浴室": [
+              "浴室洗手池",
+              "厕所",
+              "花洒"
+            ],
+            "厨房": [
+              "冰箱",
+              "烤箱",
+              "厨房水槽",
+              "烹饪区"
+            ],
+            "公共休息室": [
+              "公共休息室桌子",
+              "公共休息室沙发"
+            ]
+          },
+          "玫瑰酒吧": {
+            "酒吧": [
+              "架子",
+              "冰箱",
+              "酒吧顾客座位",
+              "吧台后面",
+              "厨房水槽",
+              "烹饪区",
+              "麦克风"
+            ]
+          },
+          "霍布斯咖啡馆": {
+            "咖啡馆": [
+              "冰箱",
+              "咖啡馆顾客座位",
+              "烹饪区",
+              "厨房水槽",
+              "咖啡馆柜台后面",
+              "钢琴"
+            ]
+          },
+          "奥克山学院": {
+            "走廊": []
+          },
+          "奥克山学院宿舍": {
+            "公共休息室": [
+              "公共休息室沙发",
+              "台球桌",
+              "公共休息室桌子"
+            ]
+          },
+          "柳树市场和药店": {
+            "商店": [
+              "杂货店货架",
+              "杂货店柜台后面",
+              "杂货店柜台",
+              "药店货架",
+              "药店柜台",
+              "药店柜台后面"
+            ]
+          },
+          "哈维奥克供应店": {
+            "供应店": [
+              "供应店产品货架",
+              "供应店柜台后面",
+              "供应店柜台"
+            ]
+          },
+          "约翰逊公园": {
+            "公园": [
+              "公园花园"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "classic_25_profile": {
+    "age": 25,
+    "innate": "思想开放、好奇、坚定",
+    "learned": "阿比盖尔是一位数字艺术家和动画师，她喜欢探索如何使用技术来表达想法。她一直在寻找结合艺术和技术的新方法。",
+    "lifestyle": "阿比盖尔在午夜前后上床睡觉，早上8点左右醒来，下午6点左右吃晚饭。",
+    "daily_plan": "",
+    "currently": "阿比盖尔正在为客户做一个动画项目。她也在尝试不同的工具和技术来创造互动艺术。"
+  },
+  "field_provenance": {
+    "age": {
+      "value": 25,
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/阿比盖尔/scratch/age",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "innate": {
+      "value": "思想开放、好奇、坚定",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/阿比盖尔/scratch/innate",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "learned": {
+      "value": "阿比盖尔是一位数字艺术家和动画师，她喜欢探索如何使用技术来表达想法。她一直在寻找结合艺术和技术的新方法。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/阿比盖尔/scratch/learned",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "lifestyle": {
+      "value": "阿比盖尔在午夜前后上床睡觉，早上8点左右醒来，下午6点左右吃晚饭。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/阿比盖尔/scratch/lifestyle",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "daily_plan": {
+      "value": "",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/阿比盖尔/scratch/daily_plan",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "currently": {
+      "value": "阿比盖尔正在为客户做一个动画项目。她也在尝试不同的工具和技术来创造互动艺术。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/阿比盖尔/currently",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    }
+  },
+  "restored_profile_fields": [],
+  "initial_placement": {
+    "coord": [
+      36,
+      18
+    ],
+    "coord_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+      "json_pointer": "/persona_init_pos/阿比盖尔",
+      "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+    },
+    "address": [
+      "the Ville",
+      "艺术家共居空间",
+      "阿比盖尔的房间",
+      "床"
+    ],
+    "address_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\maze.json",
+      "json_pointer": "/tiles",
+      "sha256": "5724aea03bf4de8cf4aba5e76df39d7680e31d78fae1e4c80bd9cfcf1aa3d5d2"
+    },
+    "matching_source_tile": {
+      "coord": [
+        36,
+        18
+      ],
+      "address": [
+        "艺术家共居空间",
+        "阿比盖尔的房间",
+        "床"
+      ]
+    },
+    "living_area": [
+      "the Ville",
+      "艺术家共居空间",
+      "阿比盖尔的房间"
+    ],
+    "living_area_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿比盖尔\\agent.json",
+      "json_pointer": "/spatial/address/living_area",
+      "sha256": "7b96938e3f1924d6fad3ada0b12859c9f4d721d1b7eb72ae74a04565f424c8af"
+    }
+  },
+  "classic_known_spatial": {
+    "address": {
+      "living_area": [
+        "the Ville",
+        "艺术家共居空间",
+        "阿比盖尔的房间"
+      ]
+    },
+    "tree": {
+      "the Ville": {
+        "艺术家共居空间": {
+          "阿比盖尔的房间": [
+            "床",
+            "书桌",
+            "壁橱"
+          ],
+          "阿比盖尔的浴室": [
+            "浴室洗手池",
+            "厕所",
+            "花洒"
+          ],
+          "厨房": [
+            "冰箱",
+            "烤箱",
+            "厨房水槽",
+            "烹饪区"
+          ],
+          "公共休息室": [
+            "公共休息室桌子",
+            "公共休息室沙发"
+          ]
+        },
+        "玫瑰酒吧": {
+          "酒吧": [
+            "架子",
+            "冰箱",
+            "酒吧顾客座位",
+            "吧台后面",
+            "厨房水槽",
+            "烹饪区",
+            "麦克风"
+          ]
+        },
+        "霍布斯咖啡馆": {
+          "咖啡馆": [
+            "冰箱",
+            "咖啡馆顾客座位",
+            "烹饪区",
+            "厨房水槽",
+            "咖啡馆柜台后面",
+            "钢琴"
+          ]
+        },
+        "奥克山学院": {
+          "走廊": []
+        },
+        "奥克山学院宿舍": {
+          "公共休息室": [
+            "公共休息室沙发",
+            "台球桌",
+            "公共休息室桌子"
+          ]
+        },
+        "柳树市场和药店": {
+          "商店": [
+            "杂货店货架",
+            "杂货店柜台后面",
+            "杂货店柜台",
+            "药店货架",
+            "药店柜台",
+            "药店柜台后面"
+          ]
+        },
+        "哈维奥克供应店": {
+          "供应店": [
+            "供应店产品货架",
+            "供应店柜台后面",
+            "供应店柜台"
+          ]
+        },
+        "约翰逊公园": {
+          "公园": [
+            "公园花园"
+          ]
+        }
+      }
+    }
+  },
+  "known_spatial_provenance": {
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿比盖尔\\agent.json",
+      "json_pointer": "/spatial",
+      "sha256": "7b96938e3f1924d6fad3ada0b12859c9f4d721d1b7eb72ae74a04565f424c8af"
+    },
+    "historical_complete_snapshot_available": false,
+    "adjustment": "No adjustment.",
+    "removed_object_names": [],
+    "adjustment_evidence": null
+  },
+  "source_behavior_parameters": {
+    "vision_radius": 8,
+    "perception_mode": "box",
+    "attention_bandwidth": 8,
+    "move_speed": null,
+    "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+    "chat_iterations": 4,
+    "schedule_max_try": 5,
+    "schedule_diversity": 5,
+    "think_interval": 1000,
+    "poignancy_max": 150,
+    "memory_retention": 8,
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+      "json_pointer": "/agent",
+      "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+    }
+  },
+  "assets": [
+    {
+      "role": "portrait",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿比盖尔\\portrait.png",
+      "copy": "agents/abigail-chen/assets/portrait.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1391,
+      "sha256": "127db5248d3f53482b6d799681277cde762c548b25a5c78e387e3241d6f5de4c"
+    },
+    {
+      "role": "walking_texture",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿比盖尔\\texture.png",
+      "copy": "agents/abigail-chen/assets/texture.png",
+      "width": 96,
+      "height": 128,
+      "bytes": 4525,
+      "sha256": "85f0085fd0ff3c68c5a8152731574a01ba2c2645ef28ddc313b43839c3ab5ade"
+    }
+  ]
+}

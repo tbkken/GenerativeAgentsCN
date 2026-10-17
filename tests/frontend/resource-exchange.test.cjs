@@ -12,8 +12,7 @@ test('the six catalogs extract their own resource kind from a shared package', (
   }
   assert.equal(exchange.matches({kind:'skill', skill_kind:'brain'}, 'brain'), true);
   assert.equal(exchange.matches({kind:'skill', skill_kind:'brain'}, 'skill'), false);
-  assert.equal(exchange.matches({kind:'skill', skill_kind:'atomic'}, 'skill'), true);
-  assert.equal(exchange.matches({kind:'skill', skill_kind:'pack'}, 'skill'), true);
+  assert.equal(exchange.matches({kind:'skill', skill_kind:'skill'}, 'skill'), true);
 });
 
 test('selecting a map alone leaves skills and agents unselected', () => {
@@ -229,10 +228,12 @@ test('shared Skill dependencies stay selected until all referring roots are remo
   const resources = [
     {kind:'skill', key:'a', skill_kind:'brain', dependencies:[{kind:'skill', key:'shared'}]},
     {kind:'skill', key:'b', skill_kind:'brain', dependencies:[{kind:'skill', key:'shared'}]},
-    {kind:'skill', key:'shared', skill_kind:'pack', dependencies:[{kind:'skill', key:'leaf'}]},
-    {kind:'skill', key:'leaf', skill_kind:'atomic'},
+    {kind:'skill', key:'shared', skill_kind:'skill', dependencies:[{kind:'skill', key:'leaf'}]},
+    {kind:'skill', key:'leaf', skill_kind:'skill'},
   ];
   await importPreview(setup, 'skills', {token:'skills', source_kind:'config', resources, roots:resources.slice(0,2)});
+  assert.equal(exchange.summary(resources), '2 个大脑、2 个技能');
+  assert.doesNotMatch(setup.element('resourceExchangePreview').innerHTML, /单个技能|技能包|原子/);
   const get = key => setup.choices().find(item => item.value === `skill:${key}`);
   assert.equal(setup.element('resourceExchangeSubmit').textContent, '导入所选资源（4）');
   get('a').checked = false; get('a').listeners.change();

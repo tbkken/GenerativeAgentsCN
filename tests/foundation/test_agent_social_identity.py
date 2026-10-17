@@ -112,8 +112,10 @@ def test_speak_uses_stable_keys_and_rejects_an_unrelated_identity():
     game.agents['resident-024'].name = '阿伊莎'
     game.agent_keys_by_name['阿伊莎'] = 'resident-024'
     server.game = game
-    result = server.call('world-act', {'action_type': 'SPEAK', 'participant_agent_keys': ['阿伊莎'], 'message': '一起讨论吗？'})
-    assert result['isError'] is False
+    result = server.invoke('world-act', {'action_type': 'SPEAK', 'participant_agent_keys': ['阿伊莎'], 'message': '一起讨论吗？'})
+    assert result['ok'] is True
+    assert set(result) == {'ok', 'result'}
+    assert isinstance(result['result'], dict)
     assert server.action.arguments['participant_agent_keys'] == ['resident-024']
     committed = game.record_conversation_message('agent-1', ('resident-024',))
     assert committed['participants'] == ('agent-1', 'resident-024')

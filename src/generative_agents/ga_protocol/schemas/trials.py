@@ -1,4 +1,4 @@
-"""Diagnostics for an isolated Skill file workspace."""
+"""Contracts for an isolated Skill workspace and its natural-language input."""
 
 class SkillTrialError(ValueError):
     def __init__(self, code, message, *, status=422, trace=()):

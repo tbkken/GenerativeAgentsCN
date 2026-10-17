@@ -1,0 +1,14 @@
+2026-10-15 15:44:15,189 INFO run=16c8418e-657c-4cb0-9690-93d758ed2059 Skill runtimes ready for 25 Agents and 0 Game Objects
+2026-10-15 15:50:47,639 INFO run=16c8418e-657c-4cb0-9690-93d758ed2059 
+----------        yuriko-yamamoto.summary @ 20240213-06:00:00         ----------
+{"name": "山本百合子", "currently": "山本百合子正在为一家当地企业开展税务合规项目。她还参加了一些课程，以了解最新的税法。山本百合子也很好奇谁将参加下个月的地方市长选举。", "tile": {"coord[28,65]": "the Ville:山本百合子的房子:主人房:床", "spatial_semantics": [{"id": "world-e21ed4a015689d5a6124", "kind": "WORLD", "name": "the Ville", "semantic": "整个可运行世界"}, {"id": "sector-0ba95fc64cd738809224", "kind": "SECTOR", "name": "山本百合子的房子", "semantic": "the Ville → 山本百合子的房子"}, {"id": "arena-bf760f664a5ea6d6b35b", "kind": "ARENA", "name": "主人房", "semantic": "the Ville → 山本百合子的房子 → 主人房"}, {"id": "game_object-e3337d752a10998c9089", "kind": "GAME_OBJECT", "name": "床", "semantic": "the Ville → 山本百合子的房子 → 主人房 → 床"}], "events": {"e_0": "床 此时 空闲 @ the Ville:山本百合子的房子:主人房:床", "e_1": "山本百合子 此时 空闲 @ the Ville:山本百合子的房子:主人房:床"}}, "status": {}, "chats": [], "action": {"status": "已完成 [20240213-06:00~20240213-06:00]", "event": "山本百合子 此时 空闲 @ the Ville:山本百合子的房子:主人房:床", "object": "床 此时 空闲 @ the Ville:山本百合子的房子:主人房:床"}}
+
+{
+  "active_attempt_id": "f114f3ed-ccb6-46fd-9878-5783ceb43380",
+  "committed_step": 0,
+  "reason": "cancel requested; uncommitted Step discarded",
+  "run_id": "16c8418e-657c-4cb0-9690-93d758ed2059",
+  "status": "CANCELLED",
+  "total_steps": 120,
+  "updated_at": "2026-10-15T07:54:25.018514Z"
+}

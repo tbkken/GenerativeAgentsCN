@@ -1,0 +1,1085 @@
+{
+  "status": "PASS_AGENT_CONFIGURATION_COMPARISON_ASSET_BYTES_NOT_INCLUDED",
+  "verified_at_utc": "2026-10-15T06:02:33.282481+00:00",
+  "experiment_id": "b0b85db8-e439-450b-93ad-670d7d6a9caa",
+  "experiment_identity_basis": "Main agent reported this UI download after saving and reloading this experiment; JSON itself contains no experiment ID.",
+  "original_download": "C:\\Users\\D304\\Downloads\\experiment-agents (1).json",
+  "archived_copy": "D:\\GenerativeAgentsCN\\docs\\book\\sample\\04-stanford-town-original\\verification\\ui-exports\\experiment-agents (1).json",
+  "bytes": 86910,
+  "sha256": "ddb6ef796895e5efeb59737c9feb6784132410693bd79c8c50e82ed7886bb9b9",
+  "filesystem_creation_time_utc": "2026-10-15T05:59:37.865232+00:00",
+  "filesystem_modified_time_utc": "2026-10-15T05:59:37.867297+00:00",
+  "timestamp_note": "Filesystem download times; export generation time is not embedded in the JSON and is unknown.",
+  "export_kind": "UI Agent configuration JSON, schema_version 1; not a ga-package or sealed .gaexp",
+  "agent_count": 25,
+  "missing_agents": [],
+  "extra_agents": [],
+  "duplicate_agents": [],
+  "business_content_differences": [],
+  "image_reference_count": 50,
+  "image_bytes_in_export": 0,
+  "sprite_path_normalization_count": 25,
+  "sprite_path_normalization_basis": "ga_studio/experiments/workspace.py _agent_asset uses assets/agents/{agent_key}/{role}{extension}; walking role is sprite.",
+  "empty_source_daily_plan_count": 13,
+  "empty_source_daily_plans": [
+    {
+      "key": "jane-moreno",
+      "name": "简"
+    },
+    {
+      "key": "tamara-taylor",
+      "name": "塔玛拉"
+    },
+    {
+      "key": "jennifer-moore",
+      "name": "詹妮弗"
+    },
+    {
+      "key": "francisco-lopez",
+      "name": "弗朗西斯科"
+    },
+    {
+      "key": "hailey-johnson",
+      "name": "海莉"
+    },
+    {
+      "key": "rajiv-patel",
+      "name": "拉吉夫"
+    },
+    {
+      "key": "latoya-williams",
+      "name": "拉托亚"
+    },
+    {
+      "key": "abigail-chen",
+      "name": "阿比盖尔"
+    },
+    {
+      "key": "carlos-gomez",
+      "name": "卡洛斯"
+    },
+    {
+      "key": "giorgio-rossi",
+      "name": "乔治"
+    },
+    {
+      "key": "ryan-park",
+      "name": "瑞恩"
+    },
+    {
+      "key": "yuriko-yamamoto",
+      "name": "山本百合子"
+    },
+    {
+      "key": "adam-smith",
+      "name": "亚当"
+    }
+  ],
+  "ui_completeness_basis": "ga_studio/experiments/editor.py:274 requires name, nonempty daily_plan and two-coordinate placement. AgentScratch.daily_plan defaults to empty; this badge is not a protocol failure.",
+  "scope_limitations": [
+    "No image bytes or attachment hashes in this export; experiment copies require a package/image export to verify bytes.",
+    "No independent-environment import, sealing, simulation or child-Skill runtime validation is claimed."
+  ],
+  "checks": [
+    {
+      "key": "ayesha-khan",
+      "name": "阿伊莎",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "460524bd810d12cfdd97ce93e6a3bd3f6500052cb393248a05383de14c63e2e6",
+      "coord": [
+        118,
+        61
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "阿伊莎的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "4b6822162d0bc4a0c29f32d509526a0b9e97408d72ff244cd911a3d3608cd1a4",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/ayesha-khan/texture.png",
+        "experiment": "assets/agents/ayesha-khan/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "5f5af6b9b58ebf04732b2cd4dbfc953c4e14f6eb7805356f1b5b2d319af97ece",
+          "exported_path": "assets/agents/ayesha-khan/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "321737d02185701ce1a9665433beb6a5e3b350ebc9efeac20919f35ca392e936",
+          "exported_path": "assets/agents/ayesha-khan/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "klaus-mueller",
+      "name": "克劳斯",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "3f0bc115bca3285983aded7e6f75f054046a9b3bc4122d1179bb78a98fd7109c",
+      "coord": [
+        126,
+        46
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "克劳斯的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "932063b03de2288fc895f835356dc1e151bec7d17019e192366f397265642094",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/klaus-mueller/texture.png",
+        "experiment": "assets/agents/klaus-mueller/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "0fa5da0104e473d92938dde7c11766db6c4ec1e0b75cedff2496b55a3219dd1b",
+          "exported_path": "assets/agents/klaus-mueller/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "9eabd5d81dc3b03dea424316a7e9fb24987cd95b9d02a3128af95fb51fc88e38",
+          "exported_path": "assets/agents/klaus-mueller/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "maria-lopez",
+      "name": "玛丽亚",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "a69c0b64fe244ca29f70d2b24c1b5a7c7f33ea15af18ea88d69c71dd27d9fb5a",
+      "coord": [
+        123,
+        57
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "玛丽亚的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "288651736636aec9ee164b7f917697af5fd7537ab67b2def15146420b6335063",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/maria-lopez/texture.png",
+        "experiment": "assets/agents/maria-lopez/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "a0701bde26a9f2f6b718f022007e7d9cbbdc27991f0354cc06c06e0443ea7460",
+          "exported_path": "assets/agents/maria-lopez/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "449753cef273b4a984b22172bdc62c82869b4cd19c008558fc94016b2db02366",
+          "exported_path": "assets/agents/maria-lopez/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "wolfgang-schulz",
+      "name": "沃尔夫冈",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "b0fbd7a34b950d5d40020f722dac806d0952cc183526a40180fc488685b2e46b",
+      "coord": [
+        107,
+        62
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "沃尔夫冈的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "90479254a72a566033e5eaeacded7ae314af7d01c09a0ca2192c6c26fd72e279",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/wolfgang-schulz/texture.png",
+        "experiment": "assets/agents/wolfgang-schulz/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "41cab704349909832e922f753ba3bed05587f402b49990b4a3526db72cc54ab2",
+          "exported_path": "assets/agents/wolfgang-schulz/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "de05252cf8cba8773bf19656c7071247fe1ace38c5f27e59866ab7d672518c5c",
+          "exported_path": "assets/agents/wolfgang-schulz/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "mei-lin",
+      "name": "梅",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "a324a3d56ca96ae557fdc625952b3210df59ea50971311a41dd95f529b8ee8ca",
+      "coord": [
+        90,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "de1384e156892e109d08d1f9d1f93b58f36825a1edce4da5fcf03c0204dc3193",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/mei-lin/texture.png",
+        "experiment": "assets/agents/mei-lin/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "c96aabfc8786d2f8eabc766a9e0324ede43159254e021290eed8142799b98f65",
+          "exported_path": "assets/agents/mei-lin/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "9a1cc8f4d1598c37615e13ab2a4a73fa70c51d8b851fd928bc9b1b8380c7d8c3",
+          "exported_path": "assets/agents/mei-lin/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "john-lin",
+      "name": "约翰",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "9b16d991f688923612450bf778a35aff7486ad56b4e65d52687cbe89dcf9f85a",
+      "coord": [
+        91,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "94d21e988531907ad299548fdac5c2f4a472b81d74a17cd648062856833a29f1",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/john-lin/texture.png",
+        "experiment": "assets/agents/john-lin/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "562931ae6082efbea13693aa738d080a3acaa4aaa0c0ce560741c48323e402d5",
+          "exported_path": "assets/agents/john-lin/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "f912eda6d794ff23ce6a1b27f785a800c6261f8e33ffd5f96fffa5de6ec325aa",
+          "exported_path": "assets/agents/john-lin/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "eddy-lin",
+      "name": "埃迪",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "a7b4d4f618071fb340b8de30759decafd5064cc062ff168b0f05885a834451e5",
+      "coord": [
+        93,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "埃迪的卧室",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "c0a91c39e13430684a9fd92d5743560beb775bd308027d279d6a57b367dd5ce0",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/eddy-lin/texture.png",
+        "experiment": "assets/agents/eddy-lin/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "66d523412d0072cd21550946182e73a0ef8f989a9c4f922d7547137ef6730057",
+          "exported_path": "assets/agents/eddy-lin/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "4f1eca4f29ee37526f3033f347bfda0ad5fac1d92be4c4f50398db6f32c1b689",
+          "exported_path": "assets/agents/eddy-lin/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "jane-moreno",
+      "name": "简",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "08ec2b5ac98c44c3c6b3f582cb23b493b937dc4861239809ad311e9ba5dd85d9",
+      "coord": [
+        72,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "bfb1efab3015b24eb8b7230f622808c5a3557c1c240b16e12bf9d2889e363049",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/jane-moreno/texture.png",
+        "experiment": "assets/agents/jane-moreno/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "11655a8f73f972764501ae4cda4bbff2d9f64855f867dce90282517ac16b4127",
+          "exported_path": "assets/agents/jane-moreno/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "2ffd98086b3fbdab1b23459a7a041bdabca81773326425a0c952e049bfbbbc37",
+          "exported_path": "assets/agents/jane-moreno/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "tom-moreno",
+      "name": "汤姆",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "7d5255a567501a2fa34dd0f878a3ac069a56a7cd491522992887a67eb9101067",
+      "coord": [
+        73,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "bfb1efab3015b24eb8b7230f622808c5a3557c1c240b16e12bf9d2889e363049",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/tom-moreno/texture.png",
+        "experiment": "assets/agents/tom-moreno/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "1f29f62b027e64cdceba15ef81e778d44086b3f8d5fe994aa2bea93f11f1cfc0",
+          "exported_path": "assets/agents/tom-moreno/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "237902717463ad243e2d1e7b9a61097bcdf043c2f6749e59643d8a844219d6c8",
+          "exported_path": "assets/agents/tom-moreno/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "carmen-ortiz",
+      "name": "卡门",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "66689fa376381e0c19db8f1ae2ca81ae4adba304211155802e57d12929bb0f90",
+      "coord": [
+        57,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "卡门的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "ad098fffa029f632fab8eb7f2f8bb3cd22b608ca75397a05865fa20187bf5cf0",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/carmen-ortiz/texture.png",
+        "experiment": "assets/agents/carmen-ortiz/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "25fa13f191d14f8e83ca642d5c90849cb8f79f1fdda86f9458affb21c3fbced7",
+          "exported_path": "assets/agents/carmen-ortiz/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "40512ae37738d1fc2597471bebec69c7001b1f1c19ae9b49db7795b90b2ab4c2",
+          "exported_path": "assets/agents/carmen-ortiz/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "tamara-taylor",
+      "name": "塔玛拉",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "556640c71ff107bbc7758cf5a37eef0e5204d58779697aa45c133df53ea59c52",
+      "coord": [
+        54,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "塔玛拉的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "288050db2d5881aef4d9c05590413f4956bf0f91b5f1458ebfd08ed857e186b2",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/tamara-taylor/texture.png",
+        "experiment": "assets/agents/tamara-taylor/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "4a9720980d500a6480dfe582f514a4420aadfe7b5c4d73f3283211a83cdcc1aa",
+          "exported_path": "assets/agents/tamara-taylor/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "cf484ba005c2df9bfe973688d87224dd04f4e5ba20f78a366f468eda8bc53685",
+          "exported_path": "assets/agents/tamara-taylor/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "arthur-burton",
+      "name": "亚瑟",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "dabb6c9d79431121b8f95a984d3dfa6735d07f9c9cf0c241e48b842e4ae32914",
+      "coord": [
+        53,
+        14
+      ],
+      "initial_address": [
+        "the Ville",
+        "亚瑟的公寓",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "c22a39d9e744161e4a058b445931d37e8d9f8bbf3e50e3e79a0aa4f36a7bc7c5",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/arthur-burton/texture.png",
+        "experiment": "assets/agents/arthur-burton/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "01dbcf959a344e4b374d6e628f3143b4a3370f6d61b555d38799442026522857",
+          "exported_path": "assets/agents/arthur-burton/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "454ce9bd109735ee830df7ab972215f5d455aba2236075ecf97ad80a6868e5c4",
+          "exported_path": "assets/agents/arthur-burton/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "isabella-rodriguez",
+      "name": "伊莎贝拉",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "c9d3fc5664f5908f9347b733ba220bdfb15d8c4b9f7700307ede0ca90d803b06",
+      "coord": [
+        72,
+        14
+      ],
+      "initial_address": [
+        "the Ville",
+        "伊莎贝拉的公寓",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "a32b84a93e277bf71af76c77ffbc1074fa1b1f5c3cf31654eccb9ece1c472f64",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/isabella-rodriguez/texture.png",
+        "experiment": "assets/agents/isabella-rodriguez/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "2f04daac15a8d33a43a3d4c5f73b69878ee864a33dccc00017a5ef43eed3d233",
+          "exported_path": "assets/agents/isabella-rodriguez/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "7b19cb649d592f98c7689ef937308e9a0e7dc8601bb151da5387e76b339b543c",
+          "exported_path": "assets/agents/isabella-rodriguez/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "sam-moore",
+      "name": "山姆",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "c8b16caf2298abe9232375893c839baef28a41f6ac92954cd41649b8d1b3f07f",
+      "coord": [
+        36,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "1254de17b69844483c981096e3c9965565cfac7e2f02c4847ea99a00b3391e72",
+      "source_daily_plan_empty": false,
+      "sprite_path_change": {
+        "prepared": "assets/agents/sam-moore/texture.png",
+        "experiment": "assets/agents/sam-moore/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "f520b892aa7fb0f44af0b8787d8d4ef32f06d463f45067fda9354a8713a97b8e",
+          "exported_path": "assets/agents/sam-moore/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "e306456c1417969857386d8bade35284960afb8d00bf0a07c60a091010054b1f",
+          "exported_path": "assets/agents/sam-moore/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "jennifer-moore",
+      "name": "詹妮弗",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "fd6a28e227ba09319eed7473cc4b392b78033bce22b79bacf7e471433a71f688",
+      "coord": [
+        37,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "1254de17b69844483c981096e3c9965565cfac7e2f02c4847ea99a00b3391e72",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/jennifer-moore/texture.png",
+        "experiment": "assets/agents/jennifer-moore/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "807c1c62ba190a07fdaf67ce7563349130d35589f576def567f0b409e292fe23",
+          "exported_path": "assets/agents/jennifer-moore/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "9c9caa59d5e4abb3d40ad29259fea5c52fc5b764eafd62f7f62ff4901ff75064",
+          "exported_path": "assets/agents/jennifer-moore/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "francisco-lopez",
+      "name": "弗朗西斯科",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "0a31092316730db3c459fa851e057e834bbc862bc8c21be18c8973aaba74c226",
+      "coord": [
+        16,
+        32
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "弗朗西斯科的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "60e93adb35268bd8d7d92f7bcf602e837ccd72847ecaf084992e4cb508cd38a0",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/francisco-lopez/texture.png",
+        "experiment": "assets/agents/francisco-lopez/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "08a367b245fbb6c7344de362444e02333e3af315676f2c81070e3e6606ca0c78",
+          "exported_path": "assets/agents/francisco-lopez/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "3ba2ff723ab4df9eb93fd55621ae322889606ae50a6e124a7a4c308e311d0203",
+          "exported_path": "assets/agents/francisco-lopez/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "hailey-johnson",
+      "name": "海莉",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "10e6ca0988d4ffdf680716d3ad9c0ac5915d52d9857d1db51a771495958bd334",
+      "coord": [
+        26,
+        32
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "海莉的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "ee8882f9cfcf68171afd89bb47a2cfecd6ff920544613e61dc64d4babb92aa9f",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/hailey-johnson/texture.png",
+        "experiment": "assets/agents/hailey-johnson/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "14273a6f7bc4327645b84d6c6dfc329873beef6e6bbc1e12b821434b15dbcfd6",
+          "exported_path": "assets/agents/hailey-johnson/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "684178e526869586c7fc94c455d0f4b5f1f9f56b7bc035cc9a6000920f4a0bf4",
+          "exported_path": "assets/agents/hailey-johnson/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "rajiv-patel",
+      "name": "拉吉夫",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "f29b48fbd842899389bc12b16e0d7511f027559daff2ade0ef8a0e2a8a851604",
+      "coord": [
+        26,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉吉夫的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "bb5897028c8ddf6d4b719ca2627ee108dda3fb0e7f1c759d8b7e74ec3578032d",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/rajiv-patel/texture.png",
+        "experiment": "assets/agents/rajiv-patel/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "a1048ef4f41338d8a2ba6950b111b41c62e8cb0ca1411e12e4e1c3fb889eb643",
+          "exported_path": "assets/agents/rajiv-patel/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "dd20304a14c7b6253abad386238f67f7c0d0df033f85548594d44333970ca7e0",
+          "exported_path": "assets/agents/rajiv-patel/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "latoya-williams",
+      "name": "拉托亚",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "94272ece7d4f9c8fb0cd1284c6945b5ae4beed7b40e359b7736bc8a9776c33fd",
+      "coord": [
+        16,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉托亚的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "694dc21afcdaf2a5aea667071a07d8ecbe729553c571f83f7585155c58f7003b",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/latoya-williams/texture.png",
+        "experiment": "assets/agents/latoya-williams/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "b4f892f3d17fe89b988f228ad2d8b60f340aa63a4c530571fa2e049c8a283d55",
+          "exported_path": "assets/agents/latoya-williams/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "9099bd2b68d6c9d82c79afa2ba881094dab78cfc65d48347c9679f2b6485e39b",
+          "exported_path": "assets/agents/latoya-williams/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "abigail-chen",
+      "name": "阿比盖尔",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "f883b782eb962371378eeeeccb424897e9495e3dbf2d64c80aca53c933fc3da3",
+      "coord": [
+        36,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "阿比盖尔的房间",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "c7d644fa08a1703287750fdac6119fcea0e654e627d27b5e78e4293c8086f033",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/abigail-chen/texture.png",
+        "experiment": "assets/agents/abigail-chen/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "127db5248d3f53482b6d799681277cde762c548b25a5c78e387e3241d6f5de4c",
+          "exported_path": "assets/agents/abigail-chen/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "85f0085fd0ff3c68c5a8152731574a01ba2c2645ef28ddc313b43839c3ab5ade",
+          "exported_path": "assets/agents/abigail-chen/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "carlos-gomez",
+      "name": "卡洛斯",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "e17fdbe3557388744a922d48c6e00767daabb1d03be2827d42d6f8890595b2ce",
+      "coord": [
+        94,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "卡洛斯的公寓",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "5b8584b7efe58437febc3fb61f8d0a2b42b803ec404b18a0533a6c917faa9681",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/carlos-gomez/texture.png",
+        "experiment": "assets/agents/carlos-gomez/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "f2a2349d6d9f881b9c145ff2b94cee87c7480e7577a2fa089305cd8a18edaaed",
+          "exported_path": "assets/agents/carlos-gomez/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "593921c3672f33bbecd622aa4906cce797e9595c3ee65e101c508165b5c957cf",
+          "exported_path": "assets/agents/carlos-gomez/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "giorgio-rossi",
+      "name": "乔治",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "16081212e44a9268aeaa7686caa412066ede1d8ebc829f771f374f1975d649e7",
+      "coord": [
+        86,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "乔治的公寓",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "de28d2143cdb8b1d761bbbb4df91df22dcf0db164477a4ca34e11d9c0a8538f7",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/giorgio-rossi/texture.png",
+        "experiment": "assets/agents/giorgio-rossi/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "62dbdd036b97d42dfdfefacbf023599a63019be7d770e7642d49dd692eb6d353",
+          "exported_path": "assets/agents/giorgio-rossi/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "91b53d4b6a60f35de13e68e6395d1ffc0e55e2666e24fe86b46c6041db02a228",
+          "exported_path": "assets/agents/giorgio-rossi/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "ryan-park",
+      "name": "瑞恩",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "f5883189f042ab18a1c4fb1b43514f4c04d9339b28e7074595e314d40b2dc545",
+      "coord": [
+        65,
+        19
+      ],
+      "initial_address": [
+        "the Ville",
+        "瑞恩的公寓",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "0207ac562962ac37fee245650895942aaee81916fe315db5597a1cef1fef2198",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/ryan-park/texture.png",
+        "experiment": "assets/agents/ryan-park/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "1050aef1470ff7c3410e34737119934533af33c755512707a6119c66e84d9d18",
+          "exported_path": "assets/agents/ryan-park/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "85f5ada21a3ed73e53979d9fd55a8193cf1acdc0a5cacb583d371126aacfcaed",
+          "exported_path": "assets/agents/ryan-park/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "yuriko-yamamoto",
+      "name": "山本百合子",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "df747500d3a192bcf547d6eb873da205b35dd1788c53e3fe831dd14a5a7e5065",
+      "coord": [
+        28,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "山本百合子的房子",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "213f14704b61d3d613ae4058f675bb8219494ea3f5157f04f47a7100f58c66bb",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/yuriko-yamamoto/texture.png",
+        "experiment": "assets/agents/yuriko-yamamoto/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "4dbb7247d998f9b27f4665abd29b881d67c37d3864e819ea7af77086eb2caf69",
+          "exported_path": "assets/agents/yuriko-yamamoto/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "c24f175f651636d1cdd4027a5158ffeeaa07fca2b4c6f03eece57ce69347f55e",
+          "exported_path": "assets/agents/yuriko-yamamoto/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    },
+    {
+      "key": "adam-smith",
+      "name": "亚当",
+      "status": "MATCH",
+      "all_agent_core_fields_match_after_documented_sprite_path_normalization": true,
+      "profile_sha256": "0f848400653061fd46b010b0c9a33aeca58a315024b9c36973a97690d9b5bb70",
+      "coord": [
+        20,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "亚当的家",
+        "主人房",
+        "床"
+      ],
+      "all_common_addresses_and_known_space_match": true,
+      "spatial_sha256": "9c9bd710f5f32bc8e808e3ded9c416d2151373d0ad3924c3f6f134299f2a958d",
+      "source_daily_plan_empty": true,
+      "sprite_path_change": {
+        "prepared": "assets/agents/adam-smith/texture.png",
+        "experiment": "assets/agents/adam-smith/sprite.png"
+      },
+      "images": [
+        {
+          "role": "portrait",
+          "expected_source_sha256": "06b1196693173b20aedc7b2f4400a2fa310c39cba6f78ad3134e90ba00f98d3f",
+          "exported_path": "assets/agents/adam-smith/portrait.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        },
+        {
+          "role": "walking_texture",
+          "expected_source_sha256": "647d20ea095902c4953084550a537b39e46fe1223366c2785fed07cc487f8dcb",
+          "exported_path": "assets/agents/adam-smith/sprite.png",
+          "experiment_asset_bytes_verified": false,
+          "reason": "UI Agent JSON has file paths only, without image bytes or file hashes."
+        }
+      ]
+    }
+  ]
+}

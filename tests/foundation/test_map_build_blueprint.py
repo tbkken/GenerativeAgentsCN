@@ -12,6 +12,7 @@ def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
     """回归验证 ``test_two_day_commute_blueprint_builds_one_publishable_map_step_by_step`` 所描述的业务结果、故障边界和隔离约束。"""
     app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
+        assert client.get("/api/studio/resources/skills").json()["items"] == []
         blueprints = client.get("/api/studio/resources/map-blueprints")
         assert blueprints.status_code == 200, blueprints.text
         blueprint = next(
@@ -104,6 +105,14 @@ def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
         }
         placements = definition["spatial_scene"]["placements"]
         assert len([item for item in placements if item["instance_key"].startswith("signal-")]) == 8
+        assert all(
+            not asset["skill_bindings"]
+            for asset in definition["editor"]["spatial_assets"].values()
+        )
+        assert {
+            item["state_overrides"]["state"]
+            for item in placements if item["instance_key"].startswith("signal-")
+        } == {"VEHICLE_GREEN", "VEHICLE_RED"}
         assert len([item for item in placements if "-wait-" in item["instance_key"]]) == 8
         assert len([item for item in placements if item["instance_key"].startswith("parking-")]) == 3
         assert any(item["instance_key"] == "gate-office-entry" for item in placements)
@@ -117,9 +126,10 @@ def test_two_day_commute_blueprint_builds_one_mutable_map_step_by_step(
         )
         assert validated.status_code == 200, validated.text
         current = validated.json()
-        assert current["validation"]["valid"] is True
+        assert current["validation"]["valid"] is True, current["validation"]
         assert current["world_hash"]
         assert current["world"]["world_key"] == "commute-blueprint-acceptance"
+        assert client.get("/api/studio/resources/skills").json()["items"] == []
         # Runtime addresses are compiled into the immutable experiment snapshot,
         # not written back into the mutable authoring map during validation.
         assert any(

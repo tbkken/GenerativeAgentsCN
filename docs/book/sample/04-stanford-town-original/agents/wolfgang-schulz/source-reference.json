@@ -1,0 +1,381 @@
+{
+  "document_kind": "historical-source-reference-not-ga-package",
+  "preparation_status": "materials-only-not-imported",
+  "display_name": "沃尔夫冈",
+  "source_asset_key": "沃尔夫冈",
+  "source_asset_key_language": "zh",
+  "documented_english_name": "Wolfgang Schulz",
+  "proposed_stable_key": "wolfgang-schulz",
+  "stable_key_provenance": "Derived in this preparation from the English full name in chapter_15; the local original assets use Chinese directory keys.",
+  "english_name_source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\docs\\book\\manuscript\\part_03\\chapter_15.md",
+  "source_agent_json": {
+    "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\沃尔夫冈\\agent.json",
+    "json_pointer": "",
+    "sha256": "b9f0f681db10e3a0e89617ffaae6097003c7521794589ea866317037aba5ea11"
+  },
+  "source_agent_core_unmodified": {
+    "name": "沃尔夫冈",
+    "portrait": "assets/village/agents/沃尔夫冈/portrait.png",
+    "coord": [
+      107,
+      62
+    ],
+    "currently": "沃尔夫冈正在为下一场比赛进行训练，并为考试做准备。他也在寻找提高学习效率的方法。",
+    "scratch": {
+      "age": 21,
+      "innate": "勤奋、热情、敬业",
+      "learned": "沃尔夫冈是奥克山学院学习化学的学生，也是一名学生运动员。他对学业和运动都非常投入。",
+      "lifestyle": "沃尔夫冈晚上9点左右上床睡觉，早上5点左右醒来，下午6点左右吃晚饭。",
+      "daily_plan": "沃尔夫冈早上去跑步，白天学习，晚上在房间里锻炼。"
+    },
+    "spatial": {
+      "address": {
+        "living_area": [
+          "the Ville",
+          "奥克山学院宿舍",
+          "沃尔夫冈的房间"
+        ]
+      },
+      "tree": {
+        "the Ville": {
+          "奥克山学院": {
+            "走廊": [],
+            "图书馆": [
+              "图书馆沙发",
+              "图书馆桌子",
+              "书架"
+            ],
+            "教室": [
+              "黑板",
+              "教室讲台",
+              "教室学生座位"
+            ]
+          },
+          "奥克山学院宿舍": {
+            "花园": [
+              "宿舍花园"
+            ],
+            "沃尔夫冈的房间": [
+              "书桌",
+              "床",
+              "游戏机",
+              "举重器械",
+              "壁橱"
+            ],
+            "女卫生间": [
+              "厕所",
+              "花洒",
+              "浴室洗手池"
+            ],
+            "公共休息室": [
+              "公共休息室沙发",
+              "台球桌",
+              "公共休息室桌子"
+            ],
+            "男卫生间": [
+              "花洒",
+              "浴室洗手池",
+              "厕所"
+            ]
+          },
+          "柳树市场和药店": {
+            "商店": [
+              "杂货店货架",
+              "杂货店柜台后面",
+              "杂货店柜台",
+              "药店货架",
+              "药店柜台",
+              "药店柜台后面"
+            ]
+          },
+          "哈维奥克供应店": {
+            "供应店": [
+              "供应店产品货架",
+              "供应店柜台后面",
+              "供应店柜台"
+            ]
+          },
+          "约翰逊公园": {
+            "公园": [
+              "公园花园"
+            ]
+          },
+          "玫瑰酒吧": {
+            "酒吧": [
+              "架子",
+              "冰箱",
+              "酒吧顾客座位",
+              "吧台后面",
+              "厨房水槽",
+              "烹饪区",
+              "麦克风"
+            ]
+          },
+          "霍布斯咖啡馆": {
+            "咖啡馆": [
+              "冰箱",
+              "咖啡馆顾客座位",
+              "烹饪区",
+              "厨房水槽",
+              "咖啡馆柜台后面",
+              "钢琴"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "classic_25_profile": {
+    "age": 21,
+    "innate": "勤奋、热情、敬业",
+    "learned": "沃尔夫冈是奥克山学院学习化学的学生，也是一名学生运动员。他对学业和运动都非常投入。",
+    "lifestyle": "沃尔夫冈晚上9点左右上床睡觉，早上5点左右醒来，下午6点左右吃晚饭。",
+    "daily_plan": "沃尔夫冈早上去跑步，白天学习，晚上在房间里锻炼。",
+    "currently": "沃尔夫冈正在为下一场比赛进行训练，并为考试做准备。他也在寻找提高学习效率的方法。"
+  },
+  "field_provenance": {
+    "age": {
+      "value": 21,
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/沃尔夫冈/scratch/age",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "innate": {
+      "value": "勤奋、热情、敬业",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/沃尔夫冈/scratch/innate",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "learned": {
+      "value": "沃尔夫冈是奥克山学院学习化学的学生，也是一名学生运动员。他对学业和运动都非常投入。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/沃尔夫冈/scratch/learned",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "lifestyle": {
+      "value": "沃尔夫冈晚上9点左右上床睡觉，早上5点左右醒来，下午6点左右吃晚饭。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/沃尔夫冈/scratch/lifestyle",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "daily_plan": {
+      "value": "沃尔夫冈早上去跑步，白天学习，晚上在房间里锻炼。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/沃尔夫冈/scratch/daily_plan",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "currently": {
+      "value": "沃尔夫冈正在为下一场比赛进行训练，并为考试做准备。他也在寻找提高学习效率的方法。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/沃尔夫冈/currently",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    }
+  },
+  "restored_profile_fields": [],
+  "initial_placement": {
+    "coord": [
+      107,
+      62
+    ],
+    "coord_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+      "json_pointer": "/persona_init_pos/沃尔夫冈",
+      "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+    },
+    "address": [
+      "the Ville",
+      "奥克山学院宿舍",
+      "沃尔夫冈的房间",
+      "床"
+    ],
+    "address_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\maze.json",
+      "json_pointer": "/tiles",
+      "sha256": "5724aea03bf4de8cf4aba5e76df39d7680e31d78fae1e4c80bd9cfcf1aa3d5d2"
+    },
+    "matching_source_tile": {
+      "coord": [
+        107,
+        62
+      ],
+      "address": [
+        "奥克山学院宿舍",
+        "沃尔夫冈的房间",
+        "床"
+      ]
+    },
+    "living_area": [
+      "the Ville",
+      "奥克山学院宿舍",
+      "沃尔夫冈的房间"
+    ],
+    "living_area_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\沃尔夫冈\\agent.json",
+      "json_pointer": "/spatial/address/living_area",
+      "sha256": "b9f0f681db10e3a0e89617ffaae6097003c7521794589ea866317037aba5ea11"
+    }
+  },
+  "classic_known_spatial": {
+    "address": {
+      "living_area": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "沃尔夫冈的房间"
+      ]
+    },
+    "tree": {
+      "the Ville": {
+        "奥克山学院": {
+          "走廊": [],
+          "图书馆": [
+            "图书馆沙发",
+            "图书馆桌子",
+            "书架"
+          ],
+          "教室": [
+            "黑板",
+            "教室讲台",
+            "教室学生座位"
+          ]
+        },
+        "奥克山学院宿舍": {
+          "花园": [
+            "宿舍花园"
+          ],
+          "沃尔夫冈的房间": [
+            "书桌",
+            "床",
+            "游戏机",
+            "举重器械",
+            "壁橱"
+          ],
+          "女卫生间": [
+            "厕所",
+            "花洒",
+            "浴室洗手池"
+          ],
+          "公共休息室": [
+            "公共休息室沙发",
+            "台球桌",
+            "公共休息室桌子"
+          ],
+          "男卫生间": [
+            "花洒",
+            "浴室洗手池",
+            "厕所"
+          ]
+        },
+        "柳树市场和药店": {
+          "商店": [
+            "杂货店货架",
+            "杂货店柜台后面",
+            "杂货店柜台",
+            "药店货架",
+            "药店柜台",
+            "药店柜台后面"
+          ]
+        },
+        "哈维奥克供应店": {
+          "供应店": [
+            "供应店产品货架",
+            "供应店柜台后面",
+            "供应店柜台"
+          ]
+        },
+        "约翰逊公园": {
+          "公园": [
+            "公园花园"
+          ]
+        },
+        "玫瑰酒吧": {
+          "酒吧": [
+            "架子",
+            "冰箱",
+            "酒吧顾客座位",
+            "吧台后面",
+            "厨房水槽",
+            "烹饪区",
+            "麦克风"
+          ]
+        },
+        "霍布斯咖啡馆": {
+          "咖啡馆": [
+            "冰箱",
+            "咖啡馆顾客座位",
+            "烹饪区",
+            "厨房水槽",
+            "咖啡馆柜台后面",
+            "钢琴"
+          ]
+        }
+      }
+    }
+  },
+  "known_spatial_provenance": {
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\沃尔夫冈\\agent.json",
+      "json_pointer": "/spatial",
+      "sha256": "b9f0f681db10e3a0e89617ffaae6097003c7521794589ea866317037aba5ea11"
+    },
+    "historical_complete_snapshot_available": false,
+    "adjustment": "No adjustment.",
+    "removed_object_names": [],
+    "adjustment_evidence": null
+  },
+  "source_behavior_parameters": {
+    "vision_radius": 8,
+    "perception_mode": "box",
+    "attention_bandwidth": 8,
+    "move_speed": null,
+    "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+    "chat_iterations": 4,
+    "schedule_max_try": 5,
+    "schedule_diversity": 5,
+    "think_interval": 1000,
+    "poignancy_max": 150,
+    "memory_retention": 8,
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+      "json_pointer": "/agent",
+      "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+    }
+  },
+  "assets": [
+    {
+      "role": "portrait",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\沃尔夫冈\\portrait.png",
+      "copy": "agents/wolfgang-schulz/assets/portrait.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1364,
+      "sha256": "41cab704349909832e922f753ba3bed05587f402b49990b4a3526db72cc54ab2"
+    },
+    {
+      "role": "walking_texture",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\沃尔夫冈\\texture.png",
+      "copy": "agents/wolfgang-schulz/assets/texture.png",
+      "width": 96,
+      "height": 128,
+      "bytes": 2191,
+      "sha256": "de05252cf8cba8773bf19656c7071247fe1ace38c5f27e59866ab7d672518c5c"
+    }
+  ]
+}

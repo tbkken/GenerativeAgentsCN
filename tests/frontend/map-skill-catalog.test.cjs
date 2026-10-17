@@ -134,7 +134,7 @@ test('scope changes clear the old catalog and ignore late author responses', asy
   releaseAuthor(response([{name: 'author-camera'}]));
   assert.equal(await author, false);
   assert.deepEqual(f.optionValues(), ['', 'package-camera']);
-  assert.equal(f.requests.at(-1).url, '/api/studio/experiments/experiment-a/resources/skills?kind=atomic&page=1&page_size=20');
+  assert.equal(f.requests.at(-1).url, '/api/studio/experiments/experiment-a/resources/skills?kind=skill&page=1&page_size=20');
 });
 
 test('a request from an abandoned scope is ignored even before a replacement refresh starts', async () => {
@@ -166,6 +166,21 @@ test('experiment activation keeps its existing map reload while refreshing only 
   f.setCatalog([{name: 'package-camera'}]);
   await f.manager.activate();
   assert.deepEqual(f.openedMaps, [['experiment-a', false]]);
-  assert.equal(f.requests[0].url, '/api/studio/experiments/experiment-a/resources/skills?kind=atomic&page=1&page_size=20');
+  assert.equal(f.requests[0].url, '/api/studio/experiments/experiment-a/resources/skills?kind=skill&page=1&page_size=20');
   assert.deepEqual(f.optionValues(), ['', 'package-camera']);
+});
+
+test('object Skill choices show Chinese display names and descriptions while submitting stable keys', async () => {
+  const f = setup();
+  f.setCatalog([{name: 'observe-camera', display_name: '观察摄像头', description: '记录范围内的活动'},
+    {name: 'unsafe-label', display_name: '<script>标题</script>'}]);
+  await f.editor.refreshSkillCatalog();
+  assert.match(f.selector.innerHTML, /观察摄像头（observe-camera） · 记录范围内的活动/);
+  assert.match(f.selector.innerHTML, /value="observe-camera"/);
+  assert.match(f.selector.innerHTML, /&lt;script&gt;标题&lt;\/script&gt;/);
+  assert.doesNotMatch(f.selector.innerHTML, /<script>/);
+  f.selector.value = 'observe-camera';
+  await f.editor.refreshSkillCatalog();
+  assert.equal(f.selector.value, 'observe-camera');
+  assert.ok(f.optionValues().includes('observe-camera'));
 });

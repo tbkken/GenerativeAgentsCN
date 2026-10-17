@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import Engine, create_engine, event
+from sqlalchemy import CheckConstraint, Engine, create_engine, event, inspect, select
 from sqlalchemy.engine import make_url
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import NullPool
@@ -138,5 +138,46 @@ def upgrade_database(database_url: str, revision: str = "head") -> None:
         engine = create_engine(database_url)
         try:
             StudioResourceExchangeState.__table__.create(engine, checkfirst=True)
+            _refresh_empty_skill_table(engine)
         finally:
             engine.dispose()
+
+
+def _refresh_empty_skill_table(engine: Engine) -> None:
+    """Apply the current Skill kind contract only to an empty SQLite author table.
+
+    Public resources in other tables must survive a Skill contract change. An
+    incompatible populated Skill table is rejected, never converted or cleared.
+    """
+    from generative_agents.ga_studio.storage.models import StudioSkill
+
+    if engine.dialect.name != "sqlite":
+        return
+    table = StudioSkill.__table__
+    constraint_name = "ck_studio_skills_kind"
+    expected = next(str(item.sqltext) for item in table.constraints
+                    if isinstance(item, CheckConstraint) and item.name == constraint_name)
+
+    def normalized(value: str) -> str:
+        return "".join(value.casefold().split())
+
+    with engine.connect() as connection:
+        # Lock writers before inspecting emptiness and keep SQLite DDL in
+        # the same explicit transaction as the guard and replacement.
+        connection.exec_driver_sql("BEGIN IMMEDIATE")
+        try:
+            constraints = inspect(connection).get_check_constraints(table.name)
+            actual = next((item["sqltext"] for item in constraints
+                           if item["name"] == constraint_name), "")
+            if normalized(actual) != normalized(expected):
+                if connection.execute(select(table.c.id).limit(1)).first() is not None:
+                    raise RuntimeError(
+                        "Studio Skill kind constraint is incompatible; the author Skill table "
+                        "must be empty before its schema can be refreshed. No resources were changed."
+                    )
+                table.drop(connection)
+                table.create(connection)
+            connection.commit()
+        except Exception:
+            connection.rollback()
+            raise

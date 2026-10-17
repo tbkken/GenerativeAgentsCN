@@ -105,7 +105,7 @@ class ConfigManifest(ProtocolModel):
 class SkillPackageEntry(ProtocolModel):
     skill_id: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=240)]
     kind: Literal["brain", "sub_skill", "object"]
-    editor_kind: Literal["brain", "pack", "atomic"] | None = None
+    editor_kind: Literal["brain", "skill"] | None = None
     path: SafePath
     dependencies: list[str] = Field(default_factory=list)
     content_sha256: Sha256 | None = None

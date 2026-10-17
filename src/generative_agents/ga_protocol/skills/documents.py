@@ -3,31 +3,24 @@
 from __future__ import annotations
 
 import hashlib
-import json
 import re
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Iterable, Literal, Mapping
 
-from generative_agents.ga_protocol.skills.dependencies import referenced_mcp_tools
+from generative_agents.ga_protocol.skills.dependencies import referenced_interfaces, referenced_skills, skill_dependencies
+from generative_agents.ga_protocol.skills.decisions import skill_model_settings
+from generative_agents.ga_protocol.skills.metadata import SkillRegistryError, skill_display_name, skill_frontmatter
 
 
-SkillKind = Literal["atomic", "pack", "brain"]
-_KINDS: tuple[SkillKind, ...] = ("atomic", "pack", "brain")
+SkillKind = Literal["skill", "brain"]
+_KINDS: tuple[SkillKind, ...] = ("skill", "brain")
 _NAME = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
-_FRONTMATTER = re.compile(
-    r"\A---\s*\r?\n(?P<header>.*?)\r?\n---\s*(?:\r?\n|\Z)", re.DOTALL
-)
 _PROMPT = re.compile(
     r"<!--\s*PROMPT:START\s*-->\s*(?P<prompt>.*?)\s*<!--\s*PROMPT:END\s*-->",
     re.DOTALL,
 )
-_SKILL_REFERENCE = re.compile(r"(?<![\w-])\$([a-z0-9]+(?:-[a-z0-9]+)*)")
-
-
-class SkillRegistryError(ValueError):
-    """A skill document is missing, unsafe, or invalid."""
 
 
 @dataclass(frozen=True, slots=True)
@@ -45,7 +38,11 @@ class SkillDocument:
     scripts: tuple[str, ...]
     content_hash: str
     updated_at: str
+    display_name: str = ""
     example_input: str = ""
+    llm_type: Literal["generative", "decision"] = "generative"
+    decision_questions: dict[str, Any] = field(default_factory=dict)
+    decision_prompt_sha256: str = ""
 
     def summary(self) -> dict[str, object]:
         """执行 `SkillDocument` 的摘要操作。
@@ -55,8 +52,12 @@ class SkillDocument:
         """
         return {
             "name": self.name,
+            "display_name": self.display_name,
             "description": self.description,
             "example_input": self.example_input,
+            "llm_type": self.llm_type,
+            "decision_questions": self.decision_questions,
+            "decision_prompt_sha256": self.decision_prompt_sha256,
             "kind": self.kind,
             "path": self.path.as_posix(),
             "children": list(self.children),
@@ -112,23 +113,21 @@ class SkillRegistry:
         返回:
             返回按接口约定组织的结果集合。
         """
+        if kind is not None and kind not in _KINDS:
+            raise SkillRegistryError(f"Unsupported Skill kind: {kind}")
         kinds = (kind,) if kind else _KINDS
         needle = query.strip().casefold()
         normalized_needle = re.sub(r"[\s_-]+", "-", needle).strip("-")
         documents: list[SkillDocument] = []
         for current_kind in kinds:
-            kind_root = (
-                self.root / f"{current_kind}s"
-                if current_kind != "atomic"
-                else self.root / "atomic"
-            )
+            kind_root = self.root / f"{current_kind}s"
             if not kind_root.exists():
                 continue
             for skill_file in sorted(kind_root.glob("*/SKILL.md")):
                 document = self._read(skill_file, current_kind)
                 haystack = (
                     f"{document.name}\n{document.name.replace('-', ' ')}\n"
-                    f"{document.description}\n{document.body}"
+                    f"{document.display_name}\n{document.description}\n{document.body}"
                 ).casefold()
                 if not needle or needle in haystack or normalized_needle in document.name:
                     documents.append(document)
@@ -165,19 +164,13 @@ class SkillRegistry:
         返回:
             返回以字段名或业务键组织的结构化映射。
         """
-        document = self.get(name)
-        children = []
-        for child_name in document.children:
+        self.get(name)
+        def load(key):
             try:
-                children.append(self.get(child_name).summary())
+                return self.get(key).detail()
             except SkillRegistryError:
-                children.append({"name": child_name, "missing": True})
-        return {
-            "skill": document.name,
-            "scripts": list(document.scripts),
-            "skills": children,
-            "mcp": referenced_mcp_tools(document.body),
-        }
+                return None
+        return skill_dependencies(self.normalize_name(name), load)
 
     def snapshot(
         self,
@@ -210,6 +203,7 @@ class SkillRegistry:
         return {
             document.name: {
                 "kind": document.kind,
+                "display_name": document.display_name,
                 "description": document.description,
                 "markdown": document.markdown,
                 "content_hash": document.content_hash,
@@ -248,7 +242,9 @@ class SkillRegistry:
         异常:
             SkillRegistryError: 当底层操作报告该异常条件时抛出。
         """
-        folder = "atomic" if kind == "atomic" else f"{kind}s"
+        if kind not in _KINDS:
+            raise SkillRegistryError(f"Unsupported Skill kind: {kind}")
+        folder = f"{kind}s"
         path = (self.root / folder / name).resolve()
         try:
             path.relative_to(self.root)
@@ -282,34 +278,10 @@ class SkillRegistry:
         异常:
             SkillRegistryError: 当底层操作报告该异常条件时抛出。
         """
-        match = _FRONTMATTER.match(markdown)
-        if not match:
-            raise SkillRegistryError(f"SKILL.md has no valid YAML frontmatter: {path}")
-        fields: dict[str, str] = {}
-        for raw_line in match.group("header").splitlines():
-            if not raw_line.strip():
-                continue
-            key, separator, raw_value = raw_line.partition(":")
-            if not separator:
-                raise SkillRegistryError(
-                    f"Invalid frontmatter line in {path}: {raw_line}"
-                )
-            key = key.strip()
-            if key not in {"name", "description", "example_input"}:
-                raise SkillRegistryError(
-                    f"Unsupported frontmatter field in {path}: {key}"
-                )
-            value = raw_value.strip()
-            if value.startswith('"') and value.endswith('"'):
-                try:
-                    value = json.loads(value)
-                except json.JSONDecodeError as exc:
-                    raise SkillRegistryError(
-                        f"Invalid quoted frontmatter value in {path}"
-                    ) from exc
-            fields[key] = value
-        if not {"name", "description"} <= set(fields):
-            raise SkillRegistryError(f"SKILL.md requires name and description: {path}")
+        if kind not in _KINDS:
+            raise SkillRegistryError(f"Unsupported Skill kind: {kind}")
+        fields, body_offset = skill_frontmatter(markdown, location=path)
+        llm_type, decision_questions = skill_model_settings(fields)
         name = self.normalize_name(fields["name"])
         if path.parent.name != name:
             raise SkillRegistryError(
@@ -319,14 +291,10 @@ class SkillRegistry:
         if not description:
             raise SkillRegistryError(f"Skill description is empty: {path}")
         example_input = fields.get("example_input", "").strip()
-        body = markdown[match.end() :].strip()
+        body = markdown[body_offset:].strip()
         prompt_match = _PROMPT.search(body)
         prompt_template = prompt_match.group("prompt").strip() if prompt_match else ""
-        children = tuple(
-            dict.fromkeys(
-                child for child in _SKILL_REFERENCE.findall(body) if child != name
-            )
-        )
+        children = tuple(referenced_skills(body))
         scripts_root = path.parent / "scripts"
         scripts = (tuple(sorted(name for name in file_contents if name.startswith("scripts/"))) if file_contents is not None else (
             tuple(
@@ -340,6 +308,11 @@ class SkillRegistry:
             else ()
         ))
         digest_builder = hashlib.sha256(markdown.encode("utf-8"))
+        if llm_type == "decision":
+            if kind == "brain":
+                raise SkillRegistryError("Brain 必须使用生成式模型；请通过子 Skill 调用决策模型。")
+            if children or referenced_interfaces(body) or scripts:
+                raise SkillRegistryError("决策 Skill 只返回判断结果；子 Skill、运行时接口和脚本请由生成式 Skill 调用。")
         for relative_path in scripts:
             digest_builder.update(b"\x00")
             digest_builder.update(relative_path.encode("utf-8"))
@@ -349,6 +322,7 @@ class SkillRegistry:
         updated = "" if file_contents is not None else datetime.fromtimestamp(path.stat().st_mtime, UTC).isoformat()
         return SkillDocument(
             name=name,
+            display_name=skill_display_name(fields, name),
             description=description,
             kind=kind,
             path=path,
@@ -360,6 +334,9 @@ class SkillRegistry:
             content_hash=digest,
             updated_at=updated,
             example_input=example_input,
+            llm_type=llm_type,
+            decision_questions=decision_questions,
+            decision_prompt_sha256=fields.get("decision_prompt_sha256", ""),
         )
 
 
@@ -422,7 +399,7 @@ class SnapshotSkillRegistry:
                 raise SkillRegistryError(
                     f"Unsupported Skill kind in run snapshot: {kind!r}"
                 )
-            folder = "atomic" if kind == "atomic" else f"{kind}s"
+            folder = f"{kind}s"
             skill_root = (self.root / folder / name).resolve()
             try:
                 skill_root.relative_to(self.root)

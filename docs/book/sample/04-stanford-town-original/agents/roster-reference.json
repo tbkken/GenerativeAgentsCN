@@ -1,0 +1,1809 @@
+{
+  "document_kind": "historical-source-reference-not-ga-package",
+  "preparation_status": "materials-only-not-imported",
+  "baseline": "Chinese-project example before the Lin Xiao extension; not claimed to be the official Stanford paper package.",
+  "roster_source": {
+    "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+    "json_pointer": "/persona_init_pos",
+    "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+  },
+  "profile_source": {
+    "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+    "json_pointer": "/all_movement/description",
+    "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+  },
+  "source_count": 25,
+  "source_world_name": "the Ville",
+  "english_key_note": "The local source asset key is Chinese. proposed_stable_key is newly derived from documented English names and is not an original asset field.",
+  "agents": [
+    {
+      "order": 1,
+      "display_name": "阿伊莎",
+      "source_asset_key": "阿伊莎",
+      "documented_english_name": "Ayesha Khan",
+      "proposed_stable_key": "ayesha-khan",
+      "profile": {
+        "age": 20,
+        "innate": "好奇、坚定、独立",
+        "learned": "阿伊莎是一名热爱文学探索的大学生。她充满好奇心，决心要理解每一件作品的细微差别。",
+        "lifestyle": "阿伊莎晚上10点左右上床睡觉，早上6点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "阿伊莎从上午10点到下午2点去奥克山学院的图书馆上课，然后在图书馆学习。",
+        "currently": "阿伊莎正在为她的毕业论文做研究，主题是莎士比亚戏剧中的语言运用。她也在上课，学习更多关于写作的知识。"
+      },
+      "initial_coord": [
+        118,
+        61
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "阿伊莎的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "阿伊莎的房间"
+      ],
+      "known_spatial_reference": "agents/ayesha-khan/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿伊莎\\portrait.png",
+          "copy": "agents/ayesha-khan/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1630,
+          "sha256": "5f5af6b9b58ebf04732b2cd4dbfc953c4e14f6eb7805356f1b5b2d319af97ece"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿伊莎\\texture.png",
+          "copy": "agents/ayesha-khan/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2605,
+          "sha256": "321737d02185701ce1a9665433beb6a5e3b350ebc9efeac20919f35ca392e936"
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "display_name": "克劳斯",
+      "source_asset_key": "克劳斯",
+      "documented_english_name": "Klaus Mueller",
+      "proposed_stable_key": "klaus-mueller",
+      "profile": {
+        "age": 20,
+        "innate": "善良、好奇、热情",
+        "learned": "克劳斯是奥克山学院社会学专业的学生。他对社会正义充满热情，喜欢探索不同的观点。",
+        "lifestyle": "克劳斯晚上11点左右睡觉，早上7点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "克劳斯一大早就去奥克山学院的图书馆，整日写作，在霍布斯咖啡馆吃饭。",
+        "currently": "克劳斯正在撰写一篇关于低收入社区中产阶级化影响的研究论文。"
+      },
+      "initial_coord": [
+        126,
+        46
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "克劳斯的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "克劳斯的房间"
+      ],
+      "known_spatial_reference": "agents/klaus-mueller/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\克劳斯\\portrait.png",
+          "copy": "agents/klaus-mueller/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1556,
+          "sha256": "0fa5da0104e473d92938dde7c11766db6c4ec1e0b75cedff2496b55a3219dd1b"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\克劳斯\\texture.png",
+          "copy": "agents/klaus-mueller/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2544,
+          "sha256": "9eabd5d81dc3b03dea424316a7e9fb24987cd95b9d02a3128af95fb51fc88e38"
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "display_name": "玛丽亚",
+      "source_asset_key": "玛丽亚",
+      "documented_english_name": "Maria Lopez",
+      "proposed_stable_key": "maria-lopez",
+      "profile": {
+        "age": 21,
+        "innate": "精力充沛、热情、好学",
+        "learned": "玛丽亚是奥克山学院的一名物理专业学生，也是一名兼职Twitch游戏主播，喜欢与他人建立联系并探索新想法。",
+        "lifestyle": "玛丽亚午夜前后上床睡觉，上午10点左右醒来，晚上7点左右吃晚饭。",
+        "daily_plan": "玛丽亚每天至少花6个小时在Twitch上直播或玩游戏。",
+        "currently": "玛丽亚正在攻读物理学位，并在Twitch上直播游戏以赚取额外收入。她几乎每天都会去霍布斯咖啡馆学习和吃饭。"
+      },
+      "initial_coord": [
+        123,
+        57
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "玛丽亚的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "玛丽亚的房间"
+      ],
+      "known_spatial_reference": "agents/maria-lopez/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\玛丽亚\\portrait.png",
+          "copy": "agents/maria-lopez/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1456,
+          "sha256": "a0701bde26a9f2f6b718f022007e7d9cbbdc27991f0354cc06c06e0443ea7460"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\玛丽亚\\texture.png",
+          "copy": "agents/maria-lopez/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3841,
+          "sha256": "449753cef273b4a984b22172bdc62c82869b4cd19c008558fc94016b2db02366"
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "display_name": "沃尔夫冈",
+      "source_asset_key": "沃尔夫冈",
+      "documented_english_name": "Wolfgang Schulz",
+      "proposed_stable_key": "wolfgang-schulz",
+      "profile": {
+        "age": 21,
+        "innate": "勤奋、热情、敬业",
+        "learned": "沃尔夫冈是奥克山学院学习化学的学生，也是一名学生运动员。他对学业和运动都非常投入。",
+        "lifestyle": "沃尔夫冈晚上9点左右上床睡觉，早上5点左右醒来，下午6点左右吃晚饭。",
+        "daily_plan": "沃尔夫冈早上去跑步，白天学习，晚上在房间里锻炼。",
+        "currently": "沃尔夫冈正在为下一场比赛进行训练，并为考试做准备。他也在寻找提高学习效率的方法。"
+      },
+      "initial_coord": [
+        107,
+        62
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "沃尔夫冈的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "沃尔夫冈的房间"
+      ],
+      "known_spatial_reference": "agents/wolfgang-schulz/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\沃尔夫冈\\portrait.png",
+          "copy": "agents/wolfgang-schulz/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1364,
+          "sha256": "41cab704349909832e922f753ba3bed05587f402b49990b4a3526db72cc54ab2"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\沃尔夫冈\\texture.png",
+          "copy": "agents/wolfgang-schulz/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2191,
+          "sha256": "de05252cf8cba8773bf19656c7071247fe1ace38c5f27e59866ab7d672518c5c"
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "display_name": "梅",
+      "source_asset_key": "梅",
+      "documented_english_name": "Mei Lin",
+      "proposed_stable_key": "mei-lin",
+      "profile": {
+        "age": 44,
+        "innate": "培养、善良、耐心",
+        "learned": "梅是一位大学教授，也是一位喜欢帮助人们实现目标的母亲。她一直在寻找方法来支持她的学生和家人。",
+        "lifestyle": "梅晚上11点左右上床睡觉，早上7点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "梅上午10点开始去奥克山学院教书，一直教到下午2点，然后回家。",
+        "currently": "梅与丈夫约翰和儿子埃迪住在一起，她正在教授哲学课程并撰写研究论文。她还帮助她的两个孩子做功课。"
+      },
+      "initial_coord": [
+        90,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室"
+      ],
+      "known_spatial_reference": "agents/mei-lin/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\梅\\portrait.png",
+          "copy": "agents/mei-lin/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1386,
+          "sha256": "c96aabfc8786d2f8eabc766a9e0324ede43159254e021290eed8142799b98f65"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\梅\\texture.png",
+          "copy": "agents/mei-lin/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3902,
+          "sha256": "9a1cc8f4d1598c37615e13ab2a4a73fa70c51d8b851fd928bc9b1b8380c7d8c3"
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "display_name": "约翰",
+      "source_asset_key": "约翰",
+      "documented_english_name": "John Lin",
+      "proposed_stable_key": "john-lin",
+      "profile": {
+        "age": 45,
+        "innate": "耐心、善良、有条理",
+        "learned": "约翰是柳树市场和药店的药店店主，他喜欢帮助别人。他一直在寻找让客户更容易获得药物的方法。",
+        "lifestyle": "约翰晚上10点左右上床睡觉，早上6点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "约翰上午9点左右去柳树市场和药店开放药店柜台。他站在药店柜台后面直到下午5点，然后回家。",
+        "currently": "约翰与妻子梅和儿子埃迪住在一起，在柳树市场和药店开了一家药店。他还参加了在线课程，以了解最新的药物和治疗方法。约翰也很好奇谁将参加下个月的地方市长选举，他向每个人询问谁将参加选举。"
+      },
+      "initial_coord": [
+        91,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室"
+      ],
+      "known_spatial_reference": "agents/john-lin/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\约翰\\portrait.png",
+          "copy": "agents/john-lin/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1336,
+          "sha256": "562931ae6082efbea13693aa738d080a3acaa4aaa0c0ce560741c48323e402d5"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\约翰\\texture.png",
+          "copy": "agents/john-lin/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3062,
+          "sha256": "f912eda6d794ff23ce6a1b27f785a800c6261f8e33ffd5f96fffa5de6ec325aa"
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "display_name": "埃迪",
+      "source_asset_key": "埃迪",
+      "documented_english_name": "Eddy Lin",
+      "proposed_stable_key": "eddy-lin",
+      "profile": {
+        "age": 19,
+        "innate": "好奇、分析、音乐",
+        "learned": "埃迪是奥克山学院的一名学生，学习音乐理论和作曲。他喜欢探索不同的音乐风格，并一直在寻找扩展知识的方法。",
+        "lifestyle": "埃迪晚上11点左右上床睡觉，早上7点左右起床，下午5点左右吃晚饭。",
+        "daily_plan": "埃迪上午10点去奥克山学院上课。下午，他喜欢去霍布斯咖啡馆吃饭和学习。",
+        "currently": "埃迪正在为他的大学班级做音乐合成项目。他也在上课，学习更多的音乐理论。"
+      },
+      "initial_coord": [
+        93,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "埃迪的卧室",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "林氏家族的房子",
+        "埃迪的卧室"
+      ],
+      "known_spatial_reference": "agents/eddy-lin/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\埃迪\\portrait.png",
+          "copy": "agents/eddy-lin/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1507,
+          "sha256": "66d523412d0072cd21550946182e73a0ef8f989a9c4f922d7547137ef6730057"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\埃迪\\texture.png",
+          "copy": "agents/eddy-lin/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3483,
+          "sha256": "4f1eca4f29ee37526f3033f347bfda0ad5fac1d92be4c4f50398db6f32c1b689"
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "display_name": "简",
+      "source_asset_key": "简",
+      "documented_english_name": "Jane Moreno",
+      "proposed_stable_key": "jane-moreno",
+      "profile": {
+        "age": 46,
+        "innate": "友好、乐于助人、有条理",
+        "learned": "简是一个喜欢照顾家人的家庭主妇。她总是在寻找新的方法，让每个人的生活更轻松、更愉快。",
+        "lifestyle": "简晚上10点左右上床睡觉，早上6点左右醒来，下午6点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "简和她的丈夫汤姆住在一起，汤姆是柳树市场和药店的店主。"
+      },
+      "initial_coord": [
+        72,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室"
+      ],
+      "known_spatial_reference": "agents/jane-moreno/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\简\\portrait.png",
+          "copy": "agents/jane-moreno/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1547,
+          "sha256": "11655a8f73f972764501ae4cda4bbff2d9f64855f867dce90282517ac16b4127"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\简\\texture.png",
+          "copy": "agents/jane-moreno/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2240,
+          "sha256": "2ffd98086b3fbdab1b23459a7a041bdabca81773326425a0c952e049bfbbbc37"
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "display_name": "汤姆",
+      "source_asset_key": "汤姆",
+      "documented_english_name": "Tom Moreno",
+      "proposed_stable_key": "tom-moreno",
+      "profile": {
+        "age": 52,
+        "innate": "粗鲁、好斗、精力充沛",
+        "learned": "汤姆是柳树市场和药店的店主，他喜欢与顾客互动。他总是乐于助人，确保每个人都得到照顾。",
+        "lifestyle": "汤姆晚上11点左右上床睡觉，早上7点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "汤姆早上8点开放柳树市场和药店，站在杂货店柜台后面，下午6点回家和妻子一起吃晚饭。",
+        "currently": "汤姆和他的妻子简住在一起，负责管理商店的日常运营，并帮助顾客完成订单。汤姆对下个月即将举行的地方市长选举也很感兴趣。他不喜欢山姆。"
+      },
+      "initial_coord": [
+        73,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室"
+      ],
+      "known_spatial_reference": "agents/tom-moreno/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [
+        "currently"
+      ],
+      "removed_later_known_objects": [
+        "社区公告板"
+      ],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\汤姆\\portrait.png",
+          "copy": "agents/tom-moreno/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1564,
+          "sha256": "1f29f62b027e64cdceba15ef81e778d44086b3f8d5fe994aa2bea93f11f1cfc0"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\汤姆\\texture.png",
+          "copy": "agents/tom-moreno/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3135,
+          "sha256": "237902717463ad243e2d1e7b9a61097bcdf043c2f6749e59643d8a844219d6c8"
+        }
+      ]
+    },
+    {
+      "order": 10,
+      "display_name": "卡门",
+      "source_asset_key": "卡门",
+      "documented_english_name": "Carmen Ortiz",
+      "proposed_stable_key": "carmen-ortiz",
+      "profile": {
+        "age": 33,
+        "innate": "友好、外向、乐于助人",
+        "learned": "卡门是哈维奥克供应店的店主，她喜欢帮助人们找到所需的物资。她总是想方设法让顾客感到受欢迎。",
+        "lifestyle": "卡门晚上11点左右上床睡觉，早上7点左右醒来，晚上8点左右吃晚饭。",
+        "daily_plan": "卡门早上8点开放哈维奥克供应店，站在柜台后面，下午6点关门，这时她喜欢去玫瑰酒吧放松一下。",
+        "currently": "卡门正在管理哈维奥克供应店，与室友塔玛拉住在一起。她还在努力扩大她的网店。"
+      },
+      "initial_coord": [
+        57,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "卡门的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "卡门的房间"
+      ],
+      "known_spatial_reference": "agents/carmen-ortiz/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\卡门\\portrait.png",
+          "copy": "agents/carmen-ortiz/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1606,
+          "sha256": "25fa13f191d14f8e83ca642d5c90849cb8f79f1fdda86f9458affb21c3fbced7"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\卡门\\texture.png",
+          "copy": "agents/carmen-ortiz/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2623,
+          "sha256": "40512ae37738d1fc2597471bebec69c7001b1f1c19ae9b49db7795b90b2ab4c2"
+        }
+      ]
+    },
+    {
+      "order": 11,
+      "display_name": "塔玛拉",
+      "source_asset_key": "塔玛拉",
+      "documented_english_name": "Tamara Taylor",
+      "proposed_stable_key": "tamara-taylor",
+      "profile": {
+        "age": 30,
+        "innate": "富有想象力，耐心，善良",
+        "learned": "塔玛拉是一位儿童读物作家，她喜欢创作能激发年轻读者想象力的故事。她非常善良，在工作中也很有耐心。",
+        "lifestyle": "塔玛拉晚上10点左右上床睡觉，早上6点左右醒来，晚上6点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "塔玛拉和室友卡门住在一起，她正在写一系列新的儿童读物。她还在为成人创作系列漫画。"
+      },
+      "initial_coord": [
+        54,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "塔玛拉的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "塔玛拉的房间"
+      ],
+      "known_spatial_reference": "agents/tamara-taylor/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\塔玛拉\\portrait.png",
+          "copy": "agents/tamara-taylor/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1639,
+          "sha256": "4a9720980d500a6480dfe582f514a4420aadfe7b5c4d73f3283211a83cdcc1aa"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\塔玛拉\\texture.png",
+          "copy": "agents/tamara-taylor/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 4445,
+          "sha256": "cf484ba005c2df9bfe973688d87224dd04f4e5ba20f78a366f468eda8bc53685"
+        }
+      ]
+    },
+    {
+      "order": 12,
+      "display_name": "亚瑟",
+      "source_asset_key": "亚瑟",
+      "documented_english_name": "Arthur Burton",
+      "proposed_stable_key": "arthur-burton",
+      "profile": {
+        "age": 42,
+        "innate": "友好、外向、慷慨",
+        "learned": "亚瑟是玫瑰酒吧的调酒师和酒吧老板，他喜欢让人们感到受欢迎。他总是想办法让他的顾客感到很特别。",
+        "lifestyle": "亚瑟在午夜前后上床睡觉，早上7点左右醒来，下午4点左右吃晚饭。",
+        "daily_plan": "亚瑟每天下午5点开放玫瑰酒吧，并在柜台前站到晚上10点，然后关门。",
+        "currently": "亚瑟在镇上经营着一家很受欢迎的酒吧，这家酒吧已经存在了10年。他还学习了更多关于调酒的知识，并创造了独特的鸡尾酒。"
+      },
+      "initial_coord": [
+        53,
+        14
+      ],
+      "initial_address": [
+        "the Ville",
+        "亚瑟的公寓",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "亚瑟的公寓",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/arthur-burton/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚瑟\\portrait.png",
+          "copy": "agents/arthur-burton/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1600,
+          "sha256": "01dbcf959a344e4b374d6e628f3143b4a3370f6d61b555d38799442026522857"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚瑟\\texture.png",
+          "copy": "agents/arthur-burton/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3754,
+          "sha256": "454ce9bd109735ee830df7ab972215f5d455aba2236075ecf97ad80a6868e5c4"
+        }
+      ]
+    },
+    {
+      "order": 13,
+      "display_name": "伊莎贝拉",
+      "source_asset_key": "伊莎贝拉",
+      "documented_english_name": "Isabella Rodriguez",
+      "proposed_stable_key": "isabella-rodriguez",
+      "profile": {
+        "age": 34,
+        "innate": "友好、外向、好客",
+        "learned": "伊莎贝拉是霍布斯咖啡馆的老板，她总是想办法让咖啡馆成为人们放松和享受的地方。",
+        "lifestyle": "伊莎贝拉晚上11点左右上床睡觉，早上6点左右醒来。",
+        "daily_plan": "伊莎贝拉每天早上8点开放霍布斯咖啡馆，站在柜台前直到晚上8点，然后关闭咖啡馆。",
+        "currently": "伊莎贝拉计划于2月14日下午5点在霍布斯咖啡馆与她的顾客举行情人节派对。她正在收集聚会材料，并告诉大家在2月14日下午5点至7点在霍布斯咖啡馆参加聚会。"
+      },
+      "initial_coord": [
+        72,
+        14
+      ],
+      "initial_address": [
+        "the Ville",
+        "伊莎贝拉的公寓",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "伊莎贝拉的公寓",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/isabella-rodriguez/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [
+        "scratch.learned",
+        "currently"
+      ],
+      "removed_later_known_objects": [
+        "社区公告板"
+      ],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\伊莎贝拉\\portrait.png",
+          "copy": "agents/isabella-rodriguez/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1649,
+          "sha256": "2f04daac15a8d33a43a3d4c5f73b69878ee864a33dccc00017a5ef43eed3d233"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\伊莎贝拉\\texture.png",
+          "copy": "agents/isabella-rodriguez/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2868,
+          "sha256": "7b19cb649d592f98c7689ef937308e9a0e7dc8601bb151da5387e76b339b543c"
+        }
+      ]
+    },
+    {
+      "order": 14,
+      "display_name": "山姆",
+      "source_asset_key": "山姆",
+      "documented_english_name": "Sam Moore",
+      "proposed_stable_key": "sam-moore",
+      "profile": {
+        "age": 65,
+        "innate": "聪明、足智多谋、幽默",
+        "learned": "山姆是一名退役海军军官，他喜欢分享自己在军队的故事。他总有许多有趣的故事和建议。",
+        "lifestyle": "山姆晚上9点左右上床睡觉，早上5点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "山姆喜欢在约翰逊公园散步，或者坐在霍布斯咖啡馆看书。",
+        "currently": "山姆和他结婚40年的妻子詹妮弗住在一起，他空闲时间都在打理公园，他还是个狂热的读者。山姆打算在即将到来的选举中竞选地方市长，他正在告诉邻居们这件事。"
+      },
+      "initial_coord": [
+        36,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/sam-moore/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [
+        "scratch.learned",
+        "currently"
+      ],
+      "removed_later_known_objects": [
+        "社区公告板"
+      ],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\山姆\\portrait.png",
+          "copy": "agents/sam-moore/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1501,
+          "sha256": "f520b892aa7fb0f44af0b8787d8d4ef32f06d463f45067fda9354a8713a97b8e"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\山姆\\texture.png",
+          "copy": "agents/sam-moore/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2091,
+          "sha256": "e306456c1417969857386d8bade35284960afb8d00bf0a07c60a091010054b1f"
+        }
+      ]
+    },
+    {
+      "order": 15,
+      "display_name": "詹妮弗",
+      "source_asset_key": "詹妮弗",
+      "documented_english_name": "Jennifer Moore",
+      "proposed_stable_key": "jennifer-moore",
+      "profile": {
+        "age": 68,
+        "innate": "聪明、有经验、热情",
+        "learned": "詹妮弗是一位水彩画家，已经画了五十多年。她聪明又有经验，她的作品充满了温暖。",
+        "lifestyle": "詹妮弗晚上9点左右上床睡觉，早上5点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "詹妮弗和结婚40年的丈夫山姆住在一起，她正在为自己的作品展览做准备。她还指导年轻的艺术家，帮助他们发掘自己的创造性。"
+      },
+      "initial_coord": [
+        37,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/jennifer-moore/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\詹妮弗\\portrait.png",
+          "copy": "agents/jennifer-moore/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1525,
+          "sha256": "807c1c62ba190a07fdaf67ce7563349130d35589f576def567f0b409e292fe23"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\詹妮弗\\texture.png",
+          "copy": "agents/jennifer-moore/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3393,
+          "sha256": "9c9caa59d5e4abb3d40ad29259fea5c52fc5b764eafd62f7f62ff4901ff75064"
+        }
+      ]
+    },
+    {
+      "order": 16,
+      "display_name": "弗朗西斯科",
+      "source_asset_key": "弗朗西斯科",
+      "documented_english_name": "Francisco Lopez",
+      "proposed_stable_key": "francisco-lopez",
+      "profile": {
+        "age": 23,
+        "innate": "外向、友好、诚实",
+        "learned": "弗朗西斯科是一位喜欢娱乐他人的喜剧演员。他总是在寻找让人发笑的新方法。",
+        "lifestyle": "弗朗西斯科晚上11点左右上床睡觉，早上7点左右醒来，下午6点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "弗朗西斯科正在制作一个关于共居空间生活的网络系列节目。他们也在探索即兴喜剧课程。"
+      },
+      "initial_coord": [
+        16,
+        32
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "弗朗西斯科的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "艺术家共居空间",
+        "弗朗西斯科的房间"
+      ],
+      "known_spatial_reference": "agents/francisco-lopez/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\弗朗西斯科\\portrait.png",
+          "copy": "agents/francisco-lopez/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1497,
+          "sha256": "08a367b245fbb6c7344de362444e02333e3af315676f2c81070e3e6606ca0c78"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\弗朗西斯科\\texture.png",
+          "copy": "agents/francisco-lopez/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3148,
+          "sha256": "3ba2ff723ab4df9eb93fd55621ae322889606ae50a6e124a7a4c308e311d0203"
+        }
+      ]
+    },
+    {
+      "order": 17,
+      "display_name": "海莉",
+      "source_asset_key": "海莉",
+      "documented_english_name": "Hailey Johnson",
+      "proposed_stable_key": "hailey-johnson",
+      "profile": {
+        "age": 30,
+        "innate": "富有想象力、精力充沛、足智多谋",
+        "learned": "海莉是一位作家，她总是在寻找新的故事讲述方式。她喜欢沉浸在不同的文化中，探索他们的文学。",
+        "lifestyle": "海莉凌晨2点左右上床睡觉，上午10点左右醒来，下午6点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "海莉正在写一部关于一群艺术家生活在共居空间的小说。她还计划开播客。"
+      },
+      "initial_coord": [
+        26,
+        32
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "海莉的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "艺术家共居空间",
+        "海莉的房间"
+      ],
+      "known_spatial_reference": "agents/hailey-johnson/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\海莉\\portrait.png",
+          "copy": "agents/hailey-johnson/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1590,
+          "sha256": "14273a6f7bc4327645b84d6c6dfc329873beef6e6bbc1e12b821434b15dbcfd6"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\海莉\\texture.png",
+          "copy": "agents/hailey-johnson/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2763,
+          "sha256": "684178e526869586c7fc94c455d0f4b5f1f9f56b7bc035cc9a6000920f4a0bf4"
+        }
+      ]
+    },
+    {
+      "order": 18,
+      "display_name": "拉吉夫",
+      "source_asset_key": "拉吉夫",
+      "documented_english_name": "Rajiv Patel",
+      "proposed_stable_key": "rajiv-patel",
+      "profile": {
+        "age": 27,
+        "innate": "耐心、可靠、开朗",
+        "learned": "拉吉夫是一位画家，他想安静地生活，在享受日常生活的同时画画。",
+        "lifestyle": "拉吉夫在午夜前后上床睡觉，早上9点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "拉吉夫正在准备他的首场个人演出。他主要在艺术家共居空间工作。另外，他最近喜欢上了弹吉他。"
+      },
+      "initial_coord": [
+        26,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉吉夫的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉吉夫的房间"
+      ],
+      "known_spatial_reference": "agents/rajiv-patel/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉吉夫\\portrait.png",
+          "copy": "agents/rajiv-patel/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1385,
+          "sha256": "a1048ef4f41338d8a2ba6950b111b41c62e8cb0ca1411e12e4e1c3fb889eb643"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉吉夫\\texture.png",
+          "copy": "agents/rajiv-patel/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2185,
+          "sha256": "dd20304a14c7b6253abad386238f67f7c0d0df033f85548594d44333970ca7e0"
+        }
+      ]
+    },
+    {
+      "order": 19,
+      "display_name": "拉托亚",
+      "source_asset_key": "拉托亚",
+      "documented_english_name": "Latoya Williams",
+      "proposed_stable_key": "latoya-williams",
+      "profile": {
+        "age": 25,
+        "innate": "有条理、有逻辑、细心",
+        "learned": "拉托亚是一位对细节有着敏锐洞察力的数码摄影师。当涉及到她的艺术时，她非常有条理，也有很强的分析能力。",
+        "lifestyle": "拉托亚晚上10点左右上床睡觉，早上6点左右醒来，下午17:30左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "拉托亚从她的旅行中获得灵感，正在创作一系列摄影作品。她主要在艺术家共居空间工作。拉托亚也很好奇下个月谁将参加地方市长选举，这是她与其他人交谈的核心话题。"
+      },
+      "initial_coord": [
+        16,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉托亚的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉托亚的房间"
+      ],
+      "known_spatial_reference": "agents/latoya-williams/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉托亚\\portrait.png",
+          "copy": "agents/latoya-williams/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1405,
+          "sha256": "b4f892f3d17fe89b988f228ad2d8b60f340aa63a4c530571fa2e049c8a283d55"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉托亚\\texture.png",
+          "copy": "agents/latoya-williams/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2446,
+          "sha256": "9099bd2b68d6c9d82c79afa2ba881094dab78cfc65d48347c9679f2b6485e39b"
+        }
+      ]
+    },
+    {
+      "order": 20,
+      "display_name": "阿比盖尔",
+      "source_asset_key": "阿比盖尔",
+      "documented_english_name": "Abigail Chen",
+      "proposed_stable_key": "abigail-chen",
+      "profile": {
+        "age": 25,
+        "innate": "思想开放、好奇、坚定",
+        "learned": "阿比盖尔是一位数字艺术家和动画师，她喜欢探索如何使用技术来表达想法。她一直在寻找结合艺术和技术的新方法。",
+        "lifestyle": "阿比盖尔在午夜前后上床睡觉，早上8点左右醒来，下午6点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "阿比盖尔正在为客户做一个动画项目。她也在尝试不同的工具和技术来创造互动艺术。"
+      },
+      "initial_coord": [
+        36,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "阿比盖尔的房间",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "艺术家共居空间",
+        "阿比盖尔的房间"
+      ],
+      "known_spatial_reference": "agents/abigail-chen/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿比盖尔\\portrait.png",
+          "copy": "agents/abigail-chen/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1391,
+          "sha256": "127db5248d3f53482b6d799681277cde762c548b25a5c78e387e3241d6f5de4c"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\阿比盖尔\\texture.png",
+          "copy": "agents/abigail-chen/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 4525,
+          "sha256": "85f0085fd0ff3c68c5a8152731574a01ba2c2645ef28ddc313b43839c3ab5ade"
+        }
+      ]
+    },
+    {
+      "order": 21,
+      "display_name": "卡洛斯",
+      "source_asset_key": "卡洛斯",
+      "documented_english_name": "Carlos Gomez",
+      "proposed_stable_key": "carlos-gomez",
+      "profile": {
+        "age": 32,
+        "innate": "直率、狂野、不友好",
+        "learned": "卡洛斯是一位喜欢探索自己内心想法和感受的诗人。他总是在寻找新的方式来表达自己。",
+        "lifestyle": "卡洛斯晚上10点左右上床睡觉，早上7点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "卡洛斯正在写一本诗集，探索自然世界的美。他还参加创意写作研讨会来磨练自己的技能。"
+      },
+      "initial_coord": [
+        94,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "卡洛斯的公寓",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "卡洛斯的公寓",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/carlos-gomez/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\卡洛斯\\portrait.png",
+          "copy": "agents/carlos-gomez/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1502,
+          "sha256": "f2a2349d6d9f881b9c145ff2b94cee87c7480e7577a2fa089305cd8a18edaaed"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\卡洛斯\\texture.png",
+          "copy": "agents/carlos-gomez/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3035,
+          "sha256": "593921c3672f33bbecd622aa4906cce797e9595c3ee65e101c508165b5c957cf"
+        }
+      ]
+    },
+    {
+      "order": 22,
+      "display_name": "乔治",
+      "source_asset_key": "乔治",
+      "documented_english_name": "Giorgio Rossi",
+      "proposed_stable_key": "giorgio-rossi",
+      "profile": {
+        "age": 41,
+        "innate": "分析、逻辑、古怪",
+        "learned": "乔治是一位数学家，他喜欢解决具有挑战性的问题。他总在寻找各种方法来运用他的分析技能。",
+        "lifestyle": "乔治在午夜前后上床睡觉，早上7点左右醒来，下午4点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "乔治正在进行一项研究项目，探索自然界中的数学模式。他也在上课，以了解最新的数学理论。乔治也很好奇下个月谁将参加当地市长选举，他经常和其他人谈论这件事。"
+      },
+      "initial_coord": [
+        86,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "乔治的公寓",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "乔治的公寓",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/giorgio-rossi/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\乔治\\portrait.png",
+          "copy": "agents/giorgio-rossi/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1501,
+          "sha256": "62dbdd036b97d42dfdfefacbf023599a63019be7d770e7642d49dd692eb6d353"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\乔治\\texture.png",
+          "copy": "agents/giorgio-rossi/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3036,
+          "sha256": "91b53d4b6a60f35de13e68e6395d1ffc0e55e2666e24fe86b46c6041db02a228"
+        }
+      ]
+    },
+    {
+      "order": 23,
+      "display_name": "瑞恩",
+      "source_asset_key": "瑞恩",
+      "documented_english_name": "Ryan Park",
+      "proposed_stable_key": "ryan-park",
+      "profile": {
+        "age": 29,
+        "innate": "善于分析、务实、有上进心",
+        "learned": "瑞恩是一位热爱解决问题的软件工程师。他一直在寻找改进现有系统的方法。",
+        "lifestyle": "瑞恩凌晨1点左右上床睡觉，早上9点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "瑞恩正在开发一个新的移动应用程序。他也在研究最新技术，以保持领先地位。"
+      },
+      "initial_coord": [
+        65,
+        19
+      ],
+      "initial_address": [
+        "the Ville",
+        "瑞恩的公寓",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "瑞恩的公寓",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/ryan-park/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\瑞恩\\portrait.png",
+          "copy": "agents/ryan-park/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1397,
+          "sha256": "1050aef1470ff7c3410e34737119934533af33c755512707a6119c66e84d9d18"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\瑞恩\\texture.png",
+          "copy": "agents/ryan-park/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3047,
+          "sha256": "85f5ada21a3ed73e53979d9fd55a8193cf1acdc0a5cacb583d371126aacfcaed"
+        }
+      ]
+    },
+    {
+      "order": 24,
+      "display_name": "山本百合子",
+      "source_asset_key": "山本百合子",
+      "documented_english_name": "Yuriko Yamamoto",
+      "proposed_stable_key": "yuriko-yamamoto",
+      "profile": {
+        "age": 28,
+        "innate": "有条理、可靠、注重细节",
+        "learned": "山本百合子是一名税务律师，她喜欢帮助人们应对复杂的税务世界。她做事很有条理并且注重细节。",
+        "lifestyle": "山本百合子晚上11点左右睡觉，早上7点左右醒来，下午6点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "山本百合子正在为一家当地企业开展税务合规项目。她还参加了一些课程，以了解最新的税法。山本百合子也很好奇谁将参加下个月的地方市长选举。"
+      },
+      "initial_coord": [
+        28,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "山本百合子的房子",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "山本百合子的房子",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/yuriko-yamamoto/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\山本百合子\\portrait.png",
+          "copy": "agents/yuriko-yamamoto/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1392,
+          "sha256": "4dbb7247d998f9b27f4665abd29b881d67c37d3864e819ea7af77086eb2caf69"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\山本百合子\\texture.png",
+          "copy": "agents/yuriko-yamamoto/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 3246,
+          "sha256": "c24f175f651636d1cdd4027a5158ffeeaa07fca2b4c6f03eece57ce69347f55e"
+        }
+      ]
+    },
+    {
+      "order": 25,
+      "display_name": "亚当",
+      "source_asset_key": "亚当",
+      "documented_english_name": "Adam Smith",
+      "proposed_stable_key": "adam-smith",
+      "profile": {
+        "age": 36,
+        "innate": "深思熟虑、善于反思、富有智慧",
+        "learned": "亚当是一位喜欢探索不同观点的哲学家。他总是想办法挑战人们的先入为主的观念。",
+        "lifestyle": "亚当晚上8点左右上床睡觉，凌晨4点左右醒来，下午5点左右吃晚饭。",
+        "daily_plan": "",
+        "currently": "亚当正在写一本关于创造力的重要性以及它如何塑造世界的书。他也很好奇谁将参加下个月的地方市长选举。"
+      },
+      "initial_coord": [
+        20,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "亚当的家",
+        "主人房",
+        "床"
+      ],
+      "living_area": [
+        "the Ville",
+        "亚当的家",
+        "主人房"
+      ],
+      "known_spatial_reference": "agents/adam-smith/source-reference.json#/classic_known_spatial",
+      "source_behavior_parameters": {
+        "vision_radius": 8,
+        "perception_mode": "box",
+        "attention_bandwidth": 8,
+        "move_speed": null,
+        "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+        "chat_iterations": 4,
+        "schedule_max_try": 5,
+        "schedule_diversity": 5,
+        "think_interval": 1000,
+        "poignancy_max": 150,
+        "memory_retention": 8,
+        "source": {
+          "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+          "json_pointer": "/agent",
+          "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+        }
+      },
+      "restored_profile_fields": [],
+      "removed_later_known_objects": [],
+      "assets": [
+        {
+          "role": "portrait",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚当\\portrait.png",
+          "copy": "agents/adam-smith/assets/portrait.png",
+          "width": 32,
+          "height": 32,
+          "bytes": 1274,
+          "sha256": "06b1196693173b20aedc7b2f4400a2fa310c39cba6f78ad3134e90ba00f98d3f"
+        },
+        {
+          "role": "walking_texture",
+          "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚当\\texture.png",
+          "copy": "agents/adam-smith/assets/texture.png",
+          "width": 96,
+          "height": 128,
+          "bytes": 2126,
+          "sha256": "647d20ea095902c4953084550a537b39e46fe1223366c2785fed07cc487f8dcb"
+        }
+      ]
+    }
+  ]
+}

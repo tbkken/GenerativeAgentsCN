@@ -1,4 +1,4 @@
-<Slide notes={`依赖被解析后，运行时为模型提供 call_skill 工具，参数只有两个：name 和 input_text。父技能要把有用的观察、约束和问题传给子技能，再利用子技能返回的自然语言建议继续判断。
+<Slide notes={`依赖被解析后，运行时为模型提供 call_skill 工具：name 指定子技能，input_text 与 input_from 二选一。父技能可以直接传递自然语言观察、约束和问题，也可以用 input_from 引用本次执行中已完成的直接子技能调用 ID（tool_call_id），让运行器把该次结果原文交给下一技能，无须重新概括。执行顺序仍由父技能按 SOP 判断。
 
 两条容易误解的地方。第一，依赖关系不是执行顺序，不会因为某个子 Skill 写在列表第一项就自动先调用。第二，子 Skill 拿到的是同一轮的 IterationContext，但不能替根 Brain 提交世界动作——执行器会直接从子技能的可用工具里去掉 world-act。
 
@@ -31,7 +31,7 @@
             </Box>
             <Box style={{ width: 200, height: 104, background: '#EDF4FC', borderRadius: 8, padding: '12px 14px', flexDirection: 'column', gap: 5, justifyContent: 'center' }}>
                 <Text style={{ fontSize: 15, fontWeight: 'bold', color: '#276FBF' }}>提供 call_skill 工具</Text>
-                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>参数：name、input_text</Text>
+                <Text style={{ fontSize: 12, color: '#546779', lineHeight: 1.5 }}>name 指定技能{'\n'}input_text / input_from</Text>
             </Box>
             <Box style={{ width: 38, justifyContent: 'center', alignItems: 'center' }}>
                 <Text style={{ fontSize: 22, color: '#26816B' }}>›</Text>

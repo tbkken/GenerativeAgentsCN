@@ -13,13 +13,13 @@ from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.facts.commits import read_committed_frame
 
 
-QUALITY_PROJECTION_VERSION = 2
+QUALITY_PROJECTION_VERSION = 3
 QUALITY_PROJECTION_SOURCE = "committed-step-results"
 _DETERMINISTIC_CODES = {
     "NO_WORLD_ACTION_SELECTED",
     "BRAIN_ITERATION_ROLLED_BACK",
     "BRAIN_RUNTIME_DEGRADED",
-    "MCP_TOOL_ERROR",
+    "INTERFACE_CALL_ERROR",
     "REPEATED_READ_WITHOUT_PROGRESS",
     "EMPTY_MEMORY_RETRIEVAL",
     "RUN_EXECUTION_FAILED",
@@ -96,10 +96,10 @@ def deterministic_quality_issues(records: Iterable[Mapping[str, Any]]) -> list[d
                 ),
                 "evidence": {key: value for key, value in signal.items() if key != "_trace_index"},
             })
-        for call in record.get("mcp_calls", []):
+        for call in record.get("interface_calls", []):
             if call.get("is_error"):
                 append(record, call, {
-                    "code": "MCP_TOOL_ERROR",
+                    "code": "INTERFACE_CALL_ERROR",
                     "severity": "WARNING",
                     "agent_key": agent_key,
                     "step_no": record["step_no"],
@@ -108,7 +108,7 @@ def deterministic_quality_issues(records: Iterable[Mapping[str, Any]]) -> list[d
                 })
         # New IterationContext is new information. Diagnose redundant reads
         # only inside this iteration, resetting after successful writes.
-        for call in record.get("mcp_calls", []):
+        for call in record.get("interface_calls", []):
             if call.get("is_error"):
                 continue
             tool = call.get("tool")
@@ -207,7 +207,7 @@ def read_quality_records(root: Path, run_id: str, committed_step: int, *, start_
                         **({"object_key": object_key} if object_key else {}),
                         "effect_id": effect_id,
                     },
-                    "mcp_calls": [
+                    "interface_calls": [
                         {
                             "skill": item.get("skill"),
                             "tool": item.get("tool"),
@@ -216,7 +216,7 @@ def read_quality_records(root: Path, run_id: str, committed_step: int, *, start_
                             "is_error": bool(item.get("is_error", False)),
                             "_trace_index": index,
                         }
-                        for index, item in enumerate(trace) if item.get("event") == "mcp.call"
+                        for index, item in enumerate(trace) if item.get("event") == "interface.call"
                     ],
                     "runtime_signals": [
                         {**item, "_trace_index": index}

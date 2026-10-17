@@ -11,12 +11,15 @@ from pathlib import Path
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException, Request, Response
+from pydantic import ValidationError
 
 from generative_agents.ga_studio.api import ExperimentWorkspaceService
 from generative_agents.ga_studio.api import WorkspaceConflictError
 from generative_agents.ga_protocol.schemas.trials import SkillTrialError
 from generative_agents.ga_runtime.api import execute_skill_trial
+from generative_agents.ga_runtime.api import compile_skill_decision
 from generative_agents.ga_studio.api import ExperimentResourceEditor, ExperimentResourceError
+from generative_agents.adapters.web.routes.resources import SkillTrial, SkillDecisionCompile
 
 
 def create_experiment_resource_router(database, var_dir):
@@ -72,11 +75,17 @@ def create_experiment_resource_router(database, var_dir):
                 # Validation also works for sealed packages and never rewrites them.
                 return editor.read(experiment_id, f"maps/{experiment_id}", {}, validate_execution=True)
             if request.method == "POST" and len(parts) == 3 and parts[0] == "skills" and parts[2] == "run":
+                body = SkillTrial.model_validate(body).model_dump(exclude_none=True)
                 with tempfile.TemporaryDirectory(prefix="ga-skill-trial-") as destination:
                     credentials = editor.prepare_trial(experiment_id, parts[1], body, destination=destination)
                     return execute_skill_trial(destination, credentials=credentials)
+            if request.method == "POST" and len(parts) == 3 and parts[0] == "skills" and parts[2] == "decision-compile":
+                body = SkillDecisionCompile.model_validate(body).model_dump(exclude_none=True)
+                return compile_skill_decision(**editor.prepare_decision_compile(experiment_id, parts[1], body))
             result = editor.write(experiment_id, resource_path, request.method, body)
             return Response(status_code=204) if result is None else result
+        except ValidationError as exc:
+            raise HTTPException(422, '试运行仅接受情景输入、实验、Agent 和生成式模型；运行时上下文由系统自动生成。') from exc
         except WorkspaceConflictError as exc:
             raise HTTPException(409, str(exc)) from exc
         except SkillTrialError as exc:

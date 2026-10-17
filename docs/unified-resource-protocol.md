@@ -14,7 +14,7 @@
 
 公共资源通过 `ResourceRecord` 表示，字段包括 `kind`、`key`、`name`、`description`、`definition`、`dependencies` 和 `attachments`。`ResourceRef` 使用类型和稳定 key 引用资源，可声明依赖内容的 `expected_sha256`。公共数据库 ID、素材表外键和本机凭据定位不进入公共合同。
 
-资源类型为 `map / agent / crowd / skill / model / spatial_asset / evaluator`。大脑是 `skill` 的一种，`definition.skill_kind` 为 `brain`；技能页面显示 `atomic / pack`。是否作为实验 Brain、对象根技能或子技能使用，由实验装配和引用关系决定。
+资源类型为 `map / agent / crowd / skill / model / spatial_asset / evaluator`。Skill 的 `definition.skill_kind` 仅为 `skill / brain`，分别对应普通技能与大脑；任意技能都可通过 `SKILL.md` 组合子技能、脚本和接口，不再区分单个技能与技能包。是否作为实验 Brain、对象根技能或子技能使用，由实验装配和引用关系决定。
 
 - 地图资源保存几何、四层语义、碰撞、图层、素材切片、对象初态和状态图。空间语义索引作为地图中的派生内容，由同一套 Protocol 逻辑生成。
 - Agent 资源保存人物内容、感知限制、头像与行走图等。`coord`、初始地址和已知空间属于实验的 `placements`。

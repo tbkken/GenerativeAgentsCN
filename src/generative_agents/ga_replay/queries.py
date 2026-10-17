@@ -230,7 +230,7 @@ def trace_records(package):
                             except (ValueError, UnicodeError):
                                 offset = handle.tell()
                                 continue
-                        if isinstance(item, dict):
+                        if isinstance(item, dict) and 'span_id' not in item:
                             item = {key: value for key, value in item.items() if key != 'payload'}
                             item['trace_id'] = f"{item.get('attempt_id', '')}:{item.get('event_seq', 0)}"
                             records.append(item)
@@ -280,7 +280,7 @@ def trace_page(package, *, attempt_id=None, event_type=None, purpose='', cursor=
                             item = json.loads(line)
                         except (ValueError, UnicodeError):
                             continue
-                        if not isinstance(item, dict):
+                        if not isinstance(item, dict) or 'span_id' in item:
                             continue
                         trace_id = f"{item.get('attempt_id', '')}:{item.get('event_seq', 0)}"
                         locations[trace_id] = (path.name, position, signatures[path.name])
@@ -326,7 +326,7 @@ def trace_record(package, trace_id):
                         item = json.loads(handle.readline())
                 except (ValueError, UnicodeError):
                     item = None
-                if isinstance(item, dict) and f"{item.get('attempt_id', '')}:{item.get('event_seq', 0)}" == trace_id:
+                if isinstance(item, dict) and 'span_id' not in item and f"{item.get('attempt_id', '')}:{item.get('event_seq', 0)}" == trace_id:
                     return {**item, 'trace_id': trace_id}
         for path in sorted(checked_package_path(root / 'traces').glob('*.jsonl')):
             with checked_package_path(path).open('rb') as handle:
@@ -335,7 +335,7 @@ def trace_record(package, trace_id):
                         item = json.loads(line)
                     except (ValueError, UnicodeError):
                         continue
-                    if isinstance(item, dict) and f"{item.get('attempt_id', '')}:{item.get('event_seq', 0)}" == trace_id:
+                    if isinstance(item, dict) and 'span_id' not in item and f"{item.get('attempt_id', '')}:{item.get('event_seq', 0)}" == trace_id:
                         return {**item, 'trace_id': trace_id}
     return None
 

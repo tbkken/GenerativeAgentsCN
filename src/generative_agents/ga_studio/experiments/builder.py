@@ -30,7 +30,7 @@ class SkillSource:
     kind: Literal["brain", "sub_skill", "object"]
     skill_file: Path
     dependencies: tuple[str, ...] = ()
-    editor_kind: Literal["brain", "pack", "atomic"] | None = None
+    editor_kind: Literal["brain", "skill"] | None = None
 
 
 def _plain_mapping(value: object) -> dict:
@@ -88,9 +88,10 @@ class ExperimentPackageBuilder:
                 resources.files[target] = content
                 attachments.append(target)
             record = ResourceRecord(kind="skill", key=source.skill_id, name=source.skill_id,
-                definition={"skill_kind": source.editor_kind or ("brain" if source.kind == "brain" else "atomic"),
+                definition={"skill_kind": source.editor_kind or ("brain" if source.kind == "brain" else "skill"),
                             "entrypoint": f"{folder}/SKILL.md"}, attachments=attachments)
             document = skill_document(record, resources)
+            record.name = document.display_name
             record.description = document.description
             record.dependencies = [ResourceRef(kind="skill", key=key) for key in document.children]
             if source.dependencies and set(source.dependencies) != set(document.children):

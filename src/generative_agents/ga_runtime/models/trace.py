@@ -15,6 +15,7 @@ from typing import Any, Callable, Mapping
 from uuid import UUID
 
 from generative_agents.ga_runtime.engine.context import RunPaths
+from generative_agents.ga_runtime.storage.execution import ExecutionTraceWriter
 
 
 class ModelTraceEventType(StrEnum):
@@ -168,6 +169,9 @@ class ModelTraceWriter:
         self._on_append = on_append
         self._lock = threading.Lock()
         self._event_seq = self._read_last_sequence()
+        self.execution = ExecutionTraceWriter(
+            paths, run_id=run_id, attempt_id=attempt_id, attempt_no=attempt_no,
+        )
 
     @property
     def run_id(self) -> UUID:
@@ -248,6 +252,7 @@ class ModelTraceWriter:
             self._event_seq = sequence
         if self._on_append is not None:
             self._on_append(self.path)
+        self.execution.observe_model(event)
         return sequence
 
     def _to_record(self, event: ModelTraceEvent, sequence: int) -> dict[str, Any]:

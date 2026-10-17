@@ -85,6 +85,7 @@ class ExperimentSelection:
     brain_skill_id: str
     model_preset_id: str
     embedding_model_preset_id: str | None = None
+    decision_model_preset_id: str | None = None
     agent_ids: tuple[str, ...] = ()
     crowd_ids: tuple[str, ...] = ()
     evaluator_ids: tuple[str, ...] = ()
@@ -153,18 +154,27 @@ class ExperimentWorkspaceService:
             self._available(model_preset, "Model preset", selection.model_preset_id)
             model_config = copy.deepcopy(model_preset.config_json)
             model_bindings = {purpose: ResourceRef(kind="model", key=model_preset.preset_key)
-                              for purpose in model_config if purpose in {"chat", "embedding"}}
+                              for purpose in model_config if purpose in {"chat", "embedding", "decision"} and model_config[purpose] is not None}
             if selection.embedding_model_preset_id:
                 embedding_preset = session.get(StudioModelPreset, selection.embedding_model_preset_id)
                 self._available(embedding_preset, "Embedding model", selection.embedding_model_preset_id)
                 model_config['embedding'] = copy.deepcopy(embedding_preset.config_json.get('embedding'))
                 model_bindings['embedding'] = ResourceRef(kind="model", key=embedding_preset.preset_key)
+            if selection.decision_model_preset_id:
+                decision_preset = session.get(StudioModelPreset, selection.decision_model_preset_id)
+                self._available(decision_preset, "Decision model", selection.decision_model_preset_id)
+                if not decision_preset.config_json.get('decision'):
+                    raise StudioResourceError("Selected model preset has no decision model configuration")
+                model_config['decision'] = copy.deepcopy(decision_preset.config_json['decision'])
+                model_bindings['decision'] = ResourceRef(kind="model", key=decision_preset.preset_key)
             models = ModelsConfig.model_validate(model_config).model_dump(
                 mode="json", exclude_none=False
             )
             model_selections = [("model", selection.model_preset_id)]
             if selection.embedding_model_preset_id and selection.embedding_model_preset_id != selection.model_preset_id:
                 model_selections.append(("model", selection.embedding_model_preset_id))
+            if selection.decision_model_preset_id and ("model", selection.decision_model_preset_id) not in model_selections:
+                model_selections.append(("model", selection.decision_model_preset_id))
             selected_resources = ResourceExchangeService(self.database, asset_store=self.asset_store).materialize_resources(
                 [("map", selection.map_id), *[("agent", key) for key in selected_agent_ids],
                  *[("crowd", key) for key in selection.crowd_ids], *model_selections],

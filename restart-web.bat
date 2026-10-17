@@ -5,7 +5,8 @@ rem Always run from the repository that contains this script.
 cd /d "%~dp0"
 
 set "GA_RESTART_PROJECT_ROOT=%~dp0"
-set "GA_RESTART_PORT=8000"
+set "GA_RESTART_PORT=8800"
+if defined GA_PORT set "GA_RESTART_PORT=%GA_PORT%"
 set "GA_RESTART_VAR_DIR=%~dp0var"
 set "GA_RESTART_LOG_DIR=%~dp0var\logs"
 set "GA_RESTART_DATABASE_URL=sqlite:///%~dp0var/generative-agents.db"

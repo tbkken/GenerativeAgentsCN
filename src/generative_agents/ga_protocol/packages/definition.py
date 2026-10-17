@@ -18,6 +18,7 @@ from generative_agents.ga_protocol.packages.resources import (
 from generative_agents.ga_protocol.packages.semantic_index import build_semantic_index
 from generative_agents.ga_protocol.schemas.manifests import ExperimentManifest, SkillPackageEntry, SkillPackageRegistry
 from generative_agents.ga_protocol.schemas.resources import ExperimentAssembly, ExperimentPlacement, ResourceIndex
+from generative_agents.ga_protocol.schemas.experiment import DecisionModelConfig
 from generative_agents.ga_protocol.packages.reading import file_fingerprint, read_package_json
 
 _documents = OrderedDict()
@@ -229,8 +230,12 @@ def write_experiment_definition(root: str | Path, definition: dict, *, resource_
     selected_models = {}
     model_records = {}
     for purpose, config in definition.get("models", {}).items():
-        if purpose not in {"chat", "embedding"}:
+        if purpose not in {"chat", "embedding", "decision"}:
             raise PackageError(f"unsupported model purpose: {purpose}")
+        if purpose == "decision" and config is None:
+            continue
+        if purpose == "decision":
+            config = DecisionModelConfig.model_validate(config).model_dump(mode="json")
         reference = (model_selections or {}).get(purpose)
         if reference is not None:
             reference = ResourceRef.model_validate(reference)

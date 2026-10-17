@@ -13,17 +13,19 @@ from typing import Any, Mapping
 
 from generative_agents.ga_runtime.skills.executor import RecoverableSkillRuntimeError
 from generative_agents.ga_runtime.skills.executor import SkillRuntime
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled
 from generative_agents.ga_protocol.facts.movement import normalize_movement_activity
+from generative_agents.ga_protocol.skills.interfaces import object_interface_catalog
 
 from generative_agents.ga_runtime.capabilities.server import PlannedWorldAction
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.iteration import ObjectIterationContext
 
 
-class ObjectMCPServer(SimulationMCPServer):
+class ObjectAPI(SimulationAPI):
     """Object-scoped perception, private memory and a single validated action."""
 
-    default_tools = True
+    default_interfaces = True
 
     def __init__(self, game, iteration: ObjectIterationContext, *, binding,
                  observed_facts=(), requests=(), memory_stream=None):
@@ -50,34 +52,11 @@ class ObjectMCPServer(SimulationMCPServer):
             return self.game.game_object_interactions.object_state(object_key)
         return super()._public_object_state(object_key)
 
-    def tools(self) -> list[dict]:
-        available = [tool for tool in super().tools() if tool["name"] != "world-navigate"]
-        action = next(tool for tool in available if tool["name"] == "world-act")
-        action["description"] = (
-            "Commit your one Game Object action this Step. ACT records an activity; "
-            "SET_OBJECT_STATE changes only your own state; WAIT waits. You are stationary. "
-            "Attach responses to answer pending request IDs in the same action. "
-            "Use target_agent_key and evidence_ids for an observed subject, and "
-            "idempotency_key to prevent repeating an activity across Steps/resumes. "
-            "Only the state label is publicly visible; other state fields are private."
-        )
-        names = {"action_type", "description", "predicate", "object", "emoji", "object_key",
-                 "state_patch", "wait_reason", "expected_until_step", "expected_until_time"}
-        props = action["inputSchema"]["properties"]
-        action["inputSchema"]["properties"] = props = {key: value for key, value in props.items() if key in names}
-        props["action_type"] = {"type": "string", "enum": ["ACT", "WAIT", "SET_OBJECT_STATE"]}
-        props.update({
-            "target_agent_key": {"type": "string"},
-            "evidence_ids": {"type": "array", "items": {"type": "string"}, "maxItems": 100},
-            "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 240},
-            "responses": {"type": "array", "maxItems": 100, "items": {
-                "type": "object", "properties": {
-                    "request_id": {"type": "string"}, "message": {"type": "string", "minLength": 1}},
-                "required": ["request_id", "message"], "additionalProperties": False}},
-        })
-        for tool in available:
-            tool["description"] = tool["description"].replace("this Agent", "this Game Object").replace("The Agent identity", "The Game Object identity")
-        return available
+    def descriptors(self) -> list[dict]:
+        return [
+            descriptor for descriptor in object_interface_catalog()
+            if self.memory_stream is not None or not descriptor["name"].startswith("memory-stream-")
+        ]
 
     def _perceive(self, arguments: Mapping[str, Any]) -> dict:
         result = super()._perceive(arguments)
@@ -190,9 +169,11 @@ class ObjectSkillRuntime:
     """Execute one object's natural-language SOP with shared model infrastructure."""
 
     def __init__(self, registry, *, model_config, memory_stream=None, model_client=None,
-                 recorder=None, control=None, logger=None):
+                 decision_config=None, decision_client=None, recorder=None, control=None, logger=None):
         self.registry = registry
         self.model_config = dict(model_config)
+        self.decision_config = dict(decision_config or {})
+        self.decision_client = decision_client
         self.memory_stream = memory_stream
         self.model_client = model_client
         self.recorder = recorder
@@ -201,6 +182,8 @@ class ObjectSkillRuntime:
 
     def run_step(self, game, binding, *, step_no: int, total_steps: int,
                  stride_minutes: int, observed_facts=()) -> dict:
+        if self.registry.get(binding.skill_name).llm_type != "generative":
+            raise ValueError("Game Object root Skill requires a generative model")
         system = game.game_object_interactions
         state = system.runtime_state(binding.object_key)
         if step_no <= state["last_step"]:
@@ -227,13 +210,13 @@ class ObjectSkillRuntime:
                        "pending_request_count": len(state["requests"]),
                        "recent_action_keys": list(state["action_keys"])[-100:]},
         )
-        mcp = ObjectMCPServer(game, iteration, binding=binding, observed_facts=observed_facts,
+        interfaces = ObjectAPI(game, iteration, binding=binding, observed_facts=observed_facts,
                               requests=requests, memory_stream=self.memory_stream)
         config = self.model_config
         runtime = SkillRuntime(
             self.registry, base_url=str(config.get("base_url") or ""),
             model=str(config.get("resolved_model") or config.get("model") or ""),
-            api_key=str(config.get("api_key") or ""), mcp=mcp,
+            api_key=str(config.get("api_key") or ""), interfaces=interfaces,
             timeout=float(config.get("timeout_seconds") or 300),
             max_hops=int(config.get("max_hops") or 12),
             temperature=float(config.get("temperature") or 0.2),
@@ -243,6 +226,7 @@ class ObjectSkillRuntime:
             retry_attempts=int(config.get("retry_attempts") or 1),
             retry_backoff_seconds=float(config.get("retry_backoff_seconds") or 0),
             model_client=self.model_client, recorder=self.recorder, control=self.control,
+            decision_config=self.decision_config, decision_client=self.decision_client,
             logger=self.logger, agent_key=iteration.memory_owner_key, step_no=step_no,
         )
         task = (
@@ -266,18 +250,25 @@ class ObjectSkillRuntime:
         except RecoverableSkillRuntimeError as exc:
             if memory_snapshot is not None:
                 self.memory_stream.rollback_iteration(memory_snapshot)
-            mcp.discard_action()
+            interfaces.discard_action()
+            execution = getattr(self.recorder, "execution", None)
+            if execution is not None:
+                execution.rollback(error_code=type(exc).__name__)
             trace = (*exc.trace, {"event": "object.fallback", "reason": str(exc), "object_key": binding.object_key})
             fallback = True
-        except Exception:
+        except Exception as exc:
             if memory_snapshot is not None:
                 self.memory_stream.rollback_iteration(memory_snapshot)
+            execution = getattr(self.recorder, "execution", None)
+            if execution is not None:
+                execution.rollback(error_code=type(exc).__name__,
+                                   cancelled=isinstance(exc, ModelCallCancelled))
             raise
-        if mcp.action is None:
+        if interfaces.action is None:
             fallback = True
             trace = (*trace, {"event": "object.missing_action", "object_key": binding.object_key,
                              "reason": "Game Object Skill did not submit world-act"})
-        action = mcp.action or PlannedWorldAction("WAIT", {
+        action = interfaces.action or PlannedWorldAction("WAIT", {
             "action_type": "WAIT", "object_key": binding.object_key,
             "description": "对象 Skill 未提交动作，本轮等待", "responses": [],
         })
@@ -287,4 +278,4 @@ class ObjectSkillRuntime:
                 "input_text": task, "output_text": output, "trace": list(trace)}
 
 
-__all__ = ["ObjectMCPServer", "ObjectSkillRuntime"]
+__all__ = ["ObjectAPI", "ObjectSkillRuntime"]

@@ -30,32 +30,50 @@ source .venv/bin/activate
 
 ~~~bash
 python -m pip install -e ".[runtime,studio,web]"
+python tools/link_local_source.py
 ga studio serve
 ~~~
 
-打开 [Studio](http://127.0.0.1:8000/)。健康检查地址是 [api/studio/health](http://127.0.0.1:8000/api/studio/health)。Web 默认使用 var/generative-agents.db 和 var/；启动参数见 `ga studio serve --help`。
+打开 [Studio](http://127.0.0.1:8800/)。健康检查地址是 [api/studio/health](http://127.0.0.1:8800/api/studio/health)。Web 默认使用 var/generative-agents.db 和 var/；启动参数见 `ga studio serve --help`。
+
+Web 页面、API 和回放共用一个监听端口，默认 `8800`。可用 `ga studio serve --port 8081` 临时指定端口，或设置环境变量 `GA_PORT`；命令行 `--port` 优先。生成式模型的默认连接地址为 `http://127.0.0.1:8888/v1`，向量模型为 `http://127.0.0.1:5002/v1`，均连接独立模型服务，在模型中心修改服务地址。公共模型修改不会自动更新已有实验和 Run 的副本。Runtime 能力通过身份绑定的进程内接口调用，默认 SQLite 数据库使用文件，均无需额外监听端口。
 
 Windows 也可使用根目录的 `restart-web.bat` 启动或重启 Web。首次使用先安装项目；以下命令无需激活虚拟环境：
 
 ~~~powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e ".[runtime,studio,web]"
+.\.venv\Scripts\python.exe tools/link_local_source.py
 .\restart-web.bat
 ~~~
 
 脚本优先使用仓库的 `.venv\Scripts\python.exe`，没有该环境时才使用 PATH 中的 Python，并在停止旧服务前检查项目和 Web 依赖。若提示 `No module named 'generative_agents'`，表示所选 Python 尚未安装项目，按脚本显示的安装命令补齐即可。后台进程提前退出时会立即显示错误和日志路径；仅进程创建成功不代表服务可用，须看到健康检查通过的 `[OK]` 提示。启动日志位于 `var/logs/`。
+
+`restart-web.bat` 同样默认使用 `8800`，并读取 `GA_PORT`。例如在 PowerShell 中先执行 `$env:GA_PORT = '8081'`，再运行 `.\restart-web.bat`，即可在 `8081` 启动或重启 Web。
+
+每次 editable 安装后，使用仓库 `.venv` 中的 Python 执行 `tools/link_local_source.py`，将源码关联改为相对于 `site-packages` 的路径；Windows 下为 `../../../src`。该关联按虚拟环境位置解析，与启动工作目录无关。`restart-web.bat` 也按自身目录选择 Python。pip 生成的 `ga` 启动器和虚拟环境的基础 Python 仍有安装位置要求；跨机器搬迁时应重新创建虚拟环境，再执行上述安装步骤。
 
 依赖统一在 pyproject.toml 声明。仅检查包或回放时安装 `.`；运行仿真使用 `.[runtime]`；完整 Studio 使用 `.[runtime,studio,web]`；开发测试再加 `dev`。源码统一放在 `src/generative_agents/`，命令从安装后的包加载，可在任意工作目录运行。
 
 **创建第一个实验**
 
 1. 在基础配置中创建用户地图、智能体，以及所需 Brain / 子 Skill / 对象 Skill；按场景配置空间素材和人群。
-2. 在模型中心配置聊天和向量模型的服务地址、明确的模型 ID、必要的 API Key，并测试连接。
+2. 在模型中心配置生成式模型和向量模型的服务地址、明确的模型 ID、必要的 API Key，并测试连接。
 3. 新建实验时显式选择地图、Brain 和模型，以及需要的 Agent / Crowd。选入的资源和依赖立即物理复制到实验工作目录。
 4. 在实验草稿内核对地图、初始位置、包内 Skill、模型参数和仿真时间，通过校验后封存。
 5. 启动 Run，在实验结果中查看提交进度、质量问题、日志和回放。公共资源后续修改不会自动更新已有实验。
 
-系统不提供默认地图或内置公共 Agent。实验生命周期为 DRAFT → SEALED；封存后若需调整，复制为新的独立实验。具体仿真流程由 Brain Skill 决定，内核提供感知、导航、隔离记忆和经过校验的世界动作。
+系统不提供默认地图或内置公共 Agent，也不自动填充 Skill / Brain。实验生命周期为 DRAFT → SEALED；封存后若需调整，复制为新的独立实验。具体仿真流程由 Brain Skill 决定，内核提供感知、导航、隔离记忆和经过校验的世界动作。
+
+创建入口仅区分“技能”和“大脑”，生成式技能能组合子技能，无需选择“技能包”类型。技能正文用 `$child-skill` 引用子技能、`@world-perceive` 等标记引用接口，并以自然语言描述调用条件、输入与结果用途。技能页面的“文件与调用关系”展示实时正文引用、递归子技能和实际脚本。详见 [Skill 编写规范](docs/skill-authoring.md)。
+
+技能配置的“LLM 类型”默认是生成式模型，也可选择决策模型。决策技能仍用自然语言编写完整正文：配置时由生成式模型自动识别是/否、多分类或评分及候选项，页面只读展示解析结果；正文修改后保存前重新解析。公共技能选择用于解析的生成式模型，实验内使用包内生成式模型。运行时保留完整正文作为决策指令，直接调用 Laya，不再调用生成式模型解析。在模型中心配置本地服务 `http://127.0.0.1:5003/v1/systemone`、模型 `laya-multilingual`，无需 API Key；在实验模型详情中配置实验的决策模型。使用流程与结果解释见 [LLM 类型与决策问题](docs/skill-authoring.md#llm-类型与决策问题)。
+
+技能详情的“试运行”只需输入自然语言情境；生成式技能直接接收输入原文，决策技能直接把输入发送给决策模型，无需填写运行时上下文 JSON。纯文本技能可独立试运行；依赖环境接口时，选择已有实验及其中的 Agent，系统从实验初始场景装配真实地图、身份、位置、时间和感知限制。公共技能按 LLM 类型选择可用模型，实验内的技能使用包内模型配置。修改技能后先保存，再试运行当前内容及其子技能。
+
+试运行使用独立临时场景和记忆，不读取已有 Run 的当前现场，也不启动全体 Agent 的 Brain。原实验和已有运行不受影响；只读技能无需提交动作即可完成。结果提供执行事件、子技能、接口输入输出及实际模型请求的只读审计，并分别展示逻辑调用与含重试的物理尝试数；执行事件数量不等于模型调用次数。接口接受动作不等于世界已提交，试运行不生成正式的 World Commit。
+
+Skill 之间默认传递自然语言；上层 Skill 也可引用已完成子调用的结果原文，由运行器直接交给下一技能。目的、顺序和分支仍由 Brain／SOP 决定，接口参数、身份权限与运行事实继续严格校验。两种输入方式及引用范围见 [Skill 编写规范](docs/skill-authoring.md#skill-之间的输入与结果)。
 
 地图、智能体、人群、技能、大脑、模型页面均支持导入和导出资源包。可以从 config ZIP、实验 `.gaexp` 或 Run `.garun` 中只选择所需资源；图片、脚本和模板随资源保存。完整结构、关联缺失处理与 v2 升级边界见 [统一资源协议与操作说明](docs/unified-resource-protocol.md)。
 

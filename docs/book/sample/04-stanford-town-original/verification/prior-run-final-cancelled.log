@@ -1,0 +1,27 @@
+2026-10-15 13:17:22,216 INFO run=6ba9a460-98e1-4f51-a8c0-54e958922b5d Skill runtimes ready for 2 Agents and 0 Game Objects
+2026-10-15 13:18:28,298 INFO run=6ba9a460-98e1-4f51-a8c0-54e958922b5d 
+----------     agent-mv92ylyu-wamsoq.summary @ 20261015-09:00:00      ----------
+{"name": "陈明远", "currently": "今天上午计划在阅读室阅读社区故事集。先到可见的阅读桌阅读一段，再自然回应读书伙伴林晨的交流。已有当日简要安排，当前重点是实际阅读和简短交流。", "tile": {"coord[7,3]": "斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌", "spatial_semantics": [{"id": "world-stanford-town-reading-check", "kind": "WORLD", "name": "斯坦福小镇·阅读角验证", "semantic": "供居民阅读、交流的紧凑社区阅读角。开放地面可通行；人物应依据真实感知选择阅读桌或交流位置。"}, {"id": "sector-mv92tkwv-if5cqu", "kind": "SECTOR", "name": "文化街区", "semantic": "居民共同使用的文化街区，设有开放阅读室。"}, {"id": "arena-mv92u0va-9ad3ni", "kind": "ARENA", "name": "开放阅读室", "semantic": "安静且可自由通行的阅读室。阅读桌供就近阅读，交流角供短暂讨论读书计划；人物不必离开本室就能完成读书与交流。"}, {"id": "game_object-mv92uct0-qfjak4", "kind": "GAME_OBJECT", "name": "阅读桌", "semantic": "供居民围坐阅读的桌旁活动区域，包含可站立位置。桌上有社区故事集，可在到达后阅读并与邻座分享感想。"}], "events": {"e_0": "阅读桌 此时 空闲 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌", "e_1": "陈明远 此时 空闲 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌"}}, "status": {}, "chats": [], "action": {"status": "已完成 [20261015-09:00~20261015-09:00]", "event": "陈明远 此时 空闲 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌", "object": "阅读桌 此时 空闲 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌"}}
+
+2026-10-15 13:30:04,385 WARNING run=6ba9a460-98e1-4f51-a8c0-54e958922b5d Brain step degraded to WAIT after recoverable Skill failure (1/3): Skill model call failed after retries: HTTPConnectionPool(host='127.0.0.1', port=8888): Read timed out. (read timeout=600)
+2026-10-15 13:30:04,387 INFO run=6ba9a460-98e1-4f51-a8c0-54e958922b5d 
+----------     agent-mv92v5nq-zn3rqx.summary @ 20261015-09:00:00      ----------
+{"name": "林晨", "currently": "今天已安排上午在阅读室读书，当前首要目标是找到可见的阅读桌，走到桌旁阅读社区故事集。完成实际阅读后，再与遇到的陈明远分享一句阅读感想。已有简单日程足够执行当前任务，不必先重建全天计划。", "tile": {"coord[5,3]": "斯坦福小镇·阅读角验证:文化街区:开放阅读室", "spatial_semantics": [{"id": "world-stanford-town-reading-check", "kind": "WORLD", "name": "斯坦福小镇·阅读角验证", "semantic": "供居民阅读、交流的紧凑社区阅读角。开放地面可通行；人物应依据真实感知选择阅读桌或交流位置。"}, {"id": "sector-mv92tkwv-if5cqu", "kind": "SECTOR", "name": "文化街区", "semantic": "居民共同使用的文化街区，设有开放阅读室。"}, {"id": "arena-mv92u0va-9ad3ni", "kind": "ARENA", "name": "开放阅读室", "semantic": "安静且可自由通行的阅读室。阅读桌供就近阅读，交流角供短暂讨论读书计划；人物不必离开本室就能完成读书与交流。"}], "events": {"e_0": "林晨 此时 空闲 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室"}}, "status": {}, "chats": [], "action": {"status": "已完成 [20261015-09:00~20261015-09:00]", "event": "林晨 此时 空闲 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室", "object": "开放阅读室 此时 空闲 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室"}}
+
+2026-10-15 13:34:01,396 INFO run=6ba9a460-98e1-4f51-a8c0-54e958922b5d 
+----------     agent-mv92ylyu-wamsoq.summary @ 20261015-09:01:00      ----------
+{"name": "陈明远", "currently": "陈明远坐在开放阅读室的阅读桌旁，翻开桌上的社区故事集，安静地读了一段。（位置：斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌）", "tile": {"coord[7,3]": "斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌", "spatial_semantics": [{"id": "world-stanford-town-reading-check", "kind": "WORLD", "name": "斯坦福小镇·阅读角验证", "semantic": "供居民阅读、交流的紧凑社区阅读角。开放地面可通行；人物应依据真实感知选择阅读桌或交流位置。"}, {"id": "sector-mv92tkwv-if5cqu", "kind": "SECTOR", "name": "文化街区", "semantic": "居民共同使用的文化街区，设有开放阅读室。"}, {"id": "arena-mv92u0va-9ad3ni", "kind": "ARENA", "name": "开放阅读室", "semantic": "安静且可自由通行的阅读室。阅读桌供就近阅读，交流角供短暂讨论读书计划；人物不必离开本室就能完成读书与交流。"}, {"id": "game_object-mv92uct0-qfjak4", "kind": "GAME_OBJECT", "name": "阅读桌", "semantic": "供居民围坐阅读的桌旁活动区域，包含可站立位置。桌上有社区故事集，可在到达后阅读并与邻座分享感想。"}], "events": {"e_0": "阅读桌 此时 空闲 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌", "e_1": "陈明远坐在开放阅读室的阅读桌旁，翻开桌上的社区故事集，安静地读了一段。 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌"}}, "status": {}, "chats": [], "action": {"status": "进行中 [20261015-09:00~20261015-09:01]", "event": "陈明远坐在开放阅读室的阅读桌旁，翻开桌上的社区故事集，安静地读了一段。 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室:阅读桌"}}
+
+2026-10-15 13:41:11,559 INFO run=6ba9a460-98e1-4f51-a8c0-54e958922b5d 
+----------     agent-mv92v5nq-zn3rqx.summary @ 20261015-09:01:00      ----------
+{"name": "林晨", "currently": "Brain Skill 未选择世界变化，本轮等待（位置：斯坦福小镇·阅读角验证:文化街区:开放阅读室）", "tile": {"coord[5,3]": "斯坦福小镇·阅读角验证:文化街区:开放阅读室", "spatial_semantics": [{"id": "world-stanford-town-reading-check", "kind": "WORLD", "name": "斯坦福小镇·阅读角验证", "semantic": "供居民阅读、交流的紧凑社区阅读角。开放地面可通行；人物应依据真实感知选择阅读桌或交流位置。"}, {"id": "sector-mv92tkwv-if5cqu", "kind": "SECTOR", "name": "文化街区", "semantic": "居民共同使用的文化街区，设有开放阅读室。"}, {"id": "arena-mv92u0va-9ad3ni", "kind": "ARENA", "name": "开放阅读室", "semantic": "安静且可自由通行的阅读室。阅读桌供就近阅读，交流角供短暂讨论读书计划；人物不必离开本室就能完成读书与交流。"}], "events": {"e_0": "Brain Skill 未选择世界变化，本轮等待 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室"}}, "status": {}, "chats": [], "action": {"status": "进行中 [20261015-09:00~20261015-09:01]", "event": "Brain Skill 未选择世界变化，本轮等待 @ 斯坦福小镇·阅读角验证:文化街区:开放阅读室"}}
+
+{
+  "active_attempt_id": "de62dc9b-0715-4fbb-8580-05ef88268709",
+  "committed_step": 2,
+  "reason": "cancel requested at a complete Step boundary",
+  "run_id": "6ba9a460-98e1-4f51-a8c0-54e958922b5d",
+  "status": "CANCELLED",
+  "total_steps": 6,
+  "updated_at": "2026-10-15T05:41:11.676453Z"
+}

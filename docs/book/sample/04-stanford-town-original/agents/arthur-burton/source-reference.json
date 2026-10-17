@@ -1,0 +1,331 @@
+{
+  "document_kind": "historical-source-reference-not-ga-package",
+  "preparation_status": "materials-only-not-imported",
+  "display_name": "亚瑟",
+  "source_asset_key": "亚瑟",
+  "source_asset_key_language": "zh",
+  "documented_english_name": "Arthur Burton",
+  "proposed_stable_key": "arthur-burton",
+  "stable_key_provenance": "Derived in this preparation from the English full name in chapter_15; the local original assets use Chinese directory keys.",
+  "english_name_source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\docs\\book\\manuscript\\part_03\\chapter_15.md",
+  "source_agent_json": {
+    "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚瑟\\agent.json",
+    "json_pointer": "",
+    "sha256": "af80f1bc160826904b9256b3b800b115139cb659d048a66cb77dc647c629218a"
+  },
+  "source_agent_core_unmodified": {
+    "name": "亚瑟",
+    "portrait": "assets/village/agents/亚瑟/portrait.png",
+    "coord": [
+      53,
+      14
+    ],
+    "currently": "亚瑟在镇上经营着一家很受欢迎的酒吧，这家酒吧已经存在了10年。他还学习了更多关于调酒的知识，并创造了独特的鸡尾酒。",
+    "scratch": {
+      "age": 42,
+      "innate": "友好、外向、慷慨",
+      "learned": "亚瑟是玫瑰酒吧的调酒师和酒吧老板，他喜欢让人们感到受欢迎。他总是想办法让他的顾客感到很特别。",
+      "lifestyle": "亚瑟在午夜前后上床睡觉，早上7点左右醒来，下午4点左右吃晚饭。",
+      "daily_plan": "亚瑟每天下午5点开放玫瑰酒吧，并在柜台前站到晚上10点，然后关门。"
+    },
+    "spatial": {
+      "address": {
+        "living_area": [
+          "the Ville",
+          "亚瑟的公寓",
+          "主人房"
+        ]
+      },
+      "tree": {
+        "the Ville": {
+          "亚瑟的公寓": {
+            "主人房": [
+              "床",
+              "吉他",
+              "书桌",
+              "冰箱",
+              "壁橱",
+              "架子"
+            ]
+          },
+          "玫瑰酒吧": {
+            "酒吧": [
+              "架子",
+              "冰箱",
+              "酒吧顾客座位",
+              "吧台后面",
+              "厨房水槽",
+              "烹饪区",
+              "麦克风"
+            ]
+          },
+          "霍布斯咖啡馆": {
+            "咖啡馆": [
+              "冰箱",
+              "咖啡馆顾客座位",
+              "烹饪区",
+              "厨房水槽",
+              "咖啡馆柜台后面",
+              "钢琴"
+            ]
+          },
+          "哈维奥克供应店": {
+            "供应店": [
+              "供应店产品货架",
+              "供应店柜台后面",
+              "供应店柜台"
+            ]
+          },
+          "柳树市场和药店": {
+            "商店": [
+              "药店柜台后面",
+              "药店货架",
+              "药店柜台",
+              "杂货店货架",
+              "杂货店柜台后面",
+              "杂货店柜台"
+            ]
+          },
+          "奥克山学院宿舍": {
+            "花园": [
+              "宿舍花园"
+            ]
+          },
+          "约翰逊公园": {
+            "公园": [
+              "公园花园"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "classic_25_profile": {
+    "age": 42,
+    "innate": "友好、外向、慷慨",
+    "learned": "亚瑟是玫瑰酒吧的调酒师和酒吧老板，他喜欢让人们感到受欢迎。他总是想办法让他的顾客感到很特别。",
+    "lifestyle": "亚瑟在午夜前后上床睡觉，早上7点左右醒来，下午4点左右吃晚饭。",
+    "daily_plan": "亚瑟每天下午5点开放玫瑰酒吧，并在柜台前站到晚上10点，然后关门。",
+    "currently": "亚瑟在镇上经营着一家很受欢迎的酒吧，这家酒吧已经存在了10年。他还学习了更多关于调酒的知识，并创造了独特的鸡尾酒。"
+  },
+  "field_provenance": {
+    "age": {
+      "value": 42,
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/亚瑟/scratch/age",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "innate": {
+      "value": "友好、外向、慷慨",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/亚瑟/scratch/innate",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "learned": {
+      "value": "亚瑟是玫瑰酒吧的调酒师和酒吧老板，他喜欢让人们感到受欢迎。他总是想办法让他的顾客感到很特别。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/亚瑟/scratch/learned",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "lifestyle": {
+      "value": "亚瑟在午夜前后上床睡觉，早上7点左右醒来，下午4点左右吃晚饭。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/亚瑟/scratch/lifestyle",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "daily_plan": {
+      "value": "亚瑟每天下午5点开放玫瑰酒吧，并在柜台前站到晚上10点，然后关门。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/亚瑟/scratch/daily_plan",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "currently": {
+      "value": "亚瑟在镇上经营着一家很受欢迎的酒吧，这家酒吧已经存在了10年。他还学习了更多关于调酒的知识，并创造了独特的鸡尾酒。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/亚瑟/currently",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    }
+  },
+  "restored_profile_fields": [],
+  "initial_placement": {
+    "coord": [
+      53,
+      14
+    ],
+    "coord_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+      "json_pointer": "/persona_init_pos/亚瑟",
+      "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+    },
+    "address": [
+      "the Ville",
+      "亚瑟的公寓",
+      "主人房",
+      "床"
+    ],
+    "address_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\maze.json",
+      "json_pointer": "/tiles",
+      "sha256": "5724aea03bf4de8cf4aba5e76df39d7680e31d78fae1e4c80bd9cfcf1aa3d5d2"
+    },
+    "matching_source_tile": {
+      "coord": [
+        53,
+        14
+      ],
+      "address": [
+        "亚瑟的公寓",
+        "主人房",
+        "床"
+      ]
+    },
+    "living_area": [
+      "the Ville",
+      "亚瑟的公寓",
+      "主人房"
+    ],
+    "living_area_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚瑟\\agent.json",
+      "json_pointer": "/spatial/address/living_area",
+      "sha256": "af80f1bc160826904b9256b3b800b115139cb659d048a66cb77dc647c629218a"
+    }
+  },
+  "classic_known_spatial": {
+    "address": {
+      "living_area": [
+        "the Ville",
+        "亚瑟的公寓",
+        "主人房"
+      ]
+    },
+    "tree": {
+      "the Ville": {
+        "亚瑟的公寓": {
+          "主人房": [
+            "床",
+            "吉他",
+            "书桌",
+            "冰箱",
+            "壁橱",
+            "架子"
+          ]
+        },
+        "玫瑰酒吧": {
+          "酒吧": [
+            "架子",
+            "冰箱",
+            "酒吧顾客座位",
+            "吧台后面",
+            "厨房水槽",
+            "烹饪区",
+            "麦克风"
+          ]
+        },
+        "霍布斯咖啡馆": {
+          "咖啡馆": [
+            "冰箱",
+            "咖啡馆顾客座位",
+            "烹饪区",
+            "厨房水槽",
+            "咖啡馆柜台后面",
+            "钢琴"
+          ]
+        },
+        "哈维奥克供应店": {
+          "供应店": [
+            "供应店产品货架",
+            "供应店柜台后面",
+            "供应店柜台"
+          ]
+        },
+        "柳树市场和药店": {
+          "商店": [
+            "药店柜台后面",
+            "药店货架",
+            "药店柜台",
+            "杂货店货架",
+            "杂货店柜台后面",
+            "杂货店柜台"
+          ]
+        },
+        "奥克山学院宿舍": {
+          "花园": [
+            "宿舍花园"
+          ]
+        },
+        "约翰逊公园": {
+          "公园": [
+            "公园花园"
+          ]
+        }
+      }
+    }
+  },
+  "known_spatial_provenance": {
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚瑟\\agent.json",
+      "json_pointer": "/spatial",
+      "sha256": "af80f1bc160826904b9256b3b800b115139cb659d048a66cb77dc647c629218a"
+    },
+    "historical_complete_snapshot_available": false,
+    "adjustment": "No adjustment.",
+    "removed_object_names": [],
+    "adjustment_evidence": null
+  },
+  "source_behavior_parameters": {
+    "vision_radius": 8,
+    "perception_mode": "box",
+    "attention_bandwidth": 8,
+    "move_speed": null,
+    "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+    "chat_iterations": 4,
+    "schedule_max_try": 5,
+    "schedule_diversity": 5,
+    "think_interval": 1000,
+    "poignancy_max": 150,
+    "memory_retention": 8,
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+      "json_pointer": "/agent",
+      "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+    }
+  },
+  "assets": [
+    {
+      "role": "portrait",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚瑟\\portrait.png",
+      "copy": "agents/arthur-burton/assets/portrait.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1600,
+      "sha256": "01dbcf959a344e4b374d6e628f3143b4a3370f6d61b555d38799442026522857"
+    },
+    {
+      "role": "walking_texture",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\亚瑟\\texture.png",
+      "copy": "agents/arthur-burton/assets/texture.png",
+      "width": 96,
+      "height": 128,
+      "bytes": 3754,
+      "sha256": "454ce9bd109735ee830df7ab972215f5d455aba2236075ecf97ad80a6868e5c4"
+    }
+  ]
+}

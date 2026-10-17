@@ -1,0 +1,73 @@
+{
+  "source": "主 Agent 经浏览器读取的界面事实；非直接接口查询",
+  "experiment_id": "b7c8efec-0f4f-456c-8b8d-e18649490c88",
+  "run_id": "6ba9a460-98e1-4f51-a8c0-54e958922b5d",
+  "attempt_id": "de62dc9b-0715-4fbb-8580-05ef88268709",
+  "observed_status": "RUNNING",
+  "observed_committed_step": 1,
+  "requested_steps": 6,
+  "status_observation_wall_duration": "20m 4s",
+  "child_skill_evidence": {
+    "agent": "林晨",
+    "step": 1,
+    "skill_key": "base-desc",
+    "event_seq": 17,
+    "call_id": "48543d47-e698-4272-a79a-fe45bd372e10",
+    "status": "SUCCEEDED",
+    "latency_ms": 23090,
+    "returned_to_parent_event_seq": 20
+  },
+  "successful_interfaces_in_committed_step": {
+    "林晨": ["world-perceive", "memory-stream-search", "memory-stream-append"],
+    "陈明远": ["world-perceive", "memory-stream-search", "memory-stream-append", "world-act"]
+  },
+  "lin_memory": {
+    "id": "2ec0d89e-1ec1-54c5-98a9-f2205f264bbf",
+    "state": "ACTIVE",
+    "created_step": 1
+  },
+  "chen_world_act": {
+    "accepted": true,
+    "action_type": "ACT",
+    "predicate": "阅读一段",
+    "object": "社区故事集",
+    "target_coord": [7, 3],
+    "target_address": ["斯坦福小镇·阅读角验证", "文化街区", "开放阅读室", "阅读桌"]
+  },
+  "timeout": {
+    "agent": "林晨",
+    "step": 1,
+    "skill_key": "stanford-town-brain",
+    "event_seq": 29,
+    "call_id": "1cc71f52-46b8-4fc9-8566-421085c7eea5",
+    "started_at": "2026-10-15T05:20:04.360183+00:00",
+    "ended_at": "2026-10-15T05:30:04.374736+00:00",
+    "latency_ms": 600014,
+    "error_code": "ReadTimeout",
+    "error_summary": "HTTPConnectionPool(host='127.0.0.1', port=8888): Read timed out. (read timeout=600)",
+    "payload_sha256": "352e97fd4b6b52b70179e64c09a67942256fdb26d3d689b774dbd41b459ddf5a",
+    "log_result": "Brain step degraded to WAIT after recoverable Skill failure (1/3)"
+  },
+  "control_observations": {
+    "pause_requested_at_approx": "2026-10-15T13:30:00+08:00",
+    "pause_toast": "暂停请求已提交；会在当前安全步骤完成后暂停。",
+    "cancel_requested_at_approx": "2026-10-15T13:34:00+08:00",
+    "cancel_toast": "正在立即终止当前执行；未提交的当前 Step 将被丢弃。",
+    "later_new_request": {
+      "agent": "林晨",
+      "step": 2,
+      "event_seq": 94,
+      "call_id": "60807ac1-345f-4889-a4c0-4208e3e69f93",
+      "started_at": "2026-10-15T05:35:33.862019+00:00",
+      "observed_status": "RUNNING"
+    }
+  },
+  "ui_log_download": {
+    "filename": "run-6ba9a460-98e1-4f51-a8c0-54e958922b5d-attempt-de62dc9b-0715-4fbb-8580-05ef88268709.log",
+    "downloaded_at": "2026-10-15T13:36:26.3393992+08:00",
+    "bytes": 6019,
+    "sha256": "49F0669D07C8ACC6530B4EEDBF03ABD9DEC206FE3727F9016ED7E4C2B4FCF30A",
+    "scope": "当时的原始运行日志，不是最终结果或正式 garun"
+  },
+  "acceptance": "部分调用成功，完整验收阻断；29 个子 Skill 和 7 个接口没有全部动态覆盖"
+}

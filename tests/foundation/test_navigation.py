@@ -1,5 +1,4 @@
 """Collision authoring, server previews and Agent-bound navigation contracts."""
-import json
 from datetime import datetime, timezone
 from types import SimpleNamespace
 from uuid import uuid4
@@ -14,7 +13,7 @@ from generative_agents.ga_protocol.spatial.navigation import grid_path
 from generative_agents.ga_studio.experiments.builder import build_semantic_index
 from generative_agents.adapters.web.routes.resources import create_resource_router
 from generative_agents.ga_runtime.engine.space import Maze
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 from generative_agents.ga_studio.resources.maps import normalize_public_world
 
@@ -103,40 +102,40 @@ def navigation_server():
     game = SimpleNamespace(maze=maze, get_agent=lambda key: agent)
     iteration = IterationContext(uuid4(), uuid4(), 'agent-1', 'Agent', 1, 3,
         datetime.now(timezone.utc), 1, (1, 2), ('Campus', 'Sector', 'Outside'))
-    return SimulationMCPServer(game, iteration), agent
+    return SimulationAPI(game, iteration), agent
 
 
 def unpack(response):
-    assert not response['isError'], response
-    return json.loads(response['content'][0]['text'])
+    assert response['ok'], response
+    return response["result"]
 
 
 def test_navigation_is_readonly_and_move_cannot_cross_wall_or_lake():
     server, agent = navigation_server()
-    assert not unpack(server.call('world-navigate', {'target_coord': [5, 2]}))['reachable']
-    assert server.call('world-act', {'action_type': 'MOVE', 'target_coord': [5, 2]})['isError']
+    assert not unpack(server.invoke('world-navigate', {'target_coord': [5, 2]}))['reachable']
+    assert not server.invoke('world-act', {'action_type': 'MOVE', 'target_coord': [5, 2]})['ok']
     assert server.action is None and agent.coord == (1, 2)
     server.game.maze.tiles[2][3].collision = False
-    result = unpack(server.call('world-navigate', {'target_coord': [5, 2]}))
+    result = unpack(server.invoke('world-navigate', {'target_coord': [5, 2]}))
     assert result == {'reachable': True, 'distance_tiles': 4, 'next_coord': [2, 2], 'movement_required': True,
                       'requested_target': {'target_coord': [5, 2]},
                       'next_coord_role': 'FIRST_PATH_TILE_NOT_DESTINATION'}
     assert server.action is None
-    unpack(server.call('world-act', {'action_type': 'MOVE', 'target_coord': [5, 2]}))
+    unpack(server.invoke('world-act', {'action_type': 'MOVE', 'target_coord': [5, 2]}))
     assert server.action.path == ((2, 2), (3, 2), (4, 2), (5, 2))
-    assert server.call('world-act', {'action_type': 'WAIT'})['isError']
-    assert not server.call('world-navigate', {'target_coord': [5, 2]})['isError']
+    assert not server.invoke('world-act', {'action_type': 'WAIT'})['ok']
+    assert server.invoke('world-navigate', {'target_coord': [5, 2]})['ok']
 
 
 def test_navigation_identity_visibility_and_remembered_destination():
     server, agent = navigation_server(); agent.percept_config['vision_r'] = 1
     for args in [{'target_coord': [5, 2]}, {'target_coord': [2, 2], 'agent_key': 'other'},
                  {'target_coord': [True, 2]}, {'target_coord': [1.5, 2]}]:
-        assert server.call('world-navigate', args)['isError']
-    assert not unpack(server.call('world-navigate', {'target_address': ['Campus', 'Sector', 'Room']}))['reachable']
-    assert server.call('world-act', {'action_type': 'MOVE', 'target_coord': [2.5, 2]})['isError']
-    assert unpack(server.call('world-navigate', {'target_coord': [1, 2]}))['distance_tiles'] == 0
-    assert 'world-navigate' in {tool['name'] for tool in server.tools()}
+        assert not server.invoke('world-navigate', args)['ok']
+    assert not unpack(server.invoke('world-navigate', {'target_address': ['Campus', 'Sector', 'Room']}))['reachable']
+    assert not server.invoke('world-act', {'action_type': 'MOVE', 'target_coord': [2.5, 2]})['ok']
+    assert unpack(server.invoke('world-navigate', {'target_coord': [1, 2]}))['distance_tiles'] == 0
+    assert 'world-navigate' in {tool['name'] for tool in server.descriptors()}
 
 
 def test_paths_never_cut_diagonal_corners_and_blocked_start_cannot_escape():

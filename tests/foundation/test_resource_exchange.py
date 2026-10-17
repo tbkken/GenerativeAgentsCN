@@ -166,7 +166,7 @@ def test_skill_brain_and_private_templates_roundtrip(machines, tmp_path):
              "skills/items/template-skill/templates/note.txt": "精确模板\n".encode(),
              "skills/items/template-skill/scripts/note.py": b'\xef\xbb\xbfprint("exact-script")\r\n'}
     template = ResourceRecord(kind="skill", key="template-skill", name="template-skill", description="Template skill",
-                              definition={"skill_kind": "atomic", "entrypoint": "skills/items/template-skill/SKILL.md"},
+                              definition={"skill_kind": "skill", "entrypoint": "skills/items/template-skill/SKILL.md"},
                               attachments=list(files))
     path = package(tmp_path, ResourceSet(resources=[template], files=files), "templates")
     import_all(target, path)
@@ -205,22 +205,22 @@ def test_crowd_export_and_root_import_include_members_and_images_by_default(mach
     assert [item["key"] for item in single["imported"]] == ["bob"]
 
 
-def test_brain_and_pack_exports_collect_nested_shared_skills(machines, tmp_path):
+def test_brain_and_skill_exports_collect_nested_shared_skills(machines, tmp_path):
     database, source, _ = machines("source")
     _, target, _ = machines("target")
     registry = DatabaseSkillRegistry(database, cache_root=tmp_path / "skills")
     registry.create(name="observe", description="观察")
     for key in ("morning", "evening"):
-        pack = registry.create(name=key, description=key, kind="pack")
-        registry.save(key, pack.markdown + "\n调用 $observe。\n")
+        skill = registry.create(name=key, description=key, kind="skill")
+        registry.save(key, skill.markdown + "\n调用 $observe。\n")
     brain = registry.create(name="daily", description="日常", kind="brain")
     registry.save("daily", brain.markdown + "\n调用 $morning 和 $evening。\n")
     archive = source.export_resource("brain", "daily", tmp_path / "brain.zip")
     assert sorted(item.key for item in read_resource_set(archive).resources) == ["daily", "evening", "morning", "observe"]
     single = target.import_resources(archive, [{"kind": "skill", "key": "morning"}])
     assert {item["key"] for item in single["imported"]} == {"morning", "observe"}
-    pack = source.export_resource("skill", "morning", tmp_path / "pack.zip")
-    assert {item.key for item in read_resource_set(pack).resources} == {"morning", "observe"}
+    skill_archive = source.export_resource("skill", "morning", tmp_path / "skill.zip")
+    assert {item.key for item in read_resource_set(skill_archive).resources} == {"morning", "observe"}
     alone = source.export_resource("skill", "observe", tmp_path / "alone.zip")
     assert [item.key for item in read_resource_set(alone).resources] == ["observe"]
 

@@ -54,18 +54,23 @@ def test_agent_and_crowd_lists_page_in_sql_and_detail_members_are_batched(databa
     assert sum("FROM studio_agents" in query for query in sql) == 1
 
 
-def test_skill_list_never_materializes_or_selects_markdown_and_scripts(database, tmp_path, monkeypatch):
+def test_skill_list_projects_only_frontmatter_without_body_or_scripts(database, tmp_path, monkeypatch):
     registry = DatabaseSkillRegistry(database, cache_root=tmp_path / "cache")
     with database.session_factory.begin() as session:
-        for number, kind in enumerate(("atomic", "pack", "brain", "atomic")):
+        for number, kind in enumerate(("skill", "skill", "brain", "skill")):
             session.add(StudioSkill(skill_key=f"skill-{number}", kind=kind, description="description",
-                markdown="x" * 100_000, scripts_json={"scripts/large.py": "x" * 100_000}, content_hash=str(number) * 64))
+                markdown=f'---\nname: skill-{number}\ndisplay_name: "中文名称{number}"\ndescription: description\n---\n' + "x" * 100_000,
+                scripts_json={"scripts/large.py": "x" * 100_000}, content_hash=str(number) * 64))
     monkeypatch.setattr(registry, "_document", forbidden)
     with statements(database) as sql:
         result = registry.list_summaries(kind="skill", page=2, page_size=2)
     assert result["total"] == 3 and len(result["items"]) == 1
-    assert result["counts"] == {"atomic": 2, "pack": 1, "brain": 1}
-    assert len(sql) == 3 and not any("markdown" in query or "scripts_json" in query for query in sql)
+    assert result["counts"] == {"skill": 3, "brain": 1}
+    assert len(sql) == 3 and not any("scripts_json" in query for query in sql)
+    assert "substr(studio_skills.markdown" in sql[1]
+    assert ", studio_skills.markdown," not in sql[1]
+    assert result["items"][0]["display_name"] == "中文名称3"
+    assert "frontmatter" not in result["items"][0] and "markdown" not in result["items"][0]
     assert list((tmp_path / "cache").iterdir()) == []
 
 

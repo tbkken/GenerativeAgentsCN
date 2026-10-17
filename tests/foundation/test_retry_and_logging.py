@@ -5,11 +5,13 @@ from pathlib import Path
 from uuid import uuid4
 
 import requests
+import pytest
 
 from generative_agents.ga_runtime.models.gateway import LLMModel
 from generative_agents.ga_runtime.storage.logging import create_file_logger
 from generative_agents.ga_runtime.engine.context import RunControl
 from generative_agents.ga_runtime.models.trace import ModelTraceEventType
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled
 
 
 class _AlwaysFailModel(LLMModel):
@@ -21,7 +23,7 @@ class _AlwaysFailModel(LLMModel):
     def _completion(self, prompt, return_type, **kwargs):
         """为本测试模块封装 ``_completion`` 辅助步骤，减少重复的场景搭建代码。"""
         del prompt, return_type, kwargs
-        raise RuntimeError("synthetic provider failure")
+        raise requests.ConnectionError("synthetic provider failure")
 
 
 class _ChatTransportModel(LLMModel):
@@ -66,7 +68,8 @@ def test_model_retry_wait_stops_on_run_control_request():
         sleep=request_cancel,
     )
 
-    assert model.completion("prompt", failsafe="safe") == "safe"
+    with pytest.raises(ModelCallCancelled):
+        model.completion("prompt", failsafe="safe")
     assert waits == [0.1]
 
 
@@ -123,8 +126,8 @@ def test_chat_gateway_retries_timeout_and_malformed_tool_json(monkeypatch):
         ),
     ]
 
-    def fake_post(_url, **kwargs):
-        payloads.append(kwargs["json"])
+    def fake_post(self, _method, _url, **kwargs):
+        payloads.append(kwargs["payload"])
         running_facts_seen_by_transport.append(
             (
                 recorder.events[-1].event_type,
@@ -134,10 +137,10 @@ def test_chat_gateway_retries_timeout_and_malformed_tool_json(monkeypatch):
         outcome = outcomes.pop(0)
         if isinstance(outcome, Exception):
             raise outcome
-        return outcome
+        return outcome.json()
 
     monkeypatch.setattr(
-        "generative_agents.ga_runtime.models.gateway.requests.post", fake_post
+        "generative_agents.ga_runtime.models.gateway.LLMModel._request_json", fake_post
     )
     model = _ChatTransportModel(
         {

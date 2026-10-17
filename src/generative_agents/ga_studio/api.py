@@ -24,6 +24,8 @@ from generative_agents.ga_studio.storage.credentials import HostModelCredentials
 from generative_agents.ga_studio.resources.assets import SecretService
 from generative_agents.ga_studio.resources.assets import AssetService
 from generative_agents.ga_studio.resources.trials import prepare_skill_trial
+from generative_agents.ga_studio.resources.decision_compile import prepare_skill_decision_compile
+from generative_agents.ga_studio.resources.trials import SkillTrialEnvironmentService
 from generative_agents.ga_studio.resources.trials import prepare_copied_trial
 from generative_agents.ga_studio.experiments.workspace import WorkspaceConflictError
 from generative_agents.ga_studio.experiments.editor import ExperimentResourceEditor
@@ -39,4 +41,4 @@ from generative_agents.ga_studio.resources.exchange import ResourceExchangeError
 from generative_agents.ga_studio.resources.exchange import ResourceExchangeService
 from generative_agents.ga_studio.resources.exchange import resource_extra_files
 from generative_agents.ga_studio.resources.exchange import require_resolved_resource_dependencies
-__all__ = ['OperationJobs', 'AgentPlacement', 'AssetService', 'BUNDLED_ROOT', 'ExperimentPackageBuilder', 'ExperimentResourceEditor', 'ExperimentResourceError', 'ExperimentSelection', 'ExperimentWorkspaceService', 'HostModelCredentials', 'ModelService', 'ModelServiceInput', 'PackageCatalogRecord', 'ResourceExchangeError', 'ResourceExchangeService', 'RunRecycleBusy', 'SecretService', 'ServiceError', 'SkillSource', 'SpatialAssetService', 'StudioAgentDefinition', 'StudioPackageCatalogService', 'StudioResourceError', 'StudioResourceService', 'StudioSchemaPreparation', 'StudioSession', 'WorkspaceConflictError', 'WorldMapService', 'fresh_ville_editor_document', 'normalize_public_world', 'prepare_copied_trial', 'prepare_skill_trial', 'prepare_studio_database', 'recycle_run', 'resource_extra_files', 'require_resolved_resource_dependencies']
+__all__ = ['OperationJobs', 'AgentPlacement', 'AssetService', 'BUNDLED_ROOT', 'ExperimentPackageBuilder', 'ExperimentResourceEditor', 'ExperimentResourceError', 'ExperimentSelection', 'ExperimentWorkspaceService', 'HostModelCredentials', 'ModelService', 'ModelServiceInput', 'PackageCatalogRecord', 'ResourceExchangeError', 'ResourceExchangeService', 'RunRecycleBusy', 'SecretService', 'ServiceError', 'SkillSource', 'SkillTrialEnvironmentService', 'SpatialAssetService', 'StudioAgentDefinition', 'StudioPackageCatalogService', 'StudioResourceError', 'StudioResourceService', 'StudioSchemaPreparation', 'StudioSession', 'WorkspaceConflictError', 'WorldMapService', 'fresh_ville_editor_document', 'normalize_public_world', 'prepare_copied_trial', 'prepare_skill_decision_compile', 'prepare_skill_trial', 'prepare_studio_database', 'recycle_run', 'resource_extra_files', 'require_resolved_resource_dependencies']

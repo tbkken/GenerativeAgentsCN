@@ -90,6 +90,8 @@
     traceEof: true,
     traceItems: [],
     tracePage: 1,
+    traceScope: null,
+    traceRequest: null,
     modelUsageItems: [],
     modelUsagePage: 1,
     traceDetailState: null,
@@ -144,6 +146,7 @@
   };
 
   const $ = id => document.getElementById(id);
+  state.executionObserver = window.ExecutionObserver?.create({ document, api, onTrace: openModelTrace });
   // Preserve the established experiment workspace: configuration stays in
   // Overview / Models, while Results remains a read-only Run and replay view.
   const overviewPanel = document.querySelector('#page-overview .overview-panel');
@@ -399,7 +402,15 @@
     if (pageName === 'public-agents') await window.CrowdWorkspace.activateAgents();
     if (pageName === 'model-catalog') await window.ModelWorkspace.activate();
     if (pageName === 'models') {
-      await Promise.all([window.ModelWorkspace.loadChoices($('experimentChatModelChoice'), 'chat'), window.ModelWorkspace.loadChoices($('experimentEmbeddingModelChoice'), 'embedding')]);
+      const experimentId = state.selectedExperimentId;
+      const decisionSelect = $('experimentDecisionModelChoice');
+      await Promise.all([window.ModelWorkspace.loadChoices($('experimentChatModelChoice'), 'chat', '', false), window.ModelWorkspace.loadChoices($('experimentEmbeddingModelChoice'), 'embedding', '', false), window.ModelWorkspace.loadChoices(decisionSelect, 'decision', '', false)]);
+      if (state.selectedExperimentId !== experimentId || state.workspacePage !== 'models') return;
+      $('experimentChatModelChoice').options[0].textContent = '保留当前生成式模型配置';
+      $('experimentEmbeddingModelChoice').options[0].textContent = '保留当前 向量模型配置';
+      decisionSelect.options[0].textContent = '保留当前决策模型配置';
+      decisionSelect.add(new Option('移除实验中的决策模型配置', '__remove__'));
+      ['experimentChatModelChoice', 'experimentDecisionModelChoice', 'experimentEmbeddingModelChoice'].forEach(id => { $(id).disabled = !state.draft; });
       $('applyExperimentModelChoices').disabled = !state.draft;
     }
     if (pageName === 'agents') await loadExperimentAgents();
@@ -614,7 +625,8 @@
     try {
       await Promise.all(['models', 'maps', 'crowds'].map(group => window.WorkspaceLoader.load(group)));
       if (generation !== state.wizardGeneration) return;
-      await Promise.all([prepareExperimentBrainChoices(), window.ModelWorkspace.loadChoices($('newExperimentChatModel'), 'chat'), window.ModelWorkspace.loadChoices($('newExperimentEmbeddingModel'), 'embedding'), window.MapWorkspace.prepareExperimentCreate(), window.CrowdWorkspace.prepareExperimentCreate({resetSelection:true})]);
+      await Promise.all([prepareExperimentBrainChoices(), window.ModelWorkspace.loadChoices($('newExperimentChatModel'), 'chat'), window.ModelWorkspace.loadChoices($('newExperimentEmbeddingModel'), 'embedding'), window.ModelWorkspace.loadChoices($('newExperimentDecisionModel'), 'decision', '', false), window.MapWorkspace.prepareExperimentCreate(), window.CrowdWorkspace.prepareExperimentCreate({resetSelection:true})]);
+      if ($('newExperimentDecisionModel').options[0]) $('newExperimentDecisionModel').options[0].textContent = '不配置决策模型';
       if (generation !== state.wizardGeneration) return;
       state.wizardResourcesReady = true;
       renderWizardStep();
@@ -629,7 +641,7 @@
       placeholder:'请选择 Brain Skill',
       loadPage: page => api(`/skills?kind=brain&page=${page}&page_size=20`),
       value:item => item.resource_id || item.id || item.name,
-      label:item => `${item.name}${item.description ? ` · ${item.description}` : ''}`,
+      label:item => `${item.display_name && item.display_name !== item.name ? `${item.display_name}（${item.name}）` : item.name}${item.description ? ` · ${item.description}` : ''}`,
     });
     const response = {items:[{name:state.definition?.engine?.brain_skill, resource_id:state.definition?.engine?.brain_skill}]};
     const composition = $('experimentBrainRevisionSelect');
@@ -696,6 +708,10 @@
     const modal = $(id);
     if (!modal) return;
     if (id === 'agentEditorModal') releaseAgentImageObjectUrls();
+    if (id === 'modelTraceModal') {
+      state.traceDetailState?.controller.abort();
+      state.traceDetailState = null;
+    }
     modal.classList.remove('open');
     if (id === 'resourceDeleteModal' && state.pendingResourceDelete) {
       const pending = state.pendingResourceDelete;
@@ -761,7 +777,7 @@
   function modelAutoProbeMarkup(report) {
     const probe = report.auto_model_probe;
     if (!probe?.enabled) return '';
-    const purposes = (probe.purposes || []).map(item => item === 'chat' ? 'Chat' : item === 'embedding' ? 'Embedding' : item);
+    const purposes = (probe.purposes || []).map(item => item === 'chat' ? 'Chat' : item === 'embedding' ? '向量模型' : item);
     const summary = `<div class="validation-item model-auto-probe"><span>↻</span><div><strong>模型服务由系统自动检测</strong><small>确认执行后会一次性检测 ${escapeHtml(purposes.join(' + '))}，并将 auto 固化为实际模型。无需逐项操作。</small></div></div>`;
     return summary;
   }
@@ -1406,9 +1422,10 @@
   }
 
   function fillModelFields(models) {
-    $('experimentModelCopySummary').innerHTML = ['chat', 'embedding'].map(purpose => {
+    const labels = {chat:'生成式模型', decision:'决策模型', embedding:'向量模型'};
+    $('experimentModelCopySummary').innerHTML = ['chat', 'decision', 'embedding'].map(purpose => {
       const model = models[purpose];
-      return `<div class="summary-cell"><span>${purpose === 'chat' ? '聊天模型' : 'Embedding'}</span><strong>${escapeHtml(model.model)}</strong><small>${escapeHtml(model.base_url || '')} · ${model.credential_env ? '密钥已关联' : '未配置密钥'}</small></div>`;
+      return `<div class="summary-cell"><span>${labels[purpose]}</span><strong>${escapeHtml(model?.model || '未配置')}</strong><small>${model ? `${escapeHtml(model.base_url || '')} · ${model.credential_env ? '密钥已关联' : '未设置认证密钥'}` : '使用决策 Skill 时，请先复制决策模型配置。'}</small></div>`;
     }).join('');
   }
 
@@ -1728,6 +1745,8 @@
   }
 
   function resetResultRuntime() {
+    if (state.activeModalId === 'modelTraceModal') closeModal('modelTraceModal', { restoreFocus: false });
+    state.executionObserver?.reset();
     state.resultGeneration += 1;
     state.resultRequestGeneration += 1;
     state.operationFactsGeneration += 1;
@@ -1742,6 +1761,8 @@
     state.renderedAgentDetailKey = null;
     state.traceItems = [];
     state.tracePage = 1;
+    state.traceScope = null;
+    state.traceRequest = null;
     state.modelUsageItems = [];
     state.modelUsagePage = 1;
     state.operationEvents = [];
@@ -1764,6 +1785,8 @@
   }
 
   function resetOperationsWorkspaceForRunSwitch() {
+    if (state.activeModalId === 'modelTraceModal') closeModal('modelTraceModal', { restoreFocus: false });
+    state.executionObserver?.reset();
     // Run-scoped diagnostics must never retain either data or selection ownership
     // from the previous Run while the new requests are in flight.
     state.operationFactsGeneration += 1;
@@ -1789,15 +1812,17 @@
     state.traceCursor = null;
     state.traceEof = true;
     state.tracePage = 1;
+    state.traceScope = null;
+    state.traceRequest = null;
     state.checkpointItems = [];
     state.checkpointPage = 1;
     state.traceDetailState = null;
     state.checkpointPreviewState = null;
     state.modelUsageItems = [];
     state.modelUsagePage = 1;
-    $('modelUsageRows').innerHTML = '<div class="diagnostic-list-empty">正在加载当前仿真的已提交用途汇总…</div>';
+    $('modelUsageRows').innerHTML = '<div class="diagnostic-list-empty">正在加载当前仿真的模型调用汇总…</div>';
     if ($('modelUsageWatermark')) {
-      $('modelUsageWatermark').textContent = '正在读取当前仿真的 StepResult 水位…';
+      $('modelUsageWatermark').textContent = '正在读取模型执行审计；调用成功不代表世界已提交。';
     }
     $('attemptLogSelect').innerHTML = '<option value="">正在加载 Attempt…</option>';
     $('traceAttemptSelect').innerHTML = '<option value="">正在加载 Attempt…</option>';
@@ -1822,7 +1847,7 @@
     state.currentRun = null;
     renderRunQuality(null);
     state.replayAuditSteps = new Map();
-    state.resultAgentOffset=0; state.qualityOffset=0; state.artifactOffset=0; state.checkpointOffset=0;
+    state.qualityOffset=0; state.artifactOffset=0; state.checkpointOffset=0;
     state.resultDataVersion=null;
     $('resultRunControls').hidden = true;
     renderRunSelect(runId);
@@ -1874,6 +1899,7 @@
     renderRunSelect(runId);
     renderRunActions(run);
     startResultDurationTimer(run);
+    state.executionObserver?.refreshProgress(run);
     if (run.package_error) {
       teardownReplay();
       $('replayStatus').textContent = run.package_error;
@@ -1890,13 +1916,15 @@
         await ensureReplayPlayer(runId, generation);
       }
     } else if (tab === 'agents' && changed) {
-      const agents = await api(`/runs/${runId}/results/agents?offset=${state.resultAgentOffset || 0}&limit=20`);
-      if (!current() || state.resultTab !== tab) return;
-      renderAgents(agents.items, {silent});
-      resultPageControls($('resultAgentButtons'), 'agentResultPager', state.resultAgentOffset || 0, agents.next_offset, async offset => {
-        state.resultAgentOffset=offset; state.resultDataVersion=null;
-        await refreshResultData(runId,generation,{force:true});
-      });
+      const items = [];
+      let offset = 0;
+      do {
+        const agents = await api(`/runs/${runId}/results/agents?offset=${offset}&limit=100`);
+        if (!current() || state.resultTab !== tab) return;
+        items.push(...agents.items);
+        offset = agents.next_offset;
+      } while (offset != null);
+      renderAgents(items, {silent});
     } else if (tab === 'operations') {
       await loadOperationsWorkspace(runId, generation);
     } else if (tab === 'quality' && changed) {
@@ -2103,12 +2131,12 @@
 
   function createAgentResultTab(item) {
     const template = document.createElement('template');
-    template.innerHTML = '<button type="button" role="tab" class="agent-result-tab" aria-controls="resultAgentDetail"><span class="agent-tab-avatar-fallback" aria-hidden="true"></span><img loading="lazy" decoding="async" class="agent-tab-portrait" alt=""/><span class="agent-tab-copy"><strong><i class="agent-tab-status" aria-hidden="true"></i></strong><small></small></span></button>';
+    template.innerHTML = '<button type="button" role="tab" class="agent-result-tab" aria-controls="resultAgentDetail"><span class="agent-tab-avatar-fallback" aria-hidden="true"></span><img loading="lazy" decoding="async" class="agent-tab-portrait" alt="" hidden/><strong></strong></button>';
     const tab = template.content.firstElementChild;
     const image = tab.querySelector('.agent-tab-portrait');
     image.addEventListener('error', () => {
       image.hidden = true;
-      image.previousElementSibling.style.display = 'grid';
+      image.previousElementSibling.hidden = false;
     });
     return tab;
   }
@@ -2122,17 +2150,20 @@
     tab.classList.toggle('active', active);
     tab.setAttribute('aria-selected', String(active));
     tab.tabIndex = active ? 0 : -1;
+    tab.title = `${name} · ${statusText} · 计划 ${item.plan_count || 0} · 事件 ${item.event_count || 0}`;
     tab.querySelector('.agent-tab-avatar-fallback').textContent = name.slice(0, 1);
     const image = tab.querySelector('.agent-tab-portrait');
     const portraitUrl = item.portrait_url || '';
-    if (image.getAttribute('src') !== portraitUrl) {
+    if (!portraitUrl) {
+      image.hidden = true;
+      image.previousElementSibling.hidden = false;
+      image.removeAttribute('src');
+    } else if (image.getAttribute('src') !== portraitUrl) {
       image.hidden = false;
-      image.previousElementSibling.style.display = '';
+      image.previousElementSibling.hidden = true;
       image.setAttribute('src', portraitUrl);
     }
-    const strong = tab.querySelector('.agent-tab-copy strong');
-    strong.replaceChildren(strong.querySelector('.agent-tab-status'), document.createTextNode(name));
-    tab.querySelector('.agent-tab-copy small').textContent = `${statusText} · 计划 ${item.plan_count || 0} · 事件 ${item.event_count || 0}`;
+    tab.querySelector('strong').textContent = name;
   }
 
   function renderAgentTabs() {
@@ -2820,7 +2851,7 @@
       .includes(state.currentRun?.status);
     $('modelUsageRows').innerHTML = header + (rows.length
       ? rows.map(item => `<div class="usage-row"><strong>${escapeHtml(item.purpose)}</strong><code title="逻辑调用 / 物理请求">${item.logical_calls} / ${item.physical_attempts}</code><span>${item.max_latency_ms} ms</span><span>${item.retries}</span></div>`).join('')
-      : `<div class="diagnostic-list-empty">${active ? '当前 Step 尚未提交用途汇总；右侧物理请求是实时数据' : '本次仿真没有已提交的模型调用'}</div>`);
+      : `<div class="diagnostic-list-empty">${active ? '尚无已结束的逻辑调用；右侧物理请求实时更新' : '本次仿真没有模型调用汇总'}</div>`);
     $('modelUsagePagination').innerHTML = pagination.html;
   }
 
@@ -2838,7 +2869,7 @@
     const usageStep = Number(operations.usage_committed_through_step || 0);
     const usageWatermark = $('modelUsageWatermark');
     if (usageWatermark) {
-      usageWatermark.textContent = operations.usage_consistency === 'RUN_TRACE_EVENTS' ? '按 Run 调用轨迹汇总已完成的逻辑调用和物理尝试；进行中的请求见右侧' : `已提交至 Step ${usageStep}；右侧物理请求实时刷新`;
+      usageWatermark.textContent = operations.usage_consistency === 'RUN_TRACE_EVENTS' ? '模型执行审计：已完成的逻辑调用与物理尝试；不代表世界已提交' : `来自已提交至 Step ${usageStep} 的模型审计；实时物理请求见右侧`;
     }
     renderModelUsage();
     const activeJobs = [...(operations.artifact_jobs || []), ...[...(state.artifactJobs?.values() || [])].filter(job => job.run_id === state.selectedRunId)].filter(item => item.status !== 'SUCCEEDED');
@@ -3014,9 +3045,11 @@
     $('loadMoreTraces').hidden = state.traceEof;
   }
 
-  async function loadModelTraces(runId, attemptId, signal, { append = false, factsGeneration = null } = {}) {
-    if (factsGeneration !== null && factsGeneration !== state.operationFactsGeneration) return;
+  async function loadModelTraces(runId, attemptId, signal, { append = false, factsGeneration = state.operationFactsGeneration } = {}) {
+    if (factsGeneration !== state.operationFactsGeneration || runId !== state.selectedRunId || signal.aborted) return;
     if (!attemptId) {
+      state.traceScope = null;
+      state.traceRequest = null;
       state.traceItems = [];
       state.tracePage = 1;
       state.traceCursor = null;
@@ -3024,62 +3057,118 @@
       renderModelTraces();
       return;
     }
-    if (!append) {
+    const purpose = $('tracePurposeFilter').value.trim();
+    const scope = JSON.stringify([runId, attemptId, purpose, factsGeneration]);
+    const sameScope = state.traceScope === scope;
+    const active = state.traceRequest;
+    // A poll/load-more must not supersede an in-flight refresh of its snapshot.
+    if (append && sameScope && active?.scope === scope && !active.signal.aborted) return active.promise;
+    if (!sameScope) {
+      if (state.activeModalId === 'modelTraceModal') closeModal('modelTraceModal', { restoreFocus: false });
+      state.traceScope = scope;
       state.traceItems = [];
       state.tracePage = 1;
-      state.traceCursor = 0;
-      state.traceEof = false;
-      if (state.traceDetailState?.runId !== runId || state.traceDetailState?.attemptId !== attemptId) {
-        $('modelTraceDetail').hidden = true;
-        $('tracePayloadMore').hidden = true;
-        state.traceDetailState = null;
-      }
+      state.traceCursor = null;
+      state.traceEof = true;
+      $('modelTraceDetail').hidden = true;
+      $('tracePayloadMore').hidden = true;
+      state.traceDetailState = null;
+      renderModelTraces();
     }
-    const purpose = $('tracePurposeFilter').value.trim();
+    const incremental = append && sameScope && state.traceCursor !== null;
+    const cursor = incremental ? state.traceCursor : 0;
     const suffix = purpose ? `&purpose=${encodeURIComponent(purpose)}` : '';
-    const page = await api(`/runs/${runId}/model-traces?attempt_id=${encodeURIComponent(attemptId)}&event_type=PHYSICAL&cursor=${state.traceCursor ?? 0}&limit=200${suffix}`, { signal });
-    if ((factsGeneration !== null && factsGeneration !== state.operationFactsGeneration)
-      || runId !== state.selectedRunId || signal.aborted
-      || (attemptId !== state.selectedAttemptId && attemptId !== state.selectedTraceAttemptId)) return;
-    // PHYSICAL_START and PHYSICAL_ATTEMPT share call_id + attempt_no. Keep one
-    // live row and replace it with the later completion event when it arrives.
-    const identity = item => item.call_id
-      ? `${item.call_id}:${item.attempt_no ?? 0}`
-      : item.trace_id;
-    const merged = new Map(state.traceItems.map(item => [identity(item), item]));
-    page.items.forEach(item => {
-      const key = identity(item);
-      const current = merged.get(key);
-      if (!current || Number(item.event_seq || 0) >= Number(current.event_seq || 0)) {
-        merged.set(key, item);
+    const request = { scope, signal };
+    state.traceRequest = request;
+    const current = () => state.traceRequest === request && state.traceScope === scope
+      && factsGeneration === state.operationFactsGeneration && runId === state.selectedRunId && !signal.aborted
+      && attemptId === (state.selectedTraceAttemptId || state.selectedAttemptId)
+      && purpose === $('tracePurposeFilter').value.trim();
+    request.promise = api(`/runs/${runId}/model-traces?attempt_id=${encodeURIComponent(attemptId)}&event_type=PHYSICAL&cursor=${cursor}&limit=200${suffix}`, { signal }).then(page => {
+      if (!current()) return;
+      // Keep the last successful snapshot visible until a complete refresh has
+      // succeeded. Only incremental responses merge into that snapshot.
+      const identity = item => item.call_id
+        ? `${item.call_id}:${item.attempt_no ?? 0}`
+        : item.trace_id;
+      const merged = new Map((incremental ? state.traceItems : []).map(item => [identity(item), item]));
+      page.items.forEach(item => {
+        const key = identity(item);
+        const existing = merged.get(key);
+        if (!existing || Number(item.event_seq || 0) >= Number(existing.event_seq || 0)) merged.set(key, item);
+      });
+      state.traceItems = [...merged.values()].sort(
+        (left, right) => Number(left.event_seq || 0) - Number(right.event_seq || 0)
+      );
+      state.traceCursor = page.next_cursor;
+      state.traceEof = page.eof;
+      if (page.eof && state.currentRun && ['COMPLETED','FAILED','CANCELLED','PAUSED'].includes(state.currentRun.status)) {
+        state.traceItems = state.traceItems.map(item => item.status === 'RUNNING' ? {...item,status:'ABORTED'} : item);
       }
+      renderModelTraces();
+    }).catch(error => {
+      if (current()) throw error;
+    }).finally(() => {
+      if (state.traceRequest === request) state.traceRequest = null;
     });
-    state.traceItems = [...merged.values()].sort(
-      (left, right) => Number(left.event_seq || 0) - Number(right.event_seq || 0)
-    );
-    state.traceCursor = page.next_cursor;
-    state.traceEof = page.eof;
-    if (page.eof && state.currentRun && ['COMPLETED','FAILED','CANCELLED','PAUSED'].includes(state.currentRun.status)) {
-      state.traceItems = state.traceItems.map(item => item.status === 'RUNNING' ? {...item,status:'ABORTED'} : item);
-    }
-    renderModelTraces();
+    return request.promise;
+  }
+
+  function openModelTrace(traceId, returnFocus = document.activeElement) {
+    if (!state.selectedRunId) return;
+    state.traceDetailState?.controller.abort();
+    state.traceDetailState = {
+      runId: state.selectedRunId,
+      traceId,
+      attemptId: state.selectedTraceAttemptId || state.selectedAttemptId,
+      cursor: 0, content: '', generation: state.operationFactsGeneration,
+      controller: new AbortController(), loading: false,
+    };
+    $('modelTraceDetail').hidden = true;
+    $('modelTraceDetail').textContent = '';
+    $('modelTraceBody').scrollTop = 0;
+    $('tracePayloadMore').hidden = true;
+    openModal('modelTraceModal', 'closeModelTrace', returnFocus);
+    return loadTraceDetail();
   }
 
   async function loadTraceDetail({ append = false } = {}) {
     const current = state.traceDetailState;
-    if (!current || current.runId !== state.selectedRunId) return;
+    const isCurrent = () => current && state.traceDetailState === current
+      && current.runId === state.selectedRunId && current.generation === state.operationFactsGeneration
+      && current.attemptId === (state.selectedTraceAttemptId || state.selectedAttemptId)
+      && state.activeModalId === 'modelTraceModal' && !current.controller.signal.aborted;
+    if (!isCurrent() || current.loading || (append && current.cursor === null)) return;
     const cursor = append ? current.cursor : 0;
-    const detail = await api(`/runs/${current.runId}/model-traces/${encodeURIComponent(current.traceId)}?cursor=${cursor}&limit_bytes=16384`);
-    if (state.traceDetailState !== current || current.runId !== state.selectedRunId) return;
-    current.content = append ? current.content + (detail.content || '') : (detail.content || '');
-    current.cursor = detail.next_cursor;
-    current.fileId = detail.file_id;
-    current.trace = detail.trace;
-    current.payloadAvailable = detail.payload_available;
-    $('modelTraceDetail').hidden = false;
-    $('modelTraceDetail').innerHTML = `<strong>${escapeHtml(detail.trace.purpose || detail.trace.event_type || '模型调用')}</strong><pre>${escapeHtml(JSON.stringify(detail.trace, null, 2))}</pre>${detail.payload_available ? `<strong>Payload（已脱敏）</strong><pre>${escapeHtml(current.content)}</pre>` : `<p>${escapeHtml(detail.payload_diagnostic || '该记录未保存 Payload。')}</p>`}`;
-    if (detail.iteration_tools?.length) $('modelTraceDetail').innerHTML += `<strong>同 Agent / 同 Step 的 MCP 调用记录（非单次模型请求关联）</strong><pre>${escapeHtml(JSON.stringify(detail.iteration_tools, null, 2))}</pre>`;
-    $('tracePayloadMore').hidden = detail.next_cursor === null;
+    current.loading = true;
+    $('tracePayloadMore').disabled = true;
+    $('modelTraceStatus').hidden = false;
+    $('modelTraceStatus').textContent = append ? '正在继续读取 Payload…' : '正在读取调用详情…';
+    $('modelTraceBody').setAttribute('aria-busy', 'true');
+    try {
+      const detail = await api(`/runs/${current.runId}/model-traces/${encodeURIComponent(current.traceId)}?cursor=${cursor}&limit_bytes=16384`, { signal: current.controller.signal });
+      if (!isCurrent()) return;
+      current.content = append ? current.content + (detail.content || '') : (detail.content || '');
+      current.cursor = detail.next_cursor;
+      $('modelTraceDetail').hidden = false;
+      $('modelTraceDetail').innerHTML = `<strong>${escapeHtml(detail.trace.purpose || detail.trace.event_type || '模型调用')}</strong><pre>${escapeHtml(JSON.stringify(detail.trace, null, 2))}</pre>${detail.payload_available ? `<strong>Payload（已脱敏）</strong><pre>${escapeHtml(current.content)}</pre>` : `<p>${escapeHtml(detail.payload_diagnostic || '该记录未保存 Payload。')}</p>`}`;
+      if (detail.iteration_interfaces?.length) $('modelTraceDetail').innerHTML += `<strong>同 Agent / 同 Step 的接口调用记录（非单次模型请求关联）</strong><pre>${escapeHtml(JSON.stringify(detail.iteration_interfaces, null, 2))}</pre>`;
+      $('modelTraceStatus').hidden = true;
+      $('tracePayloadMore').hidden = detail.next_cursor === null;
+      $('tracePayloadMore').textContent = '继续加载 Payload';
+    } catch (error) {
+      if (!isCurrent()) return;
+      $('modelTraceStatus').textContent = `读取失败：${error.message}`;
+      $('tracePayloadMore').hidden = false;
+      $('tracePayloadMore').textContent = '重试读取';
+      reportError(error);
+    } finally {
+      current.loading = false;
+      if (isCurrent()) {
+        $('tracePayloadMore').disabled = false;
+        $('modelTraceBody').setAttribute('aria-busy', 'false');
+      }
+    }
   }
 
   function renderSystemEvents(items) {
@@ -3238,7 +3327,11 @@
         if (state.logRunId !== runId || state.logAttemptId !== selectedAttempt) await selectAttemptLog(runId, selectedAttempt);
         else if (!state.logSource && !state.logStreamPaused) startLogStream(runId, selectedAttempt, state.logGeneration);
       } else if (tab === 'traces') {
-        await loadModelTraces(runId, $('traceAttemptSelect').value || selectedAttempt, controller.signal, {append: state.traceCursor !== null});
+        const traceAttempt = $('traceAttemptSelect').value || selectedAttempt;
+        await Promise.all([
+          loadModelTraces(runId, traceAttempt, controller.signal, {append: state.traceCursor !== null}),
+          state.executionObserver?.refreshTree(state.currentRun, traceAttempt),
+        ]);
         const usage = await api(`/runs/${runId}/results/operations?section=usage`, {signal:controller.signal});
         if (current()) renderOperations(usage);
       }
@@ -3322,21 +3415,29 @@
     });
   }
 
-  $('applyExperimentModelChoices').addEventListener('click', async () => {
+  async function applyExperimentModelChoices() {
     if (!state.draft) return;
     const experimentId = state.selectedExperimentId;
     const chatId = $('experimentChatModelChoice').value;
     const embeddingId = $('experimentEmbeddingModelChoice').value;
-    if (!chatId || !embeddingId) { showToast('请选择聊天和 Embedding 模型。', '无法应用'); return; }
+    const decisionId = $('experimentDecisionModelChoice').value;
+    if (!chatId && !embeddingId && !decisionId) { showToast('请选择要复制或移除的模型配置。', '尚未更改'); return; }
     try {
-      const [chat, embedding] = await Promise.all([api(`/resources/model-presets/${chatId}`), api(`/resources/model-presets/${embeddingId}`)]);
+      const [chat, embedding, decision] = await Promise.all([chatId ? api(`/resources/model-presets/${chatId}`) : null, embeddingId ? api(`/resources/model-presets/${embeddingId}`) : null, decisionId && decisionId !== '__remove__' ? api(`/resources/model-presets/${decisionId}`) : null]);
       if (state.selectedExperimentId !== experimentId || !state.draft) return;
-      if (!chat.config.chat || !embedding.config.embedding) throw new Error('所选模型类型不匹配，请重新选择。');
-      state.draft.definition.models = {chat: structuredClone(chat.config.chat), embedding: structuredClone(embedding.config.embedding)};
+      if ((chatId && !chat?.config?.chat) || (embeddingId && !embedding?.config?.embedding)) throw new Error('所选模型类型不匹配，请重新选择。');
+      if (decisionId && decisionId !== '__remove__' && !decision?.config?.decision) throw new Error('所选配置没有决策模型，请重新选择。');
+      const models = {...state.draft.definition.models};
+      if (chat) models.chat = structuredClone(chat.config.chat);
+      if (embedding) models.embedding = structuredClone(embedding.config.embedding);
+      if (decisionId === '__remove__') delete models.decision;
+      else if (decision) models.decision = structuredClone(decision.config.decision);
+      state.draft.definition.models = models;
       fillModelFields(state.draft.definition.models);
       await saveDraft();
     } catch (error) { reportError(error); }
-  });
+  }
+  $('applyExperimentModelChoices').addEventListener('click', applyExperimentModelChoices);
 
   async function createExperiment() {
     const brainResourceId = $('newExperimentBrain').value;
@@ -3346,7 +3447,8 @@
     if (!mapId) throw new Error('新实验必须选择一张地图');
     const modelPresetId = $('newExperimentChatModel').value;
     const embeddingModelPresetId = $('newExperimentEmbeddingModel').value;
-    if (!modelPresetId || !embeddingModelPresetId) throw new Error('请选择已配置的聊天和 Embedding 模型；可在模型中心添加。');
+    const decisionModelPresetId = $('newExperimentDecisionModel').value;
+    if (!modelPresetId || !embeddingModelPresetId) throw new Error('请选择已配置的生成式模型和 向量模型；可在模型中心添加。');
     const created = await api('/experiments', {
       method: 'POST',
       body: JSON.stringify({
@@ -3358,6 +3460,7 @@
         brain_skill_id: brainResourceId,
         model_preset_id: modelPresetId,
         embedding_model_preset_id: embeddingModelPresetId,
+        ...(decisionModelPresetId ? {decision_model_preset_id: decisionModelPresetId} : {}),
         crowd_ids: window.CrowdWorkspace?.selectedCreateRevisionIds?.() || [],
       }),
     });
@@ -4905,10 +5008,6 @@
     tabs[nextIndex].focus();
     tabs[nextIndex].click();
   });
-  [$('agentTabPrev'), $('agentTabNext')].forEach(button => button.addEventListener('click', () => {
-    const direction = button === $('agentTabPrev') ? -1 : 1;
-    $('resultAgentButtons').scrollBy({ left: direction * Math.max(260, $('resultAgentButtons').clientWidth * .72), behavior: 'smooth' });
-  }));
   $('conversationIndex').addEventListener('click', event => {
     const button = event.target.closest('.conversation-button');
     if (!button) return;
@@ -5051,10 +5150,12 @@
     if (!state.selectedRunId || !event.target.value || !state.operationsAbortController) return;
     state.selectedTraceAttemptId = event.target.value;
     loadModelTraces(state.selectedRunId, event.target.value, state.operationsAbortController.signal).catch(reportError);
+    state.executionObserver?.refreshTree(state.currentRun, event.target.value, { force: true });
   });
   $('refreshTraces').addEventListener('click', () => {
     if (!state.selectedRunId || !$('traceAttemptSelect').value || !state.operationsAbortController) return;
     loadModelTraces(state.selectedRunId, $('traceAttemptSelect').value, state.operationsAbortController.signal).catch(reportError);
+    state.executionObserver?.refreshTree(state.currentRun, $('traceAttemptSelect').value, { force: true });
   });
   $('loadMoreTraces').addEventListener('click', () => {
     if (!state.selectedRunId || !$('traceAttemptSelect').value || !state.operationsAbortController || state.traceCursor === null) return;
@@ -5092,21 +5193,10 @@
   $('modelTraceRows').addEventListener('click', event => {
     const row = event.target.closest('[data-trace-id]');
     if (!row || !state.selectedRunId) return;
-    const runId = state.selectedRunId;
-    state.traceDetailState = {
-      runId,
-      traceId: row.dataset.traceId,
-      attemptId: state.selectedTraceAttemptId || state.selectedAttemptId,
-      cursor: 0,
-      fileId: null,
-      content: '',
-      generation: state.logGeneration,
-    };
-    $('modelTraceDetail').hidden = false;
-    $('modelTraceDetail').textContent = '正在读取调用详情…';
-    loadTraceDetail().catch(error => { $('modelTraceDetail').textContent = `读取失败：${error.message}`; reportError(error); });
+    openModelTrace(row.dataset.traceId, row);
   });
-  $('tracePayloadMore').addEventListener('click', () => loadTraceDetail({ append: true }).catch(reportError));
+  [$('closeModelTrace'), $('closeModelTraceDone')].forEach(button => button.addEventListener('click', () => closeModal('modelTraceModal')));
+  $('tracePayloadMore').addEventListener('click', () => loadTraceDetail({ append: true }));
   $('tracePurposeFilter').addEventListener('keydown', event => {
     if (event.key === 'Enter') $('refreshTraces').click();
   });
@@ -5200,7 +5290,7 @@
       return;
     }
     if (state.wizardStep === 2 && (!$('newExperimentChatModel').value || !$('newExperimentEmbeddingModel').value)) {
-      showToast('请选择聊天和 Embedding 模型。', '无法继续');
+      showToast('请选择生成式模型和 向量模型。', '无法继续');
       return;
     }
     if (state.wizardStep === 2 && !$('newExperimentBrain').value) {

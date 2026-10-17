@@ -123,8 +123,8 @@ example_input: 已有两种活动安排，请比较依据和待确认事项。
 
 Brain 正文中的 `$qinghe-compare-options` 表示一个子 Skill 依赖。
 
-- 运行时解析出依赖后，为模型提供 `call_skill` 工具，参数是 `name` 和 `input_text`。
-- 父技能应把有用的观察、约束和问题传给子技能，再利用其自然语言结果继续判断。
+- 运行时解析出依赖后，为模型提供 `call_skill` 工具：`name` 指定子技能，`input_text` 与 `input_from` 二选一。
+- 父技能可用 `input_text` 传递自然语言观察、约束和问题，也可用 `input_from` 引用本次调用中已完成的直接子技能调用 ID（`tool_call_id`），由运行器把该次结果原文交给下一技能。通用执行层不调用模型预解析情境，结果引用也不重新概括文本。
 - 依赖关系不是执行顺序，也不会因为写在列表第一项就自动先调用。[文档解析实现](../../../src/generative_agents/ga_protocol/skills/documents.py) 中可查看 `SkillRegistry._parse`；[执行器](../../../src/generative_agents/ga_runtime/skills/executor.py) 的 `SkillRuntime._run` 负责实际调用。
 
 需要注意，子 Skill 得到的是同一轮的 `IterationContext`，但不能替根 Brain 提交世界动作。

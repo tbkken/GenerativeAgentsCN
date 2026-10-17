@@ -12,7 +12,7 @@ const wizardSource = cut('  function renderWizardStep()', '  async function prep
 
 function setup() {
   const nodes = {}, notices = [], errors = [], events = [], listeners = {};
-  const element = () => ({value: '', textContent: '', handlers: {}, selectedOptions: [],
+  const element = () => ({value: '', textContent: '', handlers: {}, selectedOptions: [], options: [],
     addEventListener(type, callback) { this.handlers[type] = callback; }, focus() {},
   });
   const node = id => nodes[id] ||= element();
@@ -119,4 +119,28 @@ test('refresh preserves deliberate choices and never substitutes a crowd after c
   await manager.prepareExperimentCreate();
   assert.equal(manager.selectedCreateRevisionIds().length, 0);
   assert.ok(inputs().every(input => !input.checked));
+});
+
+test('the experiment Brain selector displays Chinese names while keeping resource and Skill identities', async () => {
+  const nodes = {}, requests = [];
+  const node = id => nodes[id] ||= {value: '', options: [], dataset: {}, isConnected: true,
+    replaceChildren(...items) {this.options = items;}, add(item) {this.options.push(item);},
+    appendChild(item) {this.options.push(item);}, insertAdjacentElement() {},
+  };
+  const context = {window: {}, state: {}, $: node,
+    document: {addEventListener() {}, createElement: () => ({dataset: {}})},
+    Option: class {constructor(label, value) {this.textContent = label; this.value = value; this.dataset = {}; }},
+    renderWizardStep() {}, api: async path => {requests.push(path); return {page: 1, total_pages: 1, items: [
+      {resource_id: 'resource-123', name: 'town-brain', display_name: '小镇日常大脑', description: '按真实进度安排活动'},
+    ]};},
+  };
+  vm.createContext(context);
+  vm.runInContext(fs.readFileSync('src/generative_agents/adapters/web/static/resources/resource-list.js', 'utf8'), context);
+  vm.runInContext(cut('  async function prepareExperimentBrainChoices()', '  const modalFocusableSelector'), context);
+  await context.prepareExperimentBrainChoices();
+  const option = node('newExperimentBrain').options[1];
+  assert.equal(option.textContent, '小镇日常大脑（town-brain） · 按真实进度安排活动');
+  assert.equal(option.value, 'resource-123');
+  assert.equal(option.dataset.skillName, 'town-brain');
+  assert.deepEqual(requests, ['/skills?kind=brain&page=1&page_size=20']);
 });

@@ -1,0 +1,580 @@
+{
+  "status": "offline-source-ui-algorithm-comparison",
+  "count": 25,
+  "matching": 20,
+  "mismatches": [
+    {
+      "name": "约翰",
+      "key": "john-lin",
+      "address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "original_coord": [
+        91,
+        74
+      ],
+      "picker_coord": [
+        90,
+        74
+      ],
+      "matches": false
+    },
+    {
+      "name": "汤姆",
+      "key": "tom-moreno",
+      "address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "original_coord": [
+        73,
+        74
+      ],
+      "picker_coord": [
+        72,
+        74
+      ],
+      "matches": false
+    },
+    {
+      "name": "詹妮弗",
+      "key": "jennifer-moore",
+      "address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        37,
+        65
+      ],
+      "picker_coord": [
+        36,
+        65
+      ],
+      "matches": false
+    },
+    {
+      "name": "拉吉夫",
+      "key": "rajiv-patel",
+      "address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉吉夫的房间",
+        "床"
+      ],
+      "original_coord": [
+        26,
+        18
+      ],
+      "picker_coord": [
+        25,
+        18
+      ],
+      "matches": false
+    },
+    {
+      "name": "卡洛斯",
+      "key": "carlos-gomez",
+      "address": [
+        "the Ville",
+        "卡洛斯的公寓",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        94,
+        18
+      ],
+      "picker_coord": [
+        93,
+        18
+      ],
+      "matches": false
+    }
+  ],
+  "checks": [
+    {
+      "name": "阿伊莎",
+      "key": "ayesha-khan",
+      "address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "阿伊莎的房间",
+        "床"
+      ],
+      "original_coord": [
+        118,
+        61
+      ],
+      "picker_coord": [
+        118,
+        61
+      ],
+      "matches": true
+    },
+    {
+      "name": "克劳斯",
+      "key": "klaus-mueller",
+      "address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "克劳斯的房间",
+        "床"
+      ],
+      "original_coord": [
+        126,
+        46
+      ],
+      "picker_coord": [
+        126,
+        46
+      ],
+      "matches": true
+    },
+    {
+      "name": "玛丽亚",
+      "key": "maria-lopez",
+      "address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "玛丽亚的房间",
+        "床"
+      ],
+      "original_coord": [
+        123,
+        57
+      ],
+      "picker_coord": [
+        123,
+        57
+      ],
+      "matches": true
+    },
+    {
+      "name": "沃尔夫冈",
+      "key": "wolfgang-schulz",
+      "address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "沃尔夫冈的房间",
+        "床"
+      ],
+      "original_coord": [
+        107,
+        62
+      ],
+      "picker_coord": [
+        107,
+        62
+      ],
+      "matches": true
+    },
+    {
+      "name": "梅",
+      "key": "mei-lin",
+      "address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "original_coord": [
+        90,
+        74
+      ],
+      "picker_coord": [
+        90,
+        74
+      ],
+      "matches": true
+    },
+    {
+      "name": "约翰",
+      "key": "john-lin",
+      "address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "original_coord": [
+        91,
+        74
+      ],
+      "picker_coord": [
+        90,
+        74
+      ],
+      "matches": false
+    },
+    {
+      "name": "埃迪",
+      "key": "eddy-lin",
+      "address": [
+        "the Ville",
+        "林氏家族的房子",
+        "埃迪的卧室",
+        "床"
+      ],
+      "original_coord": [
+        93,
+        74
+      ],
+      "picker_coord": [
+        93,
+        74
+      ],
+      "matches": true
+    },
+    {
+      "name": "简",
+      "key": "jane-moreno",
+      "address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "original_coord": [
+        72,
+        74
+      ],
+      "picker_coord": [
+        72,
+        74
+      ],
+      "matches": true
+    },
+    {
+      "name": "汤姆",
+      "key": "tom-moreno",
+      "address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "original_coord": [
+        73,
+        74
+      ],
+      "picker_coord": [
+        72,
+        74
+      ],
+      "matches": false
+    },
+    {
+      "name": "卡门",
+      "key": "carmen-ortiz",
+      "address": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "卡门的房间",
+        "床"
+      ],
+      "original_coord": [
+        57,
+        74
+      ],
+      "picker_coord": [
+        57,
+        74
+      ],
+      "matches": true
+    },
+    {
+      "name": "塔玛拉",
+      "key": "tamara-taylor",
+      "address": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "塔玛拉的房间",
+        "床"
+      ],
+      "original_coord": [
+        54,
+        74
+      ],
+      "picker_coord": [
+        54,
+        74
+      ],
+      "matches": true
+    },
+    {
+      "name": "亚瑟",
+      "key": "arthur-burton",
+      "address": [
+        "the Ville",
+        "亚瑟的公寓",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        53,
+        14
+      ],
+      "picker_coord": [
+        53,
+        14
+      ],
+      "matches": true
+    },
+    {
+      "name": "伊莎贝拉",
+      "key": "isabella-rodriguez",
+      "address": [
+        "the Ville",
+        "伊莎贝拉的公寓",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        72,
+        14
+      ],
+      "picker_coord": [
+        72,
+        14
+      ],
+      "matches": true
+    },
+    {
+      "name": "山姆",
+      "key": "sam-moore",
+      "address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        36,
+        65
+      ],
+      "picker_coord": [
+        36,
+        65
+      ],
+      "matches": true
+    },
+    {
+      "name": "詹妮弗",
+      "key": "jennifer-moore",
+      "address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        37,
+        65
+      ],
+      "picker_coord": [
+        36,
+        65
+      ],
+      "matches": false
+    },
+    {
+      "name": "弗朗西斯科",
+      "key": "francisco-lopez",
+      "address": [
+        "the Ville",
+        "艺术家共居空间",
+        "弗朗西斯科的房间",
+        "床"
+      ],
+      "original_coord": [
+        16,
+        32
+      ],
+      "picker_coord": [
+        16,
+        32
+      ],
+      "matches": true
+    },
+    {
+      "name": "海莉",
+      "key": "hailey-johnson",
+      "address": [
+        "the Ville",
+        "艺术家共居空间",
+        "海莉的房间",
+        "床"
+      ],
+      "original_coord": [
+        26,
+        32
+      ],
+      "picker_coord": [
+        26,
+        32
+      ],
+      "matches": true
+    },
+    {
+      "name": "拉吉夫",
+      "key": "rajiv-patel",
+      "address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉吉夫的房间",
+        "床"
+      ],
+      "original_coord": [
+        26,
+        18
+      ],
+      "picker_coord": [
+        25,
+        18
+      ],
+      "matches": false
+    },
+    {
+      "name": "拉托亚",
+      "key": "latoya-williams",
+      "address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉托亚的房间",
+        "床"
+      ],
+      "original_coord": [
+        16,
+        18
+      ],
+      "picker_coord": [
+        16,
+        18
+      ],
+      "matches": true
+    },
+    {
+      "name": "阿比盖尔",
+      "key": "abigail-chen",
+      "address": [
+        "the Ville",
+        "艺术家共居空间",
+        "阿比盖尔的房间",
+        "床"
+      ],
+      "original_coord": [
+        36,
+        18
+      ],
+      "picker_coord": [
+        36,
+        18
+      ],
+      "matches": true
+    },
+    {
+      "name": "卡洛斯",
+      "key": "carlos-gomez",
+      "address": [
+        "the Ville",
+        "卡洛斯的公寓",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        94,
+        18
+      ],
+      "picker_coord": [
+        93,
+        18
+      ],
+      "matches": false
+    },
+    {
+      "name": "乔治",
+      "key": "giorgio-rossi",
+      "address": [
+        "the Ville",
+        "乔治的公寓",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        86,
+        18
+      ],
+      "picker_coord": [
+        86,
+        18
+      ],
+      "matches": true
+    },
+    {
+      "name": "瑞恩",
+      "key": "ryan-park",
+      "address": [
+        "the Ville",
+        "瑞恩的公寓",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        65,
+        19
+      ],
+      "picker_coord": [
+        65,
+        19
+      ],
+      "matches": true
+    },
+    {
+      "name": "山本百合子",
+      "key": "yuriko-yamamoto",
+      "address": [
+        "the Ville",
+        "山本百合子的房子",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        28,
+        65
+      ],
+      "picker_coord": [
+        28,
+        65
+      ],
+      "matches": true
+    },
+    {
+      "name": "亚当",
+      "key": "adam-smith",
+      "address": [
+        "the Ville",
+        "亚当的家",
+        "主人房",
+        "床"
+      ],
+      "original_coord": [
+        20,
+        65
+      ],
+      "picker_coord": [
+        20,
+        65
+      ],
+      "matches": true
+    }
+  ],
+  "supported_exact_coordinate_ui": "Experiment Agent JSON import, merge by agent_key; not the spatial tree picker."
+}

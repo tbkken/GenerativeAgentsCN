@@ -31,6 +31,7 @@ from generative_agents.ga_runtime.engine.context import SimulationClock
 from generative_agents.ga_runtime.engine.context import SimulationContext
 from generative_agents.ga_runtime.engine.context import SnapshotSkillInstructionRepository
 from generative_agents.ga_runtime.models.trace import ModelTraceWriter
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled
 from generative_agents.ga_protocol.skills.documents import SnapshotSkillRegistry
 from generative_agents.ga_runtime.lifecycle.assembly import build_runner
 
@@ -41,14 +42,26 @@ from generative_agents.ga_runtime.lifecycle.package import load_experiment_direc
 
 
 class RuntimeModelRegistry:
-    def __init__(self, config: dict, recorder, *, control, logger) -> None:
+    def __init__(self, config: dict, recorder, *, control, logger, decision_config=None) -> None:
         self.config = dict(config)
+        self.decision_config = dict(decision_config or {})
         self.recorder = recorder
         self.control = control
         self.logger = logger
         self._chat = None
+        self._decision = None
 
     def get(self, purpose: str):
+        if purpose == "decision":
+            if not self.decision_config:
+                raise ValueError("Decision model is not configured")
+            if self._decision is None:
+                from generative_agents.ga_runtime.models.decision import create_decision_model
+                self._decision = create_decision_model(
+                    self.decision_config, recorder=self.recorder,
+                    control=self.control, logger=self.logger,
+                )
+            return self._decision
         if purpose != "chat":
             raise KeyError(f"unsupported model purpose: {purpose}")
         if self._chat is None:
@@ -169,10 +182,28 @@ def execute_run_directory(run_root: str | Path) -> RunStatus:
             atomic_write_json(status_path, status.model_dump(mode="json"))
             return status
 
+        control = FileRunControl(run_root)
+        # QUEUED controls were reset by the explicit submit operation. Never
+        # erase a cancel received while a worker is starting or loading files.
+        if status.status not in {RunState.CREATED, RunState.QUEUED}:
+            control.reset()
+        if control.cancel_requested:
+            status.status = RunState.CANCELLED
+            status.reason = "cancel requested before the Attempt started"
+            status.updated_at = datetime.now(UTC)
+            atomic_write_json(status_path, status.model_dump(mode="json"))
+            return status
+
         experiment = load_experiment_directory(run_root / manifest.experiment.path)
         checkpoint, checkpoint_state, checkpoint_conversation = _read_checkpoint(
             paths, status.committed_step
         )
+        if control.cancel_requested:
+            status.status = RunState.CANCELLED
+            status.reason = "cancel requested before the Attempt started"
+            status.updated_at = datetime.now(UTC)
+            atomic_write_json(status_path, status.model_dump(mode="json"))
+            return status
         _quarantine_uncommitted(paths, status.committed_step)
         attempt_id = uuid4()
         attempt_no = len(_attempt_files(run_root)) + 1
@@ -193,8 +224,6 @@ def execute_run_directory(run_root: str | Path) -> RunStatus:
         status.updated_at = attempt.started_at
         atomic_write_json(status_path, status.model_dump(mode="json"))
 
-        control = FileRunControl(run_root)
-        control.reset()
         logger = _logger(paths.run_id, experiment.definition.simulation.log_level)
         recorder = ModelTraceWriter(
             paths,
@@ -227,6 +256,19 @@ def execute_run_directory(run_root: str | Path) -> RunStatus:
             }.get(status.status, AttemptState.PAUSED)
             attempt.finished_at = datetime.now(UTC)
             atomic_write_json(attempt_path, attempt.model_dump(mode="json"))
+            return status
+        except ModelCallCancelled:
+            # Model discovery and other Attempt preparation can be cancelled
+            # before a Runner exists. They are control outcomes, not failures.
+            status = RunStatus.model_validate(read_json(status_path))
+            attempt.status = AttemptState.CANCELLED
+            attempt.finished_at = datetime.now(UTC)
+            status.status = RunState.CANCELLED
+            status.reason = "cancel requested during Attempt preparation"
+            status.active_attempt_id = str(attempt_id)
+            status.updated_at = attempt.finished_at
+            atomic_write_json(attempt_path, attempt.model_dump(mode="json"))
+            atomic_write_json(status_path, status.model_dump(mode="json"))
             return status
         except Exception as exc:
             # Committer updates the status file each Step; the outer object is stale.
@@ -287,12 +329,20 @@ def _execute_attempt(
     chat_config = definition.models.chat.model_dump(mode="json")
     chat_config.pop("secret_ref", None)
     chat_config["api_key"] = experiment.chat_api_key
-    model_registry = RuntimeModelRegistry(chat_config, recorder, control=control, logger=logger)
+    decision_config = (definition.models.decision.model_dump(mode="json")
+                       if definition.models.decision is not None else None)
+    if decision_config is not None:
+        decision_config["api_key"] = experiment.decision_api_key
+    model_registry = RuntimeModelRegistry(chat_config, recorder, control=control, logger=logger,
+                                         decision_config=decision_config)
     chat_model = model_registry.get("chat")
+    decision_model = model_registry.get("decision") if decision_config is not None else None
     brain_runtime = BrainRuntime(
         skill_registry,
         brain_skill=experiment.skill_registry.brain_skill,
         model_config=chat_config,
+        decision_config=decision_config,
+        decision_client=decision_model,
         memory_stream=memory_stream,
         model_client=chat_model,
         recorder=recorder,
@@ -302,6 +352,8 @@ def _execute_attempt(
     object_runtime = ObjectSkillRuntime(
         skill_registry,
         model_config=chat_config,
+        decision_config=decision_config,
+        decision_client=decision_model,
         memory_stream=memory_stream,
         model_client=chat_model,
         recorder=recorder,
@@ -322,6 +374,7 @@ def _execute_attempt(
         control=control,
         logger=logger,
         object_skill_runtime=object_runtime,
+        execution_trace=recorder.execution,
         memory_stream=memory_stream,
         brain_runtime=brain_runtime,
         metadata={"experiment_root_sha256": experiment.root_sha256, "attempt_no": attempt_no},
@@ -337,7 +390,13 @@ def _execute_attempt(
     runner.completed_steps = status.committed_step
     runner.committer = _StatusCommitter(runner.committer, status_path, manifest.requested_steps)
     remaining = manifest.requested_steps - runner.completed_steps
-    completed = runner.run(remaining, stride_minutes=definition.simulation.stride_minutes)
+    try:
+        completed = runner.run(remaining, stride_minutes=definition.simulation.stride_minutes)
+    except ModelCallCancelled:
+        # The runner rolled back memory and never submitted its partial Step.
+        # This Runner is discarded; resume reconstructs all world state from
+        # the last committed checkpoint into a fresh Attempt.
+        completed = runner.completed_steps
     status = RunStatus.model_validate(read_json(status_path))
     status.committed_step = completed
     status.updated_at = datetime.now(UTC)
@@ -346,7 +405,7 @@ def _execute_attempt(
         status.reason = "all Steps committed; building final quality artifacts"
     elif control.cancel_requested:
         status.status = RunState.CANCELLED
-        status.reason = "cancel requested at a complete Step boundary"
+        status.reason = "cancel requested; uncommitted Step discarded"
     else:
         status.status = RunState.PAUSED
         status.reason = "pause requested at a complete Step boundary"

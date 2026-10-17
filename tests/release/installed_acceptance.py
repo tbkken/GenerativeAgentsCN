@@ -1,7 +1,7 @@
 """Installed-wheel acceptance with disposable Studio and a deterministic HTTP model.
 
 Executed by tools/verify_wheel.py, outside the repository. The model substitutes
-only the external provider; CLI, Studio, MCP, checkpoints and Replay are real.
+only the external provider; CLI, Studio, interfaces, checkpoints and Replay are real.
 """
 
 from __future__ import annotations
@@ -129,9 +129,9 @@ build_parser().parse_args(['studio', 'serve', '--help'])
             for retired in ("/static/console/commute-demo.html", "/static/console/map-configuration-demo.html", "/api/v1/experiments"):
                 assert client.get(retired).status_code == 404
             skills = {}
-            for name, kind in (("acceptance-brain", "brain"), ("acceptance-object", "atomic")):
+            for name, kind in (("acceptance-brain", "brain"), ("acceptance-object", "skill")):
                 item = api("POST", "/resources/skills", json={"name": name, "kind": kind, "description": "验收技能"})
-                item = api("PUT", f"/resources/skills/{name}", json={"markdown": item["markdown"] + "\n调用 `world-act` 执行本轮动作。\n"})
+                item = api("PUT", f"/resources/skills/{name}", json={"markdown": item["markdown"] + "\n调用 @world-act 执行本轮动作。\n"})
                 skills[name] = item
             public_map = api("POST", "/resources/maps", json={"name": "验收地图", "width": 2, "height": 1})
             nodes = []

@@ -1,0 +1,163 @@
+{
+  "status": "PASSED_OFFLINE_ONLY",
+  "archive": "D:\\GenerativeAgentsCN\\docs\\book\\sample\\04-stanford-town-original\\map\\stanford-town-original-map-config.zip",
+  "bytes": 3690857,
+  "sha256": "e0a46214fc9ff235db6b120192b1ed066bba5362aa13ee5b29484b959be561e3",
+  "root_sha256": "64e536aae8ec7581471bbc62a12d4635bd7e8f5bd1feb88f0521d3e06e732afb",
+  "width_tiles": 140,
+  "height_tiles": 100,
+  "tile_size": 32,
+  "tile_count": 14000,
+  "source_sparse_tiles": 4201,
+  "collision_tiles": 2064,
+  "hierarchy": {
+    "WORLD": 1,
+    "SECTOR": 19,
+    "ARENA": 63,
+    "GAME_OBJECT": 222
+  },
+  "visual_layers": 10,
+  "used_material_sources": 13,
+  "material_slices": 1272,
+  "png_attachments": 16,
+  "total_attachments": 18,
+  "semantic_mask_checks": 6759,
+  "board_basis_difference": {
+    "coord": [
+      74,
+      20
+    ],
+    "classic": {
+      "coord": [
+        74,
+        20
+      ],
+      "address": [
+        "霍布斯咖啡馆",
+        "咖啡馆"
+      ]
+    },
+    "expanded": {
+      "coord": [
+        74,
+        20
+      ],
+      "address": [
+        "霍布斯咖啡馆",
+        "咖啡馆",
+        "社区公告板"
+      ]
+    }
+  },
+  "sources": [
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\blocks_1.png",
+      "package_path": "assets/stanford-town-original/tilemap/blocks_1.png",
+      "bytes": 6086,
+      "sha256": "1cef1851b09819b7776a0d89703f7df34f02a64b26f04ecfcf41fcfd28b1024a"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Desert_B.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Desert_B.png",
+      "bytes": 22518,
+      "sha256": "a3b77168f04d8c6bb3b14e6ba9b1aab315e033e238f42cdb292376409ca8a37b"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Desert_C.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Desert_C.png",
+      "bytes": 24102,
+      "sha256": "78e15fd0bd608f7bb159cb581d0d8e810e6140bd816df767402d3a0f0733a2c9"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Field_B.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Field_B.png",
+      "bytes": 20444,
+      "sha256": "c2b4504f8613908865d2aa08b6afcd8ba1db1a0812924edbc048b45a8acdc6c7"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Field_C.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Field_C.png",
+      "bytes": 17278,
+      "sha256": "baed604f2a3af373171097c75888ab3e4d4cbeb224b057b79827ef236aa60431"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Forest_B.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Forest_B.png",
+      "bytes": 19839,
+      "sha256": "e217184126100f342eaa1510b50b7b7d063b5322fd152d88612757d108132ae7"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Forest_C.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Forest_C.png",
+      "bytes": 22285,
+      "sha256": "43fb62dcce64cb4d695bd2fd71c5c283c62cffbb642390bd5379616eed553d27"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Harbor_C.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Harbor_C.png",
+      "bytes": 14307,
+      "sha256": "c4e1e925972a7f1dce604b48524420f1ff5a650df8051c850e3720c6453e0b30"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Mountains_B.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Mountains_B.png",
+      "bytes": 22091,
+      "sha256": "f0144655cea00d6873d3862d550c4d6a836303aa43153eb8be23b912cbae5026"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\CuteRPG_Village_B.png",
+      "package_path": "assets/stanford-town-original/tilemap/CuteRPG_Village_B.png",
+      "bytes": 21351,
+      "sha256": "af92963707bbd9e276f4dd8846c3cabf4c0d75f5d0e2acd89c0644a11897d312"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\interiors_pt1.png",
+      "package_path": "assets/stanford-town-original/tilemap/interiors_pt1.png",
+      "bytes": 600217,
+      "sha256": "67cdb13cd6977794d582c76cf1075e7bd978306ea79bb1e9441f6300d5abb0f8"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\interiors_pt2.png",
+      "package_path": "assets/stanford-town-original/tilemap/interiors_pt2.png",
+      "bytes": 745288,
+      "sha256": "9fa6d54340f3c16d1e93d49250eb20e55ae79acaaded75e9f2e2d7dd550e0f19"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\interiors_pt3.png",
+      "package_path": "assets/stanford-town-original/tilemap/interiors_pt3.png",
+      "bytes": 798927,
+      "sha256": "93d523ee6297d54cedba5cec4a2518855c06a68f7084dd259c8eec2769294c0d"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\interiors_pt4.png",
+      "package_path": "assets/stanford-town-original/tilemap/interiors_pt4.png",
+      "bytes": 318740,
+      "sha256": "1ef07dde26c683136dce0d753b6e61db3fb8b771030f3ebc260f96c43ac742b9"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\interiors_pt5.png",
+      "package_path": "assets/stanford-town-original/tilemap/interiors_pt5.png",
+      "bytes": 719783,
+      "sha256": "aae724a186f1d1eaf20143908fe1141ac0e1146209460d92e128a9e68f4e24aa"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\Room_Builder_32x32.png",
+      "package_path": "assets/stanford-town-original/tilemap/Room_Builder_32x32.png",
+      "bytes": 394420,
+      "sha256": "a6bd5690110f94d8a431803b910423d2dd834ab5c9b42f04815d6ba2e056aa6f"
+    },
+    {
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\tilemap\\tilemap.json",
+      "package_path": "assets/stanford-town-original/tilemap/tilemap.json",
+      "bytes": 3710462,
+      "sha256": "baa342b46b3e12c0a213c3ecab88c645fdc5e000ac7812a9a3de150ac062f6ef"
+    },
+    {
+      "source": "D:\\GenerativeAgentsCN\\src\\generative_agents\\ga_studio\\bundled\\maps\\village\\maze.json",
+      "package_path": "assets/stanford-town-original/maze.json",
+      "bytes": 894195,
+      "sha256": "e4c7f70f9724be54c3348b35bf571f1bc7a67b0b3f5bea2d573af9d412848930"
+    }
+  ],
+  "scope": "离线素材与协议校验；未导入 Studio，未配置或运行实验；原版全部对象保持静态，未额外绑定对象 Skill。"
+}

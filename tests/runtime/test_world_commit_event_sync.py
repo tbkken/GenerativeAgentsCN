@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import copy
-import json
 import logging
 import random
 from datetime import datetime, timezone
@@ -17,7 +16,7 @@ from generative_agents.ga_runtime.engine.world import Game
 from generative_agents.ga_runtime.engine.space import Maze
 from generative_agents.ga_runtime.memory.action import Action
 from generative_agents.ga_runtime.memory.event import Event
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 
 
@@ -85,9 +84,9 @@ def _perceived_actor_events(game, agent):
         address=tuple(agent.get_tile().get_address()),
         spatial_semantics=tuple(agent.get_tile().spatial_semantics),
     )
-    response = SimulationMCPServer(game, iteration).call("world-perceive", {})
-    assert not response["isError"], response
-    perception = json.loads(response["content"][0]["text"])
+    response = SimulationAPI(game, iteration).invoke("world-perceive", {})
+    assert response["ok"], response
+    perception = response["result"]
     return [event for event in perception["events"] if event["subject"] == agent.name]
 
 

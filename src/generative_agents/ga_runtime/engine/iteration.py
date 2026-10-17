@@ -13,7 +13,7 @@ class IterationContext:
     """Immutable common input shared by Brain and all child Skills.
 
     It intentionally contains only observable simulation facts. Mutable world
-    access remains behind MCP tools, while natural-language Skill outputs stay in
+    access remains behind runtime interfaces, while natural-language Skill outputs stay in
     the runtime trace and are never mistaken for replay facts.
     """
 

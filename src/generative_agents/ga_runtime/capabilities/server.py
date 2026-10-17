@@ -1,14 +1,14 @@
-"""Run-scoped MCP capabilities available to Brain and child Skills."""
+"""Run-scoped runtime interfaces available to Brain and child Skills."""
 
 from __future__ import annotations
 
 import copy
-import json
 import math
 from dataclasses import dataclass
 from typing import Any, Mapping
 
 from generative_agents.ga_protocol.facts.movement import movement_activity_from_predicate
+from generative_agents.ga_protocol.skills.interfaces import simulation_interface_catalog
 
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 
@@ -33,8 +33,8 @@ class PlannedWorldAction:
         }
 
 
-class SimulationMCPServer:
-    """Bound MCP view for one Agent and one iteration.
+class SimulationAPI:
+    """Bound interface view for one Agent and one iteration.
 
     Reads are unlimited. ``world-act`` may succeed only once, which gives the
     scheduler an unambiguous mutation to commit and replay for this Agent step.
@@ -67,262 +67,22 @@ class SimulationMCPServer:
         reader = getattr(system, "public_state", system.object_state)
         return reader(object_key)
 
-    def tools(self) -> list[dict[str, Any]]:
-        tools = [
-            {
-                "name": "world-perceive",
-                "description": (
-                    "Observe compact, unique four-layer spatial semantics, events, "
-                    "nearby Agents, and nearby Game Objects without changing the "
-                    "simulation world. radius_tiles is optional and is always "
-                    "clamped to this Agent's configured vision radius."
-                ),
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "radius_tiles": {
-                            "type": "integer",
-                            "minimum": 0,
-                            "maximum": 100,
-                        }
-                    },
-                    "additionalProperties": False,
-                },
-            },
-            {
-                "name": "world-navigate",
-                "description": (
-                    "Read-only navigation from your current position. Query a coordinate "
-                    "within your vision radius, or an exact perceived or remembered arena/object address. "
-                    "Returns reachability, distance and next_coord (only the FIRST path tile), "
-                    "never undiscovered map semantics. Does not move you. To continue toward "
-                    "the queried destination, submit MOVE with the SAME target_coord or "
-                    "target_address; do not replace it with next_coord unless you intend "
-                    "to stop at that adjacent tile. The kernel applies the Step movement budget."
-                ),
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "target_coord": {"type": "array", "items": {"type": "integer"},
-                                         "minItems": 2, "maxItems": 2},
-                        "target_address": {"type": "array", "items": {"type": "string"},
-                                           "minItems": 3, "maxItems": 4},
-                    },
-                    "additionalProperties": False,
-                    "oneOf": [{"required": ["target_coord"]}, {"required": ["target_address"]}],
-                },
-            },
-            {
-                "name": "world-act",
-                "description": (
-                    "Select the single replayable world-changing action for this "
-                    "Agent iteration. Call at most once. SET_OBJECT_STATE uses object_key and "
-                    "state_patch; use state_patch.state for an observed visual state name, "
-                    "or an empty string to restore the default appearance."
-                ),
-                "inputSchema": {
-                    "type": "object",
-                    "properties": {
-                        "action_type": {
-                            "type": "string",
-                            "enum": [
-                                "MOVE",
-                                "ACT",
-                                "WAIT",
-                                "SPEAK",
-                                "INTERACT",
-                                "SET_OBJECT_STATE",
-                            ],
-                        },
-                        "description": {"type": "string"},
-                        "predicate": {"type": "string", "description": (
-                            "For MOVE, an optional short natural-language phrase for the activity "
-                            "performed while moving (at most 240 characters), without locations, "
-                            "coordinates, plans or claims of arrival. The committed movement_activity "
-                            "preserves this phrase. Actual displacement and arrival at this MOVE's "
-                            "target are determined by the kernel. For ACT, the Event predicate."
-                        )},
-                        "object": {"type": "string"},
-                        "emoji": {"type": "string"},
-                        "target_address": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                            "description": (
-                                "For MOVE, the destination. For ACT, when supplied, "
-                                "it must equal the Agent's current four-layer address."
-                            ),
-                        },
-                        "target_coord": {
-                            "type": "array",
-                            "items": {"type": "integer"},
-                            "minItems": 2,
-                            "maxItems": 2,
-                            "description": (
-                                "For MOVE, the destination. For ACT, when supplied, "
-                                "it must equal the Agent's current coordinate."
-                            ),
-                        },
-                        "target_node_id": {
-                            "type": "string",
-                            "description": (
-                                "Optional stable spatial node identity for MOVE. "
-                                "When supplied it must exist at the destination."
-                            ),
-                        },
-                        "participant_agent_keys": {
-                            "type": "array",
-                            "items": {"type": "string"},
-                        },
-                        "message": {"type": "string"},
-                        "conversation_id": {
-                            "type": "string",
-                            "description": (
-                                "Continue an open conversation UUID belonging to you "
-                                "and the selected participant. Omit for a new conversation "
-                                "or when changing participants. Do not invent an ID."
-                            ),
-                        },
-                        "start_new_conversation": {
-                            "type": "boolean",
-                            "default": False,
-                        },
-                        "end_conversation": {
-                            "type": "boolean",
-                            "default": False,
-                        },
-                        "selection_key": {"type": "string"},
-                        "request": {"type": "string"},
-                        "object_key": {"type": "string"},
-                        "state_patch": {"type": "object"},
-                        "wait_reason": {
-                            "type": "string",
-                            "description": (
-                                "For WAIT, explain the external condition or schedule "
-                                "boundary being awaited."
-                            ),
-                        },
-                        "expected_until_step": {
-                            "type": "integer",
-                            "minimum": 1,
-                            "description": (
-                                "For an intentional bounded WAIT, the last simulation "
-                                "step through which waiting is expected."
-                            ),
-                        },
-                        "expected_until_time": {
-                            "type": "string",
-                            "description": (
-                                "For an intentional bounded WAIT, the simulation-time "
-                                "boundary in ISO-8601 form."
-                            ),
-                        },
-                    },
-                    "required": ["action_type"],
-                    "additionalProperties": False,
-                },
-            },
+    def descriptors(self) -> list[dict[str, Any]]:
+        return [
+            descriptor for descriptor in simulation_interface_catalog()
+            if self.memory_stream is not None or not descriptor["name"].startswith("memory-stream-")
         ]
-        if self.memory_stream is not None:
-            tools.extend(
-                [
-                    {
-                        "name": "memory-stream-search",
-                        "description": (
-                            "Semantically search this Agent's persistent memory "
-                            "stream. The Agent identity is injected by the system."
-                        ),
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {
-                                "query": {"type": "string"},
-                                "limit": {
-                                    "type": "integer",
-                                    "minimum": 1,
-                                    "maximum": 100,
-                                },
-                            },
-                            "additionalProperties": False,
-                        },
-                    },
-                    {
-                        "name": "memory-stream-append",
-                        "description": (
-                            "Save natural-language memory for this Agent, optionally "
-                            "with Event(subject, predicate, object) semantics."
-                        ),
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {
-                                "content": {"type": "string"},
-                                "kind": {"type": "string"},
-                                "poignancy": {
-                                    "type": "integer",
-                                    "minimum": 1,
-                                    "maximum": 10,
-                                },
-                                "subject": {"type": "string"},
-                                "predicate": {"type": "string"},
-                                "object": {"type": "string"},
-                                "address": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                },
-                                "evidence_memory_ids": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                },
-                            },
-                            "required": ["content"],
-                            "additionalProperties": False,
-                        },
-                    },
-                    {
-                        "name": "memory-stream-supersede",
-                        "description": (
-                            "Replace one active memory with a corrected version. "
-                            "The old version remains replayable as SUPERSEDED."
-                        ),
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {
-                                "memory_id": {"type": "string"},
-                                "content": {"type": "string"},
-                                "reason": {"type": "string"},
-                            },
-                            "required": ["memory_id", "content"],
-                            "additionalProperties": False,
-                        },
-                    },
-                    {
-                        "name": "memory-stream-invalidate",
-                        "description": (
-                            "Mark one active memory INVALIDATED so it no longer "
-                            "participates in retrieval while history is retained."
-                        ),
-                        "inputSchema": {
-                            "type": "object",
-                            "properties": {
-                                "memory_id": {"type": "string"},
-                                "reason": {"type": "string"},
-                            },
-                            "required": ["memory_id", "reason"],
-                            "additionalProperties": False,
-                        },
-                    },
-                ]
-            )
-        return tools
 
-    def call(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
+    def invoke(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         try:
-            tool = next((item for item in self.tools() if item["name"] == name), None)
+            tool = next((item for item in self.descriptors() if item["name"] == name), None)
             if tool is None:
-                raise ValueError(f"Unknown simulation MCP tool: {name}")
-            schema = tool["inputSchema"]
+                raise ValueError(f"Unknown simulation interface: {name}")
+            schema = tool["parameters"]
             if not isinstance(arguments, dict) or set(arguments) - set(schema.get("properties", {})):
                 raise ValueError("unknown arguments; actor identity is injected by the runtime")
             if set(schema.get("required", [])) - set(arguments):
-                raise ValueError("required MCP arguments are missing")
+                raise ValueError("required interface arguments are missing")
             if name == "world-perceive":
                 value = self._perceive(arguments)
             elif name == "world-navigate":
@@ -356,21 +116,10 @@ class SimulationMCPServer:
                     reason=str(arguments.get("reason") or ""),
                 )
             else:
-                raise ValueError(f"Unknown simulation MCP tool: {name}")
-            return {
-                "content": [
-                    {
-                        "type": "text",
-                        "text": json.dumps(value, ensure_ascii=False, default=str),
-                    }
-                ],
-                "isError": False,
-            }
+                raise ValueError(f"Unknown simulation interface: {name}")
+            return {"ok": True, "result": value}
         except (KeyError, TypeError, ValueError) as exc:
-            return {
-                "content": [{"type": "text", "text": f"MCP error: {exc}"}],
-                "isError": True,
-            }
+            return {"ok": False, "error": str(exc)}
 
     def _navigate(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
         if set(arguments) - {"target_coord", "target_address"} or len(arguments) != 1:
@@ -908,4 +657,4 @@ class SimulationMCPServer:
         return tuple(sorted(selected))
 
 
-__all__ = ["PlannedWorldAction", "SimulationMCPServer"]
+__all__ = ["PlannedWorldAction", "SimulationAPI"]

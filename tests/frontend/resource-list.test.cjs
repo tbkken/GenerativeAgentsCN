@@ -25,13 +25,13 @@ test('every catalog page contains at most five distinct items and shrinking cata
   assert.equal(list.slice([],2).page, 1);
 });
 
-test('list search, type and page survive a document navigation without crossing resources or experiment scopes', () => {
+test('list search and page survive a document navigation without crossing resources or experiment scopes', () => {
   const {list, storage} = setup();
-  list.remember('skills', {page:2, query:'observe', kind:'pack', scroll:400});
+  list.remember('skills', {page:2, query:'observe', scroll:400});
   list.remember('brains', {page:3, query:'morning'});
   const reloaded = setup(storage).list;
   assert.equal(reloaded.read('skills').page, 2);
-  assert.equal(reloaded.read('skills').kind, 'pack');
+  assert.equal(reloaded.read('skills').query, 'observe');
   assert.equal(reloaded.read('brains').query, 'morning');
   assert.equal(reloaded.read('maps').page, 1);
   assert.equal(setup(storage, 'experiment-a').list.read('skills').query, '');
@@ -61,19 +61,21 @@ test('untrusted names, attributes and descriptions remain text in shared rows', 
   assert.ok(html.includes('<details class="resource-more">'));
 });
 
-test('a model with chat and embedding capabilities has one row and one deletion target', () => {
+test('a model with chat, decision and embedding capabilities has one row and one deletion target', () => {
   const {list, context} = setup(), nodes = {};
   context.list = list;
   context.$ = id => nodes[id] ||= {innerHTML:'',querySelectorAll:()=>[]};
   context.catalogPage = null;
-  context.items = [{id:'combined',name:'模型配置',config:{chat:{model:'chat-a'},embedding:{model:'embed-a'}},credential_configured:{chat:true}}];
+  context.items = [{id:'combined',name:'模型配置',config:{chat:{model:'chat-a'},decision:{model:'laya-multilingual'},embedding:{model:'embed-a'}},credential_configured:{chat:true}}];
   context.openEditor = () => {}; context.deleteModel = () => {}; context.report = () => {};
   const models = fs.readFileSync('src/generative_agents/adapters/web/static/resources/model-workspace.js','utf8');
+  vm.runInContext(models.slice(models.indexOf('  const modelPurposes'), models.indexOf('  function modelServiceUrl')),context);
   vm.runInContext(models.slice(models.indexOf('  function renderList()'), models.indexOf('  function report(')),context);
   context.renderList();
   const html = nodes.modelServiceList.innerHTML;
   assert.equal((html.match(/<article/g)||[]).length,1);
   assert.ok(html.includes('chat-a') && html.includes('embed-a'));
+  assert.ok(html.includes('laya-multilingual') && html.includes('决策模型'));
   assert.equal((html.match(/data-delete-model=/g)||[]).length,1);
   list.remember('model-catalog',{kind:'embedding'});
   context.renderList();

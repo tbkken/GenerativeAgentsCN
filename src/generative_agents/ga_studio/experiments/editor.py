@@ -8,7 +8,6 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
-import re
 import shutil
 import tempfile
 from contextlib import contextmanager
@@ -16,6 +15,7 @@ from pathlib import Path
 from uuid import uuid4
 
 from generative_agents.ga_protocol.schemas.errors import ServiceError
+from generative_agents.ga_protocol.schemas.trials import SkillTrialError
 
 from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.packages.io import atomic_write_bytes
@@ -29,11 +29,11 @@ from generative_agents.ga_protocol.packages.locking import package_lock
 from generative_agents.ga_protocol.schemas.manifests import validate_package_path
 from generative_agents.ga_protocol.schemas.spatial_assets import SpatialAssetContract
 from generative_agents.ga_protocol.skills.documents import SkillRegistry
-from generative_agents.ga_protocol.skills.dependencies import referenced_mcp_tools
+from generative_agents.ga_protocol.skills.dependencies import skill_dependencies
 from generative_agents.ga_studio.experiments.builder import build_semantic_index
 from generative_agents.ga_studio.experiments.workspace import WorkspaceConflictError
-from generative_agents.ga_studio.resources.trials import prepare_copied_trial
-from generative_agents.ga_studio.storage.credentials import HostModelCredentials
+from generative_agents.ga_studio.resources.trials import prepare_copied_trial, SkillTrialEnvironmentService, trial_model
+from generative_agents.ga_studio.resources.decision_compile import decision_compile_scripts
 from generative_agents.ga_protocol.packages.definition import (
     _experiment_definition, assemble_skill_registry, read_experiment_assembly, read_experiment_documents, write_experiment_definition,
 )
@@ -122,7 +122,7 @@ class ExperimentResourceEditor:
         if markdown is None and scripts is None:
             source = root / validate_package_path(entry["path"])
             document = SkillRegistry(root=root)._read(source, entry.get("editor_kind") or
-                                                      ("brain" if entry["kind"] == "brain" else "atomic"))
+                                                      ("brain" if entry["kind"] == "brain" else "skill"))
             return {**document.detail(), "path": entry["path"], "storage": "experiment",
                     "script_sources": {relative: (source.parent / relative).read_text(encoding="utf-8")
                                        for relative in document.scripts}}
@@ -148,7 +148,7 @@ class ExperimentResourceEditor:
                     target.resolve().relative_to(folder.resolve())
                     target.parent.mkdir(parents=True, exist_ok=True)
                     target.write_text(source, encoding="utf-8")
-            document = SkillRegistry(root=temporary)._read(path, entry.get("editor_kind") or ("brain" if entry["kind"] == "brain" else "atomic"))
+            document = SkillRegistry(root=temporary)._read(path, entry.get("editor_kind") or ("brain" if entry["kind"] == "brain" else "skill"))
             detail = document.detail()
             detail.update(path=entry["path"], storage="experiment", script_sources={
                 relative: (folder / relative).read_text(encoding="utf-8") for relative in document.scripts
@@ -188,7 +188,7 @@ class ExperimentResourceEditor:
                 needle = query.get("q", "").strip().casefold()
                 filtered = []
                 for item in items:
-                    search = item.pop("_search", item.get("name", "") + " " + item.get("description", "") + " " + item.get("id", ""))
+                    search = item.pop("_search", item.get("name", "") + " " + item.get("display_name", "") + " " + item.get("description", "") + " " + item.get("id", ""))
                     if not needle or needle in search.casefold():
                         filtered.append(item)
                 items = filtered
@@ -222,10 +222,12 @@ class ExperimentResourceEditor:
                                for asset_key, contract in sorted(contracts.items())
                                if not query.get("kind") or contract.get("kind", "OBJECT") == query["kind"]])
             if family == "skills":
+                if query.get("kind") and query["kind"] not in {"skill", "brain"}:
+                    raise ExperimentResourceError(422, "技能类型必须是 skill 或 brain")
                 skills = [record for record in index.resources if record.kind == "skill"]
                 def skill_summary(record):
                     folder = str(Path(record.definition["entrypoint"]).parent.as_posix()) + "/"
-                    return dict(summary(record), name=record.key, kind=record.definition["skill_kind"],
+                    return dict(summary(record), name=record.key, display_name=record.name, kind=record.definition["skill_kind"],
                                 path=record.definition["entrypoint"], storage="experiment",
                                 children=[item.key for item in record.dependencies],
                                 scripts=[path[len(folder):] for path in record.attachments if path.startswith(folder + "scripts/")])
@@ -237,16 +239,19 @@ class ExperimentResourceEditor:
                     detail = self.skill(root, entry)
                     detail.update(row_version=digest, editable=editable)
                     if len(parts) > 2 and parts[2] == "dependencies":
-                        return {"skill": key, "scripts": detail["scripts"],
-                                "skills": [skill_summary(chosen(item)) for item in record.dependencies],
-                                "mcp": referenced_mcp_tools(detail["markdown"])}
+                        def load_skill(skill_key):
+                            child = records.get(("skill", skill_key))
+                            if child is None:
+                                return None
+                            return self.skill(root, {"skill_id": skill_key, "path": child.definition["entrypoint"],
+                                                     "editor_kind": child.definition["skill_kind"]})
+                        return skill_dependencies(key, load_skill)
                     if len(parts) > 2 and parts[2] == "history":
                         return {"items": [{"content_hash": detail["content_hash"], "updated_at": detail["updated_at"]}]}
                     return detail
-                counts = {kind: sum(item.definition["skill_kind"] == kind for item in skills) for kind in ("atomic", "pack", "brain")}
+                counts = {kind: sum(item.definition["skill_kind"] == kind for item in skills) for kind in ("skill", "brain")}
                 return listed([skill_summary(item) for item in sorted(skills, key=lambda item: (item.definition["skill_kind"], item.key))
-                               if not query.get("kind") or item.definition["skill_kind"] == query["kind"]
-                               or (query["kind"] == "skill" and item.definition["skill_kind"] in {"atomic", "pack"})], counts=counts)
+                               if not query.get("kind") or item.definition["skill_kind"] == query["kind"]], counts=counts)
             if family == "agents":
                 placements = {item.agent.key: item for item in assembly.placements}
                 if key:
@@ -318,6 +323,10 @@ class ExperimentResourceEditor:
         raise ExperimentResourceError(404, "实验中没有这个资源")
 
     def prepare_trial(self, experiment_id, key, body, *, destination):
+        if body.get('model_preset_id'):
+            raise SkillTrialError('SKILL_MODEL_UNAVAILABLE', '实验内技能使用当前实验的模型，请在实验模型配置中调整。')
+        if body.get('experiment_id') not in {None, experiment_id}:
+            raise SkillTrialError('SKILL_EXPERIMENT_UNAVAILABLE', '实验内技能只能选择当前实验的初始场景。')
         with self.package(experiment_id, validate_execution=True) as (root, ep, digest, editable):
             registry = self.registry(root)
             entries = {item["skill_id"]: item for item in registry["skills"]}
@@ -330,16 +339,56 @@ class ExperimentResourceEditor:
                     continue
                 item = self.skill(root, entries[current])
                 snapshots[current] = {**item, "scripts": item["script_sources"]}
+                folder = (root / entries[current]['path']).parent
+                snapshots[current]['files'] = {path.relative_to(folder).as_posix(): path.read_bytes()
+                    for path in folder.rglob('*') if path.is_file() and path.name != 'SKILL.md'}
                 pending.extend(entries[current]["dependencies"])
-            config = _experiment_definition(root)[1]["models"]["chat"]
-        model = config.get("resolved_model") or config.get("model")
-        if not model or model == "auto" or not config.get("base_url"):
-            raise PackageError("请先在当前实验的模型页填写明确的模型和连接地址")
-        credential = config.get("credential_env")
-        api_key = HostModelCredentials(self.workspace.database, self.workspace.package_root.parent).resolve(credential) if credential else ""
-        prepare_copied_trial(snapshots, key, body["input_text"], body.get("context", {}),
-                             destination=destination, config=config, base_url=config["base_url"], model=model)
-        return {"GA_SKILL_TRIAL_KEY": api_key}
+            models = _experiment_definition(root)[1]["models"]
+            purpose = 'decision' if snapshots[key].get('llm_type') == 'decision' else 'chat'
+            needs_decision = any(item.get('llm_type') == 'decision' for item in snapshots.values())
+            config = models.get(purpose) or {}
+        scene_id, agent_key = body.get('experiment_id'), body.get('agent_key')
+        if agent_key:
+            scene_id = scene_id or experiment_id
+        elif purpose == 'decision':
+            scene_id = None
+        if scene_id:
+            SkillTrialEnvironmentService(self.workspace.database, self.workspace.package_root.parent).copy(
+                scene_id, agent_key, destination)
+        config, model, credentials = trial_model(self.workspace.database, self.workspace.package_root.parent,
+                                                 config=config, purpose=purpose)
+        decision_config = None
+        if purpose == 'chat' and needs_decision:
+            decision_config, decision_model, decision_credentials = trial_model(
+                self.workspace.database, self.workspace.package_root.parent,
+                config=models.get('decision') or {}, purpose='decision')
+            decision_config = {**decision_config, 'model': decision_model}
+            credentials['GA_SKILL_TRIAL_DECISION_KEY'] = decision_credentials['GA_SKILL_TRIAL_KEY']
+        prepare_copied_trial(snapshots, key, body['input_text'], destination=destination,
+            config=config, base_url=config['base_url'], model=model,
+            decision_config=decision_config,
+            experiment_directory='experiment' if scene_id else None, agent_key=agent_key)
+        return credentials
+
+    def prepare_decision_compile(self, experiment_id, key, body):
+        """Use the experiment's copied chat connection to parse an unsaved Skill."""
+        if body.get("model_preset_id"):
+            raise SkillTrialError("SKILL_MODEL_UNAVAILABLE", "实验内技能使用当前实验的生成式模型，请在实验模型配置中调整。")
+        with self.package(experiment_id) as (root, ep, digest, editable):
+            if not editable:
+                raise ExperimentResourceError(409, "实验已封存；请复制为新的独立实验后修改")
+            registry = self.registry(root)
+            entry = next((item for item in registry["skills"] if item["skill_id"] == key), None)
+            if entry is None:
+                self.missing()
+            skill = self.skill(root, entry)
+            config = _experiment_definition(root)[1]["models"].get("chat") or {}
+        config, model, credentials = trial_model(self.workspace.database, self.workspace.package_root.parent,
+                                                 config=config, purpose="chat")
+        return {"markdown": body["markdown"], "skill_key": key, "kind": skill["kind"],
+                "scripts": decision_compile_scripts(skill["scripts"], body.get("scripts")),
+                "config": {**config, "model": model},
+                "api_key": credentials["GA_SKILL_TRIAL_KEY"]}
 
     def write(self, experiment_id, resource, method, body):
         expected = body.get("row_version") or body.get("expected_content_sha256")
@@ -372,6 +421,8 @@ class ExperimentResourceEditor:
             elif family == "skills" and method == "POST" and not key:
                 if body.get("kind") == "brain":
                     raise PackageError("实验已有一个大脑，请编辑当前大脑")
+                if body.get("kind", "skill") != "skill":
+                    raise PackageError("技能类型必须是 skill")
                 key = SkillRegistry.normalize_name(body["name"])
                 if any(item["skill_id"] == key for item in registry["skills"]):
                     raise PackageError("实验中已存在同名技能")
@@ -379,9 +430,12 @@ class ExperimentResourceEditor:
                 if not description:
                     raise PackageError("请填写技能用途")
                 path = f"skills/items/{key}/SKILL.md"
-                markdown = f"---\nname: {key}\ndescription: {json.dumps(description, ensure_ascii=False)}\n---\n\n# {key}\n\n请填写技能说明。\n"
-                resources.resources.append(ResourceRecord(kind="skill", key=key, name=key, description=description,
-                    definition={"skill_kind": body.get("kind", "atomic"), "entrypoint": path}, attachments=[path]))
+                from generative_agents.ga_protocol.skills.metadata import skill_display_name
+                display_name = skill_display_name({"display_name": body["display_name"]} if body.get("display_name") is not None else {}, key)
+                markdown = (f"---\nname: {key}\ndisplay_name: {json.dumps(display_name, ensure_ascii=False)}\n"
+                            f"description: {json.dumps(description, ensure_ascii=False)}\n---\n\n# {display_name}\n\n请填写技能说明。\n")
+                resources.resources.append(ResourceRecord(kind="skill", key=key, name=display_name, description=description,
+                    definition={"skill_kind": body.get("kind", "skill"), "entrypoint": path}, attachments=[path]))
                 changes[path] = markdown.encode()
             elif family == "skills" and key and method == "DELETE":
                 entry = next((item for item in registry["skills"] if item["skill_id"] == key), None)
@@ -397,7 +451,7 @@ class ExperimentResourceEditor:
                     self.missing()
                 detail = self.skill(root, entry, markdown=body["markdown"], scripts=body.get("scripts", {}))
                 entry["dependencies"] = detail["children"]
-                if re.search(r"\$" + re.escape(key) + r"(?![a-z0-9-])", body["markdown"]):
+                if key in detail["children"]:
                     raise PackageError("技能不能把自身声明为子技能依赖")
                 entry["content_sha256"] = hashlib.sha256(body["markdown"].encode()).hexdigest()
                 changes[entry["path"]] = body["markdown"].encode()
@@ -407,6 +461,7 @@ class ExperimentResourceEditor:
                         changes[old.relative_to(root).as_posix()] = None
                 changes.update({(folder / relative).as_posix(): content.encode() for relative, content in detail["script_sources"].items()})
                 record = resources.get(ResourceRef(kind="skill", key=key))
+                record.name = detail["display_name"]
                 record.description = detail["description"]
                 record.dependencies = [ResourceRef(kind="skill", key=child) for child in detail["children"]]
             elif family == "crowds" and method in ("PUT", "POST", "DELETE"):

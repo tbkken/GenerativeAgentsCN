@@ -1,7 +1,6 @@
 """Studio database catalog for directly editable public Skill resources."""
 
 from __future__ import annotations
-from generative_agents.ga_studio.resources.bundled import bundled_skills
 
 import hashlib
 import json
@@ -17,18 +16,28 @@ from sqlalchemy.orm import object_session
 from sqlalchemy.exc import IntegrityError
 
 from generative_agents.ga_studio.storage.database import Database
-from generative_agents.ga_studio.storage.models import SeedResourceTombstone
 from generative_agents.ga_studio.storage.models import StudioSkill
 
 from generative_agents.ga_protocol.skills.documents import SkillDocument
 from generative_agents.ga_protocol.skills.documents import SkillKind
 from generative_agents.ga_protocol.skills.documents import SkillRegistry
 from generative_agents.ga_protocol.skills.documents import SkillRegistryError
-from generative_agents.ga_protocol.skills.dependencies import referenced_mcp_tools
+from generative_agents.ga_protocol.skills.dependencies import skill_dependencies
+from generative_agents.ga_protocol.skills.metadata import skill_display_name, skill_frontmatter
+from generative_agents.ga_protocol.skills.decisions import validate_compiled_decision
 
 
 def _utc_now() -> datetime:
     return datetime.now(UTC)
+
+
+def skill_header_column():
+    """Project only the frontmatter, including its closing delimiter, in SQLite."""
+    return func.substr(StudioSkill.markdown, 1, func.instr(StudioSkill.markdown, "\n---") + 3)
+
+
+def display_name_from_markdown(markdown: str, key: str) -> str:
+    return skill_display_name(skill_frontmatter(markdown)[0], key)
 
 
 class DatabaseSkillRegistry:
@@ -48,41 +57,6 @@ class DatabaseSkillRegistry:
     def normalize_name(name: str) -> str:
         return SkillRegistry.normalize_name(name)
 
-    def ensure_builtin_skills(self, source: SkillRegistry | None = None) -> int:
-        source = source or bundled_skills()
-        inserted = 0
-        with self.database.session_factory.begin() as session:
-            existing = set(session.scalars(select(StudioSkill.skill_key)))
-            deleted = set(
-                session.scalars(
-                    select(SeedResourceTombstone.resource_key).where(
-                        SeedResourceTombstone.resource_type == "skill"
-                    )
-                )
-            )
-            for document in source.list():
-                if document.name in existing or document.name in deleted:
-                    continue
-                scripts = {
-                    relative: (document.path.parent / relative).read_text(encoding="utf-8-sig")
-                    for relative in document.scripts
-                }
-                session.add(
-                    StudioSkill(
-                        skill_key=document.name,
-                        description=document.description,
-                        kind=document.kind,
-                        markdown=document.markdown,
-                        content_hash=self._content_hash(document.markdown, scripts),
-                        children_json=list(document.children),
-                        scripts_json=scripts,
-                        is_builtin=True,
-                    )
-                )
-                existing.add(document.name)
-                inserted += 1
-        return inserted
-
     def list(
         self,
         *,
@@ -90,6 +64,8 @@ class DatabaseSkillRegistry:
         query: str = "",
         include_archived: bool = False,
     ) -> list[SkillDocument]:
+        if kind is not None and kind not in {"skill", "brain"}:
+            raise SkillRegistryError(f"Unsupported Skill kind: {kind}")
         with self.database.session_factory() as session:
             statement = select(StudioSkill)
             if kind is not None:
@@ -106,6 +82,7 @@ class DatabaseSkillRegistry:
                     row
                     for row in rows
                     if needle in row.description.casefold()
+                    or needle in display_name_from_markdown(row.markdown, row.skill_key).casefold()
                     or needle in row.skill_key.replace("-", " ").casefold()
                     or normalized in row.skill_key.casefold()
                 ]
@@ -113,29 +90,33 @@ class DatabaseSkillRegistry:
 
     def list_summaries(self, *, kind=None, query="", include_archived=False, page=1, page_size=20):
         """The author list is a SQL projection, never an executable Skill materialization."""
+        if kind is not None and kind not in {"skill", "brain"}:
+            raise SkillRegistryError(f"Unsupported Skill kind: {kind}")
         from .listing import dates, page_result, query_page, search_predicate
         model = StudioSkill
         base = [] if include_archived else [model.archived_at.is_(None)]
         predicates = [*base]
         if kind:
-            predicates.append(model.kind.in_(("atomic", "pack")) if kind == "skill" else model.kind == kind)
+            predicates.append(model.kind == kind)
         if query.strip():
             normalized = re.sub(r"[\s_-]+", "-", query.strip().casefold()).strip("-")
             predicates.append(search_predicate(normalized, model.skill_key)
-                              | search_predicate(query, model.description))
+                              | search_predicate(query, model.description, skill_header_column()))
         columns = [model.id.label("resource_id"), model.skill_key.label("name"), model.kind,
                    model.description, model.children_json.label("children"), model.content_hash,
-                   model.is_builtin, model.archived_at, model.updated_at, model.row_version]
+                   model.is_builtin, model.archived_at, model.updated_at, model.row_version,
+                   skill_header_column().label("frontmatter")]
         with self.database.session_factory() as session:
             rows, total = query_page(session, model, columns, predicates=predicates,
                                      order=(model.kind, model.skill_key), page=page, page_size=page_size)
             counts = dict(session.execute(select(model.kind, func.count()).where(*base).group_by(model.kind)).all())
         for row in rows:
+            row["display_name"] = display_name_from_markdown(row.pop("frontmatter"), row["name"])
             dates(row)
             row.update(storage="database", storage_ref=f"database://skills/{row['resource_id']}")
             row["path"] = row["storage_ref"]
         return page_result(rows, total, page, page_size,
-                           counts={name: counts.get(name, 0) for name in ("atomic", "pack", "brain")})
+                           counts={name: counts.get(name, 0) for name in ("skill", "brain")})
 
     def get(self, name: str, *, include_archived: bool = False) -> SkillDocument:
         normalized = self.normalize_name(name)
@@ -161,17 +142,19 @@ class DatabaseSkillRegistry:
         *,
         name: str,
         description: str,
-        kind: SkillKind = "atomic",
+        display_name: str | None = None,
+        kind: SkillKind = "skill",
     ) -> SkillDocument:
         normalized = self.normalize_name(name)
         description = description.strip()
         if not description:
             raise SkillRegistryError("Skill description is empty")
-        if kind not in {"atomic", "pack", "brain"}:
+        if kind not in {"skill", "brain"}:
             raise SkillRegistryError(f"Unsupported Skill kind: {kind}")
-        title = " ".join(part.capitalize() for part in normalized.split("-"))
+        title = skill_display_name({"display_name": display_name} if display_name is not None else {}, normalized)
         markdown = (
             f"---\nname: {normalized}\n"
+            f"display_name: {json.dumps(title, ensure_ascii=False)}\n"
             f"description: {json.dumps(description, ensure_ascii=False)}\n"
             'example_input: "填写一条贴近真实运行时的示例输入（可含 \\n 换行）"\n'
             "---\n\n"
@@ -216,6 +199,7 @@ class DatabaseSkillRegistry:
             from generative_agents.ga_studio.resources.exchange import resource_extra_files, bind_saved_resource_dependencies
             parsed = self._parse_candidate(normalized, row.kind, markdown, normalized_scripts,
                                            extra_files=resource_extra_files(session, "skill", row.id))
+            validate_compiled_decision(parsed)
             bind_saved_resource_dependencies(session, "skill", row.id, [
                 {"kind": "skill", "key": key} for key in parsed.children
             ])
@@ -271,19 +255,18 @@ class DatabaseSkillRegistry:
             ]
 
     def dependencies(self, name: str) -> dict[str, object]:
-        document = self.author_detail(name)
+        normalized = self.normalize_name(name)
         with self.database.session_factory() as session:
-            rows = session.execute(select(StudioSkill.skill_key.label("name"), StudioSkill.kind, StudioSkill.description,
-                StudioSkill.content_hash).where(StudioSkill.skill_key.in_(document["children"]),
-                                                StudioSkill.archived_at.is_(None))).mappings()
-            available = {row["name"]: dict(row) for row in rows}
-        children = [available.get(child, {"name": child, "missing": True}) for child in document["children"]]
-        return {
-            "skill": document["name"],
-            "scripts": document["scripts"],
-            "skills": children,
-            "mcp": referenced_mcp_tools(document["markdown"]),
-        }
+            self._row(session, normalized)
+            def load(key):
+                row = session.scalar(select(StudioSkill).where(StudioSkill.skill_key == key,
+                                                               StudioSkill.archived_at.is_(None)))
+                if row is None:
+                    return None
+                return {"kind": row.kind, "display_name": display_name_from_markdown(row.markdown, row.skill_key),
+                        "description": row.description, "markdown": row.markdown,
+                        "content_hash": row.content_hash, "scripts": list(row.scripts_json or {})}
+            return skill_dependencies(normalized, load)
 
     def snapshot(
         self,
@@ -324,6 +307,7 @@ class DatabaseSkillRegistry:
             return {
                 name: {
                     "kind": row.kind,
+                    "display_name": display_name_from_markdown(row.markdown, name),
                     "description": row.description,
                     "markdown": row.markdown,
                     "content_hash": row.content_hash,
@@ -361,10 +345,6 @@ class DatabaseSkillRegistry:
         normalized = self.normalize_name(name)
         with self.database.session_factory.begin() as session:
             row = self._row(session, normalized, include_archived=True)
-            if row.is_builtin:
-                session.merge(
-                    SeedResourceTombstone(resource_type="skill", resource_key=row.skill_key)
-                )
             session.delete(row)
             from generative_agents.ga_studio.resources.exchange import delete_resource_exchange_state
             delete_resource_exchange_state(session, "skill", row.id)
@@ -378,7 +358,7 @@ class DatabaseSkillRegistry:
 
     def _document(self, row: StudioSkill) -> SkillDocument:
         root = self.cache_root / row.content_hash
-        folder = "atomic" if row.kind == "atomic" else f"{row.kind}s"
+        folder = f"{row.kind}s"
         skill_root = root / folder / row.skill_key
         self._write_exact(skill_root / "SKILL.md", row.markdown)
         for relative, source in sorted((row.scripts_json or {}).items()):
@@ -401,9 +381,11 @@ class DatabaseSkillRegistry:
         )
 
     def _parse_candidate(self, name, kind, markdown, scripts, *, extra_files=None) -> SkillDocument:
+        if kind not in {"skill", "brain"}:
+            raise SkillRegistryError(f"Unsupported Skill kind: {kind}")
         content_hash = self._content_hash(markdown, scripts, extra_files=extra_files)
         root = self.cache_root / "validation" / content_hash
-        folder = "atomic" if kind == "atomic" else f"{kind}s"
+        folder = f"{kind}s"
         skill_root = root / folder / name
         self._write_exact(skill_root / "SKILL.md", markdown)
         for relative, source in sorted(scripts.items()):

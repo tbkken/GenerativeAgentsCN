@@ -1,7 +1,6 @@
 """Navigation accepts observed object addresses without revealing unseen objects."""
 
 import copy
-import json
 import logging
 import random
 from datetime import datetime, timezone
@@ -11,7 +10,7 @@ from uuid import uuid4
 import pytest
 
 from generative_agents.ga_runtime.engine.space import Maze
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 
 
@@ -79,25 +78,25 @@ def navigation_server(*, vision=6, attention=6, blocked_door=False):
         datetime(2026, 9, 9, tzinfo=timezone.utc), 1, agent.coord,
         tuple(tile.get_address()), tuple(tile.spatial_semantics),
     )
-    return SimulationMCPServer(game, iteration), agent
+    return SimulationAPI(game, iteration), agent
 
 
 def unpack(response):
-    assert not response["isError"], response
-    return json.loads(response["content"][0]["text"])
+    assert response["ok"], response
+    return response["result"]
 
 
 def perceive(server):
-    return unpack(server.call("world-perceive", {}))
+    return unpack(server.invoke("world-perceive", {}))
 
 
 def navigate(server, address):
-    return server.call("world-navigate", {"target_address": address})
+    return server.invoke("world-navigate", {"target_address": address})
 
 
 def assert_unknown(response):
-    assert response["isError"], response
-    assert "not perceived or remembered by this Agent" in response["content"][0]["text"]
+    assert not response["ok"], response
+    assert "not perceived or remembered by this Agent" in response["error"]
 
 
 def test_observed_unremembered_object_is_navigable_and_navigation_is_readonly():

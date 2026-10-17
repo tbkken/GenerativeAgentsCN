@@ -25,7 +25,7 @@ with database.session_factory.begin() as session:
     session.add(item)
     session.flush()
     map_id = item.id
-child = skills.create(name="workspace-observe", description="观察当前地点", kind="atomic")
+child = skills.create(name="workspace-observe", description="观察当前地点", kind="skill")
 brain = skills.create(name="workspace-brain", description="实验工作区验证大脑", kind="brain")
 brain = skills.save(brain.name, brain.markdown + "\n调用 $workspace-observe 后等待。\n")
 agent = resources.create_agent({"agent_key": "workspace-agent", "name": "测试智能体", "scratch": {"age": 30}})

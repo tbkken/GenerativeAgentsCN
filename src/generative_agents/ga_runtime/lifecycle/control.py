@@ -5,6 +5,8 @@ from __future__ import annotations
 import threading
 from pathlib import Path
 
+from filelock import FileLock
+
 from generative_agents.ga_protocol.packages.io import atomic_write_json
 from generative_agents.ga_protocol.packages.io import read_json
 
@@ -12,10 +14,12 @@ from generative_agents.ga_protocol.packages.io import read_json
 class FileRunControl:
     def __init__(self, run_root: str | Path) -> None:
         self.path = Path(run_root).resolve() / "control.json"
+        self._write_lock = FileLock(str(self.path.with_name("control.lock")))
         self._local_pause = threading.Event()
         self._local_cancel = threading.Event()
-        if not self.path.exists():
-            atomic_write_json(self.path, {"pause_requested": False, "cancel_requested": False})
+        with self._write_lock:
+            if not self.path.exists():
+                atomic_write_json(self.path, {"pause_requested": False, "cancel_requested": False})
 
     def _read(self) -> dict:
         try:
@@ -25,14 +29,16 @@ class FileRunControl:
         return value if isinstance(value, dict) else {}
 
     def _write(self, *, pause: bool | None = None, cancel: bool | None = None) -> None:
-        current = self._read()
-        if pause is not None:
-            current["pause_requested"] = pause
-        if cancel is not None:
-            current["cancel_requested"] = cancel
-        atomic_write_json(self.path, current)
+        with self._write_lock:
+            current = self._read()
+            if pause is not None:
+                current["pause_requested"] = pause
+            if cancel is not None:
+                current["cancel_requested"] = cancel
+            atomic_write_json(self.path, current)
 
     def reset(self) -> None:
+        """Accept explicit resume intent; later control writes must survive."""
         self._local_pause.clear()
         self._local_cancel.clear()
         self._write(pause=False, cancel=False)

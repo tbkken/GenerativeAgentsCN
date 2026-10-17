@@ -1,7 +1,6 @@
 """Studio process resources. All database setup and SQL stay in this module."""
 from generative_agents.ga_studio.storage.database import create_database
 from generative_agents.ga_studio.storage.schema import prepare_studio_database
-from generative_agents.ga_studio.resources.bundled import bundled_skills
 from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
 from generative_agents.ga_studio.resources.spatial_assets import SpatialAssetService
 from generative_agents.ga_studio.resources.catalog import StudioResourceService
@@ -19,8 +18,7 @@ class StudioSession:
         self.spatial_assets, self.resources = spatial_assets, resources
 
     def initialize(self):
-        skills, spatial_assets, resources = self.skills, self.spatial_assets, self.resources
-        skills.ensure_builtin_skills(bundled_skills())
+        spatial_assets, resources = self.spatial_assets, self.resources
         spatial_assets.ensure_builtin_assets()
         if not resources.list_model_presets():
             resources.create_model_preset(

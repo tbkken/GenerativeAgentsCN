@@ -1,0 +1,375 @@
+{
+  "document_kind": "historical-source-reference-not-ga-package",
+  "preparation_status": "materials-only-not-imported",
+  "display_name": "埃迪",
+  "source_asset_key": "埃迪",
+  "source_asset_key_language": "zh",
+  "documented_english_name": "Eddy Lin",
+  "proposed_stable_key": "eddy-lin",
+  "stable_key_provenance": "Derived in this preparation from the English full name in chapter_15; the local original assets use Chinese directory keys.",
+  "english_name_source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\docs\\book\\manuscript\\part_03\\chapter_15.md",
+  "source_agent_json": {
+    "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\埃迪\\agent.json",
+    "json_pointer": "",
+    "sha256": "a7c5532dc609ca0ea476c7cd1185c377cefa8f2a1e7a45ee4f75a6448dc1cf0d"
+  },
+  "source_agent_core_unmodified": {
+    "name": "埃迪",
+    "portrait": "assets/village/agents/埃迪/portrait.png",
+    "coord": [
+      93,
+      74
+    ],
+    "currently": "埃迪正在为他的大学班级做音乐合成项目。他也在上课，学习更多的音乐理论。",
+    "scratch": {
+      "age": 19,
+      "innate": "好奇、分析、音乐",
+      "learned": "埃迪是奥克山学院的一名学生，学习音乐理论和作曲。他喜欢探索不同的音乐风格，并一直在寻找扩展知识的方法。",
+      "lifestyle": "埃迪晚上11点左右上床睡觉，早上7点左右起床，下午5点左右吃晚饭。",
+      "daily_plan": "埃迪上午10点去奥克山学院上课。下午，他喜欢去霍布斯咖啡馆吃饭和学习。"
+    },
+    "spatial": {
+      "address": {
+        "living_area": [
+          "the Ville",
+          "林氏家族的房子",
+          "埃迪的卧室"
+        ]
+      },
+      "tree": {
+        "the Ville": {
+          "林氏家族的房子": {
+            "浴室": [
+              "厕所",
+              "花洒",
+              "浴室洗手池"
+            ],
+            "公共休息室": [
+              "架子",
+              "公共休息室桌子"
+            ],
+            "埃迪的卧室": [
+              "壁橱",
+              "书桌",
+              "床"
+            ],
+            "花园": [
+              "住宅花园"
+            ]
+          },
+          "柳树市场和药店": {
+            "商店": [
+              "杂货店货架",
+              "杂货店柜台后面",
+              "杂货店柜台",
+              "药店柜台后面",
+              "药店货架",
+              "药店柜台"
+            ]
+          },
+          "哈维奥克供应店": {
+            "供应店": [
+              "供应店产品货架",
+              "供应店柜台后面",
+              "供应店柜台"
+            ]
+          },
+          "约翰逊公园": {
+            "公园": [
+              "公园花园"
+            ]
+          },
+          "玫瑰酒吧": {
+            "酒吧": [
+              "架子",
+              "冰箱",
+              "酒吧顾客座位",
+              "吧台后面",
+              "厨房水槽",
+              "烹饪区",
+              "麦克风"
+            ]
+          },
+          "霍布斯咖啡馆": {
+            "咖啡馆": [
+              "冰箱",
+              "咖啡馆顾客座位",
+              "烹饪区",
+              "厨房水槽",
+              "咖啡馆柜台后面",
+              "钢琴"
+            ]
+          },
+          "奥克山学院": {
+            "走廊": [],
+            "教室": [
+              "黑板",
+              "教室讲台",
+              "教室学生座位"
+            ],
+            "图书馆": [
+              "图书馆沙发",
+              "图书馆桌子",
+              "书架"
+            ]
+          },
+          "奥克山学院宿舍": {
+            "花园": [
+              "宿舍花园"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "classic_25_profile": {
+    "age": 19,
+    "innate": "好奇、分析、音乐",
+    "learned": "埃迪是奥克山学院的一名学生，学习音乐理论和作曲。他喜欢探索不同的音乐风格，并一直在寻找扩展知识的方法。",
+    "lifestyle": "埃迪晚上11点左右上床睡觉，早上7点左右起床，下午5点左右吃晚饭。",
+    "daily_plan": "埃迪上午10点去奥克山学院上课。下午，他喜欢去霍布斯咖啡馆吃饭和学习。",
+    "currently": "埃迪正在为他的大学班级做音乐合成项目。他也在上课，学习更多的音乐理论。"
+  },
+  "field_provenance": {
+    "age": {
+      "value": 19,
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/埃迪/scratch/age",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "innate": {
+      "value": "好奇、分析、音乐",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/埃迪/scratch/innate",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "learned": {
+      "value": "埃迪是奥克山学院的一名学生，学习音乐理论和作曲。他喜欢探索不同的音乐风格，并一直在寻找扩展知识的方法。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/埃迪/scratch/learned",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "lifestyle": {
+      "value": "埃迪晚上11点左右上床睡觉，早上7点左右起床，下午5点左右吃晚饭。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/埃迪/scratch/lifestyle",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "daily_plan": {
+      "value": "埃迪上午10点去奥克山学院上课。下午，他喜欢去霍布斯咖啡馆吃饭和学习。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/埃迪/scratch/daily_plan",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "currently": {
+      "value": "埃迪正在为他的大学班级做音乐合成项目。他也在上课，学习更多的音乐理论。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/埃迪/currently",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    }
+  },
+  "restored_profile_fields": [],
+  "initial_placement": {
+    "coord": [
+      93,
+      74
+    ],
+    "coord_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+      "json_pointer": "/persona_init_pos/埃迪",
+      "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+    },
+    "address": [
+      "the Ville",
+      "林氏家族的房子",
+      "埃迪的卧室",
+      "床"
+    ],
+    "address_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\maze.json",
+      "json_pointer": "/tiles",
+      "sha256": "5724aea03bf4de8cf4aba5e76df39d7680e31d78fae1e4c80bd9cfcf1aa3d5d2"
+    },
+    "matching_source_tile": {
+      "coord": [
+        93,
+        74
+      ],
+      "address": [
+        "林氏家族的房子",
+        "埃迪的卧室",
+        "床"
+      ]
+    },
+    "living_area": [
+      "the Ville",
+      "林氏家族的房子",
+      "埃迪的卧室"
+    ],
+    "living_area_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\埃迪\\agent.json",
+      "json_pointer": "/spatial/address/living_area",
+      "sha256": "a7c5532dc609ca0ea476c7cd1185c377cefa8f2a1e7a45ee4f75a6448dc1cf0d"
+    }
+  },
+  "classic_known_spatial": {
+    "address": {
+      "living_area": [
+        "the Ville",
+        "林氏家族的房子",
+        "埃迪的卧室"
+      ]
+    },
+    "tree": {
+      "the Ville": {
+        "林氏家族的房子": {
+          "浴室": [
+            "厕所",
+            "花洒",
+            "浴室洗手池"
+          ],
+          "公共休息室": [
+            "架子",
+            "公共休息室桌子"
+          ],
+          "埃迪的卧室": [
+            "壁橱",
+            "书桌",
+            "床"
+          ],
+          "花园": [
+            "住宅花园"
+          ]
+        },
+        "柳树市场和药店": {
+          "商店": [
+            "杂货店货架",
+            "杂货店柜台后面",
+            "杂货店柜台",
+            "药店柜台后面",
+            "药店货架",
+            "药店柜台"
+          ]
+        },
+        "哈维奥克供应店": {
+          "供应店": [
+            "供应店产品货架",
+            "供应店柜台后面",
+            "供应店柜台"
+          ]
+        },
+        "约翰逊公园": {
+          "公园": [
+            "公园花园"
+          ]
+        },
+        "玫瑰酒吧": {
+          "酒吧": [
+            "架子",
+            "冰箱",
+            "酒吧顾客座位",
+            "吧台后面",
+            "厨房水槽",
+            "烹饪区",
+            "麦克风"
+          ]
+        },
+        "霍布斯咖啡馆": {
+          "咖啡馆": [
+            "冰箱",
+            "咖啡馆顾客座位",
+            "烹饪区",
+            "厨房水槽",
+            "咖啡馆柜台后面",
+            "钢琴"
+          ]
+        },
+        "奥克山学院": {
+          "走廊": [],
+          "教室": [
+            "黑板",
+            "教室讲台",
+            "教室学生座位"
+          ],
+          "图书馆": [
+            "图书馆沙发",
+            "图书馆桌子",
+            "书架"
+          ]
+        },
+        "奥克山学院宿舍": {
+          "花园": [
+            "宿舍花园"
+          ]
+        }
+      }
+    }
+  },
+  "known_spatial_provenance": {
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\埃迪\\agent.json",
+      "json_pointer": "/spatial",
+      "sha256": "a7c5532dc609ca0ea476c7cd1185c377cefa8f2a1e7a45ee4f75a6448dc1cf0d"
+    },
+    "historical_complete_snapshot_available": false,
+    "adjustment": "No adjustment.",
+    "removed_object_names": [],
+    "adjustment_evidence": null
+  },
+  "source_behavior_parameters": {
+    "vision_radius": 8,
+    "perception_mode": "box",
+    "attention_bandwidth": 8,
+    "move_speed": null,
+    "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+    "chat_iterations": 4,
+    "schedule_max_try": 5,
+    "schedule_diversity": 5,
+    "think_interval": 1000,
+    "poignancy_max": 150,
+    "memory_retention": 8,
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+      "json_pointer": "/agent",
+      "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+    }
+  },
+  "assets": [
+    {
+      "role": "portrait",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\埃迪\\portrait.png",
+      "copy": "agents/eddy-lin/assets/portrait.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1507,
+      "sha256": "66d523412d0072cd21550946182e73a0ef8f989a9c4f922d7547137ef6730057"
+    },
+    {
+      "role": "walking_texture",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\埃迪\\texture.png",
+      "copy": "agents/eddy-lin/assets/texture.png",
+      "width": 96,
+      "height": 128,
+      "bytes": 3483,
+      "sha256": "4f1eca4f29ee37526f3033f347bfda0ad5fac1d92be4c4f50398db6f32c1b689"
+    }
+  ]
+}

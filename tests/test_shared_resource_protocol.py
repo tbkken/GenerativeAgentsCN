@@ -28,7 +28,7 @@ def _skills() -> ResourceSet:
     template_path = "skills/items/read-clock/templates/example.bin"
     return ResourceSet([
         ResourceRecord(kind="skill", key="read-clock", name="read-clock", description="Read the clock",
-                       definition={"skill_kind": "atomic", "entrypoint": child_path},
+                       definition={"skill_kind": "skill", "entrypoint": child_path},
                        attachments=[child_path, script_path, template_path]),
         ResourceRecord(kind="skill", key="daily-brain", name="daily-brain", description="Daily decisions",
                        definition={"skill_kind": "brain", "entrypoint": parent_path},

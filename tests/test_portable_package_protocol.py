@@ -128,11 +128,11 @@ def test_quality_overview_and_export_rebuild_all_committed_attempts(tmp_path: Pa
     attempts = ["b1d1b2dc-a5f3-4558-95cb-cb0f40f4fcf8", "28e20a39-55e0-4fdd-af56-ddb52743778d"]
     (run_root / "frames").mkdir()
     for step in (1, 2, 3):
-        calls = [{"event": "mcp.call", "skill": "test-brain", "tool": tool,
+        calls = [{"event": "interface.call", "skill": "test-brain", "tool": tool,
                   "input_text": "{}", "output_text": "boundary rejected", "is_error": True}
                  for tool in ("world-navigate", "world-act")]
         if step == 1:
-            calls.insert(0, {"event": "mcp.call", "skill": "test-brain", "tool": "memory-stream-search",
+            calls.insert(0, {"event": "interface.call", "skill": "test-brain", "tool": "memory-stream-search",
                              "input_text": "{}", "output_text": "[]", "is_error": False})
         result = {
             "run_id": run_id, "attempt_id": attempts[0 if step == 1 else 1], "step_no": step,
@@ -148,7 +148,7 @@ def test_quality_overview_and_export_rebuild_all_committed_attempts(tmp_path: Pa
     atomic_write_json(run_root / "status.json", status.model_dump(mode="json"))
     # Represents the old Attempt-local report. Reads and exports must not rewrite it.
     old_report = {"quality_status": "WARNING", "evaluated_agent_steps": 1,
-                  "issues": [{"code": "MCP_TOOL_ERROR", "step_no": 2}], "evaluator": {"status": "SKIPPED"}}
+                  "issues": [{"code": "INTERFACE_CALL_ERROR", "step_no": 2}], "evaluator": {"status": "SKIPPED"}}
     atomic_write_json(run_root / "artifacts" / "quality-report.json", old_report)
     old_bytes = (run_root / "artifacts" / "quality-report.json").read_bytes()
     old_id = hashlib.sha256(old_bytes).hexdigest()[:32]
@@ -211,7 +211,7 @@ def test_runtime_finalization_keeps_diagnostics_from_before_resume(tmp_path: Pat
         effect = StepEffectRecord(
             effect_id=uuid4(), sequence=0, kind=StepEffectKind.SKILL_EXECUTED,
             agent_keys=("test-agent",), payload={"execution_source": "BRAIN_RUNTIME", "trace": [
-                {"event": "mcp.call", "skill": "test-brain", "tool": "world-navigate",
+                {"event": "interface.call", "skill": "test-brain", "tool": "world-navigate",
                  "input_text": "{}", "output_text": "outside vision", "is_error": True},
             ]},
         )
@@ -499,7 +499,7 @@ def test_studio_selection_physically_copies_map_agent_brain_and_skill(tmp_path: 
             session.add(public_map)
             session.flush()
             map_id = public_map.id
-        child = skills.create(name="copy-child", description="child", kind="atomic")
+        child = skills.create(name="copy-child", description="child", kind="skill")
         brain = skills.create(name="copy-brain", description="brain", kind="brain")
         brain_markdown = brain.markdown + "\n\nCall $copy-child and then stop.\n"
         brain = skills.save("copy-brain", brain_markdown)

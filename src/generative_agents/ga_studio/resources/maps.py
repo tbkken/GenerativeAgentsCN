@@ -1301,7 +1301,7 @@ def _validate_object_skill_bindings(
                     "path": f"{binding_path}.skill_name",
                     "message": (
                         f"Game Object 不能绑定 Brain Skill {binding.skill_name}；"
-                        "请绑定以自然语言描述对象行为的 atomic 或 pack Skill"
+                        "请绑定以自然语言描述对象行为的 Skill"
                     ),
                 }
             )
@@ -1769,8 +1769,6 @@ class WorldMapService:
         异常:
             ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
         """
-        if hasattr(self.skill_registry, "ensure_builtin_skills"):
-            self.skill_registry.ensure_builtin_skills()
         with self.database.session_factory.begin() as session:
             public_map = session.get(WorldMap, map_id)
             if public_map is None:

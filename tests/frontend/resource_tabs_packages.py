@@ -23,11 +23,11 @@ def prepare():
         definition=AgentCore(scratch={"age": 29}, portrait_asset="assets/portrait.png", sprite_asset="assets/sprite.png").model_dump(mode="json"), attachments=list(files)))
     member = ResourceRef(kind="agent", key="tabs-agent")
     records.append(ResourceRecord(kind="crowd", key="tabs-crowd", name="Tab 验收人群", definition={"members": [member.model_dump(mode="json", exclude_none=True)]}, dependencies=[member]))
-    for key, kind, children in (("tabs-observe", "atomic", []), ("tabs-pack", "pack", ["tabs-observe"]), ("tabs-brain", "brain", ["tabs-pack", "tabs-observe"])):
+    for key, kind, children in (("tabs-observe", "skill", []), ("tabs-pack", "skill", ["tabs-observe"]), ("tabs-brain", "brain", ["tabs-pack", "tabs-observe"])):
         path = f"skills/items/{key}/SKILL.md"
         files[path] = (f"---\nname: {key}\ndescription: 合并菜单验收\n---\n\n" + "\n".join(f"调用 ${child}。" for child in children) + "\n记录观察结果。\n").encode()
         attachments = [path]
-        if kind == "atomic":
+        if key == "tabs-observe":
             for name, content in (("scripts/note.py", b'print("note")\n'), ("templates/note.txt", "验收模板\n".encode())):
                 name = f"skills/items/{key}/{name}"
                 files[name] = content

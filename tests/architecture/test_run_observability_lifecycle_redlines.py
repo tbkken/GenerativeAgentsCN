@@ -168,7 +168,7 @@ def test_def_058_trace_detail_and_operation_collections_are_pageable():
     assert "page.next_cursor" in trace and ("loadMore" in trace or "while" in trace)
     assert "next_after_id" in operations and ("loadMore" in operations or "while" in operations)
     assert "runId !== state.selectedRunId" in trace
-    assert "attemptId !== state.selectedAttemptId" in trace
+    assert "attemptId === (state.selectedTraceAttemptId || state.selectedAttemptId)" in trace
     refresh = script[
         script.index("async function loadOperationsWorkspaceUnlocked") : script.index(
             "function simulationStartTime"

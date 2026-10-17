@@ -1,0 +1,381 @@
+{
+  "status": "offline-materials-verified-not-imported",
+  "package_kind": "config",
+  "schema_version": 2,
+  "agent_count": 25,
+  "attachment_count": 50,
+  "archive": "D:\\GenerativeAgentsCN\\docs\\book\\sample\\04-stanford-town-original\\agents\\stanford-town-original-agents-config.zip",
+  "archive_bytes": 126907,
+  "archive_sha256": "44e4b43c2ecae0b6ed951b5cc33d4ccd2fd5e2ba4e2908f8882a00fc29a92936",
+  "roster_sha256": "dcdf092c2815e55369aa531c09bc7954ab912bcff8b86e8ef532ff579aeeeea5",
+  "public_agents_contain_coord_or_spatial": false,
+  "all_assets_match_source_sha256": true,
+  "placement_ui_merge_preserves_unprovided_profile_and_assets": true,
+  "placement_validation": [
+    {
+      "agent_key": "ayesha-khan",
+      "coord": [
+        118,
+        61
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "阿伊莎的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "klaus-mueller",
+      "coord": [
+        126,
+        46
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "克劳斯的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "maria-lopez",
+      "coord": [
+        123,
+        57
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "玛丽亚的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "wolfgang-schulz",
+      "coord": [
+        107,
+        62
+      ],
+      "initial_address": [
+        "the Ville",
+        "奥克山学院宿舍",
+        "沃尔夫冈的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "mei-lin",
+      "coord": [
+        90,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "john-lin",
+      "coord": [
+        91,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "梅和约翰的卧室",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "eddy-lin",
+      "coord": [
+        93,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "林氏家族的房子",
+        "埃迪的卧室",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "jane-moreno",
+      "coord": [
+        72,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "tom-moreno",
+      "coord": [
+        73,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "莫雷诺家族的房子",
+        "汤姆和简的卧室",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "carmen-ortiz",
+      "coord": [
+        57,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "卡门的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "tamara-taylor",
+      "coord": [
+        54,
+        74
+      ],
+      "initial_address": [
+        "the Ville",
+        "塔玛拉和卡门的家",
+        "塔玛拉的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "arthur-burton",
+      "coord": [
+        53,
+        14
+      ],
+      "initial_address": [
+        "the Ville",
+        "亚瑟的公寓",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "isabella-rodriguez",
+      "coord": [
+        72,
+        14
+      ],
+      "initial_address": [
+        "the Ville",
+        "伊莎贝拉的公寓",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "sam-moore",
+      "coord": [
+        36,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "jennifer-moore",
+      "coord": [
+        37,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "摩尔家族的房子",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "francisco-lopez",
+      "coord": [
+        16,
+        32
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "弗朗西斯科的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "hailey-johnson",
+      "coord": [
+        26,
+        32
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "海莉的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "rajiv-patel",
+      "coord": [
+        26,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉吉夫的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "latoya-williams",
+      "coord": [
+        16,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉托亚的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "abigail-chen",
+      "coord": [
+        36,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "艺术家共居空间",
+        "阿比盖尔的房间",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "carlos-gomez",
+      "coord": [
+        94,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "卡洛斯的公寓",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "giorgio-rossi",
+      "coord": [
+        86,
+        18
+      ],
+      "initial_address": [
+        "the Ville",
+        "乔治的公寓",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "ryan-park",
+      "coord": [
+        65,
+        19
+      ],
+      "initial_address": [
+        "the Ville",
+        "瑞恩的公寓",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "yuriko-yamamoto",
+      "coord": [
+        28,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "山本百合子的房子",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    },
+    {
+      "agent_key": "adam-smith",
+      "coord": [
+        20,
+        65
+      ],
+      "initial_address": [
+        "the Ville",
+        "亚当的家",
+        "主人房",
+        "床"
+      ],
+      "issues": []
+    }
+  ],
+  "parameter_mapping": {
+    "perception": "box, radius 8, bandwidth 8 from the original source config",
+    "sprite_layout": "4x3 from original 96x128 texture dimensions and four direction rows",
+    "sprite_display_tiles": "omitted; current product default, not a claimed original value",
+    "move_speed": "not supplied: original Agent config has no runtime speed field",
+    "enabled": "true: ordinary imported resource enabled for selection",
+    "omitted_legacy_parameters": [
+      "chat_iterations",
+      "schedule_max_try",
+      "schedule_diversity",
+      "think_interval",
+      "poignancy_max",
+      "memory_retention"
+    ]
+  }
+}

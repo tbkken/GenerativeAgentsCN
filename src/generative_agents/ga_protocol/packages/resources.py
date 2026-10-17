@@ -23,8 +23,10 @@ from generative_agents.ga_protocol.schemas.manifests import (
     ConfigManifest, ExperimentManifest, RunManifest, validate_package_path,
 )
 from generative_agents.ga_protocol.schemas.resources import AgentCore, ResourceIndex, ResourceRecord, ResourceRef
-from generative_agents.ga_protocol.schemas.experiment import ChatModelConfig, EmbeddingModelConfig, WorldConfig
+from generative_agents.ga_protocol.schemas.experiment import ChatModelConfig, DecisionModelConfig, EmbeddingModelConfig, WorldConfig
 from generative_agents.ga_protocol.skills.documents import SkillRegistry
+from generative_agents.ga_protocol.skills.decisions import validate_compiled_decision
+from generative_agents.ga_protocol.skills.dependencies import validate_interface_references
 
 
 @dataclass
@@ -106,7 +108,7 @@ def skill_document(record: ResourceRecord, resources: ResourceSet):
     except (KeyError, UnicodeError) as exc:
         raise PackageError(f"Skill {record.key} has no UTF-8 SKILL.md") from exc
     kind = record.definition.get("skill_kind")
-    if kind not in {"atomic", "pack", "brain"}:
+    if kind not in {"skill", "brain"}:
         raise PackageError(f"invalid Skill type: {kind}")
     parent = PurePosixPath(entrypoint).parent
     files = {}
@@ -189,15 +191,20 @@ def validate_resource_set(resources: ResourceSet, *, require_dependencies: bool 
                 if set(record.definition) != {"skill_kind", "entrypoint"}:
                     raise PackageError("Skill content must declare only skill_kind and entrypoint")
                 document = skill_document(record, resources)
+                validate_compiled_decision(document)
+                validate_interface_references(document.body)
                 if document.name != record.key:
                     raise PackageError("Skill key and frontmatter name must match")
+                if document.display_name != record.name:
+                    raise PackageError("Skill resource name and frontmatter display_name must match")
                 if deps != {("skill", key) for key in document.children}:
                     raise PackageError(f"Skill {record.key} dependency index disagrees with its Markdown")
             elif record.kind == "model":
-                if not record.definition or set(record.definition) - {"chat", "embedding"}:
-                    raise PackageError("model content must contain chat and/or embedding configuration")
+                if not record.definition or set(record.definition) - {"chat", "embedding", "decision"}:
+                    raise PackageError("model content must contain chat, embedding and/or decision configuration")
                 for purpose, config in record.definition.items():
-                    TypeAdapter(ChatModelConfig if purpose == "chat" else EmbeddingModelConfig).validate_python(config)
+                    TypeAdapter({"chat": ChatModelConfig, "embedding": EmbeddingModelConfig,
+                                 "decision": DecisionModelConfig}[purpose]).validate_python(config)
                     from urllib.parse import urlsplit
                     address = urlsplit(str(config.get("base_url") or ""))
                     if address.username or address.password or address.query or address.fragment:
@@ -277,7 +284,8 @@ def resource_content_hash(record: ResourceRecord, resources: ResourceSet, *, _vi
     elif record.kind == "agent":
         definition = AgentCore.model_validate(definition).model_dump(mode="json")
     elif record.kind == "model":
-        definition = {purpose: TypeAdapter(ChatModelConfig if purpose == "chat" else EmbeddingModelConfig)
+        definition = {purpose: TypeAdapter({"chat": ChatModelConfig, "embedding": EmbeddingModelConfig,
+                                           "decision": DecisionModelConfig}[purpose])
                       .validate_python(config).model_dump(mode="json") for purpose, config in definition.items()}
     elif record.kind == "crowd":
         definition["members"] = [{"kind": value["kind"], "key": value["key"]} for value in definition["members"]]

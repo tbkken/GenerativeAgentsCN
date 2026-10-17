@@ -1,0 +1,367 @@
+{
+  "document_kind": "historical-source-reference-not-ga-package",
+  "preparation_status": "materials-only-not-imported",
+  "display_name": "拉吉夫",
+  "source_asset_key": "拉吉夫",
+  "source_asset_key_language": "zh",
+  "documented_english_name": "Rajiv Patel",
+  "proposed_stable_key": "rajiv-patel",
+  "stable_key_provenance": "Derived in this preparation from the English full name in chapter_15; the local original assets use Chinese directory keys.",
+  "english_name_source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\docs\\book\\manuscript\\part_03\\chapter_15.md",
+  "source_agent_json": {
+    "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉吉夫\\agent.json",
+    "json_pointer": "",
+    "sha256": "988502bfdfcd0a1f5a89f41a57ba14914f30fbf5c2e0d16bd8140c04312b6d82"
+  },
+  "source_agent_core_unmodified": {
+    "name": "拉吉夫",
+    "portrait": "assets/village/agents/拉吉夫/portrait.png",
+    "coord": [
+      26,
+      18
+    ],
+    "currently": "拉吉夫正在准备他的首场个人演出。他主要在艺术家共居空间工作。另外，他最近喜欢上了弹吉他。",
+    "scratch": {
+      "age": 27,
+      "innate": "耐心、可靠、开朗",
+      "learned": "拉吉夫是一位画家，他想安静地生活，在享受日常生活的同时画画。",
+      "lifestyle": "拉吉夫在午夜前后上床睡觉，早上9点左右醒来，下午5点左右吃晚饭。",
+      "daily_plan": ""
+    },
+    "spatial": {
+      "address": {
+        "living_area": [
+          "the Ville",
+          "艺术家共居空间",
+          "拉吉夫的房间"
+        ]
+      },
+      "tree": {
+        "the Ville": {
+          "艺术家共居空间": {
+            "拉吉夫的房间": [
+              "床",
+              "画架",
+              "壁橱",
+              "吉他"
+            ],
+            "拉吉夫的浴室": [
+              "花洒",
+              "浴室洗手池",
+              "厕所"
+            ],
+            "厨房": [
+              "冰箱",
+              "烤箱",
+              "厨房水槽",
+              "烹饪区"
+            ],
+            "公共休息室": [
+              "公共休息室桌子",
+              "公共休息室沙发"
+            ]
+          },
+          "玫瑰酒吧": {
+            "酒吧": [
+              "架子",
+              "冰箱",
+              "酒吧顾客座位",
+              "吧台后面",
+              "厨房水槽",
+              "烹饪区",
+              "麦克风"
+            ]
+          },
+          "霍布斯咖啡馆": {
+            "咖啡馆": [
+              "冰箱",
+              "咖啡馆顾客座位",
+              "烹饪区",
+              "厨房水槽",
+              "咖啡馆柜台后面",
+              "钢琴"
+            ]
+          },
+          "奥克山学院": {
+            "走廊": []
+          },
+          "奥克山学院宿舍": {
+            "公共休息室": [
+              "公共休息室沙发",
+              "台球桌",
+              "公共休息室桌子"
+            ]
+          },
+          "柳树市场和药店": {
+            "商店": [
+              "杂货店货架",
+              "杂货店柜台后面",
+              "杂货店柜台",
+              "药店货架",
+              "药店柜台",
+              "药店柜台后面"
+            ]
+          },
+          "哈维奥克供应店": {
+            "供应店": [
+              "供应店产品货架",
+              "供应店柜台后面",
+              "供应店柜台"
+            ]
+          },
+          "约翰逊公园": {
+            "公园": [
+              "公园花园"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "classic_25_profile": {
+    "age": 27,
+    "innate": "耐心、可靠、开朗",
+    "learned": "拉吉夫是一位画家，他想安静地生活，在享受日常生活的同时画画。",
+    "lifestyle": "拉吉夫在午夜前后上床睡觉，早上9点左右醒来，下午5点左右吃晚饭。",
+    "daily_plan": "",
+    "currently": "拉吉夫正在准备他的首场个人演出。他主要在艺术家共居空间工作。另外，他最近喜欢上了弹吉他。"
+  },
+  "field_provenance": {
+    "age": {
+      "value": 27,
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/拉吉夫/scratch/age",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "innate": {
+      "value": "耐心、可靠、开朗",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/拉吉夫/scratch/innate",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "learned": {
+      "value": "拉吉夫是一位画家，他想安静地生活，在享受日常生活的同时画画。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/拉吉夫/scratch/learned",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "lifestyle": {
+      "value": "拉吉夫在午夜前后上床睡觉，早上9点左右醒来，下午5点左右吃晚饭。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/拉吉夫/scratch/lifestyle",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "daily_plan": {
+      "value": "",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/拉吉夫/scratch/daily_plan",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    },
+    "currently": {
+      "value": "拉吉夫正在准备他的首场个人演出。他主要在艺术家共居空间工作。另外，他最近喜欢上了弹吉他。",
+      "source": {
+        "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+        "json_pointer": "/all_movement/description/拉吉夫/currently",
+        "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+      },
+      "matches_current_agent_json": true
+    }
+  },
+  "restored_profile_fields": [],
+  "initial_placement": {
+    "coord": [
+      26,
+      18
+    ],
+    "coord_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\results\\compressed\\example\\movement.json",
+      "json_pointer": "/persona_init_pos/拉吉夫",
+      "sha256": "9b3480cb0b6eb4c2b31c0667c44377c3251091d0d64937c8ba50d1d8163f5989"
+    },
+    "address": [
+      "the Ville",
+      "艺术家共居空间",
+      "拉吉夫的房间",
+      "床"
+    ],
+    "address_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\maze.json",
+      "json_pointer": "/tiles",
+      "sha256": "5724aea03bf4de8cf4aba5e76df39d7680e31d78fae1e4c80bd9cfcf1aa3d5d2"
+    },
+    "matching_source_tile": {
+      "coord": [
+        26,
+        18
+      ],
+      "address": [
+        "艺术家共居空间",
+        "拉吉夫的房间",
+        "床"
+      ]
+    },
+    "living_area": [
+      "the Ville",
+      "艺术家共居空间",
+      "拉吉夫的房间"
+    ],
+    "living_area_source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉吉夫\\agent.json",
+      "json_pointer": "/spatial/address/living_area",
+      "sha256": "988502bfdfcd0a1f5a89f41a57ba14914f30fbf5c2e0d16bd8140c04312b6d82"
+    }
+  },
+  "classic_known_spatial": {
+    "address": {
+      "living_area": [
+        "the Ville",
+        "艺术家共居空间",
+        "拉吉夫的房间"
+      ]
+    },
+    "tree": {
+      "the Ville": {
+        "艺术家共居空间": {
+          "拉吉夫的房间": [
+            "床",
+            "画架",
+            "壁橱",
+            "吉他"
+          ],
+          "拉吉夫的浴室": [
+            "花洒",
+            "浴室洗手池",
+            "厕所"
+          ],
+          "厨房": [
+            "冰箱",
+            "烤箱",
+            "厨房水槽",
+            "烹饪区"
+          ],
+          "公共休息室": [
+            "公共休息室桌子",
+            "公共休息室沙发"
+          ]
+        },
+        "玫瑰酒吧": {
+          "酒吧": [
+            "架子",
+            "冰箱",
+            "酒吧顾客座位",
+            "吧台后面",
+            "厨房水槽",
+            "烹饪区",
+            "麦克风"
+          ]
+        },
+        "霍布斯咖啡馆": {
+          "咖啡馆": [
+            "冰箱",
+            "咖啡馆顾客座位",
+            "烹饪区",
+            "厨房水槽",
+            "咖啡馆柜台后面",
+            "钢琴"
+          ]
+        },
+        "奥克山学院": {
+          "走廊": []
+        },
+        "奥克山学院宿舍": {
+          "公共休息室": [
+            "公共休息室沙发",
+            "台球桌",
+            "公共休息室桌子"
+          ]
+        },
+        "柳树市场和药店": {
+          "商店": [
+            "杂货店货架",
+            "杂货店柜台后面",
+            "杂货店柜台",
+            "药店货架",
+            "药店柜台",
+            "药店柜台后面"
+          ]
+        },
+        "哈维奥克供应店": {
+          "供应店": [
+            "供应店产品货架",
+            "供应店柜台后面",
+            "供应店柜台"
+          ]
+        },
+        "约翰逊公园": {
+          "公园": [
+            "公园花园"
+          ]
+        }
+      }
+    }
+  },
+  "known_spatial_provenance": {
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉吉夫\\agent.json",
+      "json_pointer": "/spatial",
+      "sha256": "988502bfdfcd0a1f5a89f41a57ba14914f30fbf5c2e0d16bd8140c04312b6d82"
+    },
+    "historical_complete_snapshot_available": false,
+    "adjustment": "No adjustment.",
+    "removed_object_names": [],
+    "adjustment_evidence": null
+  },
+  "source_behavior_parameters": {
+    "vision_radius": 8,
+    "perception_mode": "box",
+    "attention_bandwidth": 8,
+    "move_speed": null,
+    "move_speed_status": "Source Agent has no simulation movement-speed parameter. Replay movement_speed is not a runtime actor speed.",
+    "chat_iterations": 4,
+    "schedule_max_try": 5,
+    "schedule_diversity": 5,
+    "think_interval": 1000,
+    "poignancy_max": 150,
+    "memory_retention": 8,
+    "source": {
+      "file": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\data\\config.json",
+      "json_pointer": "/agent",
+      "sha256": "7eae281c32224d43e921a4cacb4f1cf6dfbfc630e7c16bd0bd75d5876396e783"
+    }
+  },
+  "assets": [
+    {
+      "role": "portrait",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉吉夫\\portrait.png",
+      "copy": "agents/rajiv-patel/assets/portrait.png",
+      "width": 32,
+      "height": 32,
+      "bytes": 1385,
+      "sha256": "a1048ef4f41338d8a2ba6950b111b41c62e8cb0ca1411e12e4e1c3fb889eb643"
+    },
+    {
+      "role": "walking_texture",
+      "source": "C:\\Users\\D304\\Downloads\\GenerativeAgentsCN-main\\GenerativeAgentsCN-main\\generative_agents\\frontend\\static\\assets\\village\\agents\\拉吉夫\\texture.png",
+      "copy": "agents/rajiv-patel/assets/texture.png",
+      "width": 96,
+      "height": 128,
+      "bytes": 2185,
+      "sha256": "dd20304a14c7b6253abad386238f67f7c0d0df033f85548594d44333970ca7e0"
+    }
+  ]
+}

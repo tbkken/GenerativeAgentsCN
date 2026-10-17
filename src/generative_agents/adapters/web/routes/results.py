@@ -12,9 +12,16 @@ from generative_agents.ga_protocol.packages.io import checked_package_path
 from generative_agents.ga_protocol.packages.io import iter_package_files
 from generative_agents.ga_replay.api import definition_names, event_view, conversation_views, memory_views, agent_views, checkpoint_documents
 from generative_agents.ga_replay.api import read_slice, result_index, read_metadata, artifact_page, trace_page, trace_record
+from generative_agents.ga_replay.api import execution_observation
 from generative_agents.ga_protocol.packages.reading import open_readonly_package
 
 def install_routes(router, ctx):
+
+    @router.get('/runs/{run_id}/execution')
+    def run_execution(run_id: str, attempt_id: str | None=None, step_no: int | None=Query(default=None, ge=1),
+                      agent_key: str | None=None, section: str=Query(default='all', pattern='^(all|progress|tree)$')):
+        return execution_observation(ctx.run_location(run_id), attempt_id=attempt_id, step_no=step_no,
+                                     agent_key=agent_key, section=section)
 
     @router.get('/runs/{run_id}/results/timeline')
     def result_timeline(run_id: str, from_step: int=Query(default=1, ge=1), to_step: int | None=Query(default=None, ge=1), limit: int=Query(default=200, ge=1, le=500)):
@@ -164,7 +171,7 @@ def install_routes(router, ctx):
         record = trace_record(ctx.run_location(run_id), trace_id)
         if record is None:
             raise HTTPException(status_code=404, detail='Model trace is not present in this Run package')
-        iteration_tools = []
+        iteration_interfaces = []
         with ReplayReader(ctx.run_location(run_id)) as replay:
             for frame in replay.iter_steps(start=int(record.get('step_no') or 1), end=int(record.get('step_no') or 1)):
                 if frame.get('step_no') != record.get('step_no') or frame.get('attempt_id') != record.get('attempt_id'):
@@ -172,7 +179,7 @@ def install_routes(router, ctx):
                 for effect in frame.get('effects') or []:
                     if record.get('agent_key') not in (effect.get('agent_keys') or []):
                         continue
-                    iteration_tools.extend((item for item in (effect.get('payload') or {}).get('trace', []) if item.get('event') == 'mcp.call'))
+                    iteration_interfaces.extend((item for item in (effect.get('payload') or {}).get('trace', []) if item.get('event') == 'interface.call'))
         payload = record.get('payload')
         content = (json.dumps(payload, ensure_ascii=False, indent=2) if payload is not None else '').encode('utf-8')
         if cursor > len(content) or (cursor < len(content) and content[cursor] & 0xC0 == 0x80):
@@ -181,7 +188,7 @@ def install_routes(router, ctx):
         while next_cursor < len(content) and content[next_cursor] & 0xC0 == 0x80:
             next_cursor += 1
         chunk = content[cursor:next_cursor].decode('utf-8')
-        return {'trace': {key: value for key, value in record.items() if key != 'payload'}, 'iteration_tools': iteration_tools, 'payload_diagnostic': '该 Run 未保存此请求的模型 Payload，无法还原历史请求全文；下方展示已有的同轮 MCP 事实记录。', 'payload_available': payload is not None, 'content': chunk, 'next_cursor': next_cursor if next_cursor < len(content) else None, 'file_id': record.get('payload_sha256')}
+        return {'trace': {key: value for key, value in record.items() if key != 'payload'}, 'iteration_interfaces': iteration_interfaces, 'payload_diagnostic': '该 Run 未保存此请求的模型 Payload，无法还原历史请求全文；下方展示已有的同轮接口调用事实记录。', 'payload_available': payload is not None, 'content': chunk, 'next_cursor': next_cursor if next_cursor < len(content) else None, 'file_id': record.get('payload_sha256')}
 
     @router.get('/runs/{run_id}/attempts/{attempt_id}/log')
     def run_attempt_log(run_id: str, attempt_id: str, cursor: int=Query(default=0, ge=0), limit_bytes: int=Query(default=65536, ge=1, le=262144)):
