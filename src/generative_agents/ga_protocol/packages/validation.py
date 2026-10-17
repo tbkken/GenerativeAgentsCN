@@ -281,7 +281,9 @@ def validate_experiment_integrity(root: Path, *, verify_hashes: bool = True) -> 
 
 
 def validate_experiment_directory(root: Path, *, verify_hashes: bool = True) -> ExperimentManifest:
-    from generative_agents.ga_protocol.packages.resources import read_resource_index, validate_resource_set
+    from generative_agents.ga_protocol.packages.resources import (
+        object_skill_keys, read_resource_index, skill_document, validate_resource_set,
+    )
     from generative_agents.ga_protocol.packages.definition import assemble_experiment_definition
     from generative_agents.ga_protocol.schemas.resources import ExperimentAssembly
     from generative_agents.ga_protocol.schemas.experiment import ExperimentDefinition
@@ -300,7 +302,7 @@ def validate_experiment_directory(root: Path, *, verify_hashes: bool = True) -> 
         brains = [record.key for record in resources.resources if record.kind == "skill" and record.definition.get("skill_kind") == "brain"]
         if brains != [assembly.brain.key]:
             raise PackageError("an experiment must contain exactly one configured Brain Skill")
-        if set(assembly.models) != {"chat", "embedding"}:
+        if not {"chat", "embedding"} <= set(assembly.models):
             raise PackageError("experiment must select chat and embedding model configurations")
         placement_keys = [placement.agent.identity for placement in assembly.placements]
         if len(placement_keys) != len(set(placement_keys)):
@@ -310,6 +312,15 @@ def validate_experiment_directory(root: Path, *, verify_hashes: bool = True) -> 
         ExperimentDefinition.model_validate({key: (runtime_identity if key == "experiment" else value)
                                              for key, value in definition.items() if key not in {"crowds", "evaluation"}})
         world = definition["world"]
+        decision_skills = {
+            record.key for record in resources.resources
+            if record.kind == "skill" and skill_document(record, resources).llm_type == "decision"
+        }
+        if decision_skills and not definition["models"].get("decision"):
+            raise PackageError("决策 Skill 需要配置实验决策模型：" + ", ".join(sorted(decision_skills)))
+        decision_roots = decision_skills & object_skill_keys(world)
+        if decision_roots:
+            raise PackageError("对象根 Skill 必须使用生成式模型，再调用决策子 Skill：" + ", ".join(sorted(decision_roots)))
         semantic = world.get("definition", {}).get("semantic_index")
         _validate_world_and_agents(world, {"agents": definition["agents"]}, semantic)
         agent_keys = {agent["agent_key"] for agent in definition["agents"]}

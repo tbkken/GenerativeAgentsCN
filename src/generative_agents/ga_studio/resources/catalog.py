@@ -95,12 +95,12 @@ class StudioResourceService:
         if kind == "crowd":
             columns.append(func.json_array_length(model.agent_ids_json).label("member_count"))
         if kind == "model":
-            for purpose in ("chat", "embedding"):
+            for purpose in ("chat", "embedding", "decision"):
                 columns.extend(model.config_json[purpose][name].as_string().label(f"{purpose}_{name}")
                                for name in ("model", "base_url", "credential_env"))
         predicates = [] if include_archived else [model.archived_at.is_(None)]
         if kind == "model" and selected_purpose:
-            if selected_purpose not in {"chat", "embedding"}:
+            if selected_purpose not in {"chat", "embedding", "decision"}:
                 raise StudioResourceError("模型用途无效")
             predicates.append(model.config_json[selected_purpose]["model"].as_string().is_not(None))
         if query.strip():
@@ -116,8 +116,8 @@ class StudioResourceService:
             if kind == "model":
                 item["purposes"] = [{"purpose": purpose,
                                      **{name: item[f"{purpose}_{name}"] for name in ("model", "base_url", "credential_env")}}
-                                    for purpose in ("chat", "embedding") if item[f"{purpose}_model"]]
-                for purpose in ("chat", "embedding"):
+                                    for purpose in ("chat", "embedding", "decision") if item[f"{purpose}_model"]]
+                for purpose in ("chat", "embedding", "decision"):
                     for name in ("model", "base_url", "credential_env"):
                         item.pop(f"{purpose}_{name}")
         return page_result(rows, total, page, page_size)

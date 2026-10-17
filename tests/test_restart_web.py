@@ -18,11 +18,11 @@ ROOT = Path(__file__).resolve().parents[1]
 def launcher(tmp_path: Path) -> Path:
     root = tmp_path / "launcher space (test)"
     root.mkdir()
-    # Never inspect or stop the real development service on port 8000.
+    # Never inspect or stop the real development service.
     script = (ROOT / "restart-web.bat").read_text(encoding="utf-8")
-    assert 'set "GA_RESTART_PORT=8000"' in script
+    assert 'set "GA_RESTART_PORT=8800"' in script
     (root / "restart-web.bat").write_text(
-        script.replace('set "GA_RESTART_PORT=8000"', 'set "GA_RESTART_PORT=0"'),
+        script.replace('set "GA_RESTART_PORT=8800"', 'set "GA_RESTART_PORT=0"'),
         encoding="utf-8",
     )
     subprocess.run(
@@ -36,6 +36,7 @@ def _run_launcher(root: Path, *, without_path_python: bool = False) -> subproces
     env = os.environ.copy()
     env.pop("PYTHONPATH", None)
     env.pop("PYTHONHOME", None)
+    env.pop("GA_PORT", None)
     env["PYTHONNOUSERSITE"] = "1"
     if without_path_python:
         system = Path(env["SYSTEMROOT"]) / "System32"

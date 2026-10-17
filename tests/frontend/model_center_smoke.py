@@ -81,7 +81,7 @@ def main():
                     assert page.locator('#modelServiceKey').input_value() == ''
                     assert '已配置' in page.locator('#modelServiceKey').get_attribute('placeholder')
                     page.request.post(base + '/api/studio/resources/skills', data={
-                        'name': 'browser-social', 'description': '交流项目进度', 'kind': 'atomic'})
+                        'name': 'browser-social', 'description': '交流项目进度', 'kind': 'skill'})
                     page.goto(base + '/?view=skills', wait_until='domcontentloaded')
                     page.wait_for_function('!!window.SkillWorkspace')
                     page.evaluate("async()=>{await SkillWorkspace.activate('skills');await SkillWorkspace.openSkill('browser-social')}")

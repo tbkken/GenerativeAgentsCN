@@ -1,6 +1,6 @@
 """通过 OpenAI 兼容聊天端点执行自然语言 Skill。
 
-Runtime 负责在模型调用、私有脚本、子 Skill 和 MCP 工具之间循环，直到得到最终文本；
+Runtime 负责在模型调用、私有脚本、子 Skill 和公共接口之间循环，直到得到最终文本；
 所有中间动作都会写入 trace，便于运行结果解释和故障排查。
 """
 
@@ -18,11 +18,19 @@ from uuid import uuid4
 
 from generative_agents.ga_protocol.skills.documents import SkillDocument
 from generative_agents.ga_protocol.skills.documents import SkillRegistry
+from generative_agents.ga_protocol.skills.decisions import validate_compiled_decision
+from generative_agents.ga_protocol.skills.metadata import SkillRegistryError
+from generative_agents.ga_protocol.skills.dependencies import referenced_interfaces
+from generative_agents.ga_protocol.skills.dependencies import validate_interface_references
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled, check_cancelled
+from generative_agents.ga_runtime.storage.execution import execution_span
 
-class SkillMCPServer(Protocol):
+class SkillInterfaces(Protocol):
     """Identity-bound capabilities supplied by the Runtime iteration."""
 
-    def handle(self, request: dict[str, Any]) -> dict[str, Any]: ...
+    def descriptors(self) -> list[dict[str, Any]]: ...
+
+    def invoke(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]: ...
 
 
 class SkillRuntimeError(RuntimeError):
@@ -67,7 +75,7 @@ class SkillRunResult:
 
 
 class SkillRuntime:
-    """Execute atomic Skills, packs, and brains with one string between calls."""
+    """Execute Skills and brains with one string between calls."""
 
     def __init__(
         self,
@@ -76,7 +84,7 @@ class SkillRuntime:
         base_url: str | None = None,
         model: str | None = None,
         api_key: str | None = None,
-        mcp: SkillMCPServer | None = None,
+        interfaces: SkillInterfaces | None = None,
         timeout: float = 300,
         max_hops: int = 8,
         temperature: float = 0.2,
@@ -86,6 +94,8 @@ class SkillRuntime:
         retry_attempts: int = 1,
         retry_backoff_seconds: float = 0,
         model_client=None,
+        decision_config: Mapping[str, Any] | None = None,
+        decision_client=None,
         recorder=None,
         control=None,
         logger=None,
@@ -101,7 +111,7 @@ class SkillRuntime:
             base_url: `base`的访问或连接地址。 类型：`str | None`。 默认值：`None`。
             model: 当前调用、筛选或序列化的模型配置或模型实例。 类型：`str | None`。 默认值：`None`。
             api_key: 调用模型服务使用的 API 密钥；为空时由密钥解析器按配置加载。 类型：`str | None`。 默认值：`None`。
-            mcp: 技能调用使用的 MCP 服务端或客户端适配器。 类型：`SkillMCPServer | None`。 默认值：`None`。
+            interfaces: 技能调用使用的身份绑定接口。 类型：`SkillInterfaces | None`。 默认值：`None`。
             timeout: 等待操作的最长秒数；超时后按调用协议返回或抛出异常。 类型：`float`。 默认值：`300`。
             max_hops: `hops`允许的最大值。 类型：`int`。 默认值：`8`。
 
@@ -118,7 +128,7 @@ class SkillRuntime:
         self.api_key = (
             api_key if api_key is not None else os.getenv("GA_SKILL_LLM_API_KEY", "")
         )
-        self.mcp = mcp
+        self.interfaces = interfaces
         self.timeout = timeout
         self.max_hops = max_hops
         self.temperature = float(temperature)
@@ -128,7 +138,10 @@ class SkillRuntime:
         self.retry_attempts = max(1, int(retry_attempts))
         self.retry_backoff_seconds = max(0, float(retry_backoff_seconds))
         self._model_client = model_client
+        self.decision_config = dict(decision_config or {})
+        self._decision_client = decision_client
         self._recorder = recorder
+        self._execution = getattr(recorder, "execution", None)
         self._control = control
         self._logger = logger
         self._sleep = sleep
@@ -156,7 +169,7 @@ class SkillRuntime:
             context: 本次调用共享的运行上下文，包含路径、模型、技能和控制能力等依赖。 类型：`Mapping[str, Any] | None`。 默认值：`None`。
 
         返回:
-            包含规范化 Skill 名称、输出文本和每次脚本/子 Skill/MCP 调用的结果。
+            包含规范化 Skill 名称、输出文本和每次脚本/子 Skill/接口调用的结果。
         """
         trace: list[dict[str, Any]] = []
         self._total_tool_calls = 0
@@ -189,6 +202,23 @@ class SkillRuntime:
         trace: list[dict[str, Any]],
         *,
         depth: int,
+        tool_call_id: str | None = None,
+    ) -> str:
+        with execution_span(
+            self._execution, kind="skill", name=document.display_name or document.name,
+            skill_key=document.name, step_no=self.step_no, agent_key=self.agent_key,
+            tool_call_id=tool_call_id,
+        ):
+            return self._execute(document, input_text, context, trace, depth=depth)
+
+    def _execute(
+        self,
+        document: SkillDocument,
+        input_text: str,
+        context: dict[str, Any],
+        trace: list[dict[str, Any]],
+        *,
+        depth: int,
     ) -> str:
         """递归执行一个已解析 Skill，直到得到最终自然语言文本。
 
@@ -205,11 +235,19 @@ class SkillRuntime:
         异常:
             SkillRuntimeError: 当底层操作报告该异常条件时抛出。
         """
+        check_cancelled(self._control)
         if depth > self.max_hops:
             raise SkillRuntimeError("Skill call depth exceeded the configured limit")
+        validate_interface_references(document.body)
         script_path = document.path.parent / "scripts" / "main.py"
+        if document.llm_type == "decision":
+            if (document.kind == "brain" or document.children or referenced_interfaces(document.body)
+                    or document.scripts or script_path.is_file()
+                    or (depth == 0 and getattr(self.interfaces, "default_interfaces", False))):
+                raise SkillRuntimeError("Decision Skills must be leaves without Brain/object roles, interfaces, child Skills, or main.py")
+            return self._execute_decision(document, input_text, context, trace)
         # 对象根 Skill 始终由模型执行；可选脚本仍可用于它组合的子 Skill。
-        if script_path.is_file() and not (depth == 0 and getattr(self.mcp, "default_tools", False)):
+        if script_path.is_file() and not (depth == 0 and getattr(self.interfaces, "default_interfaces", False)):
             trace.append(
                 {
                     "event": "skill.start",
@@ -217,7 +255,9 @@ class SkillRuntime:
                     "input_text": input_text,
                 }
             )
-            output = self._run_script(script_path, input_text, context)
+            with execution_span(self._execution, kind="script", name="main.py"):
+                output = self._run_script(script_path, input_text, context)
+            check_cancelled(self._control)
             trace.append(
                 {
                     "event": "script.result",
@@ -228,27 +268,28 @@ class SkillRuntime:
             return output
         user_prompt = self._input_message(input_text, context)
         children = [self.registry.get(name) for name in document.children]
-        mcp_tools = (
+        declared_interfaces = set(referenced_interfaces(document.body))
+        interface_descriptors = (
             [
                 tool
-                for tool in self.mcp.tools()
-                if (getattr(self.mcp, "default_tools", False)
-                    or str(tool.get("name") or "") in document.markdown)
+                for tool in self.interfaces.descriptors()
+                if (getattr(self.interfaces, "default_interfaces", False)
+                    or str(tool.get("name") or "") in declared_interfaces)
                 # Only the root Brain or object Skill owns the iteration action.
                 # Child Skills return advice without committing world changes.
                 and not (
                     str(tool.get("name") or "") == "world-act" and depth != 0
                 )
             ]
-            if self.mcp
+            if self.interfaces
             else []
         )
         script_handlers = (
-            {} if depth == 0 and getattr(self.mcp, "default_tools", False)
+            {} if depth == 0 and getattr(self.interfaces, "default_interfaces", False)
             else self._script_handlers(document)
         )
         # 没有任何可调用依赖的叶子 Skill，只需要一次普通聊天完成。
-        if not children and not mcp_tools and not script_handlers:
+        if not children and not interface_descriptors and not script_handlers:
             system_prompt = document.markdown
             trace.append(
                 {
@@ -273,8 +314,12 @@ class SkillRuntime:
 
         system_prompt = (
             document.markdown
-            + "\n\nYou may call one listed child Skill or MCP service at a time. "
-            "Pass child Skills all useful context as plain natural language. Treat every tool result "
+            + "\n\nYou may call one listed child Skill or runtime interface at a time. "
+            "Pass child Skills all useful context as plain natural language with input_text, or "
+            "set input_from to the tool_call_id of one of your own previously completed child "
+            "Skill calls to pass its exact result without rewriting it. Supply exactly one of "
+            "input_text and input_from; result references are local to this caller execution, "
+            "not Skill names. Every tool call must have a unique non-empty tool_call_id. Treat every tool result "
             "as natural-language context. When the task is complete, answer directly without a tool call."
         )
         trace.append(
@@ -307,8 +352,17 @@ class SkillRuntime:
                                     "type": "string",
                                     "description": "Complete natural-language context for the child Skill.",
                                 },
+                                "input_from": {
+                                    "type": "string",
+                                    "minLength": 1,
+                                    "description": "The tool_call_id of your own previously completed child Skill call; pass its exact result text.",
+                                },
                             },
-                            "required": ["name", "input_text"],
+                            "required": ["name"],
+                            "oneOf": [
+                                {"required": ["input_text"]},
+                                {"required": ["input_from"]},
+                            ],
                             "additionalProperties": False,
                         },
                     },
@@ -320,10 +374,10 @@ class SkillRuntime:
                 "function": {
                     "name": tool["name"],
                     "description": tool["description"],
-                    "parameters": tool["inputSchema"],
+                    "parameters": tool["parameters"],
                 },
             }
-            for tool in mcp_tools
+            for tool in interface_descriptors
         )
         if script_handlers:
             tools.append(
@@ -353,14 +407,17 @@ class SkillRuntime:
                     },
                 }
             )
+        # Results belong to this caller invocation, never to the shared trace or runtime.
+        completed_child_results: dict[str, str] = {}
+        seen_tool_call_ids: set[str] = set()
         # 组合 Skill 采用受限工具循环；每轮模型只能调用当前文档显式允许的能力。
         for _ in range(self.max_hops):
             self._active_skill_name = document.name
             response = self._complete(messages, tools=tools)
             tool_calls = response.get("tool_calls") or []
             if not tool_calls:
-                output = str(response.get("content") or "").strip()
-                if not output:
+                output = str(response.get("content") or "")
+                if not output.strip():
                     raise SkillRuntimeError(f"Skill {document.name} returned no text")
                 trace.append(
                     {
@@ -370,6 +427,7 @@ class SkillRuntime:
                     }
                 )
                 return output
+            self._validate_tool_call_ids(document.name, tool_calls, seen_tool_call_ids, trace)
             assistant_message = {
                 "role": "assistant",
                 "content": response.get("content") or "",
@@ -377,6 +435,7 @@ class SkillRuntime:
             }
             messages.append(assistant_message)
             for call in tool_calls:
+                check_cancelled(self._control)
                 function = call.get("function") or {}
                 try:
                     arguments = json.loads(function.get("arguments") or "{}")
@@ -387,8 +446,15 @@ class SkillRuntime:
                         "Model returned invalid tool arguments"
                     ) from exc
                 tool_name = str(function.get("name") or "")
+                fingerprint_arguments = arguments
+                if tool_name == "call_skill":
+                    try:
+                        child_input = self._child_input(arguments, completed_child_results)
+                    except SkillModelError as exc:
+                        self._reject_tool_call(document.name, call, str(exc), trace)
+                    fingerprint_arguments = {"name": arguments.get("name"), "input_text": child_input}
                 request_fingerprint = self._tool_request_fingerprint(
-                    document.name, tool_name, arguments
+                    document.name, tool_name, fingerprint_arguments
                 )
                 previous = self._tool_progress.get(request_fingerprint)
                 if previous is not None and previous[1] >= self.max_identical_tool_calls:
@@ -405,7 +471,7 @@ class SkillRuntime:
                         f"Skill {document.name} repeated {tool_name} without progress"
                     )
                 semantic_fingerprint = self._semantic_tool_fingerprint(
-                    document.name, tool_name, arguments
+                    document.name, tool_name, fingerprint_arguments
                 )
                 semantic_previous = self._semantic_tool_progress.get(
                     semantic_fingerprint
@@ -451,18 +517,21 @@ class SkillRuntime:
                         raise SkillRuntimeError(
                             f"Skill {document.name} attempted unavailable child {child_name}"
                         )
-                    child_input = str(arguments.get("input_text") or input_text)
                     trace.append(
                         {
                             "event": "skill.call",
                             "skill": document.name,
                             "child": child.name,
+                            "tool_call_id": call["id"],
                             "input_text": child_input,
+                            **({"input_from": arguments["input_from"]} if "input_from" in arguments else {}),
                         }
                     )
                     tool_output = self._run(
-                        child, child_input, context, trace, depth=depth + 1
+                        child, child_input, context, trace, depth=depth + 1,
+                        tool_call_id=call["id"],
                     )
+                    completed_child_results[call["id"]] = tool_output
                 elif tool_name == "run_skill_script":
                     # 私有函数来自当前 Skill 目录，不能按模型给出的任意路径加载代码。
                     handler_name = str(arguments.get("function") or "")
@@ -472,11 +541,13 @@ class SkillRuntime:
                             f"Skill {document.name} attempted unavailable script function {handler_name}"
                         )
                     script_input = str(arguments.get("input_text") or input_text)
-                    tool_output = handler(script_input, context)
-                    if not isinstance(tool_output, str):
-                        raise SkillRuntimeError(
-                            f"Skill script {handler_name} returned {type(tool_output).__name__}; expected str"
-                        )
+                    with execution_span(self._execution, kind="script", name=handler_name,
+                                        tool_call_id=call.get("id")):
+                        tool_output = handler(script_input, context)
+                        if not isinstance(tool_output, str):
+                            raise SkillRuntimeError(
+                                f"Skill script {handler_name} returned {type(tool_output).__name__}; expected str"
+                            )
                     trace.append(
                         {
                             "event": "script.call",
@@ -486,15 +557,15 @@ class SkillRuntime:
                             "output_text": tool_output,
                         }
                     )
-                elif self.mcp and any(tool["name"] == tool_name for tool in mcp_tools):
-                    # MCP 工具也必须出现在当前 Skill 声明的允许列表中。
-                    result = self.mcp.call(tool_name, arguments)
-                    raw_output = "\n".join(
-                        str(item.get("text") or "")
-                        for item in result.get("content", [])
-                        if item.get("type") == "text"
-                    ).strip()
-                    is_error = bool(result.get("isError"))
+                elif self.interfaces and any(tool["name"] == tool_name for tool in interface_descriptors):
+                    # 公共接口也必须出现在当前 Skill 声明的允许列表中。
+                    with execution_span(self._execution, kind="interface", name=tool_name,
+                                        tool_call_id=call.get("id")) as invocation:
+                        result = self.interfaces.invoke(tool_name, arguments)
+                        if result.get("ok") is not True:
+                            invocation.status = "FAILED"
+                            invocation.error_code = "InterfaceRejected"
+                    is_error = result.get("ok") is not True
                     tool_result_is_error = is_error
                     state_changed = tool_name in {
                         "world-act",
@@ -502,18 +573,16 @@ class SkillRuntime:
                         "memory-stream-supersede",
                         "memory-stream-invalidate",
                     } and not is_error
-                    tool_output = (
-                        json.dumps(
-                            {"isError": True, "error": raw_output},
-                            ensure_ascii=False,
-                            separators=(",", ":"),
-                        )
-                        if is_error
-                        else raw_output
+                    tool_output = json.dumps(
+                        {"ok": False, "error": str(result.get("error") or "Interface call failed")}
+                        if is_error else result.get("result"),
+                        ensure_ascii=False,
+                        separators=(",", ":"),
+                        default=str,
                     )
                     trace.append(
                         {
-                            "event": "mcp.call",
+                            "event": "interface.call",
                             "skill": document.name,
                             "tool": tool_name,
                             "input_text": json.dumps(arguments, ensure_ascii=False),
@@ -560,14 +629,14 @@ class SkillRuntime:
                 messages.append(
                     {
                         "role": "tool",
-                        "tool_call_id": call.get("id") or f"call-{uuid4().hex}",
+                        "tool_call_id": call["id"],
                         "name": tool_name,
                         "content": tool_output,
                     }
                 )
                 if (
                     tool_name == "world-act"
-                    and self.mcp is not None
+                    and self.interfaces is not None
                     and not tool_result_is_error
                 ):
                     # world-act is the terminal mutation choice for an Agent
@@ -587,6 +656,43 @@ class SkillRuntime:
             f"Skill {document.name} did not finish within {self.max_hops} calls"
         )
 
+    def _execute_decision(self, document, input_text, context, trace):
+        """Return typed decisions as the child's result without any chat call."""
+        try:
+            validate_compiled_decision(document)
+        except SkillRegistryError as exc:
+            raise SkillRuntimeError(str(exc)) from exc
+        if self._decision_client is None and not self.decision_config:
+            raise SkillRuntimeError(f"Decision model is not configured for Skill {document.name}")
+        state = {**context, "input_text": input_text} if context else input_text
+        trace.append({"event": "skill.start", "skill": document.name, "llm_type": "decision",
+                      "input_text": input_text, "decision_request": {
+                          "model": self.decision_config.get("model"), "state": state,
+                          "questions": document.decision_questions,
+                      }})
+        check_cancelled(self._control)
+        try:
+            if self._decision_client is None:
+                from generative_agents.ga_runtime.models.decision import create_decision_model
+                self._decision_client = create_decision_model(
+                    self.decision_config, recorder=self._recorder, control=self._control,
+                    logger=self._logger, sleep=self._sleep,
+                )
+            answers = self._decision_client.decision_completion(
+                state, document.decision_questions, agent_key=self.agent_key,
+                step_no=self.step_no, prompt_key=document.name,
+                retry=int(self.decision_config.get("retry_attempts") or 1),
+            )
+        except ModelCallCancelled:
+            raise
+        except Exception as exc:
+            raise SkillModelError(f"Decision model call failed after retries: {exc}") from exc
+        check_cancelled(self._control)
+        output = json.dumps(answers, ensure_ascii=False, sort_keys=True, separators=(",", ":"), allow_nan=False)
+        trace.append({"event": "skill.result", "skill": document.name, "llm_type": "decision",
+                      "output_text": output})
+        return output
+
     def _complete(
         self,
         messages: list[dict[str, Any]],
@@ -605,8 +711,9 @@ class SkillRuntime:
         异常:
             SkillRuntimeError: 当底层操作报告该异常条件时抛出。
         """
+        check_cancelled(self._control)
         try:
-            return dict(
+            response = dict(
                 self._model().chat_completion(
                     messages,
                     tools=tools,
@@ -619,8 +726,12 @@ class SkillRuntime:
                     retry=self.retry_attempts,
                 )
             )
+        except ModelCallCancelled:
+            raise
         except Exception as exc:
             raise SkillModelError(f"Skill model call failed after retries: {exc}") from exc
+        check_cancelled(self._control)
+        return response
 
     def _model(self):
         """Lazily create the shared traced model adapter for direct runtimes."""
@@ -650,6 +761,63 @@ class SkillRuntime:
         return self._model_client
 
     @staticmethod
+    def _reject_tool_call(skill: str, call: Mapping[str, Any], error: str, trace: list[dict[str, Any]]) -> None:
+        function = call.get("function") or {}
+        tool_name = function.get("name")
+        event = {
+            "event": "skill.call.rejected" if tool_name == "call_skill" else "tool.call.rejected",
+            "skill": skill, "tool": tool_name, "tool_call_id": call.get("id"), "error": error,
+        }
+        try:
+            arguments = json.loads(function.get("arguments") or "{}")
+        except (TypeError, ValueError):
+            arguments = None
+        if isinstance(arguments, dict):
+            event["arguments"] = arguments
+            if tool_name == "call_skill":
+                event["child"] = arguments.get("name")
+                if "input_from" in arguments:
+                    event["input_from"] = arguments["input_from"]
+        trace.append(event)
+        raise SkillModelError(error)
+
+    @classmethod
+    def _validate_tool_call_ids(cls, skill, calls, seen_ids, trace) -> None:
+        """Reject an ambiguous message before any of its tools can run."""
+        current_ids: set[str] = set()
+        for call in calls:
+            call_id = call.get("id")
+            if not isinstance(call_id, str) or not call_id.strip():
+                cls._reject_tool_call(skill, call, "Tool call requires a non-empty string tool_call_id", trace)
+            if call_id in seen_ids or call_id in current_ids:
+                cls._reject_tool_call(skill, call, f"Model returned duplicate tool_call_id: {call_id}", trace)
+            current_ids.add(call_id)
+        seen_ids.update(current_ids)
+
+    @staticmethod
+    def _child_input(arguments: Mapping[str, Any], completed_results: Mapping[str, str]) -> str:
+        """Resolve task text without interpreting or rewriting its contents."""
+        if set(arguments) - {"name", "input_text", "input_from"}:
+            raise SkillModelError("call_skill accepts only name and one of input_text or input_from")
+        if not isinstance(arguments.get("name"), str) or not arguments["name"]:
+            raise SkillModelError("call_skill name must be a non-empty string")
+        if ("input_text" in arguments) == ("input_from" in arguments):
+            raise SkillModelError("call_skill requires exactly one of input_text or input_from")
+        if "input_text" in arguments:
+            text = arguments["input_text"]
+            if not isinstance(text, str):
+                raise SkillModelError("call_skill input_text must be a string")
+            return text
+        source_id = arguments["input_from"]
+        if not isinstance(source_id, str) or not source_id.strip():
+            raise SkillModelError("call_skill input_from must be a non-empty tool_call_id string")
+        if source_id not in completed_results:
+            raise SkillModelError(
+                f"call_skill input_from does not identify this caller's completed child result: {source_id}"
+            )
+        return completed_results[source_id]
+
+    @staticmethod
     def _tool_request_fingerprint(
         skill_name: str, tool_name: str, arguments: Mapping[str, Any]
     ) -> str:
@@ -670,7 +838,13 @@ class SkillRuntime:
     def _semantic_tool_fingerprint(
         skill_name: str, tool_name: str, arguments: Mapping[str, Any]
     ) -> str:
-        """Identify the capability being repeated independently of paraphrased input."""
+        """Keep distinct reads separate, while detecting paraphrased delegation loops."""
+
+        if tool_name in {"world-perceive", "world-navigate", "memory-stream-search"}:
+            # Equal read results (including no matches) do not establish that
+            # different queries, limits, radii or destinations are redundant.
+            # Identical requests and the shared call budget still bound loops.
+            return SkillRuntime._tool_request_fingerprint(skill_name, tool_name, arguments)
 
         target = ""
         if tool_name == "call_skill":

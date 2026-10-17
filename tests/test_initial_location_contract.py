@@ -53,7 +53,7 @@ def definition_with_floor():
 def build_package(tmp_path, definition=None):
     skill = tmp_path / "author" / "SKILL.md"
     skill.parent.mkdir(parents=True, exist_ok=True)
-    skill.write_text("---\nname: test-brain\ndescription: test\n---\nUse world-act.\n", encoding="utf-8")
+    skill.write_text("---\nname: test-brain\ndescription: test\n---\nUse @world-act.\n", encoding="utf-8")
     root = tmp_path / "var" / "packages" / "experiments" / "spawn-test"
     ExperimentPackageBuilder().build_directory(
         root, definition=definition or definition_with_floor(),

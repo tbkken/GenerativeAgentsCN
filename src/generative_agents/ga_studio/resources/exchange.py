@@ -26,14 +26,14 @@ from generative_agents.ga_protocol.packages.resources import (
     ResourceRecord, ResourceRef, ResourceSet, read_resource_set,
     resource_content_hash, write_config_package, skill_document, validate_resource_set,
 )
-from generative_agents.ga_protocol.schemas.experiment import WorldConfig, ChatModelConfig, EmbeddingModelConfig
+from generative_agents.ga_protocol.schemas.experiment import WorldConfig, ChatModelConfig, DecisionModelConfig, EmbeddingModelConfig
 from generative_agents.ga_protocol.schemas.resources import AgentCore
 from generative_agents.ga_protocol.schemas.spatial_assets import SpatialAssetContract
 from generative_agents.ga_studio.resources.assets import AssetService
 from generative_agents.ga_studio.resources.catalog import StudioAgentDefinition
 from generative_agents.ga_studio.resources.errors import ServiceError
 from generative_agents.ga_studio.resources.maps import normalize_public_world, world_hash
-from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
+from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry, display_name_from_markdown, skill_header_column
 from generative_agents.ga_studio.storage.models import (
     Asset, SpatialAssetDefinition, StudioAgent, StudioCrowd, StudioEvaluator,
     StudioModelPreset, StudioSkill, StudioResourceExchangeState, WorldMap,
@@ -191,9 +191,9 @@ def _clean_models(value, purpose=None):
                 if url.port is not None:
                     host += f":{url.port}"
                 child = urlunsplit((url.scheme, host, url.path, "", ""))
-            result[key] = _clean_models(child, key if key in {"chat", "embedding"} else purpose)
-        if purpose in {"chat", "embedding"} and value.get("secret_ref") and not result.get("credential_env"):
-            result["credential_env"] = "GA_EMBEDDING_API_KEY" if purpose == "embedding" else "GA_CHAT_API_KEY"
+            result[key] = _clean_models(child, key if key in {"chat", "embedding", "decision"} else purpose)
+        if purpose in {"chat", "embedding", "decision"} and value.get("secret_ref") and not result.get("credential_env"):
+            result["credential_env"] = f"GA_{purpose.upper()}_API_KEY"
         return result
     if isinstance(value, list):
         return [_clean_models(item, purpose) for item in value]
@@ -202,8 +202,10 @@ def _clean_models(value, purpose=None):
 
 def _model_definition(value):
     cleaned = _clean_models(copy.deepcopy(value))
-    return {purpose: TypeAdapter(ChatModelConfig if purpose == "chat" else EmbeddingModelConfig)
-            .validate_python(config).model_dump(mode="json") for purpose, config in cleaned.items()}
+    return {purpose: TypeAdapter({"chat": ChatModelConfig, "embedding": EmbeddingModelConfig,
+                                 "decision": DecisionModelConfig}[purpose])
+            .validate_python(config).model_dump(mode="json") for purpose, config in cleaned.items()
+            if purpose != "decision" or config is not None}
 
 
 class ResourceExchangeService:
@@ -229,11 +231,15 @@ class ResourceExchangeService:
         columns = [model.id, key.label("key"), name.label("name"), model.description]
         if current == "skill":
             columns.append(model.kind.label("skill_kind"))
+            columns.append(skill_header_column().label("frontmatter"))
         filters = [model.archived_at.is_(None)] if hasattr(model, "archived_at") else []
         if current == "skill":
             filters.append(model.kind == "brain" if kind == "brain" else model.kind != "brain")
         if query.strip():
-            filters.append(search_predicate(query, key, name, model.description))
+            search_columns = [key, name, model.description]
+            if current == "skill":
+                search_columns.append(skill_header_column())
+            filters.append(search_predicate(query, *search_columns))
         with self.database.session_factory() as session:
             rows, total = query_page(session, model, columns, predicates=filters, order=(key,), page=page, page_size=page_size)
             dependencies = dict(session.execute(select(StudioResourceExchangeState.resource_id,
@@ -241,6 +247,9 @@ class ResourceExchangeService:
                     StudioResourceExchangeState.resource_kind == current,
                     StudioResourceExchangeState.resource_id.in_([row["id"] for row in rows]))).all())
         for row in rows:
+            if current == "skill":
+                row["name"] = display_name_from_markdown(row.pop("frontmatter"), row["key"])
+                row["display_name"] = row["name"]
             row["kind"] = current
             row.setdefault("skill_kind", None)
             row["pending_dependencies"] = [{key: value for key, value in item.items() if key != "resource_id"}
@@ -298,7 +307,9 @@ class ResourceExchangeService:
         kind = self._kind(kind)
         _, key_field = _MODELS[kind]
         key = getattr(row, key_field)
-        name = key if kind == "skill" else row.name
+        name = (display_name_from_markdown(
+            session.scalar(select(skill_header_column()).where(StudioSkill.id == row.id)) if metadata_only else row.markdown, key)
+            if kind == "skill" else row.name)
         attachments = set()
         dependencies = []
         if kind == "agent":

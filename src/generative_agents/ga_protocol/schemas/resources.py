@@ -75,7 +75,7 @@ class ExperimentAssembly(ProtocolModel):
     brain: ResourceRef
     placements: list[ExperimentPlacement] = Field(default_factory=list)
     crowds: list[ResourceRef] = Field(default_factory=list)
-    models: dict[Literal["chat", "embedding"], ResourceRef]
+    models: dict[Literal["chat", "embedding", "decision"], ResourceRef]
     simulation: dict[str, Any]
     engine: dict[str, Any] = Field(default_factory=lambda: {"algorithm_version": "ga-cn-v1"})
     results: dict[str, Any] = Field(default_factory=dict)

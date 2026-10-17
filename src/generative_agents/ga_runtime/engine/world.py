@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from generative_agents.ga_runtime.storage.execution import execution_span
+
 import copy
 import json
 from pathlib import Path
@@ -335,7 +337,7 @@ class Game:
         stride_minutes: int,
         movement_budget: int,
     ) -> dict:
-        """Commit the one MCP-selected action and emit replay-complete facts."""
+        """Commit the one interface-selected action and emit replay-complete facts."""
 
         agent = self.get_agent(agent_key)
         action = dict(outcome.get("world_action") or {})
@@ -588,15 +590,21 @@ class Game:
         runtime = getattr(self.context, "object_skill_runtime", None)
         if bindings and runtime is None:
             raise ValueError("bound Game Objects require ObjectSkillRuntime")
-        for binding in bindings:
-            outcome = runtime.run_step(
-                self, binding, step_no=step_no, total_steps=total_steps,
-                stride_minutes=stride_minutes, observed_facts=observed_facts,
-            )
-            yield from self.commit_game_object_action(outcome)
+        for actor_index, binding in enumerate(bindings, 1):
+            with execution_span(
+                getattr(self.context, "execution_trace", None), kind="actor",
+                name=binding.object_name, agent_key=f"game-object:{binding.object_key}",
+                actor_name=binding.object_name, actor_kind="object", step_no=step_no,
+                actor_index=actor_index, actor_total=len(bindings),
+            ):
+                outcome = runtime.run_step(
+                    self, binding, step_no=step_no, total_steps=total_steps,
+                    stride_minutes=stride_minutes, observed_facts=observed_facts,
+                )
+                yield from self.commit_game_object_action(outcome)
 
     def commit_game_object_action(self, outcome: Mapping) -> list[dict]:
-        """Commit an object's MCP-selected action, replies and recovery progress."""
+        """Commit an object's interface-selected action, replies and recovery progress."""
         iteration = outcome["iteration"]
         object_key = iteration.object_key
         system = self.game_object_interactions

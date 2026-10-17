@@ -15,7 +15,7 @@ def create_model_service_router(database, root):
 
     @router.get('')
     def list_models(q: str=Query(default='', max_length=200), page: int=Query(default=1, ge=1),
-                    page_size: int=Query(default=20, ge=1, le=100), purpose: Literal['chat', 'embedding'] | None=None):
+                    page_size: int=Query(default=20, ge=1, le=100), purpose: Literal['chat', 'embedding', 'decision'] | None=None):
         return call(lambda: service.list_models(query=q, page=page, page_size=page_size, purpose=purpose))
 
     @router.get('/{model_id}')

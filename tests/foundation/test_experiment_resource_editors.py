@@ -59,7 +59,7 @@ def test_brain_save_updates_package_hash_and_never_changes_source(editing):
     validate_experiment_directory(root)
 
 
-@pytest.mark.parametrize("change", ["\nCall $missing-child", "\nCall $test-brain"])
+@pytest.mark.parametrize("change", ["\nCall $missing-child", "\nCall $test-brain", "\nCall @unknown-interface"])
 def test_skill_invalid_dependency_or_self_cycle_is_atomic(editing, change):
     client, prefix, root, identity = editing
     detail = client.get(f"{prefix}/skills/test-brain").json()
@@ -89,14 +89,55 @@ def test_new_skill_dependency_and_referenced_deletion(editing):
     client, prefix, root, identity = editing
     detail = client.get(f"{prefix}/skills/test-brain").json()
     created = client.post(f"{prefix}/skills", json={"expected_content_sha256": detail["row_version"],
-                                                 "name": "local-child", "description": "实验专用", "kind": "atomic"})
+                                                 "name": "local-child", "display_name": "实验本地技能", "description": "实验专用", "kind": "skill"})
     assert created.status_code == 200, created.text
+    assert created.json()["display_name"] == "实验本地技能"
+    listing = client.get(f"{prefix}/skills", params={"q": "实验本地技能"}).json()
+    assert listing["total"] == 1 and listing["items"][0]["name"] == "local-child"
     saved = client.put(f"{prefix}/skills/test-brain", json={"row_version": created.json()["row_version"],
                                                         "markdown": detail["markdown"] + "\nCall $local-child", "scripts": {}})
     assert saved.status_code == 200, saved.text
     blocked = client.request("DELETE", f"{prefix}/skills/local-child", json={"expected_content_sha256": saved.json()["row_version"]})
     assert blocked.status_code == 422
     assert client.get(f"{prefix}/skills/local-child").status_code == 200
+
+
+def test_experiment_skill_display_name_updates_its_copied_resource_only(editing):
+    client, prefix, root, identity = editing
+    source = root.parent / "author-skill/test-brain/SKILL.md"
+    before = source.read_bytes()
+    detail = client.get(f"{prefix}/skills/test-brain").json()
+    markdown = detail["markdown"].replace("name: test-brain", 'name: test-brain\ndisplay_name: "实验内大脑"')
+    saved = client.put(f"{prefix}/skills/test-brain", json={"row_version": detail["row_version"],
+                                                       "markdown": markdown, "scripts": {}})
+    assert saved.status_code == 200, saved.text
+    assert saved.json()["display_name"] == "实验内大脑"
+    assert client.get(f"{prefix}/skills/test-brain").json()["name"] == "test-brain"
+    listing = client.get(f"{prefix}/skills", params={"q": "实验内大脑"}).json()
+    assert listing["total"] == 1 and listing["items"][0]["display_name"] == "实验内大脑"
+    assert source.read_bytes() == before
+    validate_experiment_directory(root)
+
+
+def test_experiment_lineage_uses_only_its_copied_skill_graph(editing):
+    client, prefix, root, identity = editing
+    brain = client.get(f"{prefix}/skills/test-brain").json()
+    created = client.post(f"{prefix}/skills", json={"expected_content_sha256": brain["row_version"],
+        "name": "local-child", "description": "只读上下文", "kind": "skill"}).json()
+    child = client.get(f"{prefix}/skills/local-child").json()
+    saved = client.put(f"{prefix}/skills/local-child", json={"row_version": child["row_version"],
+        "markdown": child["markdown"] + "\n调用 @world-perceive。", "scripts": {"scripts/local.py": "print('local')"}})
+    assert saved.status_code == 200, saved.text
+    saved = client.put(f"{prefix}/skills/test-brain", json={"row_version": saved.json()["row_version"],
+        "markdown": brain["markdown"] + "\n使用 $local-child，再调用 @world-act。", "scripts": {}})
+    assert saved.status_code == 200, saved.text
+    lineage = client.get(f"{prefix}/skills/test-brain/dependencies").json()
+    assert lineage["interfaces"] == ["world-act"]
+    assert lineage["skills"][0]["interfaces"] == ["world-perceive"]
+    assert lineage["skills"][0]["scripts"] == ["scripts/local.py"]
+    assert lineage["skills"][0]["skills"] == []
+    assert lineage["diagnostics"] == []
+    assert "mcp" not in lineage
 
 
 def test_upload_is_package_local_and_sealed_edits_are_rejected(database, editing):
@@ -116,13 +157,13 @@ def test_upload_is_package_local_and_sealed_edits_are_rejected(database, editing
     assert rejected.status_code == 409
 
 
-def test_skill_pack_kind_and_trial_use_only_copied_models(editing, monkeypatch):
+def test_skill_kind_and_trial_use_only_copied_models(editing, monkeypatch):
     client, prefix, root, identity = editing
     digest = read_json(root / "integrity/sha256.json")["root_sha256"]
     created = client.post(f"{prefix}/skills", json={"expected_content_sha256": digest,
-                                                 "name": "local-pack", "description": "组合技能", "kind": "pack"})
+                                                 "name": "local-compose", "description": "组合技能", "kind": "skill"})
     assert created.status_code == 200, created.text
-    assert client.get(f"{prefix}/skills?kind=pack").json()["items"][0]["name"] == "local-pack"
+    assert client.get(f"{prefix}/skills?kind=skill").json()["items"][0]["name"] == "local-compose"
     calls = []
     def copied_trial(directory, *, credentials=None):
         document = read_json(Path(directory) / "trial.json")
@@ -130,9 +171,10 @@ def test_skill_pack_kind_and_trial_use_only_copied_models(editing, monkeypatch):
         copied = SkillRegistry(Path(directory) / "skills")
         calls.append(({item.name for item in copied.list()}, document["skill_key"], document))
         assert "api_key" not in document["config"]
+        assert 'context' not in document
         return {"output": "copied model", "model": document["model"]}
     monkeypatch.setattr("generative_agents.adapters.web.routes.experiment_resources.execute_skill_trial", copied_trial)
-    result = client.post(f"{prefix}/skills/test-brain/run", json={"input_text": "test", "context": {}, "model_preset_id": "deleted-public-model"})
+    result = client.post(f"{prefix}/skills/test-brain/run", json={"input_text": "test"})
     assert result.status_code == 200, result.text
     assert result.json()["model"] == "local-test"
     assert set(calls[0][0]) == {"test-brain"}

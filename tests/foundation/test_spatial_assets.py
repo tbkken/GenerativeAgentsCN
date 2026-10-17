@@ -27,6 +27,10 @@ def test_builtin_spatial_assets_are_directly_editable_resources(database_url):
             item for item in builtins if item["asset_key"] == "object-traffic-light"
         )
         detail = client.get(f"/api/studio/resources/spatial-assets/{traffic_light['id']}").json()
+        assert detail["contract"]["skill_bindings"] == []
+        assert detail["contract"]["initial_state"] == {
+            "state": "VEHICLE_GREEN", "phase": "VEHICLE_GREEN",
+        }
         changed = deepcopy(detail["contract"])
         changed["summary"] = "可以直接修改的信号灯"
         updated = client.put(

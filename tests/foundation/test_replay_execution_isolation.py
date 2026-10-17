@@ -105,7 +105,7 @@ def test_web_replay_and_run_catalog_use_recorded_facts(recorded_run, tmp_path):
         assert response.status_code == 200, response.text
         assert response.content.startswith(b"<svg")
         prefix = f"/api/studio/experiments/{experiment_id}/resources"
-        response = client.get(f"{prefix}/skills?kind=atomic")
+        response = client.get(f"{prefix}/skills?kind=skill")
         assert response.status_code == 200, response.text
         assert response.json()["items"] == []
         response = client.get(f"{prefix}/skills/test-brain")

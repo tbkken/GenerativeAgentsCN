@@ -74,7 +74,7 @@ class StudioSkill(Base):
     )
 
     __table_args__ = (
-        CheckConstraint("kind IN ('atomic','pack','brain')", name="ck_studio_skills_kind"),
+        CheckConstraint("kind IN ('skill','brain')", name="ck_studio_skills_kind"),
         CheckConstraint("row_version >= 1", name="ck_studio_skills_row_version"),
         Index("ix_studio_skills_kind_updated", "kind", "updated_at"),
         Index("ix_studio_skills_archived", "archived_at", "updated_at"),

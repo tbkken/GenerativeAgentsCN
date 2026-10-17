@@ -27,6 +27,7 @@ class LoadedExperiment:
     chat_api_key: str
     embedding_api_key: str
     root_sha256: str
+    decision_api_key: str = ""
 
 
 def _runtime_model_config(document: dict, purpose: str) -> tuple[dict, str]:
@@ -78,7 +79,12 @@ def load_experiment_directory(root: str | Path) -> LoadedExperiment:
     raw["experiment"].pop("experiment_id", None)
     chat, chat_key = _runtime_model_config(raw["models"], "chat")
     embedding, embedding_key = _runtime_model_config(raw["models"], "embedding")
+    decision, decision_key = (_runtime_model_config(raw["models"], "decision")
+                              if raw["models"].get("decision") is not None else (None, ""))
     raw["models"] = {"chat": chat, "embedding": embedding}
+    if decision is not None:
+        raw["models"]["decision"] = decision
     return LoadedExperiment(root=root, manifest=manifest, definition=ExperimentDefinition.model_validate(raw),
         skill_registry=assemble_skill_registry(resources, assembly), skill_snapshot=_load_skill_snapshot(resources),
-        chat_api_key=chat_key, embedding_api_key=embedding_key, root_sha256=str(integrity["root_sha256"]))
+        chat_api_key=chat_key, embedding_api_key=embedding_key, decision_api_key=decision_key,
+        root_sha256=str(integrity["root_sha256"]))

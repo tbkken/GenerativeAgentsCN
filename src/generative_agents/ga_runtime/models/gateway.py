@@ -5,6 +5,7 @@ import json
 import time
 import re
 import requests
+import httpx
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -13,6 +14,8 @@ from generative_agents.ga_runtime.models.trace import ModelTraceEvent
 from generative_agents.ga_runtime.models.trace import ModelTraceEventType
 from generative_agents.ga_runtime.models.trace import ModelTraceStatus
 from generative_agents.ga_runtime.models.retry import interruptible_wait
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled, check_cancelled
+from generative_agents.ga_runtime.models.transport import request_json
 
 
 class LLMModel:
@@ -46,6 +49,7 @@ class LLMModel:
         self._logger = logger
         self._sleep = sleep or time.sleep
         self._last_usage = {}
+        self._call_deadline = None
 
         self._handle = self.setup(config)
         self._enabled = True
@@ -62,6 +66,7 @@ class LLMModel:
         purpose="skill_runtime",
         prompt_key=None,
         retry=None,
+        response_validator=None,
     ):
         """Execute one traced OpenAI-compatible chat/tool logical call.
 
@@ -72,9 +77,24 @@ class LLMModel:
         """
 
         request_messages = copy.deepcopy(list(messages))
+        original_message_count = len(request_messages)
+        def validate_response(message):
+            try:
+                response_validator(message)
+            except ValueError:
+                # Keep one bounded correction message across all physical
+                # attempts. The existing logical deadline and retry count apply.
+                marker = "The previous response did not match the required output schema."
+                del request_messages[original_message_count:]
+                request_messages.append({"role": "user", "content": marker +
+                    " Return exactly the supplied structured output with all required fields,"
+                    " correct value types, and no additional top-level fields."})
+                raise
+            return message
         return self.completion(
             request_messages,
             retry=retry,
+            callback=validate_response if response_validator is not None else None,
             return_type=None,
             caller=purpose,
             agent_key=agent_key,
@@ -136,13 +156,25 @@ class LLMModel:
         prompt_key = kwargs.pop("prompt_key", None)
         step_no = kwargs.pop("step_no", None)
         logical_started = datetime.now(timezone.utc)
+        # A timeout bounds the complete logical call, including physical retries
+        # and backoff. It is not a fresh allowance for every failed attempt.
+        self._call_deadline = time.monotonic() + float(self._timeout)
         last_error = None
         self._summary.setdefault(caller, [0, 0, 0])
         for attempt_no in range(1, retry + 1):
+            try:
+                check_cancelled(self._control)
+            except ModelCallCancelled as exc:
+                last_error = exc
+                break
+            if time.monotonic() >= self._call_deadline:
+                last_error = httpx.TimeoutException("model logical-call timeout budget exhausted")
+                break
             started_at = datetime.now(timezone.utc)
             self._last_usage = {}
             attempt_error = None
             output = None
+            physical_prompt = copy.deepcopy(prompt)
             # Persist the request boundary before entering the blocking provider
             # call. The diagnostics API tails this append-only fact directly, so
             # a long local-model request is visible while it is still running.
@@ -165,11 +197,12 @@ class LLMModel:
                     latency_ms=0,
                     attempt_no=attempt_no,
                     status=ModelTraceStatus.RUNNING,
-                    payload={"request": prompt},
+                    payload={"request": physical_prompt},
                 )
             )
             try:
                 output = completion_method(prompt, return_type, **kwargs)
+                check_cancelled(self._control)
                 self._summary["total"][0] += 1
                 self._summary[caller][0] += 1
                 if callback:
@@ -200,7 +233,9 @@ class LLMModel:
                     ),
                     attempt_no=attempt_no,
                     status=(
-                        ModelTraceStatus.SUCCEEDED
+                        ModelTraceStatus.ABORTED
+                        if isinstance(attempt_error, ModelCallCancelled)
+                        else ModelTraceStatus.SUCCEEDED
                         if response is not None
                         else ModelTraceStatus.FAILED
                     ),
@@ -209,22 +244,31 @@ class LLMModel:
                     total_tokens=self._last_usage.get("total_tokens"),
                     error_code=type(attempt_error).__name__ if attempt_error else None,
                     error_summary=str(attempt_error) if attempt_error else None,
-                    payload={"request": prompt, "response": output},
+                    payload={"request": physical_prompt, "response": output},
                 )
             )
             if response is not None:
                 break
+            if isinstance(last_error, ModelCallCancelled) or not self._retryable(last_error):
+                break
+            if time.monotonic() >= self._call_deadline:
+                break
             if attempt_no < retry and self._retry_backoff:
                 if not interruptible_wait(
-                    self._retry_backoff,
+                    min(self._retry_backoff, max(0, self._call_deadline - time.monotonic())),
                     control=self._control,
                     sleep=self._sleep,
                 ):
+                    if self._control is not None and self._control.cancel_requested:
+                        last_error = ModelCallCancelled("model call cancelled during retry backoff")
                     break
         pos = 2 if response is None else 1
         self._summary["total"][pos] += 1
         self._summary[caller][pos] += 1
-        result = response if response is not None else failsafe
+        result = (
+            None if isinstance(last_error, ModelCallCancelled)
+            else response if response is not None else failsafe
+        )
         logical_ended = datetime.now(timezone.utc)
         logical_error = last_error if response is None else None
         self._record(
@@ -246,7 +290,9 @@ class LLMModel:
                 ),
                 attempt_no=None,
                 status=(
-                    ModelTraceStatus.SUCCEEDED
+                    ModelTraceStatus.ABORTED
+                    if isinstance(logical_error, ModelCallCancelled)
+                    else ModelTraceStatus.SUCCEEDED
                     if response is not None
                     else ModelTraceStatus.FALLBACK
                     if failsafe is not None
@@ -257,6 +303,8 @@ class LLMModel:
                 payload={"request": prompt, "response": result},
             )
         )
+        if isinstance(last_error, ModelCallCancelled):
+            raise last_error
         if response is None and raise_on_failure and last_error is not None:
             raise last_error
         return result
@@ -291,14 +339,11 @@ class LLMModel:
         headers = {"Content-Type": "application/json"}
         if self._api_key:
             headers["Authorization"] = f"Bearer {self._api_key}"
-        response = requests.post(
-            f"{base_url}/chat/completions",
+        document = self._request_json(
+            "POST", f"{base_url}/chat/completions",
             headers=headers,
-            json=payload,
-            timeout=self._timeout,
+            payload=payload,
         )
-        response.raise_for_status()
-        document = response.json()
         self._last_usage = document.get("usage") or {}
         choices = document.get("choices") or []
         if not choices or not isinstance(choices[0], dict):
@@ -317,6 +362,15 @@ class LLMModel:
             except (AttributeError, json.JSONDecodeError, TypeError) as exc:
                 # Preserve the malformed answer as repair context for the next
                 # configured physical attempt without mutating Skill messages.
+                # Replace the prior repair pair instead of growing an unbounded
+                # series of malformed responses on every physical retry.
+                if (
+                    messages and messages[-1].get("role") == "user"
+                    and messages[-1].get("content", "").startswith(
+                        "The previous tool call arguments were invalid JSON."
+                    )
+                ):
+                    del messages[-2:]
                 messages.extend(
                     [
                         {
@@ -338,6 +392,21 @@ class LLMModel:
         elif not str(message.get("content") or "").strip():
             raise ValueError("model response has neither content nor tool calls")
         return dict(message)
+
+    def _request_json(self, method, url, *, headers=None, payload=None):
+        return request_json(
+            method, url, headers=headers, payload=payload,
+            deadline=self._call_deadline or (time.monotonic() + float(self._timeout)),
+            control=self._control,
+        )
+
+    @staticmethod
+    def _retryable(error):
+        if isinstance(error, (httpx.HTTPStatusError, requests.HTTPError)):
+            return error.response.status_code in {408, 425, 429, 500, 502, 503, 504}
+        return isinstance(error, (
+            httpx.TransportError, requests.ConnectionError, requests.Timeout, ValueError,
+        ))
 
     @property
     def provider(self):
@@ -488,14 +557,11 @@ class OllamaLLMModel(LLMModel):
         if response_format:
             params["response_format"] = response_format
 
-        response = requests.post(
-            url=f"{self._base_url}/chat/completions",
+        result = self._request_json(
+            "POST", f"{self._base_url}/chat/completions",
             headers=headers,
-            json=params,
-            stream=False,
-            timeout=300,
+            payload=params,
         )
-        result = response.json()
         self._last_usage = result.get("usage") or {}
         return result
 
@@ -583,24 +649,22 @@ class VLLMLLMModel(LLMModel):
         self._enable_thinking = bool(config.get("enable_thinking", False))
         self._base_url = self._base_url.rstrip("/")
 
-        session = requests.Session()
-        session.headers.update({"Content-Type": "application/json"})
+        headers = {"Content-Type": "application/json"}
         if self._api_key:
-            session.headers.update({"Authorization": f"Bearer {self._api_key}"})
+            headers["Authorization"] = f"Bearer {self._api_key}"
 
         if not self._model or self._model == "auto":
-            response = session.get(self._api_url("models"), timeout=self._timeout)
-            self._raise_for_status(response)
+            document = self._request_json("GET", self._api_url("models"), headers=headers)
             models = [
                 item.get("id")
-                for item in response.json().get("data", [])
+                for item in document.get("data", [])
                 if item.get("id")
             ]
             if not models:
                 raise RuntimeError("GET /v1/models returned no model IDs")
             self._model = models[0]
 
-        return session
+        return headers
 
     def _api_url(self, path):
         """执行`api``url`的内部处理，供当前模块或类复用。
@@ -613,25 +677,6 @@ class VLLMLLMModel(LLMModel):
         """
         prefix = normalize_openai_base_url(self._base_url)
         return f"{prefix}/{path.lstrip('/')}"
-
-    @staticmethod
-    def _raise_for_status(response):
-        """执行`raise``for``status`的内部处理，供当前模块或类复用。
-
-        参数:
-            response: 模型、HTTP 接口或下游组件返回的原始响应，尚待校验或转换。
-
-        返回:
-            无返回值。
-
-        异常:
-            RuntimeError: 当运行状态不允许继续执行或底层操作失败时抛出。
-        """
-        if response.ok:
-            return
-        raise RuntimeError(
-            f"HTTP {response.status_code} from {response.url}: {response.text}"
-        )
 
     @staticmethod
     def _parse_structured_output(content, return_type):
@@ -696,13 +741,10 @@ class VLLMLLMModel(LLMModel):
                 },
             }
 
-        response = self._handle.post(
-            self._api_url("chat/completions"),
-            json=params,
-            timeout=self._timeout,
+        result = self._request_json(
+            "POST", self._api_url("chat/completions"),
+            headers=self._handle, payload=params,
         )
-        self._raise_for_status(response)
-        result = response.json()
         self._last_usage = result.get("usage") or {}
         choices = result.get("choices") or []
         if not choices:

@@ -11,7 +11,7 @@ for index in range(1, 8):
     member = resources.create_agent({'agent_key': f'list-agent-{index}', 'name': f'列表验收智能体 {index}',
                                      'scratch': {'age': 20 + index}, 'currently': '检查统一列表与编辑返回。'})
     resources.create_crowd(name=f'列表验收人群 {index}', agent_ids=[member['id']])
-    skills.create(name=f'list-skill-{index}', description=f'列表验收技能 {index}', kind='atomic' if index % 2 else 'pack')
+    skills.create(name=f'list-skill-{index}', description=f'列表验收技能 {index}', kind='skill')
     skills.create(name=f'list-brain-{index}', description=f'列表验收大脑 {index}', kind='brain')
     resources.create_model_preset(name=f'列表验收模型 {index}', config={
         'chat': {'provider': 'vllm', 'model': f'chat-{index}', 'base_url': 'http://127.0.0.1:9999/v1'},

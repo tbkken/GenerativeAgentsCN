@@ -61,5 +61,5 @@ class HostModelCredentials:
         _manifest, definition = _experiment_definition(experiment)
         models = definition['models']
         return {item['credential_env']: self.resolve(item['credential_env'])
-                for purpose in ('chat', 'embedding')
+                for purpose in ('chat', 'embedding', 'decision')
                 if (item := models.get(purpose, {})).get('credential_env')}

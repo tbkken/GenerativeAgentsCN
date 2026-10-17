@@ -15,7 +15,7 @@ from tests.committed_frames import write_frame
 
 def _call(tool="world-navigate", *, error=True, output="blocked", request="{}"):
     return {
-        "event": "mcp.call",
+        "event": "interface.call",
         "skill": "brain",
         "tool": tool,
         "input_text": request,
@@ -67,16 +67,16 @@ def test_projection_includes_both_attempts_and_replaces_old_deterministic_items(
     _frame(tmp_path, 3, [_effect("effect-3", [_call()])], attempt="attempt-b")
     _frame(tmp_path, 4, [_effect("effect-4", [_call()])], attempt="attempt-b")
     previous = {"evaluator": {"status": "SKIPPED", "error": None}, "issues": [
-        {"code": "MCP_TOOL_ERROR", "step_no": 999, "message": "obsolete"},
+        {"code": "INTERFACE_CALL_ERROR", "step_no": 999, "message": "obsolete"},
     ]}
     before = copy.deepcopy(previous)
     report = _project(tmp_path, 4, previous)
     assert report["evaluated_agent_steps"] == 4
     assert [issue["step_no"] for issue in report["issues"]] == [1, 2, 2, 3, 4]
-    assert [issue["code"] for issue in report["issues"]] == ["EMPTY_MEMORY_RETRIEVAL", *["MCP_TOOL_ERROR"] * 4]
+    assert [issue["code"] for issue in report["issues"]] == ["EMPTY_MEMORY_RETRIEVAL", *["INTERFACE_CALL_ERROR"] * 4]
     assert {issue["source"]["attempt_id"] for issue in report["issues"]} == {"attempt-a", "attempt-b"}
     assert len({issue["issue_id"] for issue in report["issues"]}) == 5
-    assert report["projection_version"] == 2
+    assert report["projection_version"] == 3
     assert report["source"] == "committed-step-results"
     assert report["source_committed_step"] == 4
     assert report["source_run_id"] == "run-a"
@@ -145,11 +145,11 @@ def test_projection_rejects_invalid_committed_frame_identity(tmp_path, fault):
         _project(tmp_path, 1)
 
 
-def test_legacy_records_preserve_fields_and_read_diagnostics_reset_on_successful_write():
+def test_iteration_records_preserve_fields_and_read_diagnostics_reset_on_successful_write():
     read = {"tool": "memory-stream-search", "input": "query", "output": "[]", "is_error": False}
     write = {"tool": "memory-stream-append", "input": "note", "output": "ok", "is_error": False}
-    record = {"agent_key": "agent-a", "step_no": 1, "runtime_signals": [], "mcp_calls": [read, read, write, read]}
-    issues = deterministic_quality_issues([record, {**record, "step_no": 2, "mcp_calls": [read]}])
+    record = {"agent_key": "agent-a", "step_no": 1, "runtime_signals": [], "interface_calls": [read, read, write, read]}
+    issues = deterministic_quality_issues([record, {**record, "step_no": 2, "interface_calls": [read]}])
     assert [issue["code"] for issue in issues] == [
         "EMPTY_MEMORY_RETRIEVAL", "REPEATED_READ_WITHOUT_PROGRESS", "EMPTY_MEMORY_RETRIEVAL",
         "EMPTY_MEMORY_RETRIEVAL", "EMPTY_MEMORY_RETRIEVAL",
@@ -176,7 +176,7 @@ def test_explicit_evaluator_findings_survive_without_merging_different_steps(tmp
     _frame(tmp_path, 1, [_effect("effect-1", [_call("world-act", error=False)])])
     findings = [{"code": "BRAIN_CONFORMANCE_DEVIATION", "step_no": step, "message": "same text"} for step in (1, 2)]
     previous = {"evaluator": {"status": "WARNING", "error": None}, "issues": [
-        *findings, {"code": "MCP_TOOL_ERROR", "step_no": 99}, {"code": "UNKNOWN_STALE_CODE"},
+        *findings, {"code": "INTERFACE_CALL_ERROR", "step_no": 99}, {"code": "UNKNOWN_STALE_CODE"},
     ]}
     report = _project(tmp_path, 1, previous)
     assert report["issues"] == findings

@@ -137,7 +137,10 @@ class ChatTransport(StrictModel):
     credential_env: str | None = Field(default=None, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")
     resolved_model: ModelName | None = None
     context_window: int | None = Field(default=None, ge=1, le=10_000_000)
-    timeout_seconds: int = Field(default=120, ge=1, le=600)
+    timeout_seconds: int = Field(
+        default=120, ge=1, le=600,
+        description="单次逻辑模型调用的总时间预算（秒），包含所有物理尝试与重试退避。",
+    )
     max_tokens: int = Field(default=2048, ge=1, le=131_072)
     temperature: float = Field(default=0.5, ge=0, le=2)
     enable_thinking: bool = False
@@ -356,10 +359,41 @@ EmbeddingModelConfig = Annotated[
 ]
 
 
+class DecisionModelConfig(StrictModel):
+    """通过 Unsloth Decision API 返回结构化判断的独立模型配置。"""
+
+    provider: Literal["unsloth"] = "unsloth"
+    model: ModelName
+    base_url: AnyHttpUrl
+    credential_env: str | None = Field(default=None, pattern=r"^[A-Za-z_][A-Za-z0-9_]*$")
+    timeout_seconds: int = Field(default=120, ge=1, le=600)
+    retry_attempts: int = Field(default=3, ge=1, le=5)
+    retry_backoff_seconds: float = Field(default=5, ge=0, le=300)
+
+    @field_validator("model")
+    @classmethod
+    def explicit_model(cls, value: str) -> str:
+        if value.casefold() == "auto":
+            raise ValueError("decision model requires an explicit model")
+        return value
+
+    @field_validator("base_url")
+    @classmethod
+    def normalize_url(cls, value: AnyHttpUrl) -> AnyHttpUrl:
+        if value.username or value.password or value.query or value.fragment:
+            raise ValueError("decision service URL cannot contain credentials, query parameters or fragments")
+        parsed = urlsplit(str(value).rstrip("/"))
+        path = parsed.path.rstrip("/")
+        if path.endswith("/systemone"):
+            path = path.removesuffix("/systemone")
+        return AnyHttpUrl(urlunsplit((parsed.scheme, parsed.netloc, path or "/v1", "", "")))
+
+
 class ModelsConfig(StrictModel):
-    """把聊天模型与向量模型组合成一次实验使用的模型集合。"""
+    """一次实验使用的生成式、向量及可选决策模型。"""
     chat: ChatModelConfig
     embedding: EmbeddingModelConfig
+    decision: DecisionModelConfig | None = None
 
 
 class AgentPerceptionLimits(StrictModel):

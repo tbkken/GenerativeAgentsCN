@@ -326,7 +326,7 @@
     }
 
     skillCatalogUrl() {
-      return window.ResourceScope?.url('/skills?kind=atomic') || '/api/studio/resources/skills?kind=atomic';
+      return window.ResourceScope?.url('/skills?kind=skill') || '/api/studio/resources/skills?kind=skill';
     }
 
     async refreshSkillCatalog({append=false} = {}) {
@@ -368,7 +368,8 @@
       if (selectedSkillName) skillNames.add(selectedSkillName);
       return [...skillNames].sort((a, b) => a.localeCompare(b)).map(name => {
         const item = this.passiveSkillCatalog.find(candidate => candidate.name === name);
-        return `<option value="${escapeHtml(name)}" ${selectedSkillName === name ? 'selected' : ''}>${escapeHtml(name)}${item?.description ? ` · ${escapeHtml(item.description)}` : ''}</option>`;
+        const label = item?.display_name && item.display_name !== name ? `${item.display_name}（${name}）` : name;
+        return `<option value="${escapeHtml(name)}" ${selectedSkillName === name ? 'selected' : ''}>${escapeHtml(label)}${item?.description ? ` · ${escapeHtml(item.description)}` : ''}</option>`;
       }).join('');
     }
 

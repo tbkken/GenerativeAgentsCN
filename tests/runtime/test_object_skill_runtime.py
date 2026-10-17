@@ -18,12 +18,12 @@ from generative_agents.ga_runtime.engine.world import Game
 from generative_agents.ga_runtime.engine.objects import GameObjectInteractionSystem
 from generative_agents.ga_runtime.engine.space import Maze
 from generative_agents.ga_runtime.memory.event import Event
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.context import RunControl
 from generative_agents.ga_runtime.engine.context import SimulationClock
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 from generative_agents.ga_runtime.engine.iteration import ObjectIterationContext
-from generative_agents.ga_runtime.skills.objects import ObjectMCPServer
+from generative_agents.ga_runtime.skills.objects import ObjectAPI
 from generative_agents.ga_runtime.skills.objects import ObjectSkillRuntime
 from generative_agents.ga_protocol.schemas.facts import DomainEventRecord
 from tests.skill_files import write_skill
@@ -103,8 +103,8 @@ def game_with_runtime(tmp_path, choose, *, agents=True):
     game._conversation_sequence = 0
     game.conversation = {}
     registry = SkillRegistry(tmp_path / "skills")
-    write_skill(registry, name="facility", description="观察周围，按需记录活动和回复交互。", kind="atomic")
-    # No script and no hand-written MCP tool names are required in this Skill.
+    write_skill(registry, name="facility", description="观察周围，按需记录活动和回复交互。", kind="skill")
+    # No script and no hand-written interface references are required in this Skill.
     model = ToolModel(choose)
     stream = FileMemoryStream(tmp_path / "memory", run_id=game.context.run_id,
                               attempt_id=game.context.attempt_id, clock=lambda: clock.get_date())
@@ -134,13 +134,13 @@ def runner(game, *, move=False, interaction=False, completed=0):
             coord=agent.coord, address=tuple(agent.get_tile().get_address()),
             spatial_semantics=tuple(agent.get_tile().spatial_semantics),
         )
-        mcp = SimulationMCPServer(game, iteration)
+        api = SimulationAPI(game, iteration)
         args = ({"action_type": "MOVE", "target_coord": [12, 2]} if move and agent.coord != (12, 2)
                 else {"action_type": "INTERACT", "selection_key": "camera/interact", "request": "现在什么状态？"}
                 if interaction and key == "rider" else {"action_type": "WAIT"})
-        result = mcp.call("world-act", args)
-        assert not result["isError"], result
-        return {"world_action": mcp.action.as_dict(), "info": {"iteration_context": iteration.as_dict()}}
+        result = api.invoke("world-act", args)
+        assert result["ok"], result
+        return {"world_action": api.action.as_dict(), "info": {"iteration_context": iteration.as_dict()}}
     game.agent_think = think
     committer = Committer(game)
     instance = SimulationRunner(game.context, game, committer, completed_steps=completed)
@@ -249,14 +249,14 @@ def server_for(game, *, step=1, facts=(), requests=()):
         now=game.context.clock.get_date(), stride_minutes=1, coord=(5, 0),
         address=("world", "sector", "road", "camera"),
     )
-    return ObjectMCPServer(game, iteration, binding=binding, observed_facts=facts,
+    return ObjectAPI(game, iteration, binding=binding, observed_facts=facts,
                            requests=requests, memory_stream=game.context.memory_stream)
 
 
 def test_object_and_agent_identities_state_permissions_and_private_memory(tmp_path):
     game, _ = game_with_runtime(tmp_path, lambda *_: (None, ""))
     game.context.memory_stream.begin_step(1, game.context.clock.get_date())
-    mcp = server_for(game)
+    api = server_for(game)
     for tool, args in [
         ("world-perceive", {"agent_key": "rider"}),
         ("world-act", {"action_type": "MOVE", "target_coord": [2, 1]}),
@@ -264,20 +264,20 @@ def test_object_and_agent_identities_state_permissions_and_private_memory(tmp_pa
         ("world-act", {"action_type": "WAIT", "responses": [{"request_id": "someone-elses", "message": "reply"}]}),
         ("world-act", {"action_type": "ACT", "predicate": "观察", "object": "rider", "target_agent_key": "rider"}),
     ]:
-        assert mcp.call(tool, args)["isError"]
-    assert not mcp.call("memory-stream-append", {"content": "object-private"})["isError"]
+        assert not api.invoke(tool, args)["ok"]
+    assert api.invoke("memory-stream-append", {"content": "object-private"})["ok"]
     assert game.context.memory_stream.search(agent_key="rider", query="object-private") == []
     assert len(game.context.memory_stream.search(agent_key="game-object:camera", query="object-private")) == 1
-    assert not mcp.call("world-act", {"action_type": "WAIT"})["isError"]
-    assert mcp.call("world-act", {"action_type": "WAIT"})["isError"]
+    assert api.invoke("world-act", {"action_type": "WAIT"})["ok"]
+    assert not api.invoke("world-act", {"action_type": "WAIT"})["ok"]
     game.agents["rider"].coord = (5, 1)
     agent = game.agents["rider"]
     context = IterationContext(game.context.run_id, game.context.attempt_id, "rider", "rider", 1, 1,
                                game.context.clock.get_date(), 1, agent.coord, tuple(agent.get_tile().get_address()))
-    rider_mcp = SimulationMCPServer(game, context)
-    assert rider_mcp.call("world-act", {"action_type": "SET_OBJECT_STATE", "object_key": "camera",
-                                        "state_patch": {"state": "OFF"}})["isError"]
-    seen = json.loads(rider_mcp.call("world-perceive", {})["content"][0]["text"])
+    rider_api = SimulationAPI(game, context)
+    assert not rider_api.invoke("world-act", {"action_type": "SET_OBJECT_STATE", "object_key": "camera",
+                                        "state_patch": {"state": "OFF"}})["ok"]
+    seen = rider_api.invoke("world-perceive", {})["result"]
     assert next(obj for obj in seen["game_objects"] if obj["object_key"] == "camera")["state"] == {"state": "RED"}
 
 
@@ -288,10 +288,10 @@ def test_object_action_key_survives_checkpoint_and_new_attempt(tmp_path):
     run.run(1, stride_minutes=1)
     game.context.attempt_id = uuid4()
     game.restore_runtime_state(commit.snapshots[0])
-    mcp = server_for(game, step=2)
-    assert mcp.call("world-act", {"action_type": "ACT", "predicate": "记录", "object": "一次活动",
-                                   "idempotency_key": "episode-1"})["isError"]
-    assert not mcp.call("world-act", {"action_type": "WAIT"})["isError"]
+    api = server_for(game, step=2)
+    assert not api.invoke("world-act", {"action_type": "ACT", "predicate": "记录", "object": "一次活动",
+                                   "idempotency_key": "episode-1"})["ok"]
+    assert api.invoke("world-act", {"action_type": "WAIT"})["ok"]
 
 
 def test_text_alone_never_changes_world_or_sends_a_response(tmp_path):
@@ -357,7 +357,7 @@ def test_object_root_composes_natural_language_children_with_shared_identity(tmp
         return "world-act", {"action_type": "ACT", "predicate": "观察", "object": "周围环境"}
     game, _ = game_with_runtime(tmp_path, choose)
     registry = game.context.object_skill_runtime.registry
-    write_skill(registry, name="helper", description="查看周围并给出自然语言建议", kind="atomic")
+    write_skill(registry, name="helper", description="查看周围并给出自然语言建议", kind="skill")
     facility = registry.get("facility")
     registry.get("facility").path.write_text(facility.markdown + "\n先调用 $helper 获取建议，再决定行动。\n", encoding="utf-8")
     run, commit = runner(game)
@@ -372,11 +372,11 @@ def test_attention_limits_visible_facts_and_rejects_unobserved_evidence(tmp_path
         event_id=uuid4(), sequence=index + 1, event_type="AGENT_ACTED", agent_keys=("rider",),
         payload={"predicate": "停留", "object": "道路", "structured_payload": {"to_coord": coord}},
     ) for index, coord in enumerate(([5, 1], [6, 1], [12, 4]))]
-    mcp = server_for(game, facts=facts)
-    mcp.binding = replace(mcp.binding, attention_bandwidth=1)
-    seen = json.loads(mcp.call("world-perceive", {})["content"][0]["text"])
+    api = server_for(game, facts=facts)
+    api.binding = replace(api.binding, attention_bandwidth=1)
+    seen = api.invoke("world-perceive", {})["result"]
     assert len(seen["observed_actions"]) == 1
     assert seen["attention"]["observed_action_candidates"] == 2
     assert seen["attention"]["truncated"]
-    assert mcp.call("world-act", {"action_type": "ACT", "predicate": "记录", "object": "道路",
-                                   "evidence_ids": [str(facts[2].event_id)]})["isError"]
+    assert not api.invoke("world-act", {"action_type": "ACT", "predicate": "记录", "object": "道路",
+                                   "evidence_ids": [str(facts[2].event_id)]})["ok"]

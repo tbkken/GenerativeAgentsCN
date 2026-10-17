@@ -9,15 +9,16 @@ import pytest
 from fastapi.testclient import TestClient
 
 from generative_agents.ga_runtime.memory.stream import FileMemoryStream as MemoryStream
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 from datetime import datetime, timezone
 from uuid import uuid4
-from generative_agents.ga_studio.resources.bundled import bundled_skills
+from tests.fixtures.skills_registry import fixture_skills
 from generative_agents.ga_protocol.skills.documents import SkillRegistry
 from generative_agents.ga_protocol.skills.documents import SkillRegistryError
 from generative_agents.ga_runtime.skills.executor import SkillLoopError
 from generative_agents.ga_runtime.skills.executor import SkillRuntime
+from generative_agents.ga_runtime.skills.executor import SkillRuntimeError
 from tests.studio_support import create_test_studio
 
 
@@ -37,11 +38,11 @@ class ScriptedSkillRuntime(SkillRuntime):
 
 def test_file_backed_skill_catalog_and_brain_dependencies():
     """回归验证 ``test_file_backed_skill_catalog_and_brain_dependencies`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = bundled_skills()
+    registry = fixture_skills()
 
     documents = registry.list()
-    assert len(documents) >= 40
-    assert {item.kind for item in documents} == {"atomic", "pack", "brain"}
+    assert len(documents) == 8
+    assert {item.kind for item in documents} == {"skill", "brain"}
     assert registry.get("wake_up").name == "wake-up"
     assert "只输出小时" in registry.prompt("wake_up")
 
@@ -61,9 +62,9 @@ def test_file_backed_skill_catalog_and_brain_dependencies():
     assert "decide-game-object-response" not in crossing_brain.children
 
 
-def test_skill_pack_hands_child_result_back_as_plain_text():
-    """回归验证 ``test_skill_pack_hands_child_result_back_as_plain_text`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = bundled_skills()
+def test_skill_hands_child_result_back_as_plain_text():
+    """回归验证 ``test_skill_hands_child_result_back_as_plain_text`` 所描述的业务结果、故障边界和隔离约束。"""
+    registry = fixture_skills()
     runtime = ScriptedSkillRuntime(
         registry,
         responses=[
@@ -111,7 +112,7 @@ def test_skill_pack_hands_child_result_back_as_plain_text():
 
 def test_run_trace_records_the_prompts_sent_to_the_model():
     """回归验证 ``test_run_trace_records_the_prompts_sent_to_the_model`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = bundled_skills()
+    registry = fixture_skills()
     runtime = ScriptedSkillRuntime(registry, responses=[{"content": "7"}])
 
     result = runtime.run("wake-up", "小明平日六点半起床。")
@@ -124,7 +125,7 @@ def test_run_trace_records_the_prompts_sent_to_the_model():
 
 def test_run_trace_user_prompt_wraps_runtime_context():
     """回归验证 ``test_run_trace_user_prompt_wraps_runtime_context`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = bundled_skills()
+    registry = fixture_skills()
     runtime = ScriptedSkillRuntime(registry, responses=[{"content": "7"}])
 
     result = runtime.run(
@@ -137,17 +138,17 @@ def test_run_trace_user_prompt_wraps_runtime_context():
     assert '"agent_key": "xiaoming"' in start["user_prompt"]
 
 
-def test_skill_pack_can_call_mcp_and_continue_with_natural_language(tmp_path):
-    """回归验证 ``test_skill_pack_can_call_mcp_and_continue_with_natural_language`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = bundled_skills()
+def test_skill_can_call_interface_and_continue_with_natural_language(tmp_path):
+    """回归验证 ``test_skill_can_call_interface_and_continue_with_natural_language`` 所描述的业务结果、故障边界和隔离约束。"""
+    registry = fixture_skills()
     memory = MemoryStream(tmp_path / "memories", run_id=uuid4(), attempt_id=uuid4())
     now = datetime(2026, 8, 28, 9, tzinfo=timezone.utc)
     memory.begin_step(1, now)
     iteration = IterationContext(run_id=uuid4(), attempt_id=uuid4(), agent_key="jane", agent_name="Jane", step_no=1, total_steps=2, now=now, stride_minutes=1, coord=(0, 0), address=("world",))
-    mcp = SimulationMCPServer(None, iteration, memory_stream=memory)
+    interfaces = SimulationAPI(None, iteration, memory_stream=memory)
     runtime = ScriptedSkillRuntime(
         registry,
-        mcp=mcp,
+        interfaces=interfaces,
         responses=[
             {
                 "content": "",
@@ -174,10 +175,10 @@ def test_skill_pack_can_call_mcp_and_continue_with_natural_language(tmp_path):
     result = runtime.run("perception-and-memory", "记住简今天的安排")
 
     assert result.output_text == "这条工作记忆已经保存。"
-    assert any(item["event"] == "mcp.call" for item in result.trace)
+    assert any(item["event"] == "interface.call" for item in result.trace)
     assert memory.search(agent_key="jane", query="咖啡馆")[0]["content"] == "简今天九点去咖啡馆上班"
     assert "简今天九点去咖啡馆上班" in runtime.requests[-1]["messages"][-1]["content"]
-    tool_names = {tool["name"] for tool in mcp.tools()}
+    tool_names = {tool["name"] for tool in interfaces.descriptors()}
     assert {"memory-stream-supersede", "memory-stream-invalidate"} <= tool_names
 
 
@@ -200,8 +201,8 @@ def test_memory_stream_fallback_retrieves_chinese_semantics_without_spaces(tmp_p
     assert found[0]["retrieval_method"] == "file_lexical"
 
 
-def test_skill_pack_can_call_its_private_script(tmp_path):
-    root = tmp_path / "skills" / "atomic" / "text-helper"
+def test_skill_can_call_its_private_script(tmp_path):
+    root = tmp_path / "skills" / "skills" / "text-helper"
     (root / "scripts").mkdir(parents=True)
     (root / "SKILL.md").write_text("---\nname: text-helper\ndescription: Normalize input text.\n---\nCall the private helper.", encoding="utf-8")
     (root / "scripts" / "text.py").write_text("def normalize(input_text, context):\n    return input_text.strip().upper()\n", encoding="utf-8")
@@ -235,24 +236,24 @@ def test_skill_api_starts_on_clean_database(tmp_path):
 
     assert catalog.status_code == 200
     counts = catalog.json()["counts"]
-    assert counts["atomic"] >= 33
-    assert counts["pack"] >= 5
-    assert counts["brain"] >= 2
+    assert counts == {"skill": 0, "brain": 0}
     assert created.status_code == 422
 
 
-def test_seeded_brain_can_be_deleted_and_is_not_recreated(database_url):
+def test_user_brain_can_be_deleted_and_is_not_recreated(database_url):
     app = create_test_studio(database_url=database_url)
     with TestClient(app) as client:
-        brain = client.get("/api/studio/resources/skills/stanford-town-brain")
-        assert brain.status_code == 200
-        assert brain.json()["is_builtin"] is True
-        deleted = client.delete("/api/studio/resources/skills/stanford-town-brain")
+        brain = client.post("/api/studio/resources/skills", json={
+            "name": "user-brain", "description": "用户自然语言大脑。", "kind": "brain",
+        })
+        assert brain.status_code == 201
+        assert brain.json()["is_builtin"] is False
+        deleted = client.delete("/api/studio/resources/skills/user-brain")
         assert deleted.status_code == 204, deleted.text
 
     restarted = create_test_studio(database_url=database_url)
     with TestClient(restarted) as client:
-        missing = client.get("/api/studio/resources/skills/stanford-town-brain")
+        missing = client.get("/api/studio/resources/skills/user-brain")
     assert missing.status_code == 404
 
 
@@ -264,7 +265,7 @@ def test_user_skill_is_mutable_in_database_and_never_written_to_source_tree(tmp_
     )
     source_path = (
         Path(__file__).resolve().parents[2]
-        / 'src' / 'generative_agents' / 'ga_studio' / 'bundled' / 'skills' / 'atomic' / 'user-runtime-skill' / 'SKILL.md'
+        / 'src' / 'generative_agents' / 'ga_studio' / 'bundled' / 'skills' / 'skills' / 'user-runtime-skill' / 'SKILL.md'
     )
 
     with TestClient(app) as client:
@@ -273,7 +274,7 @@ def test_user_skill_is_mutable_in_database_and_never_written_to_source_tree(tmp_
             json={
                 "name": "user-runtime-skill",
                 "description": "用文本决定普通活动的 Event 语义。",
-                "kind": "atomic",
+                "kind": "skill",
             },
         )
         assert created.status_code == 201
@@ -344,7 +345,7 @@ def test_user_skill_is_mutable_in_database_and_never_written_to_source_tree(tmp_
 def test_example_input_is_parsed_and_exposed(tmp_path):
     """回归验证 ``test_example_input_is_parsed_and_exposed`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry(root=tmp_path / "skills")
-    skill_path = tmp_path / "skills" / "atomic" / "base-desc" / "SKILL.md"
+    skill_path = tmp_path / "skills" / "skills" / "base-desc" / "SKILL.md"
     skill_path.parent.mkdir(parents=True)
 
     markdown = (
@@ -367,7 +368,7 @@ def test_example_input_is_parsed_and_exposed(tmp_path):
 def test_unknown_frontmatter_field_is_rejected(tmp_path):
     """回归验证 ``test_unknown_frontmatter_field_is_rejected`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry(root=tmp_path / "skills")
-    skill_path = tmp_path / "skills" / "atomic" / "wake-up" / "SKILL.md"
+    skill_path = tmp_path / "skills" / "skills" / "wake-up" / "SKILL.md"
     skill_path.parent.mkdir(parents=True)
 
     markdown = (
@@ -385,35 +386,39 @@ def test_unknown_frontmatter_field_is_rejected(tmp_path):
         registry.get("wake-up")
 
 
-def test_builtin_skills_all_have_example_input():
-    """回归验证 ``test_builtin_skills_all_have_example_input`` 所描述的业务结果、故障边界和隔离约束。"""
-    registry = bundled_skills()
+def test_fixture_skills_have_example_input():
+    """回归验证 ``test_fixture_skills_have_example_input`` 所描述的业务结果、故障边界和隔离约束。"""
+    registry = fixture_skills()
     documents = registry.list()
 
-    assert len(documents) >= 40
+    assert len(documents) == 8
     missing = [item.name for item in documents if not item.example_input.strip()]
     assert missing == []
 
 
 def test_repeated_identical_child_call_is_stopped_before_third_execution():
-    registry = bundled_skills()
-    call_wake_up = {
-        "content": "",
-        "tool_calls": [
-            {
-                "id": "repeat",
-                "function": {
-                    "name": "call_skill",
-                    "arguments": json.dumps(
-                        {"name": "wake-up", "input_text": "same input"}
-                    ),
-                },
-            }
-        ],
-    }
+    registry = fixture_skills()
+
+    def call_wake_up(call_id):
+        return {
+            "content": "",
+            "tool_calls": [
+                {
+                    "id": call_id,
+                    "function": {
+                        "name": "call_skill",
+                        "arguments": json.dumps(
+                            {"name": "wake-up", "input_text": "same input"}
+                        ),
+                    },
+                }
+            ],
+        }
+
     runtime = ScriptedSkillRuntime(
         registry,
-        responses=[call_wake_up, {"content": "7"}, call_wake_up, {"content": "7"}, call_wake_up],
+        responses=[call_wake_up("repeat-1"), {"content": "7"},
+                   call_wake_up("repeat-2"), {"content": "7"}, call_wake_up("repeat-3")],
         max_hops=12,
         max_identical_tool_calls=2,
     )
@@ -423,7 +428,7 @@ def test_repeated_identical_child_call_is_stopped_before_third_execution():
 
 
 def test_semantically_repeated_child_call_with_paraphrased_input_is_stopped():
-    registry = bundled_skills()
+    registry = fixture_skills()
 
     def call_wake_up(call_id, input_text):
         return {
@@ -461,33 +466,30 @@ def test_semantically_repeated_child_call_with_paraphrased_input_is_stopped():
     assert raised.value.trace[-1]["tool"] == "call_skill"
 
 
-def test_nested_skill_cannot_receive_world_act_and_mcp_errors_are_explicit():
-    class _MCP:
-        def tools(self):
+def test_nested_skill_cannot_receive_world_act_and_interface_errors_are_explicit():
+    class _Interfaces:
+        def descriptors(self):
             return [
                 {
                     "name": "world-perceive",
                     "description": "read",
-                    "inputSchema": {"type": "object"},
+                    "parameters": {"type": "object"},
                 },
                 {
                     "name": "world-act",
                     "description": "write",
-                    "inputSchema": {"type": "object"},
+                    "parameters": {"type": "object"},
                 },
             ]
 
-        def call(self, name, _arguments):
+        def invoke(self, name, _arguments):
             assert name == "world-act"
-            return {
-                "content": [{"type": "text", "text": "MCP error: rejected"}],
-                "isError": True,
-            }
+            return {"ok": False, "error": "rejected"}
 
-    registry = bundled_skills()
+    registry = fixture_skills()
     runtime = ScriptedSkillRuntime(
         registry,
-        mcp=_MCP(),
+        interfaces=_Interfaces(),
         responses=[
             {
                 "content": "",
@@ -530,43 +532,33 @@ def test_nested_skill_cannot_receive_world_act_and_mcp_errors_are_explicit():
     }
     assert "world-perceive" in child_tools
     assert "world-act" not in child_tools
-    error_call = next(item for item in result.trace if item["event"] == "mcp.call")
+    error_call = next(item for item in result.trace if item["event"] == "interface.call")
     assert error_call["is_error"] is True
     assert json.loads(error_call["output_text"]) == {
-        "isError": True,
-        "error": "MCP error: rejected",
+        "ok": False,
+        "error": "rejected",
     }
     assert result.output_text == "已根据明确错误重新规划"
 
 
 def test_successful_world_act_is_terminal_for_root_brain():
-    class _MCP:
-        def tools(self):
+    class _Interfaces:
+        def descriptors(self):
             return [
                 {
                     "name": "world-act",
                     "description": "write",
-                    "inputSchema": {"type": "object"},
+                    "parameters": {"type": "object"},
                 }
             ]
 
-        def call(self, name, arguments):
+        def invoke(self, name, arguments):
             assert name == "world-act"
-            return {
-                "content": [
-                    {
-                        "type": "text",
-                        "text": json.dumps(
-                            {"accepted": True, "action": arguments}
-                        ),
-                    }
-                ],
-                "isError": False,
-            }
+            return {"ok": True, "result": {"accepted": True, "action": arguments}}
 
     runtime = ScriptedSkillRuntime(
-        bundled_skills(),
-        mcp=_MCP(),
+        fixture_skills(),
+        interfaces=_Interfaces(),
         responses=[
             {
                 "content": "",
@@ -588,15 +580,38 @@ def test_successful_world_act_is_terminal_for_root_brain():
     assert result.output_text == "world-act accepted; this Agent iteration is complete."
     assert len(runtime.requests) == 1
     assert [item["event"] for item in result.trace[-2:]] == [
-        "mcp.call",
+        "interface.call",
         "skill.result",
     ]
+
+
+def test_runtime_requires_explicit_interface_reference_before_dispatch(tmp_path):
+    root = tmp_path / "skills" / "brains" / "declared-brain"
+    root.mkdir(parents=True)
+    (root / "SKILL.md").write_text(
+        "---\nname: declared-brain\ndescription: world-act is not a declaration.\n---\n"
+        "先调用 @world-perceive。world-act 的普通提及不授予调用权限。\n",
+        encoding="utf-8",
+    )
+    interfaces = SimulationAPI(None, None)
+    runtime = ScriptedSkillRuntime(
+        SkillRegistry(tmp_path / "skills"), interfaces=interfaces,
+        responses=[{"content": "", "tool_calls": [{"id": "undeclared", "function": {
+            "name": "world-act", "arguments": json.dumps({"action_type": "WAIT"}),
+        }}]}],
+    )
+
+    with pytest.raises(SkillRuntimeError, match="unavailable tool world-act"):
+        runtime.run("declared-brain", "observe")
+
+    assert [entry["function"]["name"] for entry in runtime.requests[0]["tools"]] == ["world-perceive"]
+    assert interfaces.action is None
 
 
 def test_save_preserves_existing_example_input(tmp_path):
     """回归验证 ``test_save_preserves_existing_example_input`` 所描述的业务结果、故障边界和隔离约束。"""
     registry = SkillRegistry(root=tmp_path / "skills")
-    skill_path = tmp_path / "skills" / "atomic" / "wake-up" / "SKILL.md"
+    skill_path = tmp_path / "skills" / "skills" / "wake-up" / "SKILL.md"
     skill_path.parent.mkdir(parents=True)
 
     first = (

@@ -51,7 +51,7 @@ def read_run_facts_unlocked(run_path, run_id: str) -> dict[str, Any]:
                         item = json.loads(line)
                     except json.JSONDecodeError:
                         continue
-                    if isinstance(item, dict):
+                    if isinstance(item, dict) and 'span_id' not in item:
                         item['trace_id'] = f"{item.get('attempt_id', '')}:{item.get('event_seq', 0)}"
                         trace_records.append(item)
     return {'summary': summary, 'definitions': definitions, 'definition': definition, 'frames': frames, 'status': status.model_dump(mode='json'), 'checkpoint_steps': checkpoint_steps, 'artifacts': artifacts, 'log': log, 'traces': trace_records}

@@ -17,11 +17,11 @@ from generative_agents.ga_runtime.engine.objects import GameObjectInteractionSys
 from generative_agents.ga_runtime.engine.space import Maze
 from generative_agents.ga_runtime.memory.action import Action
 from generative_agents.ga_runtime.memory.event import Event
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.context import SimulationClock
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 from generative_agents.ga_runtime.engine.iteration import ObjectIterationContext
-from generative_agents.ga_runtime.skills.objects import ObjectMCPServer
+from generative_agents.ga_runtime.skills.objects import ObjectAPI
 from generative_agents.ga_runtime.engine.collector import StepResultCollector
 from generative_agents.ga_protocol.schemas.facts import StepResult
 from generative_agents.ga_runtime.engine.results import StepResultBuilder
@@ -69,7 +69,7 @@ def _game():
 
 def _server(game, key="rider", step=1):
     agent = game.agents[key]
-    return SimulationMCPServer(game, IterationContext(
+    return SimulationAPI(game, IterationContext(
         run_id=game.context.run_id, attempt_id=game.context.attempt_id,
         agent_key=key, agent_name=agent.name, step_no=step, total_steps=5,
         now=game.context.clock.get_date(), stride_minutes=1, coord=agent.coord,
@@ -80,7 +80,7 @@ def _server(game, key="rider", step=1):
 
 def _camera(game, result):
     binding = game.game_object_interactions.affordances[0]
-    return ObjectMCPServer(game, ObjectIterationContext(
+    return ObjectAPI(game, ObjectIterationContext(
         run_id=result.run_id, attempt_id=result.attempt_id, object_key="camera", object_name="摄像头",
         step_no=result.step_no, total_steps=5, now=result.virtual_time, stride_minutes=1,
         coord=(5, 0), address=("世界", "街区", "道路", "摄像头"),
@@ -88,9 +88,9 @@ def _camera(game, result):
 
 
 def _call(server, name, arguments):
-    response = server.call(name, arguments)
-    assert not response["isError"], response
-    return json.loads(response["content"][0]["text"])
+    response = server.invoke(name, arguments)
+    assert response["ok"], response
+    return response["result"]
 
 
 def _move(game, phrase=None, *, budget=6, target=(12, 2), **extra):
@@ -189,8 +189,8 @@ def test_invalid_activity_does_not_select_an_action_or_change_the_world(predicat
     game = _game()
     server = _server(game)
     before = game.agents["rider"].action.to_dict()
-    response = server.call("world-act", {"action_type": "MOVE", "target_coord": [6, 2], "predicate": predicate})
-    assert response["isError"] and server.action is None
+    response = server.invoke("world-act", {"action_type": "MOVE", "target_coord": [6, 2], "predicate": predicate})
+    assert not response["ok"] and server.action is None
     assert game.agents["rider"].coord == (0, 2)
     assert game.agents["rider"].action.to_dict() == before
 

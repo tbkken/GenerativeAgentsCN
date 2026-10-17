@@ -66,11 +66,23 @@ class FileMemoryStream:
             {"schema_version": 1, "run_id": self.run_id, "items": items},
         )
 
-    def begin_step(self, step_no: int, virtual_time: datetime) -> None:
+    def begin_step(self, step_no: int, virtual_time: datetime) -> dict:
         if step_no < 1 or virtual_time.tzinfo is None:
             raise ValueError("memory step must be positive and timezone-aware")
+        with self.lock:
+            snapshot = {"run_id": self.run_id, "items": self._load(),
+                        "pending_events": copy.deepcopy(self._pending_events)}
         self._step_no = int(step_no)
         self._virtual_time = virtual_time
+        return snapshot
+
+    def rollback_step(self, snapshot: dict) -> None:
+        """Discard every participant's memory changes from an uncommitted Step."""
+        if str(snapshot.get("run_id")) != self.run_id:
+            raise ValueError("memory snapshot belongs to another Run")
+        with self.lock:
+            self._save(copy.deepcopy(snapshot["items"]))
+        self._pending_events = copy.deepcopy(snapshot["pending_events"])
 
     def _scope(self) -> tuple[int, datetime]:
         if self._step_no < 1 or self._virtual_time is None:

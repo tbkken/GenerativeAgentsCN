@@ -72,6 +72,51 @@ for (const [tab, endpoint] of [['timeline','timeline'],['agents','agents'],['qua
   });
 }
 
+test('Agent roster loads every server page before rendering one complete horizontal list', async () => {
+  const f = resultFixture('agents');
+  const items = Array.from({length:125}, (_, index) => ({agent_key:`agent-${index}`}));
+  const rendered = [];
+  f.context.api = async path => {
+    f.requests.push(path);
+    if (path === '/runs/run') return {run_id:'run', status:'COMPLETED', committed_step:8};
+    const query = new URL(path, 'http://localhost').searchParams;
+    const offset = Number(query.get('offset'));
+    assert.equal(query.get('limit'), '100');
+    assert.equal(rendered.length, 0, 'partial roster must not reset the selected Agent');
+    return {items:items.slice(offset, offset + 100), next_offset:offset + 100 < items.length ? offset + 100 : null};
+  };
+  f.context.renderAgents = agents => rendered.push(Array.from(agents, item => item.agent_key));
+  f.context.resultPageControls = () => {throw Error('Agent roster must not insert page controls');};
+  await f.context.refreshResultDataUnlocked('run', 1);
+  assert.deepEqual(f.requests, ['/runs/run', '/runs/run/results/agents?offset=0&limit=100', '/runs/run/results/agents?offset=100&limit=100']);
+  assert.deepEqual(rendered, [items.map(item => item.agent_key)]);
+});
+
+for (const abandon of ['run', 'tab', 'generation', 'request']) {
+  test(`late Agent roster page cannot render after ${abandon} changes`, async () => {
+    const f = resultFixture('agents');
+    let resolvePage;
+    let pageRequested;
+    const pendingPage = new Promise(resolve => {pageRequested = resolve;});
+    f.context.api = async path => {
+      if (path === '/runs/run') return {run_id:'run', status:'COMPLETED', committed_step:8};
+      if (path.includes('offset=0&')) return {items:[{agent_key:'first'}], next_offset:100};
+      pageRequested();
+      return new Promise(resolve => {resolvePage = resolve;});
+    };
+    const refresh = f.context.refreshResultDataUnlocked('run', 1);
+    await pendingPage;
+    if (abandon === 'run') f.context.state.selectedRunId = 'other-run';
+    if (abandon === 'tab') f.context.state.resultTab = 'timeline';
+    if (abandon === 'generation') f.context.state.resultGeneration += 1;
+    if (abandon === 'request') f.context.state.resultRequestGeneration += 1;
+    resolvePage({items:[{agent_key:'last'}], next_offset:null});
+    await refresh;
+    assert.deepEqual(f.renders, []);
+    assert.equal(f.context.state.resultDataVersion, undefined);
+  });
+}
+
 test('detail polling stops for terminal Runs and hidden tabs, but tracks a queued artifact job', () => {
   const context=run(cut('  function needsDetailPoll(', '  function scheduleDetailPoll('),{
     state:{bootstrapped:true,workspacePage:'results',currentRun:{status:'RUNNING'}},document:{visibilityState:'visible'},

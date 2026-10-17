@@ -24,7 +24,7 @@ def test_package_object_skill_runs_without_agents_and_resumes_from_committed_fac
     for name, kind in [("test-brain", "brain"), ("facility", "object")]:
         source = tmp_path / "author" / name / "SKILL.md"
         source.parent.mkdir(parents=True)
-        source.write_text(f"---\nname: {name}\ndescription: 自主维护设施状态并回应请求\n---\n\n根据当前时间维护灯色。\n", encoding="utf-8")
+        source.write_text(f"---\nname: {name}\ndescription: 自主维护设施状态并回应请求\n---\n\n根据当前时间调用 @world-act 维护灯色。\n", encoding="utf-8")
         sources.append(SkillSource(name, kind, source))
     package = ExperimentPackageBuilder().build_directory(
         tmp_path / "experiment", definition=definition, skills=sources,

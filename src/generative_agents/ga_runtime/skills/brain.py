@@ -11,9 +11,10 @@ from generative_agents.ga_protocol.facts.quality import deterministic_quality_is
 from generative_agents.ga_runtime.skills.executor import RecoverableSkillRuntimeError
 from generative_agents.ga_runtime.skills.executor import SkillRunResult
 from generative_agents.ga_runtime.skills.executor import SkillRuntime
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled
 
 from generative_agents.ga_runtime.capabilities.server import PlannedWorldAction
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 
 
@@ -26,6 +27,8 @@ class BrainRuntime:
         *,
         brain_skill: str,
         model_config: Mapping[str, Any],
+        decision_config: Mapping[str, Any] | None = None,
+        decision_client=None,
         memory_stream=None,
         model_client=None,
         recorder=None,
@@ -37,7 +40,11 @@ class BrainRuntime:
         brain = registry.get(self.brain_skill)
         if brain.kind != "brain":
             raise ValueError(f"Configured Skill is not a brain: {self.brain_skill}")
+        if brain.llm_type != "generative":
+            raise ValueError("Brain Skill requires a generative model")
         self.model_config = dict(model_config)
+        self.decision_config = dict(decision_config or {})
+        self.decision_client = decision_client
         self.memory_stream = memory_stream
         self.model_client = model_client
         self.recorder = recorder
@@ -81,7 +88,7 @@ class BrainRuntime:
                 agent, external_observations=external_observations
             ),
         )
-        mcp = SimulationMCPServer(
+        interfaces = SimulationAPI(
             game,
             iteration,
             memory_stream=self.memory_stream,
@@ -95,7 +102,7 @@ class BrainRuntime:
                 or ""
             ),
             api_key=str(self.model_config.get("api_key") or ""),
-            mcp=mcp,
+            interfaces=interfaces,
             timeout=float(self.model_config.get("timeout_seconds") or 300),
             max_hops=int(self.model_config.get("max_hops") or 12),
             temperature=float(self.model_config.get("temperature") or 0.2),
@@ -107,6 +114,8 @@ class BrainRuntime:
                 self.model_config.get("retry_backoff_seconds") or 0
             ),
             model_client=self.model_client,
+            decision_config=self.decision_config,
+            decision_client=self.decision_client,
             recorder=self.recorder,
             control=self.control,
             logger=self.logger,
@@ -115,8 +124,10 @@ class BrainRuntime:
         )
         task = (
             "驱动当前 Agent 完成一个仿真迭代。按照 Brain SOP 自主选择并串联子 Skill；"
-            "每个子 Skill 都会共享 IterationContext，上一个 Skill 的自然语言输出应作为"
-            "下一个 Skill 的输入。可任意调用只读感知和记忆 MCP。结束前必须且只能调用"
+            "每个子 Skill 都会共享 IterationContext；需要把前一次子 Skill 的结果原文传给"
+            "后续 Skill 时，使用 call_skill 的 input_from 指定那次已完成调用的 tool_call_id，"
+            "由运行器直接转交全文，不要重新概括。需要新任务说明时使用 input_text；两者只能选一项。"
+            "可任意调用只读感知和记忆接口。结束前必须且只能调用"
             "一次 world-act，选择本轮唯一真实世界动作；world-act 一旦成功，本轮立即结束。"
             "子 Skill 只能提出候选动作，不能替 Brain 提交动作。若动作目标不在当前位置，"
             "本轮先 MOVE，后续迭代到达后再 ACT，不能用 ACT 的文本假装已经移动。"
@@ -138,10 +149,13 @@ class BrainRuntime:
             )
             self._consecutive_fallbacks[agent_key] = 0
         except RecoverableSkillRuntimeError as exc:
-            discarded_action = mcp.action.as_dict() if mcp.action is not None else None
-            mcp.discard_action()
+            discarded_action = interfaces.action.as_dict() if interfaces.action is not None else None
+            interfaces.discard_action()
             if memory_snapshot is not None:
                 self.memory_stream.rollback_iteration(memory_snapshot)
+            execution = getattr(self.recorder, "execution", None)
+            if execution is not None:
+                execution.rollback(error_code=type(exc).__name__)
             failures = self._consecutive_fallbacks.get(agent_key, 0) + 1
             self._consecutive_fallbacks[agent_key] = failures
             fallback_signal = {
@@ -191,12 +205,16 @@ class BrainRuntime:
                 output_text=f"Brain runtime fallback: {exc}",
                 trace=failed_trace,
             )
-        except BaseException:
-            mcp.discard_action()
+        except BaseException as exc:
+            interfaces.discard_action()
             if memory_snapshot is not None:
                 self.memory_stream.rollback_iteration(memory_snapshot)
+            execution = getattr(self.recorder, "execution", None)
+            if execution is not None:
+                execution.rollback(error_code=type(exc).__name__,
+                                   cancelled=isinstance(exc, ModelCallCancelled))
             raise
-        if mcp.action is None and not any(
+        if interfaces.action is None and not any(
             item.get("event") == "brain.fallback" for item in result.trace
         ):
             result = SkillRunResult(
@@ -211,7 +229,7 @@ class BrainRuntime:
                     },
                 ),
             )
-        action = mcp.action or PlannedWorldAction(
+        action = interfaces.action or PlannedWorldAction(
             action_type="WAIT",
             arguments={
                 "action_type": "WAIT",
@@ -368,7 +386,7 @@ class BrainRuntime:
                     for item in trace_items
                     if item.get("event") == "skill.call"
                 ],
-                "mcp_calls": [
+                "interface_calls": [
                     {
                         "skill": item.get("skill"),
                         "tool": item.get("tool"),
@@ -377,7 +395,7 @@ class BrainRuntime:
                         "is_error": bool(item.get("is_error", False)),
                     }
                     for item in trace_items
-                    if item.get("event") == "mcp.call"
+                    if item.get("event") == "interface.call"
                 ],
                 "runtime_signals": [
                     dict(item)
@@ -407,7 +425,7 @@ class BrainRuntime:
                 "agent_key": item["agent_key"],
                 "step_no": item["step_no"],
                 "now": item["now"],
-                "mcp_calls": item["mcp_calls"],
+                "interface_calls": item["interface_calls"],
                 "action": item["action"],
             }
             for item in self._audit_records

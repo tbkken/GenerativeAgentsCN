@@ -185,10 +185,10 @@ def test_skill_workspace_is_file_backed_and_self_contained(database_url):
     assert "experiment-brain" not in script
     assert "/api/studio/resources/skills" in script
     assert "SKILL.md" in script
-    assert "Scripts 与 MCP" in script
+    assert "文件与调用关系" in script
+    assert "Scripts 与 MCP" not in script
     assert "model_preset_id" in script
     assert "/dependencies" in script
-    assert "/history" in script
     assert "workflow-editor.js" not in shell
     assert "brain-workspace.js" not in shell
     assert "capability-workspace.js" not in shell
@@ -231,7 +231,7 @@ def test_agent_result_page_is_agent_owned_and_switches_structured_outputs_by_tab
     assert 'class="agent-result-list" id="resultAgentButtons"' in shell
     assert 'id="resultAgentButtons" role="tablist"' in shell
     assert 'id="resultAgentDetail" role="tabpanel"' in shell
-    assert 'id="agentTabPrev"' in shell and 'id="agentTabNext"' in shell
+    assert 'id="agentTabPrev"' not in shell and 'id="agentTabNext"' not in shell
     assert 'data-tooltip="每个 Agent 是一个独立结果单元；切换上方 Tab' not in shell
     assert '.agent-result-card' not in shell
     assert "function renderAgentTabs()" in script
@@ -697,7 +697,11 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert "event_type=PHYSICAL&cursor=" in source
     assert "scheduleDetailPoll()" in source
     assert "syncModelTracePolling" not in source
-    assert "await loadModelTraces(runId" in source
+    trace_loading = source[source.index("async function loadOperationsWorkspaceUnlocked") : source.index("function simulationStartTime")]
+    assert "await Promise.all([" in trace_loading
+    assert "loadModelTraces(runId, traceAttempt, controller.signal" in trace_loading
+    assert "state.executionObserver?.refreshTree(state.currentRun, traceAttempt)" in trace_loading
+    assert "resultGeneration === state.resultGeneration && runId === state.selectedRunId" in trace_loading
     assert "item.status === 'RUNNING'" in source
     assert "JSON.stringify({ force: options.force ?? true })" in source
     assert "filtered.slice(pagination.itemsFrom, pagination.itemsTo)" in source

@@ -16,9 +16,11 @@ from generative_agents.ga_studio.api import normalize_public_world
 from generative_agents.ga_protocol.spatial.navigation import collision_preview
 from generative_agents.ga_protocol.spatial.navigation import grid_path
 from generative_agents.ga_studio.api import SpatialAssetService
+from generative_agents.ga_studio.api import SkillTrialEnvironmentService
 from generative_agents.ga_protocol.skills.documents import SkillRegistryError
 from generative_agents.ga_protocol.schemas.trials import SkillTrialError
 from generative_agents.adapters.web.trials import run_skill_trial
+from generative_agents.adapters.web.trials import compile_public_skill_decision
 
 
 class Request(BaseModel):
@@ -54,8 +56,9 @@ class NavigationPreview(Request):
 
 class SkillCreate(Request):
     name: str = Field(min_length=1, max_length=64)
+    display_name: str | None = Field(default=None, min_length=1, max_length=200)
     description: str = Field(min_length=1, max_length=2_000)
-    kind: Literal["atomic", "pack", "brain"] = "atomic"
+    kind: Literal["skill", "brain"] = "skill"
 
 
 class SkillUpdate(Request):
@@ -65,8 +68,15 @@ class SkillUpdate(Request):
 
 class SkillTrial(Request):
     input_text: str = Field(min_length=1, max_length=100_000)
-    context: dict[str, Any] = Field(default_factory=dict)
     model_preset_id: str | None = None
+    experiment_id: str | None = None
+    agent_key: str | None = None
+
+
+class SkillDecisionCompile(Request):
+    markdown: str = Field(min_length=1, max_length=200_000)
+    model_preset_id: str | None = None
+    scripts: dict[str, str] | None = None
 
 
 class SpatialAssetCreate(Request):
@@ -88,6 +98,8 @@ def create_resource_router(database, skill_registry) -> APIRouter:
     router = APIRouter(prefix="/api/studio/resources", tags=["studio-resources"])
     maps = WorldMapService(database, skill_registry=skill_registry)
     spatial_assets = SpatialAssetService(database)
+    trial_environments = (SkillTrialEnvironmentService(database, skill_registry.cache_root.parent)
+                          if skill_registry is not None else None)
 
     def call(operation):
         try:
@@ -100,6 +112,22 @@ def create_resource_router(database, skill_registry) -> APIRouter:
         except SkillRegistryError as exc:
             status = 404 if "does not exist" in str(exc) else 422
             raise HTTPException(status_code=status, detail=str(exc)) from exc
+        except SkillTrialError as exc:
+            raise HTTPException(status_code=exc.status, detail={
+                'code': exc.code, 'message': str(exc), 'trace': exc.trace,
+            }) from exc
+
+    @router.get('/skill-trial/experiments')
+    def trial_experiments():
+        if trial_environments is None:
+            raise HTTPException(503, '技能试运行服务不可用')
+        return call(trial_environments.experiments)
+
+    @router.get('/skill-trial/experiments/{experiment_id}/agents')
+    def trial_agents(experiment_id: str):
+        if trial_environments is None:
+            raise HTTPException(503, '技能试运行服务不可用')
+        return call(lambda: trial_environments.agents(experiment_id))
 
     @router.get("/map-editor/ville-document")
     def get_ville_map_editor_document():
@@ -263,7 +291,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
 
     @router.get("/skills")
     def list_skills(
-        kind: Literal["atomic", "pack", "brain", "skill"] | None = None,
+        kind: Literal["skill", "brain"] | None = None,
         q: str = Query(default="", max_length=200),
         include_archived: bool = False,
         page: int = Query(default=1, ge=1),
@@ -277,6 +305,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
         return call(
             lambda: skill_registry.create(
                 name=body.name,
+                display_name=body.display_name,
                 description=body.description,
                 kind=body.kind,
             ).detail()
@@ -289,11 +318,17 @@ def create_resource_router(database, skill_registry) -> APIRouter:
     @router.post("/skills/{skill_name}/run")
     def trial_skill(skill_name: str, body: SkillTrial):
         try:
-            return call(lambda: run_skill_trial(database, skill_registry, skill_name, body.input_text, body.context, model_preset_id=body.model_preset_id))
+            return call(lambda: run_skill_trial(database, skill_registry, skill_name, body.input_text,
+                model_preset_id=body.model_preset_id, experiment_id=body.experiment_id, agent_key=body.agent_key))
         except SkillTrialError as exc:
             raise HTTPException(status_code=exc.status, detail={
                 "code": exc.code, "message": str(exc), "trace": exc.trace,
             }) from exc
+
+    @router.post("/skills/{skill_name}/decision-compile")
+    def compile_decision_skill(skill_name: str, body: SkillDecisionCompile):
+        return call(lambda: compile_public_skill_decision(database, skill_registry, skill_name,
+            body.markdown, model_preset_id=body.model_preset_id, scripts=body.scripts))
 
     @router.get("/skills/{skill_name}/dependencies")
     def get_skill_dependencies(skill_name: str):

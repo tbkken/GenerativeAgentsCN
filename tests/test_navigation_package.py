@@ -15,7 +15,7 @@ def test_sealed_experiment_physically_owns_collision_and_covers_it_in_integrity(
     definition = _definition()
     definition['world'] = normalize_public_world(navigation_world()).model_dump(mode='json')
     source = tmp_path / 'SKILL.md'
-    source.write_text('---\nname: test-brain\ndescription: navigation test\n---\nUse world-navigate then world-act.\n', encoding='utf-8')
+    source.write_text('---\nname: test-brain\ndescription: navigation test\n---\nUse @world-navigate then @world-act.\n', encoding='utf-8')
     packages = []
     for name, overrides in [('closed', {}), ('open', {'17': False})]:
         definition['world']['definition']['editor_v2']['navigation']['overrides'] = overrides

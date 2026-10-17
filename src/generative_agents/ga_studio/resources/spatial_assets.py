@@ -114,13 +114,6 @@ def _builtin_contracts() -> dict[str, SpatialAssetContract]:
                 "vehicle-yellow": {"emoji": "🟡"},
                 "vehicle-red": {"emoji": "🔴"},
             },
-            skill_bindings=[{
-                "interaction_key": "query-pedestrian-signal",
-                "skill_name": "traffic-signal-state",
-                "description": "查询当前行人是否可以安全通过斑马线",
-                "interaction_radius_tiles": 2.5,
-                "default_request": "请告诉我当前行人信号，以及现在是否可以过马路。",
-            }],
         ),
         "zone-pedestrian-wait": _contract(
             "行人等待区", "ZONE", "COLOR", "#8bd3c7",

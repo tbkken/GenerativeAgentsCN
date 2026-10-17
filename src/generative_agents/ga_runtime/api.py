@@ -10,6 +10,7 @@ __all__ = [
     "export_run_artifact",
     "ArtifactJobs",
     "execute_skill_trial",
+    "compile_skill_decision",
     "FileMemoryStream",
     "FileRunControl",
     "LoadedExperiment",
@@ -55,6 +56,9 @@ def __getattr__(name: str):
     if name == "execute_skill_trial":
         from generative_agents.ga_runtime.skills.trial import execute_skill_trial
         return execute_skill_trial
+    if name == "compile_skill_decision":
+        from generative_agents.ga_runtime.skills.decision_compile import compile_skill_decision
+        return compile_skill_decision
     if name == "export_run_artifact":
         from generative_agents.ga_runtime.storage.exports import export_run_artifact
         return export_run_artifact

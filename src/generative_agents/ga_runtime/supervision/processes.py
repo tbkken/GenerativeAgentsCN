@@ -16,6 +16,7 @@ from generative_agents.ga_protocol.schemas.manifests import RunStatus
 from generative_agents.ga_protocol.packages.io import atomic_write_json
 from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.validation import validate_run_directory
+from generative_agents.ga_runtime.lifecycle.control import FileRunControl
 
 
 class FileRunSupervisor:
@@ -43,6 +44,10 @@ class FileRunSupervisor:
             raise PackageError(f"Run cannot be submitted from {status.status.value}")
         if not self._slots.acquire(blocking=False):
             raise RuntimeError("no local Runtime execution slot is available")
+        # A resume is the point at which old pause/cancel flags are cleared.
+        # The worker must preserve any new control received after QUEUED.
+        if status.status in {RunState.PAUSED, RunState.FAILED}:
+            FileRunControl(run_root).reset()
         status.status = RunState.QUEUED
         status.reason = None
         status.updated_at = datetime.now(UTC)

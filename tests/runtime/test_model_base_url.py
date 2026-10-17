@@ -1,8 +1,5 @@
 """Runtime must use the same provider API prefix as Studio and package schemas."""
-import json
-
 import pytest
-import requests
 
 from generative_agents.ga_runtime.models.gateway import VLLMLLMModel
 
@@ -15,18 +12,14 @@ from generative_agents.ga_runtime.models.gateway import VLLMLLMModel
 def test_discovery_and_completions_preserve_provider_api_path(monkeypatch, base_url, prefix):
     calls = []
 
-    def request(session, method, url, **kwargs):
+    def request(model, method, url, **kwargs):
         calls.append((method.upper(), url))
-        response = requests.Response()
-        response.status_code = 200
-        response.url = url
         data = {"data": [{"id": "test-model"}]} if method.upper() == "GET" else {
             "choices": [{"message": {"role": "assistant", "content": "OK"}}],
         }
-        response._content = json.dumps(data).encode()
-        return response
+        return data
 
-    monkeypatch.setattr(requests.Session, "request", request)
+    monkeypatch.setattr(VLLMLLMModel, "_request_json", request)
     model = VLLMLLMModel({"model": "auto", "base_url": base_url, "retry_attempts": 1})
     assert model.chat_completion([{"role": "user", "content": "Reply OK."}])["content"] == "OK"
     assert model.completion("Reply OK.") == "OK"

@@ -13,6 +13,8 @@ from generative_agents.ga_runtime.engine.world import Game
 from generative_agents.ga_runtime.engine.context import SimulationContext
 from generative_agents.ga_runtime.engine.collector import StepResultCollector
 from generative_agents.ga_runtime.engine.results import StepResultBuilder
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled, check_cancelled
+from generative_agents.ga_runtime.storage.execution import execution_span
 
 
 class StepCommitter(Protocol):
@@ -35,7 +37,7 @@ class StepCommitter(Protocol):
 
 @dataclass(slots=True)
 class SimulationRunner:
-    """运行一次隔离仿真的主循环，并只在完整步骤边界响应控制请求。
+    """运行隔离仿真；暂停等待完整步骤，取消丢弃尚未提交的步骤。
 
     ``Game`` 负责计算世界变化，``StepResultBuilder`` 收集本步事实，``committer``
     负责把事实持久化。Runner 不直接操作数据库，因此命令行运行和 Worker 运行可以
@@ -79,7 +81,7 @@ class SimulationRunner:
             ValueError: 步数或虚拟时间步长不是正数。
 
         说明:
-            每一步严格遵循“推进世界—捕获结果—写帧—可选检查点—更新投影”的顺序；控制请求只在安全边界生效。
+            每一步严格遵循“推进世界—捕获结果—写帧—可选检查点—更新投影”的顺序；暂停在安全边界生效，取消回到最近已提交边界。
         """
         if steps < 1 or stride_minutes < 1:
             raise ValueError("steps and stride_minutes must be positive")
@@ -87,7 +89,7 @@ class SimulationRunner:
         self._bind_agent_step(self.completed_steps + 1)
         self.game.reset_game()
         for offset in range(steps):
-            # 暂停和取消只能在两步之间生效，绝不能留下“移动了一半但尚未提交”的状态。
+            # 不开始新的步骤；取消发生于步内时，丢弃整个未提交步骤。
             if (
                 self.context.control.cancel_requested
                 or self.context.control.pause_requested
@@ -103,69 +105,93 @@ class SimulationRunner:
                 virtual_time=self.context.clock.get_date(),
             )
             memory_stream = getattr(self.context, "memory_stream", None)
+            memory_snapshot = None
             if memory_stream is not None:
-                memory_stream.begin_step(
+                memory_snapshot = memory_stream.begin_step(
                     step_no,
                     self.context.clock.get_date(),
                 )
-            collector = StepResultCollector(
-                builder,
-                name_to_key=self.game.agent_keys_by_name,
-            )
-            for agent_key, status in self.agent_status.items():
-                agent = self.game.get_agent(agent_key)
-                from_coord = tuple(agent.coord)
-                outcome = self.game.agent_think(
-                    agent_key,
-                    status,
-                    step_no=step_no,
-                    total_steps=target_step,
-                    stride_minutes=stride_minutes,
-                )
-                committed = self.game.commit_world_action(
-                    agent_key,
-                    outcome,
-                    stride_minutes=stride_minutes,
-                    movement_budget=self._movement_budget(stride_minutes),
-                )
-                outcome = committed["outcome"]
-                planned_path = committed["planned_path"]
-                executed_path = committed["executed_path"]
-                remaining = committed["remaining_path"]
-                collector.capture_agent(
-                    agent_key,
-                    agent,
-                    from_coord,
-                    outcome,
-                    executed_path=executed_path,
-                    planned_path=planned_path,
-                    remaining_path=remaining,
-                )
-                # Agent.path 属于 Game.snapshot_state。运行中断后必须恢复尚未消费的原路径，
-                # 不能直接跳到终点，也不能重新寻路，否则恢复前后的轨迹会分叉。
-                status["coord"] = tuple(agent.coord)
-                status["path"] = tuple(agent.path or ())
-            run_objects = getattr(self.game, "run_game_object_skills", None)
-            if callable(run_objects):
-                for event in run_objects(
-                    step_no=step_no, total_steps=target_step, stride_minutes=stride_minutes,
-                    observed_facts=builder.domain_events,
-                ):
-                    collector.capture_event(event)
-            if memory_stream is not None:
-                for event in memory_stream.drain_result_events():
-                    collector.capture_event(event)
-            result = collector.freeze()
-            # 普通间隔、最后一步或控制边界都可以产生检查点；提交器负责具体写入顺序。
-            terminal_boundary = (
-                offset == steps - 1
-                or self.context.control.pause_requested
-                or self.context.control.cancel_requested
-            )
-            force_checkpoint = (
-                terminal_boundary or step_no % self.checkpoint_interval_steps == 0
-            )
-            self.committer.commit(result, force_checkpoint=force_checkpoint)
+            with execution_span(
+                getattr(self.context, "execution_trace", None), kind="step",
+                name=f"Step {step_no}", step_no=step_no,
+            ):
+                try:
+                    collector = StepResultCollector(
+                        builder,
+                        name_to_key=self.game.agent_keys_by_name,
+                    )
+                    for actor_index, (agent_key, status) in enumerate(self.agent_status.items(), 1):
+                        check_cancelled(self.context.control)
+                        agent = self.game.get_agent(agent_key)
+                        actor_name = str(getattr(agent, "name", None) or agent_key)
+                        with execution_span(
+                            getattr(self.context, "execution_trace", None), kind="actor",
+                            name=actor_name, agent_key=agent_key,
+                            actor_name=actor_name, actor_kind="agent",
+                            step_no=step_no, actor_index=actor_index, actor_total=len(self.agent_status),
+                        ):
+                            from_coord = tuple(agent.coord)
+                            outcome = self.game.agent_think(
+                                agent_key,
+                                status,
+                                step_no=step_no,
+                                total_steps=target_step,
+                                stride_minutes=stride_minutes,
+                            )
+                            check_cancelled(self.context.control)
+                            committed = self.game.commit_world_action(
+                                agent_key,
+                                outcome,
+                                stride_minutes=stride_minutes,
+                                movement_budget=self._movement_budget(stride_minutes),
+                            )
+                            outcome = committed["outcome"]
+                            planned_path = committed["planned_path"]
+                            executed_path = committed["executed_path"]
+                            remaining = committed["remaining_path"]
+                            collector.capture_agent(
+                                agent_key,
+                                agent,
+                                from_coord,
+                                outcome,
+                                executed_path=executed_path,
+                                planned_path=planned_path,
+                                remaining_path=remaining,
+                            )
+                            # Agent.path 属于 Game.snapshot_state。运行中断后必须恢复尚未消费的原路径，
+                            # 不能直接跳到终点，也不能重新寻路，否则恢复前后的轨迹会分叉。
+                            status["coord"] = tuple(agent.coord)
+                            status["path"] = tuple(agent.path or ())
+                    check_cancelled(self.context.control)
+                    run_objects = getattr(self.game, "run_game_object_skills", None)
+                    if callable(run_objects):
+                        for event in run_objects(
+                            step_no=step_no, total_steps=target_step, stride_minutes=stride_minutes,
+                            observed_facts=builder.domain_events,
+                        ):
+                            collector.capture_event(event)
+                    if memory_stream is not None:
+                        for event in memory_stream.drain_result_events():
+                            collector.capture_event(event)
+                    result = collector.freeze()
+                    # 普通间隔、最后一步或控制边界都可以产生检查点；提交器负责具体写入顺序。
+                    terminal_boundary = (
+                        offset == steps - 1
+                        or self.context.control.pause_requested
+                        or self.context.control.cancel_requested
+                    )
+                    force_checkpoint = (
+                        terminal_boundary or step_no % self.checkpoint_interval_steps == 0
+                    )
+                    check_cancelled(self.context.control)
+                    self.committer.commit(result, force_checkpoint=force_checkpoint)
+                except ModelCallCancelled:
+                    if memory_snapshot is not None:
+                        memory_stream.rollback_step(memory_snapshot)
+                    execution = getattr(self.context, "execution_trace", None)
+                    if execution is not None:
+                        execution.rollback(error_code="ModelCallCancelled", cancelled=True)
+                    raise
             self.completed_steps = step_no
             if not terminal_boundary:
                 self.context.clock.forward(stride_minutes)

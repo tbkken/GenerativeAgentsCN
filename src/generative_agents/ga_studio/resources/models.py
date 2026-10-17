@@ -3,7 +3,7 @@ from generative_agents.ga_studio.storage.credentials import HostModelCredentials
 from uuid import uuid4
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, AnyHttpUrl
-from generative_agents.ga_protocol.schemas.experiment import ChatVLLMConfig
+from generative_agents.ga_protocol.schemas.experiment import ChatVLLMConfig, DecisionModelConfig
 from generative_agents.ga_protocol.schemas.experiment import EmbeddingOpenAICompatibleConfig
 from generative_agents.ga_studio.resources.catalog import StudioResourceService
 from generative_agents.ga_studio.resources.catalog import StudioResourceError
@@ -13,7 +13,7 @@ from generative_agents.ga_studio.storage.models import StudioResourceExchangeSta
 class ModelServiceInput(BaseModel):
     model_config = ConfigDict(extra='forbid')
     name: str = Field(min_length=1, max_length=120)
-    purpose: str = Field(pattern='^(chat|embedding)$')
+    purpose: str = Field(pattern='^(chat|embedding|decision)$')
     base_url: AnyHttpUrl
     model: str = Field(min_length=1, max_length=200)
     api_key: str | None = Field(default=None, max_length=8000)
@@ -65,12 +65,14 @@ class ModelService:
                     if session.get(StudioResourceExchangeState, ('model', previous['id'])) is not None:
                         imported_alias = alias
             alias = self.credentials.store(body.api_key, alias=imported_alias)
-        transport = {'provider': 'vllm' if body.purpose == 'chat' else 'openai_compatible', 'base_url': str(body.base_url).rstrip('/'), 'model': body.model.strip(), 'timeout_seconds': body.timeout_seconds, 'credential_env': alias}
-        if not transport['model'] or transport['model'] == 'auto':
+        providers = {'chat': 'vllm', 'embedding': 'openai_compatible', 'decision': 'unsloth'}
+        transport = {'provider': providers[body.purpose], 'base_url': str(body.base_url).rstrip('/'), 'model': body.model.strip(), 'timeout_seconds': body.timeout_seconds, 'credential_env': alias}
+        if not transport['model'] or transport['model'].casefold() == 'auto':
             raise ModelServiceError(422, '请填写明确的模型 ID。')
         if body.purpose == 'chat':
             transport.update(max_tokens=body.max_tokens, temperature=body.temperature, retry_attempts=1)
-        schema = ChatVLLMConfig if body.purpose == 'chat' else EmbeddingOpenAICompatibleConfig
+        schema = {'chat': ChatVLLMConfig, 'embedding': EmbeddingOpenAICompatibleConfig,
+                  'decision': DecisionModelConfig}[body.purpose]
         config[body.purpose] = schema.model_validate(transport).model_dump(mode='json')
         try:
             if previous:
@@ -110,17 +112,21 @@ class ModelService:
     def test(self, model_id: str, purpose: str):
         item = self.require(model_id)
         config = item['config'].get(purpose)
-        if purpose not in ('chat', 'embedding') or not config:
+        if purpose not in ('chat', 'embedding', 'decision') or not config:
             raise ModelServiceError(422, '该配置没有所选类型的模型。')
         try:
             key = self.credentials.resolve(config.get('credential_env'))
-            endpoint = '/chat/completions' if purpose == 'chat' else '/embeddings'
+            endpoint = {'chat': '/chat/completions', 'embedding': '/embeddings', 'decision': '/systemone'}[purpose]
             payload = {'model': config['model']}
             if purpose == 'chat':
                 payload.update(messages=[{'role': 'user', 'content': 'Reply OK.'}], max_tokens=16)
+            elif purpose == 'decision':
+                payload.update(state='这是一次模型服务连接测试。', questions={
+                    'connection': {'type': 'noul', 'instructions': '这段文字是否在进行连接测试？'}})
             else:
                 payload['input'] = ['连接测试']
-            with httpx.Client(timeout=20) as client:
+            timeout = config['timeout_seconds'] if purpose == 'decision' else 20
+            with httpx.Client(timeout=timeout) as client:
                 response = client.post(config['base_url'].rstrip('/') + endpoint, json=payload, headers={'Authorization': f'Bearer {key}'} if key else {})
             if response.status_code in (401, 403):
                 raise ModelServiceError(422, '认证失败，请在模型中心填写或更新有效的 API Key。')
@@ -129,15 +135,22 @@ class ModelService:
             data = response.json()
             if purpose == 'chat':
                 if not data.get('choices'):
-                    raise ValueError('聊天响应缺少 choices。')
-                return {'ok': True, 'message': '聊天模型调用成功。'}
+                    raise ValueError('生成式模型响应缺少 choices。')
+                return {'ok': True, 'message': '生成式模型调用成功。'}
+            if purpose == 'decision':
+                answer = data['answers']['connection']
+                probability = answer['noul']
+                if (answer.get('type') != 'noul' or isinstance(probability, bool)
+                        or not isinstance(probability, (int, float)) or not 0 <= probability <= 1):
+                    raise ValueError('决策模型响应缺少有效的 noul 结果。')
+                return {'ok': True, 'message': '决策模型调用成功。'}
             vector = data['data'][0]['embedding']
             if not vector:
                 raise ValueError('Embedding 返回空向量。')
             return {'ok': True, 'message': f'Embedding 调用成功，向量维度 {len(vector)}。'}
         except ModelServiceError:
             raise
-        except (ValueError, KeyError, IndexError) as exc:
+        except (ValueError, KeyError, IndexError, TypeError, AttributeError) as exc:
             raise ModelServiceError(422, '密钥未配置或模型响应格式不正确，请检查配置。') from exc
         except httpx.HTTPError as exc:
             raise ModelServiceError(422, '无法连接模型服务或请求超时，请检查服务地址和运行状态。') from exc

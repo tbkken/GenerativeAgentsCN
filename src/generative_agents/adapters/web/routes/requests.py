@@ -53,6 +53,7 @@ class ExperimentWorkspaceCreate(PortableRequest):
     brain_skill_id: str
     model_preset_id: str
     embedding_model_preset_id: str | None = None
+    decision_model_preset_id: str | None = None
     agent_ids: list[str] = Field(default_factory=list)
     crowd_ids: list[str] = Field(default_factory=list)
     evaluator_ids: list[str] = Field(default_factory=list)

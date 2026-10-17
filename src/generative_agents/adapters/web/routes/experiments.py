@@ -265,7 +265,7 @@ def install_routes(router, ctx):
     @router.post('/experiments', status_code=201)
     @ctx.jobs.action('CREATE_EXPERIMENT')
     def create_experiment_workspace(body: ExperimentWorkspaceCreate):
-        created = ctx.studio_call(lambda: ctx.workspaces.create(ExperimentSelection(name=body.name, goal=body.goal, key=body.key, timezone=body.timezone, map_id=body.map_id, brain_skill_id=body.brain_skill_id, model_preset_id=body.model_preset_id, embedding_model_preset_id=body.embedding_model_preset_id, agent_ids=tuple(body.agent_ids), crowd_ids=tuple(body.crowd_ids), evaluator_ids=tuple(body.evaluator_ids), placements=tuple((AgentPlacement(agent_id=item.agent_id, coord=item.coord) for item in body.placements)), simulation=body.simulation)))
+        created = ctx.studio_call(lambda: ctx.workspaces.create(ExperimentSelection(name=body.name, goal=body.goal, key=body.key, timezone=body.timezone, map_id=body.map_id, brain_skill_id=body.brain_skill_id, model_preset_id=body.model_preset_id, embedding_model_preset_id=body.embedding_model_preset_id, decision_model_preset_id=body.decision_model_preset_id, agent_ids=tuple(body.agent_ids), crowd_ids=tuple(body.crowd_ids), evaluator_ids=tuple(body.evaluator_ids), placements=tuple((AgentPlacement(agent_id=item.agent_id, coord=item.coord) for item in body.placements)), simulation=body.simulation)))
         metadata = ctx.update_experiment_presentation(created['experiment_id'], {'owner': body.owner.strip(), 'tags': list(dict.fromkeys((value.strip() for value in body.tags if value.strip())))})
         return {**created, **metadata}
 

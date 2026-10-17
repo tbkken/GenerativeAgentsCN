@@ -7,6 +7,15 @@ from collections.abc import Callable
 from typing import Protocol
 
 
+class ModelCallCancelled(RuntimeError):
+    """A Run cancellation, never a recoverable model/provider failure."""
+
+
+def check_cancelled(control: RetryControl | None) -> None:
+    if control is not None and control.cancel_requested:
+        raise ModelCallCancelled("model call cancelled by Run control")
+
+
 class RetryControl(Protocol):
     """模型重试期间可查询的暂停、取消和可中断等待协议。"""
 

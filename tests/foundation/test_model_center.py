@@ -89,6 +89,13 @@ def test_trial_uses_selected_model_and_encrypted_key(center, monkeypatch):
     client, _, _ = center
     _, model = create(client)
     monkeypatch.setenv('GA_SKILL_LLM_MODEL', 'must-not-override-selection')
+    def parser(config, **kwargs):
+        from types import SimpleNamespace
+        assert config['api_key'] == 'secret-test-123'
+        assert config['model'] == 'test-chat'
+        return SimpleNamespace(chat_completion=lambda *args, **kwargs: {'content': json.dumps({
+            'task': '询问项目进度', 'focus': [], 'constraints': [], 'provided_information': [], 'parameters': {}})})
+    monkeypatch.setattr('generative_agents.ga_runtime.skills.trial.create_llm_model', parser)
     def complete(runtime, messages, tools=None):
         assert runtime.api_key == 'secret-test-123'
         assert runtime.model == 'test-chat'

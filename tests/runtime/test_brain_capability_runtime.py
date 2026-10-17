@@ -1,4 +1,4 @@
-"""Contracts for IterationContext and the Agent-bound simulation MCP surface."""
+"""Contracts for IterationContext and the Agent-bound simulation API surface."""
 
 from __future__ import annotations
 
@@ -15,7 +15,7 @@ from generative_agents.ga_runtime.memory.event import Event
 from generative_agents.ga_runtime.engine.world import Game
 from generative_agents.ga_runtime.engine.space import Maze
 from generative_agents.ga_runtime.skills.brain import BrainRuntime
-from generative_agents.ga_runtime.capabilities.server import SimulationMCPServer
+from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 from generative_agents.ga_runtime.engine.collector import StepResultCollector
 from generative_agents.ga_protocol.schemas.facts import ActionSnapshot
@@ -131,16 +131,18 @@ def _server():
         address=tuple(_Tile.address),
         spatial_semantics=_Tile.spatial_semantics,
     )
-    return SimulationMCPServer(game, iteration)
+    return SimulationAPI(game, iteration)
 
 
 def test_iteration_context_exposes_virtual_time_and_four_layer_semantics():
     server = _server()
 
-    perceived = server.call("world-perceive", {"radius_tiles": 0})
+    perceived = server.invoke("world-perceive", {"radius_tiles": 0})
 
-    assert perceived["isError"] is False
-    text = perceived["content"][0]["text"]
+    assert set(perceived) == {"ok", "result"}
+    assert perceived["ok"] is True
+    assert isinstance(perceived["result"], dict)
+    text = json.dumps(perceived["result"], ensure_ascii=False)
     assert "2026-08-27T11:13:51+00:00" in text
     assert "一个由用户定义的安静世界" in text
     assert "用户世界" in text
@@ -264,12 +266,12 @@ def test_world_perceive_uses_semantic_index_and_clamps_agent_attention_contract(
         spatial_semantics=tuple(tile.spatial_semantics),
     )
 
-    response = SimulationMCPServer(game, iteration).call(
+    response = SimulationAPI(game, iteration).invoke(
         "world-perceive", {"radius_tiles": 20}
     )
-    payload = json.loads(response["content"][0]["text"])
+    payload = response["result"]
 
-    assert response["isError"] is False
+    assert response["ok"] is True
     assert payload["requested_radius_tiles"] == 20
     assert payload["radius_tiles"] == 8
     assert "tiles" not in payload
@@ -295,13 +297,13 @@ def test_world_perceive_uses_semantic_index_and_clamps_agent_attention_contract(
         )
         == 1
     )
-    assert len(response["content"][0]["text"]) < 8_000
+    assert len(json.dumps(response["result"], ensure_ascii=False)) < 8_000
 
 
 def test_world_act_accepts_exactly_one_replayable_action_per_iteration():
     server = _server()
 
-    moved = server.call(
+    moved = server.invoke(
         "world-act",
         {
             "action_type": "MOVE",
@@ -309,14 +311,15 @@ def test_world_act_accepts_exactly_one_replayable_action_per_iteration():
             "description": "小林走向长椅",
         },
     )
-    rejected = server.call("world-act", {"action_type": "WAIT"})
+    rejected = server.invoke("world-act", {"action_type": "WAIT"})
 
-    assert moved["isError"] is False
+    assert moved["ok"] is True
     assert server.action is not None
     assert server.action.action_type == "MOVE"
     assert server.action.path == ((2, 1),)
-    assert rejected["isError"] is True
-    assert "already selected" in rejected["content"][0]["text"]
+    assert rejected["ok"] is False
+    assert set(rejected) == {"ok", "error"}
+    assert "already selected" in rejected["error"]
 
 
 @pytest.mark.parametrize(
@@ -344,17 +347,17 @@ def test_world_act_rejects_move_without_a_consistent_displacement(
 ):
     server = _server()
 
-    result = server.call("world-act", arguments)
+    result = server.invoke("world-act", arguments)
 
-    assert result["isError"] is True
-    assert error_fragment in result["content"][0]["text"]
+    assert result["ok"] is False
+    assert error_fragment in result["error"]
     assert server.action is None
 
 
 def test_world_act_replaces_model_hints_with_canonical_move_destination():
     server = _server()
 
-    result = server.call(
+    result = server.invoke(
         "world-act",
         {
             "action_type": "MOVE",
@@ -364,7 +367,7 @@ def test_world_act_replaces_model_hints_with_canonical_move_destination():
         },
     )
 
-    assert result["isError"] is False
+    assert result["ok"] is True
     assert server.action.arguments["target_coord"] == [2, 1]
     assert server.action.arguments["target_address"] == _Tile.address
     assert server.action.arguments["requested_target_coord"] is None
@@ -375,13 +378,13 @@ def test_world_act_rejects_address_only_move_when_agent_is_already_there():
     server = _server()
     server.game.maze.address_tiles[":".join(_Tile.address)].add((1, 1))
 
-    result = server.call(
+    result = server.invoke(
         "world-act",
         {"action_type": "MOVE", "target_address": list(_Tile.address)},
     )
 
-    assert result["isError"] is True
-    assert "already the current location" in result["content"][0]["text"]
+    assert result["ok"] is False
+    assert "already the current location" in result["error"]
     assert server.action is None
 
 
@@ -511,7 +514,7 @@ def test_world_commit_uses_the_actual_move_endpoint_as_replay_fact():
 def test_world_act_accepts_unencoded_activity_as_event_semantics():
     server = _server()
 
-    acted = server.call(
+    acted = server.invoke(
         "world-act",
         {
             "action_type": "ACT",
@@ -522,7 +525,7 @@ def test_world_act_accepts_unencoded_activity_as_event_semantics():
         },
     )
 
-    assert acted["isError"] is False
+    assert acted["ok"] is True
     assert server.action is not None
     assert server.action.action_type == "ACT"
     assert server.action.arguments["predicate"] == "喝"
@@ -567,10 +570,10 @@ def test_world_act_rejects_activity_that_claims_another_location(
     arguments, error_fragment
 ):
     server = _server()
-    result = server.call("world-act", arguments)
+    result = server.invoke("world-act", arguments)
 
-    assert result["isError"] is True
-    assert error_fragment in result["content"][0]["text"]
+    assert result["ok"] is False
+    assert error_fragment in result["error"]
     assert server.action is None
 
 
@@ -582,10 +585,10 @@ def test_world_act_rejects_activity_that_claims_another_location(
     ],
 )
 def test_world_act_rejects_activity_without_complete_event_semantics(arguments):
-    result = _server().call("world-act", arguments)
+    result = _server().invoke("world-act", arguments)
 
-    assert result["isError"] is True
-    assert "predicate and object" in result["content"][0]["text"]
+    assert result["ok"] is False
+    assert "predicate and object" in result["error"]
 
 
 def test_replay_world_event_requires_spo_and_structured_payload():
@@ -684,7 +687,7 @@ def test_game_object_skill_response_is_delivered_once_in_next_iteration_context(
     brain = BrainRuntime(
         SimpleNamespace(
             normalize_name=lambda name: name,
-            get=lambda _name: SimpleNamespace(kind="brain", content_hash="test-content-hash"),
+            get=lambda _name: SimpleNamespace(kind="brain", llm_type="generative", content_hash="test-content-hash"),
         ),
         brain_skill="stanford-town-brain",
         model_config={"model": "test-model"},
@@ -772,21 +775,21 @@ def test_speak_rejects_invalid_thread_before_accepting_action_and_can_retry(inva
     arguments = {"action_type": "SPEAK", "participant_agent_keys": ["agent-2"],
                  "message": "Hello", "conversation_id": conversation_id,
                  "start_new_conversation": invalid_kind == "new_with_id"}
-    rejected = server.call("world-act", arguments)
-    assert rejected["isError"] is True
-    assert "conversation_id" in rejected["content"][0]["text"]
+    rejected = server.invoke("world-act", arguments)
+    assert rejected["ok"] is False
+    assert "conversation_id" in rejected["error"]
     assert server.action is None
     assert game._conversation_threads == before
     assert game._conversation_sequence == sequence
 
     arguments.pop("conversation_id")
-    accepted = server.call("world-act", arguments)
-    assert accepted["isError"] is False
+    accepted = server.invoke("world-act", arguments)
+    assert accepted["ok"] is True
     assert game._conversation_threads == before  # Validation is read-only.
     committed = game.record_conversation_message("agent-1", ("agent-2",),
         start_new=arguments["start_new_conversation"])
     assert committed["participants"] == ("agent-1", "agent-2")
-    assert server.call("world-act", arguments)["isError"] is True
+    assert server.invoke("world-act", arguments)["ok"] is False
 
 
 def test_brain_quality_report_does_not_flag_normal_reads_across_iterations():
@@ -802,7 +805,7 @@ def test_brain_quality_report_does_not_flag_normal_reads_across_iterations():
             "agent_key": "lin",
             "step_no": step,
             "runtime_signals": [],
-            "mcp_calls": [
+            "interface_calls": [
                 {
                     "tool": "memory-stream-search",
                     "input": '{"query":"昨天的约定"}',
@@ -835,15 +838,15 @@ def test_recoverable_brain_failure_rolls_back_partial_action_and_memory(
     memory.begin_step(1, now)
 
     class _PartiallyFailingSkillRuntime:
-        def __init__(self, *_args, mcp, **_kwargs):
-            self.mcp = mcp
+        def __init__(self, *_args, interfaces, **_kwargs):
+            self.interfaces = interfaces
 
         def run(self, _skill, _task, *, context):
-            self.mcp.call(
+            self.interfaces.invoke(
                 "memory-stream-append",
                 {"content": "尚未提交却被提前写成完成事实"},
             )
-            self.mcp.call(
+            self.interfaces.invoke(
                 "world-act",
                 {
                     "action_type": "ACT",
@@ -855,7 +858,7 @@ def test_recoverable_brain_failure_rolls_back_partial_action_and_memory(
                 "no semantic progress",
                 trace=(
                     {
-                        "event": "mcp.call",
+                        "event": "interface.call",
                         "skill": "test-brain",
                         "tool": "memory-stream-append",
                         "input_text": '{}',
@@ -895,7 +898,7 @@ def test_recoverable_brain_failure_rolls_back_partial_action_and_memory(
     )
     registry = SimpleNamespace(
         normalize_name=lambda name: name,
-        get=lambda _name: SimpleNamespace(kind="brain", content_hash="test-content-hash"),
+        get=lambda _name: SimpleNamespace(kind="brain", llm_type="generative", content_hash="test-content-hash"),
     )
     brain = BrainRuntime(
         registry,
@@ -917,7 +920,7 @@ def test_recoverable_brain_failure_rolls_back_partial_action_and_memory(
     assert memory.drain_result_events() == ()
     trace = outcome["events"][0]["trace"]
     assert [item["event"] for item in trace] == [
-        "mcp.call",
+        "interface.call",
         "loop.detected",
         "brain.rollback",
         "brain.fallback",
@@ -975,12 +978,12 @@ def test_visual_state_is_perceived_and_can_change_without_passive_skill():
     observation = server._perceive({})
     assert observation["game_objects"][0]["available_visual_states"] == ["已整理"]
     assert observation["game_objects"][0]["default_visual_state"] == ""
-    result = server.call("world-act", {"action_type": "SET_OBJECT_STATE", "object_key": "desk", "state_patch": {"state": "已整理"}})
-    assert not result["isError"]
-    assert server.call("world-act", {"action_type": "ACT", "predicate": "整理", "object": "桌面"})["isError"]
+    result = server.invoke("world-act", {"action_type": "SET_OBJECT_STATE", "object_key": "desk", "state_patch": {"state": "已整理"}})
+    assert result["ok"]
+    assert not server.invoke("world-act", {"action_type": "ACT", "predicate": "整理", "object": "桌面"})["ok"]
     other = _server()
     other.game.maze.semantic_nodes_in_scope = lambda coord, radius: [{**obj, "skill_bindings": [{"interaction_radius_tiles": 0.1}]}]
-    assert other.call("world-act", {"action_type": "SET_OBJECT_STATE", "object_key": "desk", "state_patch": {"state": "已整理"}})["isError"]
+    assert not other.invoke("world-act", {"action_type": "SET_OBJECT_STATE", "object_key": "desk", "state_patch": {"state": "已整理"}})["ok"]
 
 
 def test_direct_visual_state_action_is_local_and_does_not_enable_plain_objects():
@@ -991,14 +994,14 @@ def test_direct_visual_state_action_is_local_and_does_not_enable_plain_objects()
         def query(coord, radius):
             return [{"id": "desk", "kind": "GAME_OBJECT", "bounds": {"x": 1 + distance, "y": 1, "width": 1, "height": 1}, "available_visual_states": ["已整理"] if visual else [], "skill_bindings": []}] if distance <= radius else []
         server.game.maze.semantic_nodes_in_scope = query
-        assert bool(server.call("world-act", payload)["isError"]) is not accepted
+        assert server.invoke("world-act", payload)["ok"] is accepted
 
 
 def test_repeated_read_quality_respects_iteration_and_successful_progress():
     brain = object.__new__(BrainRuntime)
     read = {"tool": "world-perceive", "input": "{}", "output": "same", "is_error": False}
     def record(step, calls):
-        return {"agent_key": "agent", "step_no": step, "mcp_calls": calls}
+        return {"agent_key": "agent", "step_no": step, "interface_calls": calls}
     brain._audit_records = [record(1,[read]),record(2,[read]),record(3,[read])]
     assert not brain._deterministic_quality_issues()
     brain._audit_records = [record(1,[read,read])]
