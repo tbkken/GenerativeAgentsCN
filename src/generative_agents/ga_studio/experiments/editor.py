@@ -33,7 +33,7 @@ from generative_agents.ga_protocol.skills.dependencies import skill_dependencies
 from generative_agents.ga_studio.experiments.builder import build_semantic_index
 from generative_agents.ga_studio.experiments.workspace import WorkspaceConflictError
 from generative_agents.ga_studio.resources.trials import prepare_copied_trial, SkillTrialEnvironmentService, trial_model
-from generative_agents.ga_studio.resources.decision_compile import decision_compile_scripts
+from generative_agents.ga_studio.resources.decision_compile import decision_compile_scripts, decision_compiler_model
 from generative_agents.ga_protocol.packages.definition import (
     _experiment_definition, assemble_skill_registry, read_experiment_assembly, read_experiment_documents, write_experiment_definition,
 )
@@ -371,9 +371,7 @@ class ExperimentResourceEditor:
         return credentials
 
     def prepare_decision_compile(self, experiment_id, key, body):
-        """Use the experiment's copied chat connection to parse an unsaved Skill."""
-        if body.get("model_preset_id"):
-            raise SkillTrialError("SKILL_MODEL_UNAVAILABLE", "实验内技能使用当前实验的生成式模型，请在实验模型配置中调整。")
+        """Compile an unsaved experiment Skill using the Studio author model."""
         with self.package(experiment_id) as (root, ep, digest, editable):
             if not editable:
                 raise ExperimentResourceError(409, "实验已封存；请复制为新的独立实验后修改")
@@ -382,9 +380,7 @@ class ExperimentResourceEditor:
             if entry is None:
                 self.missing()
             skill = self.skill(root, entry)
-            config = _experiment_definition(root)[1]["models"].get("chat") or {}
-        config, model, credentials = trial_model(self.workspace.database, self.workspace.package_root.parent,
-                                                 config=config, purpose="chat")
+        config, model, credentials = decision_compiler_model(self.workspace.database, self.workspace.package_root.parent)
         return {"markdown": body["markdown"], "skill_key": key, "kind": skill["kind"],
                 "scripts": decision_compile_scripts(skill["scripts"], body.get("scripts")),
                 "config": {**config, "model": model},

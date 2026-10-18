@@ -9,6 +9,7 @@ from fastapi.testclient import TestClient
 from generative_agents.ga_protocol.schemas.trials import SkillTrialError
 from generative_agents.ga_protocol.skills.metadata import skill_frontmatter
 from generative_agents.adapters.web.routes.resources import create_resource_router
+from generative_agents.adapters.web.routes.models import create_model_service_router
 from generative_agents.adapters.web.routes.experiment_resources import create_experiment_resource_router
 from generative_agents.ga_studio.catalog.packages import StudioPackageCatalogService
 from generative_agents.ga_studio.experiments.builder import ExperimentPackageBuilder, SkillSource
@@ -16,6 +17,7 @@ from generative_agents.ga_studio.resources.catalog import StudioResourceService
 from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
 from generative_agents.ga_studio.storage.database import create_database
 from generative_agents.ga_studio.storage.models import Base
+from generative_agents.ga_studio.storage.model_settings import StudioModelSettings
 from tests.test_portable_package_protocol import _definition
 
 
@@ -131,17 +133,28 @@ def author(tmp_path, monkeypatch):
     monkeypatch.setattr("generative_agents.ga_runtime.skills.decision_compile.create_llm_model", create)
     app = FastAPI()
     app.include_router(create_resource_router(database, registry))
+    app.include_router(create_model_service_router(database, tmp_path))
     app.include_router(create_experiment_resource_router(database, tmp_path))
     with TestClient(app) as http:
         yield database, registry, resources, client, settings, http
     database.close()
 
 
+def select_compiler(http, preset):
+    config = preset["config"]["chat"]
+    response = http.put(f"/api/studio/resources/model-services/{preset['id']}", json={
+        "name": preset["name"], "purpose": "chat", "base_url": config["base_url"],
+        "model": config["model"], "row_version": preset["row_version"], "decision_compiler": True})
+    assert response.status_code == 200, response.text
+    assert response.json()["decision_compiler"] is True
+    return response.json()
+
+
 def test_public_compile_uses_chat_and_only_save_persists_current_results(author, monkeypatch):
     database, registry, resources, model, settings, http = author
     monkeypatch.setenv("TEST_COMPILE_KEY", "private-compile-key")
-    resources.create_model_preset(name="解析模型", preset_key="compile-chat",
-        config={"chat": {**CHAT, "credential_env": "TEST_COMPILE_KEY", "retry_attempts": 5}})
+    select_compiler(http, resources.create_model_preset(name="解析模型", preset_key="compile-chat",
+        config={"chat": {**CHAT, "credential_env": "TEST_COMPILE_KEY", "retry_attempts": 5}}))
     original = registry.author_detail("decide-outing")
     response = http.post("/api/studio/resources/skills/decide-outing/decision-compile", json={"markdown": MARKDOWN})
     assert response.status_code == 200, response.text
@@ -162,23 +175,44 @@ def test_public_compile_uses_chat_and_only_save_persists_current_results(author,
     assert len(model.calls) == 1
 
 
-def test_public_compile_requires_chat_purpose_and_keeps_failure_unsaved(author):
+@pytest.mark.parametrize("failure", ["missing", "deleted", "nonchat", "archived"])
+def test_public_compile_requires_unified_chat_and_keeps_failure_unsaved(author, failure):
     database, registry, resources, model, settings, http = author
-    preset = resources.create_model_preset(name="决策模型", preset_key="compile-decision",
-        config={"decision": {"provider": "unsloth", "base_url": "http://127.0.0.1:5003/v1", "model": "laya-multilingual"}})
+    preset = resources.create_model_preset(name="已有生成式模型", preset_key="compile-chat", config={"chat": CHAT})
+    if failure != "missing":
+        select_compiler(http, preset)
+    if failure == "deleted":
+        resources.delete("model", preset["id"])
+    elif failure == "archived":
+        resources.archive("model", preset["id"])
+    elif failure == "nonchat":
+        other = resources.create_model_preset(name="决策模型", preset_key="compile-decision", config={"decision": {
+            "provider": "unsloth", "base_url": "http://127.0.0.1:5003/v1", "model": "laya-multilingual"}})
+        StudioModelSettings(registry.cache_root.parent).set_decision_compiler(other["id"], True)
     original = registry.author_detail("decide-outing")["markdown"]
     response = http.post("/api/studio/resources/skills/decide-outing/decision-compile",
-        json={"markdown": MARKDOWN, "model_preset_id": preset["id"]})
+        json={"markdown": MARKDOWN})
     assert response.status_code == 422
-    assert response.json()["detail"]["code"] == "SKILL_MODEL_UNAVAILABLE"
+    assert response.json()["detail"]["code"] == ("SKILL_DECISION_COMPILER_NOT_CONFIGURED"
+        if failure == "missing" else "SKILL_DECISION_COMPILER_UNAVAILABLE")
     assert registry.author_detail("decide-outing")["markdown"] == original
     assert model.calls == []
 
 
-@pytest.mark.parametrize("with_scripts", [False, True])
-def test_experiment_compile_uses_copied_chat_and_does_not_modify_package(author, tmp_path, with_scripts):
+def test_public_compile_rejects_per_skill_model_override(author):
     database, registry, resources, model, settings, http = author
-    public = resources.create_model_preset(name="公共模型", preset_key="public-chat", config={"chat": CHAT})
+    preset = select_compiler(http, resources.create_model_preset(name="统一解析模型", preset_key="compile-chat",
+        config={"chat": CHAT}))
+    response = http.post("/api/studio/resources/skills/decide-outing/decision-compile",
+        json={"markdown": MARKDOWN, "model_preset_id": preset["id"]})
+    assert response.status_code == 422
+    assert model.calls == []
+
+
+@pytest.mark.parametrize("with_scripts", [False, True])
+def test_experiment_compile_uses_unified_author_chat_and_keeps_runtime_model(author, tmp_path, with_scripts):
+    database, registry, resources, model, settings, http = author
+    public = resources.create_model_preset(name="统一解析模型", preset_key="public-chat", config={"chat": CHAT})
     definition = _definition()
     definition["models"]["chat"] = {**CHAT, "model": "copied-chat"}
     definition["models"]["decision"] = {"provider": "unsloth", "base_url": "http://127.0.0.1:5003/v1", "model": "laya-multilingual"}
@@ -198,14 +232,19 @@ def test_experiment_compile_uses_copied_chat_and_does_not_modify_package(author,
     record = StudioPackageCatalogService(database).upsert(root)
     prefix = f"/api/studio/experiments/{record.package_id}/resources/skills/decide-outing"
     original = {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    missing = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN, "scripts": {}})
+    assert missing.status_code == 422, missing.text
+    assert missing.json()["detail"]["code"] == "SKILL_DECISION_COMPILER_NOT_CONFIGURED"
+    assert model.calls == []
+    select_compiler(http, public)
     if with_scripts:
         blocked = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN})
         assert blocked.status_code == 422, blocked.text
         assert model.calls == []
     response = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN, "scripts": {}})
     assert response.status_code == 200, response.text
-    assert response.json()["model"] == "copied-chat"
-    assert settings[0]["model"] == "copied-chat"
+    assert response.json()["model"] == "chat-test"
+    assert settings[0]["model"] == "chat-test"
     assert len(model.calls) == 1
     assert {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()} == original
     invalid = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN, "model_preset_id": public["id"]})
@@ -214,6 +253,10 @@ def test_experiment_compile_uses_copied_chat_and_does_not_modify_package(author,
     current = http.get(prefix).json()
     saved = http.put(prefix, json={"markdown": response.json()["markdown"], "scripts": {}, "row_version": current["row_version"]})
     assert saved.status_code == 200, saved.text
+    from generative_agents.ga_protocol.packages.definition import _experiment_definition
+    assert _experiment_definition(root)[1]["models"]["chat"]["model"] == "copied-chat"
+    assert not list(root.rglob("studio-model-settings.json"))
+    assert "decision_compiler_model_id" not in saved.text
     stale = http.put(prefix, json={"markdown": response.json()["markdown"] + "\n新的规则。", "scripts": {},
                                  "row_version": saved.json()["row_version"]})
     assert stale.status_code == 422, stale.text
@@ -222,7 +265,7 @@ def test_experiment_compile_uses_copied_chat_and_does_not_modify_package(author,
 
 def test_public_compile_uses_draft_script_removal_and_preserves_saved_scripts(author):
     database, registry, resources, model, settings, http = author
-    resources.create_model_preset(name="解析模型", preset_key="compile-chat", config={"chat": CHAT})
+    select_compiler(http, resources.create_model_preset(name="解析模型", preset_key="compile-chat", config={"chat": CHAT}))
     skill = registry.get("decide-outing")
     registry.save(skill.name, skill.markdown, scripts={"scripts/old.py": "def run(): return 'old'\n"})
     prefix = "/api/studio/resources/skills/decide-outing"

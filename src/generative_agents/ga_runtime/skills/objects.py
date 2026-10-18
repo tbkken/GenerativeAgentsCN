@@ -12,6 +12,8 @@ from types import SimpleNamespace
 from typing import Any, Mapping
 
 from generative_agents.ga_runtime.skills.executor import RecoverableSkillRuntimeError
+from generative_agents.ga_runtime.skills.executor import SkillBudgetExceeded
+from generative_agents.ga_runtime.skills.executor import SkillOutputFormatError
 from generative_agents.ga_runtime.skills.executor import SkillRuntime
 from generative_agents.ga_runtime.models.retry import ModelCallCancelled
 from generative_agents.ga_protocol.facts.movement import normalize_movement_activity
@@ -218,7 +220,6 @@ class ObjectSkillRuntime:
             model=str(config.get("resolved_model") or config.get("model") or ""),
             api_key=str(config.get("api_key") or ""), interfaces=interfaces,
             timeout=float(config.get("timeout_seconds") or 300),
-            max_hops=int(config.get("max_hops") or 12),
             temperature=float(config.get("temperature") or 0.2),
             max_tokens=int(config.get("max_tokens") or 2048),
             enable_thinking=bool(config.get("enable_thinking", False)),
@@ -244,6 +245,7 @@ class ObjectSkillRuntime:
         )
         memory_snapshot = self.memory_stream.begin_iteration(iteration.memory_owner_key) if self.memory_stream else None
         trace, output, fallback = (), "", False
+        fallback_reason = None
         try:
             result = runtime.run(binding.skill_name, task, context={"IterationContext": iteration.as_dict()})
             trace, output = result.trace, result.output_text
@@ -254,7 +256,22 @@ class ObjectSkillRuntime:
             execution = getattr(self.recorder, "execution", None)
             if execution is not None:
                 execution.rollback(error_code=type(exc).__name__)
-            trace = (*exc.trace, {"event": "object.fallback", "reason": str(exc), "object_key": binding.object_key})
+            invalid_output = isinstance(exc, SkillOutputFormatError)
+            exhausted_budget = isinstance(exc, SkillBudgetExceeded)
+            budget_details = {}
+            if invalid_output:
+                fallback_reason = "对象模型输出格式无效且纠错耗尽，本轮安全等待"
+            elif exhausted_budget:
+                budget_details = {"budget_kind": exc.budget_kind, "limit": exc.limit,
+                    "used": exc.used, "attempted": exc.attempted, "budget_skill": exc.skill}
+                fallback_reason = (
+                    f"对象 Skill 执行预算耗尽（{exc.budget_kind}，已用 {exc.used}，上限 {exc.limit}），本轮安全等待"
+                )
+            trace = (*exc.trace, {"event": "object.fallback", "reason": str(exc),
+                "object_key": binding.object_key, "error_code": type(exc).__name__,
+                "failure_kind": ("model_output_format" if invalid_output
+                                 else "skill_budget" if exhausted_budget else "runtime_failure"),
+                **budget_details})
             fallback = True
         except Exception as exc:
             if memory_snapshot is not None:
@@ -270,7 +287,7 @@ class ObjectSkillRuntime:
                              "reason": "Game Object Skill did not submit world-act"})
         action = interfaces.action or PlannedWorldAction("WAIT", {
             "action_type": "WAIT", "object_key": binding.object_key,
-            "description": "对象 Skill 未提交动作，本轮等待", "responses": [],
+            "description": fallback_reason or "对象 Skill 未提交动作，本轮等待", "responses": [],
         })
         return {"action": action, "iteration": iteration, "requests": requests,
                 "fallback": fallback, "skill_name": binding.skill_name,

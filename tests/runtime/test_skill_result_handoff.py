@@ -43,7 +43,7 @@ def _runtime(tmp_path, responses, **kwargs):
     write_skill(registry, "sink", "接收原文", body="直接处理收到的原文。")
     write_skill(registry, "helper", "辅助处理", body="返回处理结果。")
     model = _Model(responses)
-    return SkillRuntime(registry, model_client=model, max_hops=20, **kwargs), model
+    return SkillRuntime(registry, model_client=model, **kwargs), model
 
 
 def test_previous_child_output_reaches_next_child_without_rewriting(tmp_path):

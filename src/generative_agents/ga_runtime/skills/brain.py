@@ -9,6 +9,8 @@ from typing import Any, Mapping
 
 from generative_agents.ga_protocol.facts.quality import deterministic_quality_issues
 from generative_agents.ga_runtime.skills.executor import RecoverableSkillRuntimeError
+from generative_agents.ga_runtime.skills.executor import SkillBudgetExceeded
+from generative_agents.ga_runtime.skills.executor import SkillOutputFormatError
 from generative_agents.ga_runtime.skills.executor import SkillRunResult
 from generative_agents.ga_runtime.skills.executor import SkillRuntime
 from generative_agents.ga_runtime.models.retry import ModelCallCancelled
@@ -50,6 +52,8 @@ class BrainRuntime:
         self.recorder = recorder
         self.control = control
         self.logger = logger
+        # Only infrastructure and genuine no-progress failures enter this streak.
+        # Format and budget degradations are counted from committed quality facts.
         self._consecutive_fallbacks: dict[str, int] = {}
         self._audit_records: list[dict[str, Any]] = []
 
@@ -104,7 +108,6 @@ class BrainRuntime:
             api_key=str(self.model_config.get("api_key") or ""),
             interfaces=interfaces,
             timeout=float(self.model_config.get("timeout_seconds") or 300),
-            max_hops=int(self.model_config.get("max_hops") or 12),
             temperature=float(self.model_config.get("temperature") or 0.2),
             max_tokens=int(self.model_config.get("max_tokens") or 2048),
             enable_thinking=bool(self.model_config.get("enable_thinking", False)),
@@ -141,6 +144,7 @@ class BrainRuntime:
             and callable(getattr(self.memory_stream, "begin_iteration", None))
             else None
         )
+        fallback_reason = None
         try:
             result = runtime.run(
                 self.brain_skill,
@@ -156,14 +160,31 @@ class BrainRuntime:
             execution = getattr(self.recorder, "execution", None)
             if execution is not None:
                 execution.rollback(error_code=type(exc).__name__)
-            failures = self._consecutive_fallbacks.get(agent_key, 0) + 1
+            invalid_output = isinstance(exc, SkillOutputFormatError)
+            exhausted_budget = isinstance(exc, SkillBudgetExceeded)
+            iteration_degraded = invalid_output or exhausted_budget
+            failures = 0 if iteration_degraded else self._consecutive_fallbacks.get(agent_key, 0) + 1
             self._consecutive_fallbacks[agent_key] = failures
+            fatal = failures > 3
+            budget_details = {}
+            if invalid_output:
+                fallback_reason = "模型输出格式无效且纠错耗尽，本轮安全等待"
+            elif exhausted_budget:
+                budget_details = {"budget_kind": exc.budget_kind, "limit": exc.limit,
+                    "used": exc.used, "attempted": exc.attempted, "budget_skill": exc.skill}
+                fallback_reason = (
+                    f"Skill 执行预算耗尽（{exc.budget_kind}，已用 {exc.used}，上限 {exc.limit}），本轮安全等待"
+                )
             fallback_signal = {
                 "event": "brain.fallback",
                 "skill": self.brain_skill,
                 "reason": str(exc),
-                "consecutive_failures": failures,
-                "fatal": failures > 3,
+                "error_code": type(exc).__name__,
+                "failure_kind": ("model_output_format" if invalid_output
+                                 else "skill_budget" if exhausted_budget else "runtime_failure"),
+                **budget_details,
+                **({} if iteration_degraded else {"consecutive_failures": failures}),
+                "fatal": fatal,
             }
             rollback_signal = {
                 "event": "brain.rollback",
@@ -176,7 +197,7 @@ class BrainRuntime:
                 rollback_signal,
                 fallback_signal,
             )
-            if failures > 3:
+            if fatal:
                 self._append_audit_record(
                     agent_key=agent_key,
                     agent_name=agent.name,
@@ -194,12 +215,15 @@ class BrainRuntime:
                 )
                 raise
             if self.logger is not None:
-                self.logger.warning(
-                    "Brain step degraded to WAIT after recoverable Skill failure "
-                    "(%d/3): %s",
-                    failures,
-                    exc,
-                )
+                if iteration_degraded:
+                    self.logger.warning(
+                        "Brain step degraded to WAIT after %s: %s", fallback_signal["failure_kind"], exc,
+                    )
+                else:
+                    self.logger.warning(
+                        "Brain step degraded to WAIT after recoverable Skill failure "
+                        "(%d/3): %s", failures, exc,
+                    )
             result = SkillRunResult(
                 skill=self.brain_skill,
                 output_text=f"Brain runtime fallback: {exc}",
@@ -233,7 +257,7 @@ class BrainRuntime:
             action_type="WAIT",
             arguments={
                 "action_type": "WAIT",
-                "description": "Brain Skill 未选择世界变化，本轮等待",
+                "description": fallback_reason or "Brain Skill 未选择世界变化，本轮等待",
             },
         )
         self._append_audit_record(
@@ -407,6 +431,7 @@ class BrainRuntime:
                         "brain.rollback",
                         "loop.detected",
                         "loop.budget_exhausted",
+                        "budget.exhausted",
                     }
                 ],
                 "action": action.as_dict(),

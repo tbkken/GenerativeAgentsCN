@@ -177,7 +177,7 @@ def test_invalid_script_result_fails_script_and_skill_spans(tmp_path, entrypoint
     (scripts / f"{entrypoint}.py").write_text("def run(input_text, context):\n    return 42\n", encoding="utf-8")
     trace = recorder(tmp_path)
     responses = [] if entrypoint == "main" else [
-        tool("run_skill_script", {"function": "helper.run"}, "script-call")]
+        tool("run_skill_script", {"function": "helper.run", "input_text": "test"}, "script-call")]
     model = Model({"model": "test", "responses": responses}, recorder=trace)
     with pytest.raises(SkillRuntimeError, match="expected str"):
         SkillRuntime(registry, model_client=model, recorder=trace).run("scripted", "test")

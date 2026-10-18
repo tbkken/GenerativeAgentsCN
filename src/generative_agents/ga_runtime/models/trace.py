@@ -102,6 +102,7 @@ class ModelTraceEvent:
     total_tokens: int | None = None
     error_code: str | None = None
     error_summary: str | None = None
+    transport: Mapping[str, float | int] | None = None
     payload: Mapping[str, Any] | None = None
 
     def __post_init__(self) -> None:

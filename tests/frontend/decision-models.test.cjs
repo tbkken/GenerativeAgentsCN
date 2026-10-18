@@ -173,7 +173,7 @@ function skillEditor(markdown, kind = 'skill', {scope, fetchResponse} = {}) {
       Object.defineProperty(control, 'innerHTML', {get: () => markup, set(value) {
         markup = value;
         if (id === 'skillDecisionSettings') {
-          for (const child of ['skillDecisionCompilerModel', 'skillCompileDecision', 'skillDecisionResult']) {
+          for (const child of ['skillCompileDecision', 'skillDecisionResult']) {
             if (elements.has(child)) elements.get(child).isConnected = false;
             elements.set(child, node());
           }
@@ -337,7 +337,8 @@ test('selecting decision automatically compiles the complete natural language on
   await f.element('skillLlmType').fire('change');
   const requests = f.requests.filter(request => request.url.endsWith('/decision-compile'));
   assert.equal(requests.length, 1);
-  assert.equal(JSON.parse(requests[0].options.body).model_preset_id, 'chat-model');
+  assert.deepEqual(Object.keys(JSON.parse(requests[0].options.body)).sort(), ['markdown', 'scripts']);
+  assert.equal(f.choices.length, 0);
   assert.ok(JSON.parse(requests[0].options.body).markdown.endsWith(body));
   assert.ok(f.api.state.current.markdown.endsWith(body));
   assert.equal(f.api.decisionIsCurrent(), true);
@@ -351,45 +352,30 @@ test('selecting decision automatically compiles the complete natural language on
   assert.equal(f.requests.filter(request => request.options?.method === 'PUT').length, 1);
 });
 
-test('compiler model choices load into the connected select and survive status updates with pagination', async () => {
+test('decision settings omit the explanation and compiler selector while preserving parsing and results', async () => {
   const f = skillEditor(decisionSkill());
-  let release, loadedSelect;
-  const more = {page: 1, onclick() {this.page++;}};
-  f.context.window.ModelWorkspace.loadChoices = async select => {
-    loadedSelect = select;
-    await new Promise(resolve => {release = resolve;});
-    if (!select.isConnected) return;
-    select.replaceChildren(new f.context.Option('本机默认模型', 'local-chat'));
-    select.nextElementSibling = more;
-  };
   f.mountDefinition();
-  await new Promise(setImmediate);
-  assert.equal(loadedSelect, f.element('skillDecisionCompilerModel'));
-  assert.equal(loadedSelect.isConnected, true);
+  assert.doesNotMatch(f.api.renderDecisionSettings(), /自动提取决策配置|从 SKILL 正文识别|保存前会重新解析|用于解析的生成式模型|skillDecisionCompilerModel|使用当前实验内的生成式模型解析/);
+  assert.match(f.api.renderDecisionSettings(), /重新解析|已解析|完整问题说明/);
+  assert.equal(f.choices.length, 0);
   f.element('skillSource').value += '\n补充条件'; f.api.sourceChanged();
-  assert.equal(loadedSelect, f.element('skillDecisionCompilerModel'));
-  assert.equal(loadedSelect.isConnected, true);
-  release(); await new Promise(setImmediate);
-  assert.equal(f.element('skillDecisionCompilerModel').value, 'local-chat');
-  assert.equal(f.api.decisionDraft().modelId, 'local-chat');
-  f.api.syncModelSettings();
-  assert.equal(f.element('skillDecisionCompilerModel'), loadedSelect);
-  assert.equal(f.element('skillDecisionCompilerModel').nextElementSibling, more);
-  more.onclick(); assert.equal(more.page, 2);
+  assert.match(f.api.renderDecisionSettings(), /解析正文|需要解析/);
+  await f.element('skillCompileDecision').fire('click');
+  assert.equal(f.requests.filter(request => request.url.endsWith('/decision-compile')).length, 1);
+  assert.equal(f.choices.length, 0);
 });
 
-test('saving a changed prompt from the trial tab uses the previously loaded compiler model', async () => {
+test('saving a changed prompt from the trial tab needs no compiler model selection', async () => {
   const f = skillEditor(decisionSkill());
   f.mountDefinition();
   await new Promise(setImmediate);
   f.element('skillSource').value += '\n新增判断条件。'; f.api.sourceChanged();
   f.api.state.activeTab = 'run';
-  f.element('skillDecisionCompilerModel').isConnected = false;
   await f.api.saveSkill();
   const compilation = f.requests.find(request => request.url.endsWith('/decision-compile'));
   assert.ok(compilation);
-  assert.equal(JSON.parse(compilation.options.body).model_preset_id, 'chat-model');
-  assert.equal(f.choices.filter(choice => choice.purpose === 'chat').length, 1);
+  assert.deepEqual(Object.keys(JSON.parse(compilation.options.body)).sort(), ['markdown', 'scripts']);
+  assert.equal(f.choices.filter(choice => choice.purpose === 'chat').length, 0);
   assert.equal(f.requests.filter(request => request.options?.method === 'PUT').length, 1);
 });
 
@@ -480,7 +466,7 @@ test('compile failure blocks saving and leaves the original natural language int
   assert.equal(f.element('skillSave').disabled, false);
 });
 
-test('experiment compilation uses its embedded chat model without changing the resource digest', async () => {
+test('experiment compilation delegates model selection to the server without changing the resource digest', async () => {
   let optionsCount = 0, savedCount = 0;
   const scope = {experimentId: 'experiment-one', base: '/api/studio/experiments/experiment-one/resources',
     options: value => {optionsCount++; return value;}, saved() {savedCount++;}};

@@ -107,11 +107,8 @@ body.skill-editor-mode #resourceTabs { display:none; }
 .skill-model-choice { display:grid; grid-template-columns:minmax(0,1fr); gap:8px; }
 .skill-model-settings .control { box-sizing:border-box; width:100%; min-width:0; }
 .skill-model-choice>label { font-size:12px; font-weight:700; }
-.skill-model-choice p,.skill-decision-heading p,.skill-decision-result p,.skill-decision-model-hint { margin:0; color:var(--skill-muted); font-size:11px; line-height:1.65; }
-.skill-decision-heading { display:flex; flex-direction:column; align-items:flex-start; gap:10px; margin:16px 0 12px; padding-top:16px; border-top:1px solid var(--skill-line); }
-.skill-decision-heading strong { display:block; margin-bottom:5px; font-size:13px; }
-.skill-decision-heading>.btn { flex-shrink:0; }
-.skill-decision-model { display:grid; grid-template-columns:minmax(0,1fr); gap:8px; font-size:11px; font-weight:700; }
+.skill-model-choice p,.skill-decision-result p { margin:0; color:var(--skill-muted); font-size:11px; line-height:1.65; }
+.skill-decision-actions { margin:16px 0 12px; padding-top:16px; border-top:1px solid var(--skill-line); }
 .skill-decision-result { margin-top:12px; padding:14px; border:1px solid var(--skill-line); border-radius:9px; background:#fff; }
 .skill-decision-result>strong { display:block; margin-bottom:8px; font-size:12px; }
 .skill-decision-result details { margin-top:10px; font-size:11px; }

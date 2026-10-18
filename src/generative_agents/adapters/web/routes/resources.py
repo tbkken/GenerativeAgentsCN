@@ -75,7 +75,6 @@ class SkillTrial(Request):
 
 class SkillDecisionCompile(Request):
     markdown: str = Field(min_length=1, max_length=200_000)
-    model_preset_id: str | None = None
     scripts: dict[str, str] | None = None
 
 
@@ -328,7 +327,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
     @router.post("/skills/{skill_name}/decision-compile")
     def compile_decision_skill(skill_name: str, body: SkillDecisionCompile):
         return call(lambda: compile_public_skill_decision(database, skill_registry, skill_name,
-            body.markdown, model_preset_id=body.model_preset_id, scripts=body.scripts))
+            body.markdown, scripts=body.scripts))
 
     @router.get("/skills/{skill_name}/dependencies")
     def get_skill_dependencies(skill_name: str):

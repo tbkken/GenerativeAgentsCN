@@ -310,7 +310,7 @@
       try { questions = Object.values(skillDecisionQuestions()); } catch (_) { questions = []; }
       const parsed = Boolean(skillHeaderValue('decision_prompt_sha256') && questions.length
         && questions.every(question => question?.instructions === decisionBody()));
-      state.decisionDrafts.set(name, {modelId: '', modelOptions: null, modelsLoading: false, modelError: '',
+      state.decisionDrafts.set(name, {
         compiledBody: parsed ? decisionBody() : null, compiledQuestions: parsed ? skillHeaderValue('decision_questions') : null,
         compiledHash: parsed ? skillHeaderValue('decision_prompt_sha256') : null, status: parsed ? 'done' : 'idle', error: '', request: null});
     }
@@ -348,9 +348,7 @@
   function renderDecisionSettings() {
     const draft = decisionDraft(), readonly = state.current.editable === false;
     const parsed = decisionIsCurrent(), running = draft.status === 'running' && draft.request?.body === decisionBody();
-    const model = experimentScope ? '<p class="skill-decision-model-hint">使用当前实验内的生成式模型解析。</p>'
-      : `<label class="skill-decision-model" for="skillDecisionCompilerModel">用于解析的生成式模型<select class="control" id="skillDecisionCompilerModel" ${readonly || running || draft.modelsLoading ? 'disabled' : ''}><option value="">正在读取生成式模型…</option></select></label>`;
-    return `<header class="skill-decision-heading"><div><strong>自动提取决策配置</strong><p>从 SKILL 正文识别是非或多类别问题及候选项。正文修改后，保存前会重新解析。</p></div><button type="button" class="btn btn-sm" id="skillCompileDecision" ${readonly || running || draft.modelsLoading ? 'disabled' : ''}>${parsed ? '重新解析' : '解析正文'}</button></header>${model}<div id="skillDecisionResult">${renderDecisionResult()}</div>`;
+    return `<div class="skill-decision-actions"><button type="button" class="btn btn-sm" id="skillCompileDecision" ${readonly || running ? 'disabled' : ''}>${parsed ? '重新解析' : '解析正文'}</button></div><div id="skillDecisionResult">${renderDecisionResult()}</div>`;
   }
 
   function renderDecisionResult() {
@@ -361,7 +359,7 @@
     try { questions = skillDecisionQuestions(); }
     catch (_) { questions = {}; }
     const rows = parsed ? Object.entries(questions).map(([key, question]) => `<article class="skill-decision-result"><strong>${escapeHtml(key)} · ${escapeHtml({noul:'是 / 否', choice:'多类别', score:'评分'}[question.type] || question.type)}</strong>${question.criteria ? `<pre>${escapeHtml(JSON.stringify(question.criteria, null, 2))}</pre>` : '<p>返回“是”的概率（0～1）。</p>'}<details><summary>完整问题说明</summary><pre>${escapeHtml(question.instructions || '')}</pre></details></article>`).join('') : '';
-    return `<p class="skill-decision-status" role="status">${status}</p>${draft.error || draft.modelError ? `<p class="skill-decision-error" role="alert">${escapeHtml(draft.error || draft.modelError)}</p>` : ''}${rows}`;
+    return `<p class="skill-decision-status" role="status">${status}</p>${draft.error ? `<p class="skill-decision-error" role="alert">${escapeHtml(draft.error)}</p>` : ''}${rows}`;
   }
 
   function syncModelSettings() {
@@ -377,10 +375,8 @@
     } else {
       $('skillDecisionResult').innerHTML = renderDecisionResult();
       const draft = decisionDraft(), button = $('skillCompileDecision');
-      button.disabled = state.current.editable === false || draft.modelsLoading || Boolean(draft.request);
+      button.disabled = state.current.editable === false || Boolean(draft.request);
       button.textContent = decisionIsCurrent() ? '重新解析' : '解析正文';
-      const compilerModel = $('skillDecisionCompilerModel');
-      if (compilerModel) compilerModel.disabled = state.current.editable === false || draft.modelsLoading || Boolean(draft.request);
     }
   }
 
@@ -396,39 +392,6 @@
     if (settings.decisionControlsBound) return;
     settings.decisionControlsBound = true;
     $('skillCompileDecision')?.addEventListener('click', () => compileDecision(true));
-    $('skillDecisionCompilerModel')?.addEventListener('change', event => {
-      const draft = decisionDraft(); draft.modelId = event.target.value; draft.modelError = '';
-    });
-    loadDecisionModels();
-  }
-
-  async function loadDecisionModels() {
-    if (experimentScope || skillLlmType() !== 'decision') return true;
-    const draft = decisionDraft(), item = state.current, editor = state.editorGeneration, select = $('skillDecisionCompilerModel');
-    if (!select?.isConnected) return Boolean(draft.modelsLoaded && draft.modelId && !draft.modelError);
-    if (draft.modelSelect === select && draft.modelsPromise) return draft.modelsPromise;
-    if (draft.modelSelect === select && draft.modelsLoaded) return true;
-    const request = draft.modelRequest = {};
-    draft.modelSelect = select; draft.modelsLoaded = false;
-    const current = () => state.current === item && state.editorGeneration === editor && draft.modelRequest === request
-      && $('skillDecisionCompilerModel') === select && select.isConnected;
-    draft.modelsLoading = true;
-    draft.modelsPromise = (async () => {
-      try {
-        await window.WorkspaceLoader?.load('models');
-        await window.ModelWorkspace.loadChoices(select, 'chat', draft.modelId, true);
-        if (!current()) return false;
-        draft.modelId = select.value; draft.modelError = ''; draft.modelsLoaded = true;
-        return true;
-      } catch (error) {
-        if (current()) draft.modelError = `生成式模型读取失败：${error.message}`;
-        return false;
-      } finally {
-        if (draft.modelRequest === request) { draft.modelsLoading = false; draft.modelsPromise = null; }
-        if (current()) syncModelSettings();
-      }
-    })();
-    return draft.modelsPromise;
   }
 
   async function compileDecision(force = false) {
@@ -448,11 +411,10 @@
     syncModelSettings();
     request.promise = (async () => {
       try {
-        if (!await loadDecisionModels() || (!experimentScope && !draft.modelId)) throw new Error(draft.modelError || '请先配置并选择用于解析的生成式模型。');
         if (!current()) return false;
         syncModelSettings();
         const result = await api(`/api/studio/resources/skills/${encodeURIComponent(item.name)}/decision-compile`, {
-          method: 'POST', body: JSON.stringify({markdown, scripts, ...(experimentScope ? {} : {model_preset_id: draft.modelId})}),
+          method: 'POST', body: JSON.stringify({markdown, scripts}),
         });
         captureActiveSource();
         if (!current()) return false;

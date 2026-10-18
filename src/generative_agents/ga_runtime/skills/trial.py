@@ -11,7 +11,7 @@ from generative_agents.ga_runtime.engine.context import RunControl, RunPaths
 from generative_agents.ga_runtime.models.gateway import create_llm_model
 from generative_agents.ga_runtime.models.retry import ModelCallCancelled, check_cancelled
 from generative_agents.ga_runtime.models.trace import ModelTraceWriter
-from generative_agents.ga_runtime.skills.executor import SkillRuntime
+from generative_agents.ga_runtime.skills.executor import SkillBudgetExceeded, SkillRuntime
 from generative_agents.ga_runtime.skills.trial_scene import build_trial_scene
 
 
@@ -60,7 +60,7 @@ def execute_skill_trial(directory, *, credentials=None, control=None):
             copied, base_url=base_url, model=model, api_key=api_key,
             interfaces=scene.interfaces if scene else None,
             provider=config.get("provider", "vllm"), timeout=model_config["timeout_seconds"],
-            max_hops=12, retry_attempts=model_config["retry_attempts"],
+            retry_attempts=model_config["retry_attempts"],
             retry_backoff_seconds=model_config["retry_backoff_seconds"],
             temperature=config.get("temperature", 0.2), max_tokens=config.get("max_tokens", 2048),
             enable_thinking=config.get("enable_thinking", False), model_client=model_client,
@@ -104,6 +104,10 @@ def execute_skill_trial(directory, *, credentials=None, control=None):
         if isinstance(exc, SkillTrialError):
             exc.trace = trace
             raise
+        if isinstance(exc, SkillBudgetExceeded):
+            raise SkillTrialError("SKILL_EXECUTION_BUDGET_EXHAUSTED",
+                f"Skill 试运行达到本轮执行预算（{exc.budget_kind}，已用 {exc.used}，上限 {exc.limit}）。",
+                status=422, trace=trace) from exc
         if not isinstance(exc, Exception):
             raise
         if any(marker in message.lower() for marker in ("401", "403", "not authenticated", "unauthorized")):

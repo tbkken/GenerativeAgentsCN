@@ -25,6 +25,7 @@ _DETERMINISTIC_CODES = {
     "RUN_EXECUTION_FAILED",
     "OBJECT_RUNTIME_DEGRADED",
     "OBJECT_NO_WORLD_ACTION",
+    "SKILL_EXECUTION_BUDGET_EXHAUSTED",
 }
 _RUNTIME_SIGNALS = {
     "brain.fallback",
@@ -32,6 +33,7 @@ _RUNTIME_SIGNALS = {
     "brain.rollback",
     "loop.detected",
     "loop.budget_exhausted",
+    "budget.exhausted",
     "object.fallback",
     "object.missing_action",
 }
@@ -78,7 +80,8 @@ def deterministic_quality_issues(records: Iterable[Mapping[str, Any]]) -> list[d
             signal_event = str(signal.get("event") or "")
             append(record, signal, {
                 "code": (
-                    "OBJECT_NO_WORLD_ACTION" if signal_event == "object.missing_action"
+                    "SKILL_EXECUTION_BUDGET_EXHAUSTED" if signal_event == "budget.exhausted"
+                    else "OBJECT_NO_WORLD_ACTION" if signal_event == "object.missing_action"
                     else "OBJECT_RUNTIME_DEGRADED" if signal_event == "object.fallback"
                     else "NO_WORLD_ACTION_SELECTED" if signal_event == "brain.missing_action"
                     else "BRAIN_ITERATION_ROLLED_BACK" if signal_event == "brain.rollback"
@@ -88,7 +91,9 @@ def deterministic_quality_issues(records: Iterable[Mapping[str, Any]]) -> list[d
                 "agent_key": agent_key,
                 "step_no": record["step_no"],
                 "message": (
-                    "对象 Skill 未提交 world-act，系统收敛为 WAIT；未发送任何回复。" if signal_event == "object.missing_action"
+                    f"Skill 本轮执行预算耗尽：{signal.get('budget_kind')}，已用 {signal.get('used')}，上限 {signal.get('limit')}。"
+                    if signal_event == "budget.exhausted"
+                    else "对象 Skill 未提交 world-act，系统收敛为 WAIT；未发送任何回复。" if signal_event == "object.missing_action"
                     else "对象 Skill 调用失败，未提交动作和记忆已回滚。" if signal_event == "object.fallback"
                     else "Brain 未提交 world-act，系统安全收敛为 WAIT。" if signal_event == "brain.missing_action"
                     else "失败的 Brain 迭代已回滚未提交动作和记忆副作用。" if signal_event == "brain.rollback"

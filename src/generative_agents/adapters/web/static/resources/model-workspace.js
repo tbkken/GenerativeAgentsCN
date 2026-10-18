@@ -130,8 +130,11 @@
         <div class="field"><label for="modelServiceModel">模型 ID</label><input class="control" id="modelServiceModel" required value="${esc(config.model || (purpose === 'decision' ? 'laya-multilingual' : ''))}" placeholder="服务提供的完整模型 ID"></div>
         <div class="field" style="grid-column:1/-1"><label for="modelServiceUrl">服务地址</label><input class="control" id="modelServiceUrl" type="url" required value="${esc(config.base_url || (purpose === 'decision' ? 'http://127.0.0.1:5003/v1' : ''))}" placeholder="${purpose === 'decision' ? 'http://127.0.0.1:5003/v1/systemone' : 'http://127.0.0.1:8888/v1'}">${purpose === 'decision' ? '<small>支持填写 API Base URL 或完整 /systemone 地址，保存时统一为 Base URL。</small>' : ''}</div>
         <div class="field" style="grid-column:1/-1"><label for="modelServiceKey">API Key</label><input class="control" id="modelServiceKey" type="password" autocomplete="new-password" placeholder="${config.credential_env ? '密钥已配置；留空保持不变' : '服务无需认证时可留空'}"><label><input type="checkbox" id="modelServiceClearKey">清除当前配置的密钥</label></div>
-        <div class="field"><label for="modelServiceTimeout">超时（秒）</label><input class="control" id="modelServiceTimeout" type="number" min="1" max="600" required value="${esc(config.timeout_seconds || 90)}"></div>
-        ${purpose === 'chat' ? `<div class="field"><label for="modelServiceTokens">最大输出 tokens</label><input class="control" id="modelServiceTokens" type="number" min="1" max="131072" required value="${esc(config.max_tokens || 2048)}"></div><div class="field"><label for="modelServiceTemperature">Temperature</label><input class="control" id="modelServiceTemperature" type="number" min="0" max="2" step="0.1" required value="${esc(config.temperature ?? 0.2)}"></div>` : ''}
+        <div class="field"><label for="modelServiceTimeout">${purpose === 'chat' ? '调用总时间预算（秒）' : '超时（秒）'}</label><input class="control" id="modelServiceTimeout" type="number" min="1" max="600" required value="${esc(config.timeout_seconds || 90)}">${purpose === 'chat' ? '<small>一次逻辑调用的全部请求与重试等待共用此预算；服务端可能设有更小上限。</small>' : ''}</div>
+        ${purpose === 'chat' ? `<div class="field"><label for="modelServiceTokens">最大输出 tokens</label><input class="control" id="modelServiceTokens" type="number" min="1" max="131072" required value="${esc(config.max_tokens || 2048)}"><small>服务端可能采用更小的输出上限，返回的生效限额会记录在模型调用审计中。</small></div><div class="field"><label for="modelServiceTemperature">Temperature</label><input class="control" id="modelServiceTemperature" type="number" min="0" max="2" step="0.1" required value="${esc(config.temperature ?? 0.2)}"></div>
+        <div class="field"><label for="modelServiceRetryAttempts">传输请求次数</label><input class="control" id="modelServiceRetryAttempts" type="number" min="1" max="5" required value="${esc(config.retry_attempts ?? 3)}"><small>包含首次请求；1 表示传输故障不重试。技能响应格式另有最多 2 次纠错；全部请求和等待仍共用总时间预算。</small></div>
+        <div class="field"><label for="modelServiceRetryBackoff">重试等待（秒）</label><input class="control" id="modelServiceRetryBackoff" type="number" min="0" max="300" step="0.1" required value="${esc(config.retry_backoff_seconds ?? 5)}"></div>
+        <div class="field" style="grid-column:1/-1"><label><input type="checkbox" id="modelServiceDecisionCompiler" ${selected?.decision_compiler ? 'checked' : ''}>用于解析决策 Skill</label></div>` : ''}
         <div class="inline-actions" style="grid-column:1/-1"><button class="btn btn-primary" id="saveModelService" type="submit">保存模型</button><button class="btn" id="testModelService" type="button" ${selected?.config?.[purpose] ? '' : 'disabled'}>测试连接</button><button class="btn btn-danger" id="deleteModelService" type="button" ${selected ? '' : 'disabled'}>删除配置</button></div>
       </form><p id="modelServiceStatus" role="status" aria-live="polite"></p>`;
     $('modelServiceForm').oninput = () => { dirty = true; };
@@ -141,6 +144,11 @@
       const body = {name:$('modelServiceName').value.trim(), purpose, model:$('modelServiceModel').value.trim(), base_url:modelServiceUrl($('modelServiceUrl').value, purpose),
         api_key:$('modelServiceKey').value || null, clear_api_key:$('modelServiceClearKey').checked, row_version:selected?.row_version || null,
         timeout_seconds:Number($('modelServiceTimeout').value), max_tokens:Number($('modelServiceTokens')?.value || 2048), temperature:Number($('modelServiceTemperature')?.value || 0)};
+      if (purpose === 'chat') Object.assign(body, {
+        decision_compiler:Boolean($('modelServiceDecisionCompiler').checked),
+        retry_attempts:Number($('modelServiceRetryAttempts').value),
+        retry_backoff_seconds:Number($('modelServiceRetryBackoff').value),
+      });
       $('saveModelService').disabled = true;
       try {
         const saved = await request(selected ? `/${selected.id}` : '', {method:selected ? 'PUT':'POST', body:JSON.stringify(body)});

@@ -11,6 +11,14 @@ class ModelCallCancelled(RuntimeError):
     """A Run cancellation, never a recoverable model/provider failure."""
 
 
+class ModelResponseFormatError(ValueError):
+    """A provider answer violates the model output or tool-call contract."""
+
+    def __init__(self, message, *, response=None):
+        super().__init__(message)
+        self.response = response
+
+
 def check_cancelled(control: RetryControl | None) -> None:
     if control is not None and control.cancel_requested:
         raise ModelCallCancelled("model call cancelled by Run control")

@@ -14,7 +14,7 @@ from generative_agents.ga_runtime.models.trace import ModelTraceEvent
 from generative_agents.ga_runtime.models.trace import ModelTraceEventType
 from generative_agents.ga_runtime.models.trace import ModelTraceStatus
 from generative_agents.ga_runtime.models.retry import interruptible_wait
-from generative_agents.ga_runtime.models.retry import ModelCallCancelled, check_cancelled
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled, ModelResponseFormatError, check_cancelled
 from generative_agents.ga_runtime.models.transport import request_json
 
 
@@ -42,13 +42,14 @@ class LLMModel:
         self._temperature = config.get("temperature", 0.5)
         self._enable_thinking = bool(config.get("enable_thinking", False))
         self._summary = {"total": [0, 0, 0]}
-        self._retry_attempts = config.get("retry_attempts", 10)
+        self._retry_attempts = config.get("retry_attempts", 3)
         self._retry_backoff = config.get("retry_backoff_seconds", 5)
         self._recorder = recorder
         self._control = control
         self._logger = logger
         self._sleep = sleep or time.sleep
         self._last_usage = {}
+        self._last_transport_metadata = {}
         self._call_deadline = None
 
         self._handle = self.setup(config)
@@ -67,6 +68,7 @@ class LLMModel:
         prompt_key=None,
         retry=None,
         response_validator=None,
+        format_repair_attempts=0,
     ):
         """Execute one traced OpenAI-compatible chat/tool logical call.
 
@@ -78,30 +80,47 @@ class LLMModel:
 
         request_messages = copy.deepcopy(list(messages))
         original_message_count = len(request_messages)
+        def repair_hint(error):
+            # Keep only the latest bounded diagnosis. A rejected batch has no
+            # tool results and must not enter the provider's assistant history.
+            del request_messages[original_message_count:]
+            request_messages.append({"role": "user", "content": (
+                "The previous response did not match the required output schema. "
+                f"Validation error: {str(error)[:1000]}. "
+                "No tool from that response was executed. Return a corrected response "
+                "using only the supplied tools and all their required arguments. "
+                "Do not guess unavailable tools or child Skills."
+            )})
+
         def validate_response(message):
             try:
-                response_validator(message)
-            except ValueError:
-                # Keep one bounded correction message across all physical
-                # attempts. The existing logical deadline and retry count apply.
-                marker = "The previous response did not match the required output schema."
-                del request_messages[original_message_count:]
-                request_messages.append({"role": "user", "content": marker +
-                    " Return exactly the supplied structured output with all required fields,"
-                    " correct value types, and no additional top-level fields."})
+                self._validate_chat_message(message)
+                if response_validator is not None:
+                    response_validator(message)
+            except ValueError as exc:
+                repair_hint(exc)
                 raise
             return message
+
+        def complete_chat(*args, **kwargs):
+            try:
+                return self._chat_completion(*args, **kwargs)
+            except ModelResponseFormatError as exc:
+                repair_hint(exc)
+                raise
+
         return self.completion(
             request_messages,
             retry=retry,
-            callback=validate_response if response_validator is not None else None,
+            callback=validate_response,
             return_type=None,
             caller=purpose,
             agent_key=agent_key,
             step_no=step_no,
             prompt_key=prompt_key,
             raise_on_failure=True,
-            _completion_method=self._chat_completion,
+            _completion_method=complete_chat,
+            _format_repair_attempts=format_repair_attempts,
             tools=list(tools or ()),
             temperature=(
                 self._temperature if temperature is None else float(temperature)
@@ -148,6 +167,9 @@ class LLMModel:
             返回函数计算得到的结果。
         """
         retry = retry or self._retry_attempts
+        format_repair_limit = min(2, max(0, int(kwargs.pop("_format_repair_attempts", 0))))
+        format_repairs = 0
+        transport_failures = 0
         raise_on_failure = bool(kwargs.pop("raise_on_failure", False))
         completion_method = kwargs.pop("_completion_method", None) or self._completion
         response = None
@@ -161,7 +183,7 @@ class LLMModel:
         self._call_deadline = time.monotonic() + float(self._timeout)
         last_error = None
         self._summary.setdefault(caller, [0, 0, 0])
-        for attempt_no in range(1, retry + 1):
+        for attempt_no in range(1, retry + format_repair_limit + 1):
             try:
                 check_cancelled(self._control)
             except ModelCallCancelled as exc:
@@ -172,6 +194,7 @@ class LLMModel:
                 break
             started_at = datetime.now(timezone.utc)
             self._last_usage = {}
+            self._last_transport_metadata = {}
             attempt_error = None
             output = None
             physical_prompt = copy.deepcopy(prompt)
@@ -212,6 +235,8 @@ class LLMModel:
             except Exception as e:
                 last_error = e
                 attempt_error = e
+                if output is None and isinstance(e, ModelResponseFormatError):
+                    output = e.response
                 response = None
             ended_at = datetime.now(timezone.utc)
             self._record(
@@ -244,6 +269,7 @@ class LLMModel:
                     total_tokens=self._last_usage.get("total_tokens"),
                     error_code=type(attempt_error).__name__ if attempt_error else None,
                     error_summary=str(attempt_error) if attempt_error else None,
+                    transport=dict(self._last_transport_metadata),
                     payload={"request": physical_prompt, "response": output},
                 )
             )
@@ -253,7 +279,15 @@ class LLMModel:
                 break
             if time.monotonic() >= self._call_deadline:
                 break
-            if attempt_no < retry and self._retry_backoff:
+            if isinstance(last_error, ModelResponseFormatError) and format_repair_limit:
+                if format_repairs >= format_repair_limit:
+                    break
+                format_repairs += 1
+                continue
+            transport_failures += 1
+            if transport_failures >= retry:
+                break
+            if self._retry_backoff:
                 if not interruptible_wait(
                     min(self._retry_backoff, max(0, self._call_deadline - time.monotonic())),
                     control=self._control,
@@ -339,65 +373,58 @@ class LLMModel:
         headers = {"Content-Type": "application/json"}
         if self._api_key:
             headers["Authorization"] = f"Bearer {self._api_key}"
-        document = self._request_json(
-            "POST", f"{base_url}/chat/completions",
-            headers=headers,
-            payload=payload,
-        )
-        self._last_usage = document.get("usage") or {}
+        try:
+            document = self._request_json(
+                "POST", f"{base_url}/chat/completions",
+                headers=headers, payload=payload,
+            )
+        except json.JSONDecodeError as exc:
+            raise ModelResponseFormatError("model returned invalid JSON response") from exc
+        if not isinstance(document, dict):
+            raise ModelResponseFormatError("model response must be an object", response=document)
+        self._last_usage = document.get("usage") if isinstance(document.get("usage"), dict) else {}
         choices = document.get("choices") or []
-        if not choices or not isinstance(choices[0], dict):
-            raise ValueError("model response has no chat completion choice")
+        if not isinstance(choices, list) or not choices or not isinstance(choices[0], dict):
+            raise ModelResponseFormatError("model response has no chat completion choice", response=document)
         message = choices[0].get("message")
         if not isinstance(message, dict):
-            raise ValueError("model response choice has no message object")
-        tool_calls = message.get("tool_calls") or []
-        if tool_calls:
-            try:
-                for call in tool_calls:
-                    function = call.get("function") or {}
-                    arguments = json.loads(function.get("arguments") or "{}")
-                    if not isinstance(arguments, dict):
-                        raise TypeError("tool arguments must decode to an object")
-            except (AttributeError, json.JSONDecodeError, TypeError) as exc:
-                # Preserve the malformed answer as repair context for the next
-                # configured physical attempt without mutating Skill messages.
-                # Replace the prior repair pair instead of growing an unbounded
-                # series of malformed responses on every physical retry.
-                if (
-                    messages and messages[-1].get("role") == "user"
-                    and messages[-1].get("content", "").startswith(
-                        "The previous tool call arguments were invalid JSON."
-                    )
-                ):
-                    del messages[-2:]
-                messages.extend(
-                    [
-                        {
-                            "role": "assistant",
-                            "content": message.get("content") or "",
-                            "tool_calls": tool_calls,
-                        },
-                        {
-                            "role": "user",
-                            "content": (
-                                "The previous tool call arguments were invalid JSON. "
-                                "Return one corrected tool call whose arguments are a "
-                                "complete JSON object matching the supplied schema."
-                            ),
-                        },
-                    ]
-                )
-                raise ValueError("model returned invalid tool arguments") from exc
-        elif not str(message.get("content") or "").strip():
-            raise ValueError("model response has neither content nor tool calls")
+            raise ModelResponseFormatError("model response choice has no message object", response=document)
         return dict(message)
+
+    @staticmethod
+    def _validate_chat_message(message):
+        if not isinstance(message, dict):
+            raise ModelResponseFormatError("model response message must be an object")
+        tool_calls = message.get("tool_calls")
+        if tool_calls is not None and not isinstance(tool_calls, list):
+            raise ModelResponseFormatError("model tool_calls must be an array")
+        content = message.get("content")
+        if content is not None and not isinstance(content, str):
+            raise ModelResponseFormatError("model response content must be a string or null")
+        if tool_calls:
+            for call in tool_calls:
+                if not isinstance(call, dict) or call.get('type', 'function') != 'function':
+                    raise ModelResponseFormatError("model tool call must be a function object")
+                function = call.get('function')
+                if not isinstance(function, dict):
+                    raise ModelResponseFormatError("model tool call requires a function object")
+                if not isinstance(function.get('name'), str) or not function['name'].strip():
+                    raise ModelResponseFormatError("model tool call requires a non-empty function name")
+                try:
+                    arguments = json.loads(function.get('arguments'))
+                    if not isinstance(arguments, dict):
+                        raise TypeError('arguments must decode to an object')
+                except (ValueError, TypeError) as exc:
+                    raise ModelResponseFormatError("model returned invalid JSON tool arguments") from exc
+        elif not (content or '').strip():
+            raise ModelResponseFormatError("model response has neither content nor tool calls")
 
     def _request_json(self, method, url, *, headers=None, payload=None):
         return request_json(
             method, url, headers=headers, payload=payload,
             deadline=self._call_deadline or (time.monotonic() + float(self._timeout)),
             control=self._control,
+            metadata=self._last_transport_metadata,
         )
 
     @staticmethod

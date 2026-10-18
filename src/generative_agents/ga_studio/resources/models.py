@@ -1,5 +1,6 @@
 """Author model connections, credentials and optional probes."""
 from generative_agents.ga_studio.storage.credentials import HostModelCredentials
+from generative_agents.ga_studio.storage.model_settings import StudioModelSettings
 from uuid import uuid4
 import httpx
 from pydantic import BaseModel, ConfigDict, Field, AnyHttpUrl
@@ -22,6 +23,9 @@ class ModelServiceInput(BaseModel):
     timeout_seconds: int = Field(default=90, ge=1, le=600)
     max_tokens: int = Field(default=2048, ge=1, le=131072)
     temperature: float = Field(default=0.2, ge=0, le=2)
+    retry_attempts: int | None = Field(default=None, ge=1, le=5)
+    retry_backoff_seconds: float | None = Field(default=None, ge=0, le=300)
+    decision_compiler: bool | None = None
 
 class ModelServiceError(ServiceError):
 
@@ -33,12 +37,14 @@ class ModelService:
     def __init__(self, database, root):
         self.resources = StudioResourceService(database)
         self.credentials = HostModelCredentials(database, root)
+        self.settings = StudioModelSettings(root)
 
     def detail(self, item):
         configs = {purpose: config for purpose, config in item['config'].items() if isinstance(config, dict)}
         aliases = self.credentials.configured(config.get('credential_env') for config in configs.values())
         configured = {purpose: aliases[config.get('credential_env')] for purpose, config in configs.items()}
-        return {**item, 'credential_configured': configured}
+        return {**item, 'credential_configured': configured,
+                'decision_compiler': self.settings.decision_compiler_model_id() == item['id']}
 
     def require(self, model_id):
         try:
@@ -47,6 +53,8 @@ class ModelService:
             raise ModelServiceError(404, str(exc)) from exc
 
     def save(self, body, previous=None):
+        if body.decision_compiler is not None and body.purpose != 'chat':
+            raise ModelServiceError(422, '只有生成式模型可用于解析决策 Skill。')
         if body.base_url.username or body.base_url.password or body.base_url.query or body.base_url.fragment:
             raise ModelServiceError(422, '服务地址请填写纯 API Base URL；密钥请填写到 API Key 字段。')
         if body.clear_api_key and body.api_key:
@@ -70,7 +78,13 @@ class ModelService:
         if not transport['model'] or transport['model'].casefold() == 'auto':
             raise ModelServiceError(422, '请填写明确的模型 ID。')
         if body.purpose == 'chat':
-            transport.update(max_tokens=body.max_tokens, temperature=body.temperature, retry_attempts=1)
+            transport.update(max_tokens=body.max_tokens, temperature=body.temperature)
+            for field in ('retry_attempts', 'retry_backoff_seconds'):
+                value = getattr(body, field)
+                if value is not None:
+                    transport[field] = value
+                elif field in old:
+                    transport[field] = old[field]
         schema = {'chat': ChatVLLMConfig, 'embedding': EmbeddingOpenAICompatibleConfig,
                   'decision': DecisionModelConfig}[body.purpose]
         config[body.purpose] = schema.model_validate(transport).model_dump(mode='json')
@@ -81,6 +95,8 @@ class ModelService:
                 saved = self.resources.save_model_preset(previous['id'], config=config, expected_row_version=body.row_version, name=body.name)
             else:
                 saved = self.resources.create_model_preset(name=body.name, config=config, preset_key='model-' + uuid4().hex[:16])
+            if body.decision_compiler is not None:
+                self.settings.set_decision_compiler(saved['id'], body.decision_compiler)
             return self.detail(saved)
         except StudioResourceError as exc:
             raise ModelServiceError(422, str(exc)) from exc
@@ -89,7 +105,9 @@ class ModelService:
         result = self.resources.list_summaries('model', query=query, page=page, page_size=page_size, purpose=purpose)
         configured = self.credentials.configured(config.get('credential_env')
             for item in result['items'] for config in item['purposes'])
+        compiler_id = self.settings.decision_compiler_model_id()
         for item in result['items']:
+            item['decision_compiler'] = compiler_id == item['id']
             item['credential_configured'] = {}
             for config in item['purposes']:
                 config['credential_configured'] = configured[config.pop('credential_env')]

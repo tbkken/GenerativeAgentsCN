@@ -43,6 +43,36 @@ def create(client, purpose='chat', key='secret-test-123'):
     return body, response.json()
 
 
+def test_chat_model_uses_protocol_retry_defaults_and_preserves_explicit_policy(center):
+    client, _, _ = center
+    body, item = create(client)
+    assert item['config']['chat']['retry_attempts'] == 3
+    assert item['config']['chat']['retry_backoff_seconds'] == 5
+    body.update(row_version=item['row_version'], api_key=None,
+                retry_attempts=1, retry_backoff_seconds=0)
+    response = client.put(f"{URL}/{item['id']}", json=body)
+    assert response.status_code == 200, response.text
+    item = response.json()
+    assert item['config']['chat']['retry_attempts'] == 1
+    assert item['config']['chat']['retry_backoff_seconds'] == 0
+    body.pop('retry_attempts')
+    body.pop('retry_backoff_seconds')
+    body.update(name='改名保留策略', row_version=item['row_version'])
+    response = client.put(f"{URL}/{item['id']}", json=body)
+    assert response.status_code == 200, response.text
+    assert response.json()['config']['chat']['retry_attempts'] == 1
+    assert response.json()['config']['chat']['retry_backoff_seconds'] == 0
+
+
+@pytest.mark.parametrize('values', [{'retry_attempts': 0}, {'retry_attempts': 6},
+                                  {'retry_backoff_seconds': -1}, {'retry_backoff_seconds': 301}])
+def test_chat_retry_policy_is_bounded(center, values):
+    client, _, _ = center
+    response = client.post(URL, json=dict(name='无效重试', purpose='chat',
+        base_url='http://localhost:9876/v1', model='test-chat', **values))
+    assert response.status_code == 422
+
+
 def test_keys_are_encrypted_and_survive_reopen_rotation_and_deletion(center):
     client, credentials, root = center
     body, item = create(client)

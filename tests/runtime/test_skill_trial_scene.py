@@ -213,13 +213,20 @@ def test_interface_json_repair_remains_bounded_and_audited(tmp_path, monkeypatch
     monkeypatch.setattr(LLMModel, "_request_json", respond)
     result = execute_skill_trial(root)
     assert result["model_usage"] == {"logical_calls": 2, "physical_attempts": 4}
-    assert [len(messages) for messages in requests[:3]] == [2, 4, 4]
+    assert [len(messages) for messages in requests[:3]] == [2, 3, 3]
+    # Rejected calls have no tool results and never enter assistant history;
+    # each correction replaces the prior bounded user diagnosis.
+    assert all(message.get("role") != "assistant"
+               for messages in requests[:3] for message in messages)
+    assert all("tool_calls" not in message for messages in requests[:3] for message in messages)
     assert len(set(deadlines[:3])) == 1
     events = model_events(root)
     starts = [event for event in events if event["event_type"] == "PHYSICAL_START"]
     finished = [event for event in events if event["event_type"] == "PHYSICAL_ATTEMPT"]
     assert [event["payload"]["request"] for event in starts] == requests
     assert [event["payload"]["request"] for event in finished] == requests
+    assert finished[0]["payload"]["response"] == malformed
+    assert finished[1]["payload"]["response"] == malformed
 
 
 def test_cancel_during_model_retry_preserves_gateway_cancellation(tmp_path, monkeypatch):

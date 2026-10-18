@@ -144,7 +144,8 @@ class ChatTransport(StrictModel):
     max_tokens: int = Field(default=2048, ge=1, le=131_072)
     temperature: float = Field(default=0.5, ge=0, le=2)
     enable_thinking: bool = False
-    retry_attempts: int = Field(default=3, ge=1, le=5)
+    retry_attempts: int = Field(default=3, ge=1, le=5,
+        description="传输故障的请求次数上限，包含首次请求；1 不进行传输重试。技能响应可另有最多 2 次格式纠错，共用逻辑调用总预算。")
     retry_backoff_seconds: float = Field(default=5, ge=0, le=300)
 
 

@@ -419,7 +419,6 @@ def test_repeated_identical_child_call_is_stopped_before_third_execution():
         registry,
         responses=[call_wake_up("repeat-1"), {"content": "7"},
                    call_wake_up("repeat-2"), {"content": "7"}, call_wake_up("repeat-3")],
-        max_hops=12,
         max_identical_tool_calls=2,
     )
 
@@ -455,7 +454,6 @@ def test_semantically_repeated_child_call_with_paraphrased_input_is_stopped():
             {"content": "7"},
             call_wake_up("third", "最后再确认一次"),
         ],
-        max_hops=12,
         max_identical_tool_calls=2,
     )
 

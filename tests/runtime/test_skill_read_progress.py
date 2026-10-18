@@ -14,7 +14,7 @@ from generative_agents.ga_protocol.skills.documents import SkillRegistry
 from generative_agents.ga_runtime.capabilities.server import SimulationAPI
 from generative_agents.ga_runtime.engine.iteration import IterationContext
 from generative_agents.ga_runtime.memory.stream import FileMemoryStream
-from generative_agents.ga_runtime.skills.executor import SkillLoopError, SkillRuntime
+from generative_agents.ga_runtime.skills.executor import SkillBudgetExceeded, SkillLoopError, SkillRuntime
 from tests.skill_files import write_skill
 
 
@@ -45,7 +45,7 @@ class _RecordedAPI(SimulationAPI):
         return result
 
 
-def _runtime(tmp_path, responses, *, memory_contents=(), max_hops=16):
+def _runtime(tmp_path, responses, *, memory_contents=(), max_tool_calls=128):
     run_id = UUID("00000000-0000-4000-8000-000000000001")
     attempt_id = UUID("00000000-0000-4000-8000-000000000002")
     now = datetime(2024, 2, 13, 6, tzinfo=timezone.utc)
@@ -62,7 +62,7 @@ def _runtime(tmp_path, responses, *, memory_contents=(), max_hops=16):
         "根据活动需求使用 @memory-stream-search 检索已知地点，必要时用 "
         "@memory-stream-append 保存新事实。候选穷尽后说明缺失信息并结束。"))
     runtime = _Responses(registry, responses=responses, interfaces=interfaces,
-        max_hops=max_hops, max_identical_tool_calls=2, agent_key="eddie", step_no=1)
+        max_tool_calls=max_tool_calls, max_identical_tool_calls=2, agent_key="eddie", step_no=1)
     return runtime, interfaces, memory
 
 
@@ -136,13 +136,14 @@ def test_distinct_searches_remain_bounded_by_total_tool_budget(tmp_path):
                 for index in range(5)]
     runtime, interfaces, _ = _runtime(tmp_path, [{
         "content": "", "tool_calls": [response["tool_calls"][0] for response in requests],
-    }], max_hops=4)
+    }], max_tool_calls=4)
 
-    with pytest.raises(SkillLoopError, match="configured 4 tool-call budget") as caught:
+    with pytest.raises(SkillBudgetExceeded, match="tool_calls budget") as caught:
         runtime.run("select-place", "检查多个已知地点。")
 
     assert len(interfaces.calls) == 4
-    assert caught.value.trace[-1]["event"] == "loop.budget_exhausted"
+    assert caught.value.trace[-1]["event"] == "budget.exhausted"
+    assert (caught.value.used, caught.value.attempted) == (4, 5)
 
 
 def test_nested_skills_share_the_read_call_budget(tmp_path):
@@ -152,15 +153,16 @@ def test_nested_skills_share_the_read_call_budget(tmp_path):
         {"content": "第一处没有记忆。"},
         _tool("call_skill", {"name": "select-place", "input_text": "查询第二处。"}, "child-2"),
         _tool("memory-stream-search", {"query": "第二处"}, "search-2"),
-    ], max_hops=3)
+    ], max_tool_calls=3)
     write_skill(runtime.registry, "plan", "规划", kind="brain", body="调用 $select-place 查询目的地。")
 
-    with pytest.raises(SkillLoopError, match="configured 3 tool-call budget") as caught:
+    with pytest.raises(SkillBudgetExceeded, match="tool_calls budget") as caught:
         runtime.run("plan", "查找目的地。")
 
     assert len(interfaces.calls) == 1
     assert caught.value.trace[-1]["skill"] == "select-place"
-    assert caught.value.trace[-1]["tool_call_count"] == 4
+    assert caught.value.trace[-1]["used"] == 3
+    assert caught.value.trace[-1]["attempted"] == 4
 
 
 def test_different_unreachable_destinations_are_not_one_navigation_loop(tmp_path):

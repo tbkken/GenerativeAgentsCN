@@ -22,7 +22,7 @@ from generative_agents.ga_protocol.skills.decisions import validate_compiled_dec
 from generative_agents.ga_protocol.skills.metadata import SkillRegistryError
 from generative_agents.ga_protocol.skills.dependencies import referenced_interfaces
 from generative_agents.ga_protocol.skills.dependencies import validate_interface_references
-from generative_agents.ga_runtime.models.retry import ModelCallCancelled, check_cancelled
+from generative_agents.ga_runtime.models.retry import ModelCallCancelled, ModelResponseFormatError, check_cancelled
 from generative_agents.ga_runtime.storage.execution import execution_span
 
 class SkillInterfaces(Protocol):
@@ -49,8 +49,28 @@ class SkillModelError(RecoverableSkillRuntimeError):
     """The configured model gateway exhausted its retry policy."""
 
 
+class SkillOutputFormatError(SkillModelError):
+    """A model response remained invalid after bounded format correction."""
+
+
 class SkillLoopError(RecoverableSkillRuntimeError):
     """The Brain repeated a stable tool call without making progress."""
+
+
+class SkillBudgetExceeded(RecoverableSkillRuntimeError):
+    """An independent execution budget stopped the next operation safely."""
+
+    def __init__(self, budget_kind: str, *, limit: int, used: int, skill: str,
+                 attempted: int | None = None, trace=()) -> None:
+        self.budget_kind = budget_kind
+        self.limit = limit
+        self.used = used
+        self.attempted = used + 1 if attempted is None else attempted
+        self.skill = skill
+        super().__init__(
+            f"Skill {skill} exhausted {budget_kind} budget: used {used}, "
+            f"limit {limit}, next operation {self.attempted}", trace=trace,
+        )
 
 
 @dataclass(frozen=True, slots=True)
@@ -86,7 +106,9 @@ class SkillRuntime:
         api_key: str | None = None,
         interfaces: SkillInterfaces | None = None,
         timeout: float = 300,
-        max_hops: int = 8,
+        max_call_depth: int = 8,
+        max_skill_rounds: int = 32,
+        max_tool_calls: int = 128,
         temperature: float = 0.2,
         max_tokens: int = 2048,
         enable_thinking: bool = False,
@@ -113,7 +135,9 @@ class SkillRuntime:
             api_key: 调用模型服务使用的 API 密钥；为空时由密钥解析器按配置加载。 类型：`str | None`。 默认值：`None`。
             interfaces: 技能调用使用的身份绑定接口。 类型：`SkillInterfaces | None`。 默认值：`None`。
             timeout: 等待操作的最长秒数；超时后按调用协议返回或抛出异常。 类型：`float`。 默认值：`300`。
-            max_hops: `hops`允许的最大值。 类型：`int`。 默认值：`8`。
+            max_call_depth: 最大子 Skill 调用深度，根 Skill 为 0。默认值：`8`。
+            max_skill_rounds: 每次 Skill 执行独立的逻辑模型轮数上限。默认值：`32`。
+            max_tool_calls: 整轮调用树已开始的工具调用次数上限。默认值：`128`。
 
         返回:
             无返回值。
@@ -130,7 +154,15 @@ class SkillRuntime:
         )
         self.interfaces = interfaces
         self.timeout = timeout
-        self.max_hops = max_hops
+        for name, value in (
+            ('max_call_depth', max_call_depth), ('max_skill_rounds', max_skill_rounds),
+            ('max_tool_calls', max_tool_calls),
+        ):
+            if type(value) is not int or value < 1:
+                raise ValueError(f'{name} must be a positive integer')
+        self.max_call_depth = max_call_depth
+        self.max_skill_rounds = max_skill_rounds
+        self.max_tool_calls = max_tool_calls
         self.temperature = float(temperature)
         self.max_tokens = int(max_tokens)
         self.enable_thinking = bool(enable_thinking)
@@ -149,6 +181,7 @@ class SkillRuntime:
         self.step_no = step_no
         self.max_identical_tool_calls = max(1, int(max_identical_tool_calls))
         self._active_skill_name: str | None = None
+        self._response_validator = None
         self._total_tool_calls = 0
         self._tool_progress: dict[str, tuple[str, int]] = {}
         self._semantic_tool_progress: dict[str, tuple[str, int, int]] = {}
@@ -204,6 +237,10 @@ class SkillRuntime:
         depth: int,
         tool_call_id: str | None = None,
     ) -> str:
+        check_cancelled(self._control)
+        if depth > self.max_call_depth:
+            self._budget_exceeded('call_depth', self.max_call_depth, depth - 1,
+                                  document.name, trace, attempted=depth)
         with execution_span(
             self._execution, kind="skill", name=document.display_name or document.name,
             skill_key=document.name, step_no=self.step_no, agent_key=self.agent_key,
@@ -236,8 +273,6 @@ class SkillRuntime:
             SkillRuntimeError: 当底层操作报告该异常条件时抛出。
         """
         check_cancelled(self._control)
-        if depth > self.max_hops:
-            raise SkillRuntimeError("Skill call depth exceeded the configured limit")
         validate_interface_references(document.body)
         script_path = document.path.parent / "scripts" / "main.py"
         if document.llm_type == "decision":
@@ -301,11 +336,12 @@ class SkillRuntime:
                 }
             )
             self._active_skill_name = document.name
-            output = self._complete(
+            output = self._validated_completion(
                 [
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt},
-                ]
+                ], tools=[], skill=document.name, allowed={}, scripts={},
+                completed={}, seen_ids=set(), trace=trace,
             )["content"]
             trace.append(
                 {"event": "skill.result", "skill": document.name, "output_text": output}
@@ -343,7 +379,10 @@ class SkillRuntime:
                     "type": "function",
                     "function": {
                         "name": "call_skill",
-                        "description": "Call one child Skill and receive its natural-language result.",
+                        "description": (
+                            "Call one child Skill and receive its natural-language result. "
+                            "Supply its exact name and exactly one of input_text or input_from."
+                        ),
                         "parameters": {
                             "type": "object",
                             "properties": {
@@ -359,10 +398,8 @@ class SkillRuntime:
                                 },
                             },
                             "required": ["name"],
-                            "oneOf": [
-                                {"required": ["input_text"]},
-                                {"required": ["input_from"]},
-                            ],
+                            # Keep a plain object root for provider tool grammars.
+                            # The full input union is enforced before execution.
                             "additionalProperties": False,
                         },
                     },
@@ -373,8 +410,17 @@ class SkillRuntime:
                 "type": "function",
                 "function": {
                     "name": tool["name"],
-                    "description": tool["description"],
-                    "parameters": tool["parameters"],
+                    "description": tool["description"] + (
+                        " Supply exactly one of target_coord or target_address."
+                        if tool["name"] == "world-navigate" else ""
+                    ),
+                    # Some tool grammars discard root properties when oneOf is
+                    # present. Project only navigation's root union; Protocol and
+                    # the identity-bound interface keep the full contract.
+                    "parameters": {
+                        key: value for key, value in tool["parameters"].items()
+                        if not (tool["name"] == "world-navigate" and key == "oneOf")
+                    },
                 },
             }
             for tool in interface_descriptors
@@ -411,9 +457,13 @@ class SkillRuntime:
         completed_child_results: dict[str, str] = {}
         seen_tool_call_ids: set[str] = set()
         # 组合 Skill 采用受限工具循环；每轮模型只能调用当前文档显式允许的能力。
-        for _ in range(self.max_hops):
+        for _ in range(self.max_skill_rounds):
             self._active_skill_name = document.name
-            response = self._complete(messages, tools=tools)
+            response = self._validated_completion(
+                messages, tools=tools, skill=document.name, allowed=allowed,
+                scripts=script_handlers, completed=completed_child_results,
+                seen_ids=seen_tool_call_ids, trace=trace,
+            )
             tool_calls = response.get("tool_calls") or []
             if not tool_calls:
                 output = str(response.get("content") or "")
@@ -427,7 +477,7 @@ class SkillRuntime:
                     }
                 )
                 return output
-            self._validate_tool_call_ids(document.name, tool_calls, seen_tool_call_ids, trace)
+            seen_tool_call_ids.update(call['id'] for call in tool_calls)
             assistant_message = {
                 "role": "assistant",
                 "content": response.get("content") or "",
@@ -442,7 +492,7 @@ class SkillRuntime:
                     if not isinstance(arguments, dict):
                         raise TypeError("tool arguments must be a JSON object")
                 except (json.JSONDecodeError, TypeError) as exc:
-                    raise SkillModelError(
+                    raise SkillOutputFormatError(
                         "Model returned invalid tool arguments"
                     ) from exc
                 tool_name = str(function.get("name") or "")
@@ -453,6 +503,12 @@ class SkillRuntime:
                     except SkillModelError as exc:
                         self._reject_tool_call(document.name, call, str(exc), trace)
                     fingerprint_arguments = {"name": arguments.get("name"), "input_text": child_input}
+                    if depth >= self.max_call_depth:
+                        self._budget_exceeded('call_depth', self.max_call_depth, depth,
+                            arguments['name'], trace, attempted=depth + 1, tool=tool_name)
+                if self._total_tool_calls >= self.max_tool_calls:
+                    self._budget_exceeded('tool_calls', self.max_tool_calls, self._total_tool_calls,
+                                          document.name, trace, tool=tool_name)
                 request_fingerprint = self._tool_request_fingerprint(
                     document.name, tool_name, fingerprint_arguments
                 )
@@ -495,18 +551,6 @@ class SkillRuntime:
                         f"Skill {document.name} repeated {tool_name} without semantic progress"
                     )
                 self._total_tool_calls += 1
-                if self._total_tool_calls > self.max_hops:
-                    trace.append(
-                        {
-                            "event": "loop.budget_exhausted",
-                            "skill": document.name,
-                            "tool": tool_name,
-                            "tool_call_count": self._total_tool_calls,
-                        }
-                    )
-                    raise SkillLoopError(
-                        f"Brain exceeded the configured {self.max_hops} tool-call budget"
-                    )
                 tool_result_is_error = False
                 state_changed = False
                 if tool_name == "call_skill":
@@ -652,9 +696,17 @@ class SkillRuntime:
                         }
                     )
                     return output
-        raise SkillLoopError(
-            f"Skill {document.name} did not finish within {self.max_hops} calls"
-        )
+        check_cancelled(self._control)
+        self._budget_exceeded('skill_rounds', self.max_skill_rounds, self.max_skill_rounds,
+                              document.name, trace)
+
+    @staticmethod
+    def _budget_exceeded(kind, limit, used, skill, trace, *, attempted=None, tool=None):
+        error = SkillBudgetExceeded(kind, limit=limit, used=used, skill=skill, attempted=attempted)
+        trace.append({'event': 'budget.exhausted', 'budget_kind': kind, 'skill': skill,
+                      'limit': limit, 'used': used, 'attempted': error.attempted,
+                      **({'tool': tool} if tool is not None else {})})
+        raise error
 
     def _execute_decision(self, document, input_text, context, trace):
         """Return typed decisions as the child's result without any chat call."""
@@ -712,6 +764,12 @@ class SkillRuntime:
             SkillRuntimeError: 当底层操作报告该异常条件时抛出。
         """
         check_cancelled(self._control)
+        def validate_response(response):
+            if self._response_validator is not None:
+                try:
+                    self._response_validator(response)
+                except SkillOutputFormatError as exc:
+                    raise ModelResponseFormatError(str(exc), response=response) from exc
         try:
             response = dict(
                 self._model().chat_completion(
@@ -724,14 +782,76 @@ class SkillRuntime:
                     purpose="skill_runtime",
                     prompt_key=self._active_skill_name,
                     retry=self.retry_attempts,
+                    response_validator=validate_response,
+                    format_repair_attempts=2,
                 )
             )
         except ModelCallCancelled:
             raise
+        except ModelResponseFormatError as exc:
+            raise SkillOutputFormatError(f"Skill model output remained invalid after corrections: {exc}") from exc
         except Exception as exc:
             raise SkillModelError(f"Skill model call failed after retries: {exc}") from exc
         check_cancelled(self._control)
         return response
+
+    def _validated_completion(self, messages, *, tools, skill, allowed, scripts,
+                              completed, seen_ids, trace):
+        """Validate the entire proposed batch while every tool is still unexecuted."""
+        def validate(response):
+            self._validate_tool_response(response, skill=skill, tools=tools, allowed=allowed,
+                scripts=scripts, completed=completed, seen_ids=seen_ids, trace=trace)
+
+        previous = self._response_validator
+        self._response_validator = validate
+        try:
+            response = self._complete(messages, tools=tools)
+            # Injected model clients and test adapters need the same boundary,
+            # even when they do not implement the gateway's validator callback.
+            validate(response)
+            return response
+        finally:
+            self._response_validator = previous
+
+    @classmethod
+    def _validate_tool_response(cls, response, *, skill, tools, allowed, scripts,
+                                completed, seen_ids, trace):
+        from generative_agents.ga_runtime.models.gateway import LLMModel
+
+        try:
+            LLMModel._validate_chat_message(response)
+        except ModelResponseFormatError as exc:
+            cls._reject_tool_call(skill, {}, str(exc), trace)
+        calls = response.get('tool_calls') or []
+        # Validate a copy: a rejected response must not reserve IDs or create
+        # result references. Corrected responses may reuse those unused IDs.
+        cls._validate_tool_call_ids(skill, calls, set(seen_ids), trace)
+        available_results = dict(completed)
+        tool_names = {tool['function']['name'] for tool in tools}
+        for call in calls:
+            function = call['function']
+            name = function['name']
+            arguments = json.loads(function['arguments'])
+            if name not in tool_names:
+                cls._reject_tool_call(skill, call, f'Skill {skill} attempted unavailable tool {name}', trace)
+            if name == 'call_skill':
+                try:
+                    cls._child_input(arguments, available_results)
+                except SkillModelError as exc:
+                    cls._reject_tool_call(skill, call, str(exc), trace)
+                if arguments['name'] not in allowed:
+                    cls._reject_tool_call(skill, call,
+                        f'Skill {skill} attempted unavailable child {arguments["name"]}', trace)
+                # A following call in this batch may refer to this earlier
+                # child. Its actual result is resolved only after it succeeds.
+                available_results[call['id']] = ''
+            elif name == 'run_skill_script':
+                if (set(arguments) != {'function', 'input_text'}
+                        or not isinstance(arguments.get('function'), str)
+                        or arguments['function'] not in scripts
+                        or not isinstance(arguments.get('input_text'), str)):
+                    cls._reject_tool_call(skill, call,
+                        'run_skill_script requires an available function and string input_text', trace)
 
     def _model(self):
         """Lazily create the shared traced model adapter for direct runtimes."""
@@ -779,7 +899,7 @@ class SkillRuntime:
                 if "input_from" in arguments:
                     event["input_from"] = arguments["input_from"]
         trace.append(event)
-        raise SkillModelError(error)
+        raise SkillOutputFormatError(error)
 
     @classmethod
     def _validate_tool_call_ids(cls, skill, calls, seen_ids, trace) -> None:
@@ -799,7 +919,7 @@ class SkillRuntime:
         """Resolve task text without interpreting or rewriting its contents."""
         if set(arguments) - {"name", "input_text", "input_from"}:
             raise SkillModelError("call_skill accepts only name and one of input_text or input_from")
-        if not isinstance(arguments.get("name"), str) or not arguments["name"]:
+        if not isinstance(arguments.get("name"), str) or not arguments["name"].strip():
             raise SkillModelError("call_skill name must be a non-empty string")
         if ("input_text" in arguments) == ("input_from" in arguments):
             raise SkillModelError("call_skill requires exactly one of input_text or input_from")

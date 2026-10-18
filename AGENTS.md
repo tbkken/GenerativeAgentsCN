@@ -127,6 +127,8 @@ assets/...                        commits/step-000001.json
 
 ActorState 只保存身份、人物信息、位置、当前动作和剩余路径，不承载固定业务流程。作者地图/Skill 元数据在 `ga_studio/resources/map_document.py`、`skill_document.py`，导入时转换为 Protocol 合同并去除数据库定位信息。源码资源仅由 Studio `bundled/` 与 Web `static/` 持有；`static/shell` 协调页面/请求，`resources` 为编辑器，`replay` 为播放器，`vendor` 为前端依赖。`var/` 是用户数据，不是源码；重构不得改写案例证据或另建历史备份目录。
 
+开发、测试和排查使用的临时目录、一次性脚本、截图与日志统一放在仓库外的系统临时目录（如 `%TEMP%`）下，按任务隔离并在结束后清理；不得在项目内创建或遗留此类临时产物。测试显式指定临时目录时必须使用仓库外路径。正式交付物、案例证据及 `var/` 用户数据仍按既定目录保存，清理时不得误删。
+
 维护一个 wheel，依赖按 `runtime/studio/web/dev` 声明；CLI/Web 使用同一包与协议，不依赖仓库当前目录。常用命令（路径为占位值）：
 
 ```text
