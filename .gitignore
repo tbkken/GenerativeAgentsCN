@@ -198,3 +198,6 @@ tests/.symlink-capability-probe-*/
 /docs/book/.workbuddy/memory/
 /docs/book/**/_old_v1_backup/
 /docs/book/**/_new_v2_rejected/
+
+# Explicitly requested Studio snapshot, including its recorded logs and credentials.
+!/data/studio/**

@@ -1,3 +1,6 @@
 # Keep self-contained teaching packages and original evidence byte-for-byte.
 /docs/book/sample/03-stanford-town/** -text
 /docs/book/sample/04-stanford-town-original/** -text
+
+# Preserve the complete Studio snapshot byte-for-byte without textual diffs.
+/data/studio/** binary
