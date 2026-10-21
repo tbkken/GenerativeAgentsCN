@@ -62,7 +62,7 @@ def test_map_workspace_edits_mutable_maps_and_experiments_only_select_them():
     assert "pointermove" in editor
     assert "event.deltaY" in editor
     assert "/draft/map-overlay" not in source
-    assert "experimentMapSelect" in source
+    assert "experimentMapSelect" not in source
     assert "method: 'PUT'" in source
     assert "/draft/publish" not in source
     assert "this.publicEditor.resize();" in source

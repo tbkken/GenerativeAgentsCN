@@ -183,9 +183,6 @@
       ['newMapWidth', 'newMapHeight', 'newMapTileSize'].forEach(id => {
         document.getElementById(id).addEventListener('input', () => this.updateCreatePixelSize());
       });
-      document.getElementById('experimentMapSelect')?.addEventListener('change', () => {
-        this.selectExperimentMap().catch(error => this.fail(error));
-      });
       document.querySelectorAll('[data-map-tab]').forEach(tab => tab.addEventListener('click', () => this.setTab(tab.dataset.mapTab)));
       window.addEventListener('spatial-asset-workspace:add-to-map', event => this.addSpatialAsset(event.detail?.asset));
       window.addEventListener('spatial-asset-workspace:updated', () => {
@@ -359,17 +356,6 @@
         experimentCreateSelect.value = catalog.some(item => item.id === previousCreateValue)
           ? previousCreateValue
           : '';
-      }
-      const compositionSelect = document.getElementById('experimentMapSelect');
-      if (compositionSelect) {
-        if (this.experiment?.world) {
-          compositionSelect.innerHTML = `<option value="__embedded__">${escapeHtml(this.experiment.world.world_name || '实验内置世界')}</option>`;
-          compositionSelect.value = '__embedded__';
-          compositionSelect.disabled = true;
-        } else {
-          compositionSelect.innerHTML = '<option value="">未选择地图</option>';
-          compositionSelect.disabled = true;
-        }
       }
     },
 
@@ -971,10 +957,6 @@
 
     async setExperimentContext(context) {
       this.experiment = context;
-    },
-
-    async selectExperimentMap() {
-      throw new Error('实验中的地图是物理副本；如需更换，请执行一次新的完整地图导入');
     },
 
     emitExperimentDraft(draft) {

@@ -643,24 +643,6 @@
       value:item => item.resource_id || item.id || item.name,
       label:item => `${item.display_name && item.display_name !== item.name ? `${item.display_name}（${item.name}）` : item.name}${item.description ? ` · ${item.description}` : ''}`,
     });
-    const response = {items:[{name:state.definition?.engine?.brain_skill, resource_id:state.definition?.engine?.brain_skill}]};
-    const composition = $('experimentBrainRevisionSelect');
-    if (composition) {
-      const selectedBrain = state.definition?.engine?.brain_skill || '';
-      composition.replaceChildren(new Option('未选择大脑', ''));
-      (response.items || []).forEach(item => {
-        const option = new Option(item.name, item.resource_id);
-        option.dataset.skillName = item.name;
-        option.dataset.revisionHash = item.revision;
-        composition.appendChild(option);
-      });
-      const selectedOption = [...composition.options].find(option => option.dataset.skillName === selectedBrain);
-      composition.value = selectedOption?.value || '';
-      composition.disabled = true;
-      $('experimentBrainRevisionMeta').textContent = selectedBrain
-        ? `${selectedBrain} · 已复制进当前实验`
-        : '尚未选择大脑';
-    }
     renderWizardStep();
   }
 
@@ -1389,6 +1371,18 @@
   }
 
   function fillDefinitionOverview(definition, revision) {
+    if (revision?.id && revision.id !== state.selectedExperimentId) return;
+    const brain = definition?.engine?.brain_skill || '';
+    const map = definition?.world?.world_name || state.experiment?.core_parameters?.world_name || '';
+    for (const [id, metaId, name, label] of [
+      ['experimentBrainRevisionSelect', 'experimentBrainRevisionMeta', brain, '大脑'],
+      ['experimentMapSelect', 'experimentMapMeta', map, '地图'],
+    ]) {
+      const selector = $(id);
+      selector.replaceChildren(new Option(name || `未配置${label}`, name));
+      selector.disabled = true;
+      $(metaId).textContent = name ? '当前实验内的独立副本' : `当前实验未提供${label}配置`;
+    }
     if (!definition) return;
     const agents = definition.agents || [];
     const enabled = definition.agents ? agents.filter(item => item.enabled).length : (state.experiment?.core_parameters?.agent_count ?? state.experiment?.agent_count ?? state.experiment?.resource_summary?.agent_count ?? 0);
@@ -1617,39 +1611,64 @@
   }
 
   async function stageAgentImport(file) {
+    const experimentId = state.selectedExperimentId;
+    const experimentGeneration = state.experimentOpenGeneration;
+    const generation = state.agentImportGeneration = (state.agentImportGeneration || 0) + 1;
     const text = await file.text();
+    if (generation !== state.agentImportGeneration
+      || experimentId !== state.selectedExperimentId
+      || experimentGeneration !== state.experimentOpenGeneration
+      || !state.draft) return;
     const parsed = file.name.toLowerCase().endsWith('.csv') ? parseCsvRows(text) : JSON.parse(text);
     const items = (Array.isArray(parsed) ? parsed : parsed.agents).map(normalizeImportedAgent);
     if (!items.length) throw new Error('导入文件中没有 Agent');
-    state.pendingAgentImport = { items, filename: file.name };
+    state.pendingAgentImport = { items, filename: file.name, experimentId, experimentGeneration };
     $('agentImportPreview').innerHTML = `<div class="batch-preview-summary">${escapeHtml(file.name)} · ${items.length} 个 Agent</div>${items.slice(0, 50).map(item => `<div class="batch-preview-row"><strong>${escapeHtml(item.name || item.agent_key || '未命名')}</strong><code>${escapeHtml(JSON.stringify(item))}</code></div>`).join('')}${items.length > 50 ? `<div class="batch-preview-summary">其余 ${items.length - 50} 项已折叠</div>` : ''}`;
     $('confirmAgentImport').disabled = false;
     openModal('agentImportModal', 'agentImportStrategy');
   }
 
   async function applyAgentImport() {
-    if (!state.pendingAgentImport) return;
-    if (!await ensureExperimentDefinition()) return;
+    const pending = state.pendingAgentImport;
+    if (!pending || pending.saving || !state.draft) return;
+    const { experimentId, experimentGeneration } = pending;
+    const isCurrentExperiment = () => experimentId === state.selectedExperimentId
+      && experimentGeneration === state.experimentOpenGeneration;
+    const ownsImport = () => isCurrentExperiment() && state.pendingAgentImport === pending;
+    if (!ownsImport()) return;
     const strategy = $('agentImportStrategy').value;
-    const definition = structuredClone(state.draft.definition);
-    const byKey = new Map(definition.agents.map((agent, index) => [agent.agent_key, { agent, index }]));
-    let added = 0; let updated = 0; let skipped = 0;
-    for (const raw of state.pendingAgentImport.items) {
-      const key = String(raw.agent_key || '').trim();
-      if (!key) throw new Error(`Agent ${raw.name || '未命名'} 缺少 agent_key`);
-      const existing = byKey.get(key);
-      if (existing && strategy === 'skip') { skipped += 1; continue; }
-      if (existing) {
-        definition.agents[existing.index] = strategy === 'replace' ? raw : { ...existing.agent, ...raw, scratch: { ...existing.agent.scratch, ...(raw.scratch || {}) }, spatial: { ...existing.agent.spatial, ...(raw.spatial || {}) } };
-        updated += 1;
-      } else { definition.agents.push(raw); added += 1; }
+    pending.saving = true;
+    $('confirmAgentImport').disabled = true;
+    try {
+      if (!await ensureExperimentDefinition() || !ownsImport() || !state.draft) return;
+      const definition = structuredClone(state.draft.definition);
+      const byKey = new Map(definition.agents.map((agent, index) => [agent.agent_key, { agent, index }]));
+      let added = 0; let updated = 0; let skipped = 0;
+      for (const raw of pending.items) {
+        const key = String(raw.agent_key || '').trim();
+        if (!key) throw new Error(`Agent ${raw.name || '未命名'} 缺少 agent_key`);
+        const existing = byKey.get(key);
+        if (existing && strategy === 'skip') { skipped += 1; continue; }
+        if (existing) {
+          definition.agents[existing.index] = strategy === 'replace' ? raw : { ...existing.agent, ...raw, scratch: { ...existing.agent.scratch, ...(raw.scratch || {}) }, spatial: { ...existing.agent.spatial, ...(raw.spatial || {}) } };
+          updated += 1;
+        } else { definition.agents.push(raw); added += 1; }
+      }
+      const saved = await api(`/experiments/${experimentId}`, {
+        method: 'PUT', body: JSON.stringify({ definition, expected_content_sha256: state.draft?.definition_hash }),
+      });
+      if (!isCurrentExperiment()) return;
+      await acceptSavedDraft(saved);
+      if (!ownsImport()) return;
+      state.pendingAgentImport = null;
+      closeModal('agentImportModal');
+      showToast(`新增 ${added}、更新 ${updated}、跳过 ${skipped} 个 Agent。`, '导入完成');
+    } catch (error) {
+      if (ownsImport()) throw error;
+    } finally {
+      pending.saving = false;
+      if (ownsImport()) $('confirmAgentImport').disabled = false;
     }
-    const saved = await api(`/experiments/${state.selectedExperimentId}`, {
-      method: 'PUT', body: JSON.stringify({ definition, expected_content_sha256: state.draft?.definition_hash }),
-    });
-    state.draft = saved; state.definition = saved.definition; state.pendingAgentImport = null;
-    closeModal('agentImportModal'); fillDraft(saved.definition); fillDefinitionOverview(saved.definition, saved);
-    showToast(`新增 ${added}、更新 ${updated}、跳过 ${skipped} 个 Agent。`, '导入完成');
   }
 
   async function refreshRunHistoryList(experimentId, preferredRunId = state.selectedRunId) {
