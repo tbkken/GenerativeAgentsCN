@@ -199,6 +199,6 @@ tests/.symlink-capability-probe-*/
 /docs/book/**/_old_v1_backup/
 /docs/book/**/_new_v2_rejected/
 
-# Studio local state only. The evidence snapshot lives in the separate private
+# Local data only. Evidence snapshots live in the separate private
 # GenerativeAgentsCN-Evidence repository.
-/data/studio/
+/data/
