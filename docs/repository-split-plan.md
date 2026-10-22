@@ -71,6 +71,8 @@ git status --short
 
 `split/docs` 会同时带上 `docs/skill-authoring.md` 和 `docs/unified-resource-protocol.md`。新仓库中可删除这两份契约文档；主仓库继续保留。
 
+> 迁移完成后不要再次从主仓库执行 `git subtree split -P docs`。主仓库的 `docs/` 现在只剩两份契约文档和本计划，重新 split 并推送会覆盖 docs 仓库中的书稿内容。`GenerativeAgentsCN-Book` 的 `main` 应保持在 `d4b3feb`。
+
 ### 3. 远程推送（已执行）
 
 - `split/docs` → `GenerativeAgentsCN-Book` 的 `main`
