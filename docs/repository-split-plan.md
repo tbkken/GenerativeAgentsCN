@@ -6,7 +6,7 @@
 
 代码仓库跟踪体积已从 **503.8 MB / 4562 文件** 降到 **488.1 MB / 4315 文件**。
 
-第一步已完成，改动尚未提交：
+第一步已完成并提交（`88fb6b0`）：
 
 - `.gitignore`：保留 `data/studio/packages`、`generative-agents.db`、`snapshot.json` 的跟踪，新增本地状态忽略规则。
 - 已用 `git rm --cached` 停止跟踪 247 个本地状态文件，工作区文件未删除：
@@ -54,10 +54,15 @@ git check-ignore -v data/studio/logs data/studio/master.key data/studio/run-recy
 bash "$TEMP/ga-repo-split/split.sh" E:/GenerativeAgentsCN
 ```
 
-脚本只创建两个本地分支，不改写历史：
+脚本创建以下本地分支：
 
-- `split/docs`：`docs/` 全部内容，位于新仓库根目录。
-- `split/studio-evidence`：`data/studio/` 内容，位于新仓库根目录。
+| 分支 | 提交数 | 内容 | 用途 |
+| --- | ---: | --- | --- |
+| `split/docs` | 25 | `docs/` 全部内容，位于新仓库根目录 | 推送到 docs 仓库 |
+| `split/studio-evidence` | 2 | `data/studio/` 内容，保留历史 | 仅本地归档，**不要直接推送** |
+| `split/studio-evidence-snapshot` | 1 | 与上一分支相同的树，无历史 | 推送到 evidence 仓库 |
+
+`split/studio-evidence` 的历史包含 `8e574d1` 中加入的 `master.key` 和 `model-credentials.json`。因此推送必须使用无历史的 `split/studio-evidence-snapshot`，或者先用 `git filter-repo` 清除凭据历史。
 
 `split/docs` 会同时带上 `docs/skill-authoring.md` 和 `docs/unified-resource-protocol.md`。新仓库中可删除这两份契约文档；主仓库继续保留。
 
@@ -65,7 +70,7 @@ bash "$TEMP/ga-repo-split/split.sh" E:/GenerativeAgentsCN
 
 ```bash
 git push <docs-repo-url> split/docs:main
-git push <evidence-repo-url> split/studio-evidence:main
+git push <evidence-repo-url> split/studio-evidence-snapshot:main
 ```
 
 ### 4. 更新引用
@@ -101,7 +106,7 @@ git push --force-with-lease origin --tags
 
 ## 风险与前置检查
 
-- **凭据**：`data/studio/snapshot.json` 明确记录 `master_key_and_credentials_included: true`，同目录的 `master.key` 可解密 DB 中的模型凭据。若仓库会公开或共享，先轮换密钥，再把快照移入私有证据仓库。
+- **凭据**：`data/studio/snapshot.json` 明确记录 `master_key_and_credentials_included: true`，同目录的 `master.key` 可解密 DB 中的模型凭据。停止跟踪只影响当前树，`8e574d1` 仍保留在本地和 origin 历史中。若仓库已共享或会公开，必须先轮换模型密钥，再决定是否用 `git filter-repo` 清理远程历史。
 - **`var/` 是用户数据**：不要删除。建议复制到仓库外，设置 `GA_VAR_DIR`，验证后再处理旧目录。
 - **当前分支不干净**：`codex/retire-legacy-runtime` 上有大量未提交的 social-replay 改动。拆分提交必须与它们分开。
 - **不要用子模块**：文档和证据仓库独立发布即可，子模块会增加克隆和权限复杂度。
