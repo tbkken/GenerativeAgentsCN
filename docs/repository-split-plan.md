@@ -21,6 +21,15 @@
   - `data/studio/studio-model-settings.json`
 - 证据目录仍保持跟踪：`data/studio/packages/`（1148 文件）、`generative-agents.db`、`snapshot.json`。
 
+## 远程仓库（已完成）
+
+| 仓库 | 可见性 | 内容 | 本地分支 |
+| --- | --- | --- | --- |
+| https://github.com/tbkken/GenerativeAgentsCN-Book | 私有 | 书稿、案例素材、图片、验收记录 | `split/docs` |
+| https://github.com/tbkken/GenerativeAgentsCN-Evidence | 私有 | `data/studio` 运行证据快照 | `split/studio-evidence-snapshot` |
+
+两个远程 `main` 已与对应本地分支一致。证据仓库使用单提交快照，历史中不含 `master.key` 和 `model-credentials.json`。
+
 核对命令：
 
 ```bash
@@ -46,31 +55,32 @@ git check-ignore -v data/studio/logs data/studio/master.key data/studio/run-recy
 
 先单独提交 `.gitignore` 与 247 个停止跟踪的文件，避免和当前 social-replay 的未提交改动混在一起。
 
-### 2. 生成拆分分支
+### 2. 拆分分支（已执行）
 
-脚本位于 `%TEMP%\ga-repo-split\split.sh`（一次性脚本，不放进仓库）：
+已创建以下本地分支：
 
-```bash
-bash "$TEMP/ga-repo-split/split.sh" E:/GenerativeAgentsCN
-```
+| 分支 | 内容 | 用途 |
+| --- | --- | --- |
+| `split/docs` | `docs/` 全部内容，位于仓库根目录 | 已推送到 docs 仓库 |
+| `split/studio-evidence` | `data/studio/` 内容，保留历史 | 仅本地归档，**不要直接推送** |
+| `split/studio-evidence-snapshot` | 与上一分支相同的树，无历史 | 已推送到 evidence 仓库 |
 
-脚本创建以下本地分支：
-
-| 分支 | 提交数 | 内容 | 用途 |
-| --- | ---: | --- | --- |
-| `split/docs` | 25 | `docs/` 全部内容，位于新仓库根目录 | 推送到 docs 仓库 |
-| `split/studio-evidence` | 2 | `data/studio/` 内容，保留历史 | 仅本地归档，**不要直接推送** |
-| `split/studio-evidence-snapshot` | 1 | 与上一分支相同的树，无历史 | 推送到 evidence 仓库 |
-
-`split/studio-evidence` 的历史包含 `8e574d1` 中加入的 `master.key` 和 `model-credentials.json`。因此推送必须使用无历史的 `split/studio-evidence-snapshot`，或者先用 `git filter-repo` 清除凭据历史。
+`split/studio-evidence` 的历史包含 `8e574d1` 中加入的 `master.key` 和 `model-credentials.json`。因此远程只使用无历史的 `split/studio-evidence-snapshot`。
 
 `split/docs` 会同时带上 `docs/skill-authoring.md` 和 `docs/unified-resource-protocol.md`。新仓库中可删除这两份契约文档；主仓库继续保留。
 
-### 3. 推送到新仓库
+### 3. 远程推送（已执行）
+
+- `split/docs` → `GenerativeAgentsCN-Book` 的 `main`
+- `split/studio-evidence-snapshot` → `GenerativeAgentsCN-Evidence` 的 `main`
+
+推送时使用本机代理 `127.0.0.1:5780`：
 
 ```bash
-git push <docs-repo-url> split/docs:main
-git push <evidence-repo-url> split/studio-evidence-snapshot:main
+git -c http.proxy=http://127.0.0.1:5780 -c https.proxy=http://127.0.0.1:5780 \
+  push docs-origin split/docs:main
+git -c http.proxy=http://127.0.0.1:5780 -c https.proxy=http://127.0.0.1:5780 \
+  push evidence-origin split/studio-evidence-snapshot:main
 ```
 
 ### 4. 更新引用
