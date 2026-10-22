@@ -199,20 +199,6 @@ tests/.symlink-capability-probe-*/
 /docs/book/**/_old_v1_backup/
 /docs/book/**/_new_v2_rejected/
 
-# Explicitly requested Studio snapshot. The evidence under data/studio/packages,
-# generative-agents.db and snapshot.json stays tracked.
-!/data/studio/**
-
-# Volatile local state inside the committed snapshot is not part of the evidence.
-/data/studio/logs/
-/data/studio/skill-author-cache/
-/data/studio/assets/preview-cache/
-/data/studio/run-recycle-bin/
-/data/studio/studio-operations/
-/data/studio/model-credentials.json
-/data/studio/master.key
-/data/studio/studio-presentation.json
-/data/studio/studio-model-settings.json
-/data/studio/generative-agents.db-shm
-/data/studio/generative-agents.db-wal
-/data/studio/packages/runs/**/worker.lock
+# Studio local state only. The evidence snapshot lives in the separate private
+# GenerativeAgentsCN-Evidence repository.
+/data/studio/

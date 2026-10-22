@@ -4,11 +4,11 @@
 
 ## 当前状态（2026-10-22）
 
-代码仓库跟踪体积已从 **503.8 MB / 4562 文件** 降到 **488.1 MB / 4315 文件**。
+代码仓库跟踪体积已从 **503.8 MB / 4562 文件** 降到 **13.9 MB / 399 文件**。
 
 第一步已完成并提交（`88fb6b0`）：
 
-- `.gitignore`：保留 `data/studio/packages`、`generative-agents.db`、`snapshot.json` 的跟踪，新增本地状态忽略规则。
+- `.gitignore`：停止跟踪 `data/studio`，并将整个目录作为本地状态忽略。
 - 已用 `git rm --cached` 停止跟踪 247 个本地状态文件，工作区文件未删除：
   - `data/studio/logs/`
   - `data/studio/skill-author-cache/`
@@ -19,7 +19,7 @@
   - `data/studio/master.key`
   - `data/studio/studio-presentation.json`
   - `data/studio/studio-model-settings.json`
-- 证据目录仍保持跟踪：`data/studio/packages/`（1148 文件）、`generative-agents.db`、`snapshot.json`。
+- `data/studio` 证据已迁移到私有证据仓库，主仓库不再跟踪该目录。
 
 ## 远程仓库（已完成）
 
@@ -33,10 +33,12 @@
 核对命令：
 
 ```bash
+git ls-files | wc -l
+git ls-files docs/book docs/仿真实验 docs/images docs/verification data/studio | wc -l
 git status --short
-git ls-files data/studio/packages data/studio/generative-agents.db data/studio/snapshot.json | wc -l
-git check-ignore -v data/studio/logs data/studio/master.key data/studio/run-recycle-bin
 ```
+
+迁移完成后，第二条命令应输出 `0`。
 
 ## 目标结构
 
@@ -83,17 +85,24 @@ git -c http.proxy=http://127.0.0.1:5780 -c https.proxy=http://127.0.0.1:5780 \
   push evidence-origin split/studio-evidence-snapshot:main
 ```
 
-### 4. 更新引用
+### 4. 移除主仓库内容并更新引用（已完成）
 
-新仓库推送成功后再更新主仓库链接：
+已从主仓库删除并提交：
 
-- `README.md:108` → `docs/book/sample/README.md`
-- `AGENTS.md:167` → `docs/book/sample/README.md`
-- `CLAUDE.md:11` → 书稿案例入口
-- `CLAUDE.md:162` → `data/studio` 的保留说明
-- `docs/book/sample/` 内部的相对链接随新仓库调整
+- `docs/book/`
+- `docs/仿真实验/`
+- `docs/images/`
+- `docs/verification/`
+- `data/studio/`
 
-代码与测试不引用这些目录，功能上无需改动。
+主仓库引用已更新：
+
+- `README.md` → 教材案例入口指向 `GenerativeAgentsCN-Book`
+- `AGENTS.md` → 教材案例入口指向 `GenerativeAgentsCN-Book`
+- `CLAUDE.md` → 案例入口与证据仓库说明
+- 本文件 → 记录最终结果
+
+代码与测试不引用这些目录，功能上无需改动。`docs/skill-authoring.md` 和 `docs/unified-resource-protocol.md` 仍保留在主仓库。
 
 ### 5. 可选：清理主仓库历史
 

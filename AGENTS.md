@@ -160,7 +160,7 @@ python tools/verify_wheel.py <生成的.whl>
 
 ## 9. 教材案例操作与验收
 
-案例入口与证据见 [docs/book/sample/README.md](docs/book/sample/README.md)。案例坐标、显示比例、模型、步数和提示词不是系统默认值。
+案例入口与证据见 [教材案例入口（私有仓库）](https://github.com/tbkken/GenerativeAgentsCN-Book/blob/main/book/sample/README.md)。案例坐标、显示比例、模型、步数和提示词不是系统默认值。
 
 ### 操作边界
 

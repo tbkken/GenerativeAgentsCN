@@ -105,7 +105,7 @@ ga run seal ./my-run ./my-run.garun
 **阅读与验证**
 
 - [架构与开发约定](AGENTS.md)：统一查阅系统约束、资源生命周期、文件协议和代码入口。
-- [教材案例入口](docs/book/sample/README.md)：每个案例独立保存地图、人物、Skill、参数和验收证据。
+- [教材案例入口](https://github.com/tbkken/GenerativeAgentsCN-Book/blob/main/book/sample/README.md)（私有仓库）：每个案例独立保存地图、人物、Skill、参数和验收证据。
 - [验证命令](AGENTS.md#8-代码入口命令与验证)：架构边界、Python/Node 回归、文件系统安全及安装包验收。
 
 研究来源：[Generative Agents](https://github.com/joonspk-research/generative_agents)、[wounderland](https://github.com/Archermmt/wounderland)。许可见 [LICENSE](LICENSE)。
