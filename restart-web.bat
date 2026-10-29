@@ -1,19 +1,22 @@
 @echo off
-setlocal EnableExtensions
+setlocal EnableExtensions DisableDelayedExpansion
 
 rem Always run from the repository that contains this script.
 cd /d "%~dp0"
 
 set "GA_RESTART_PROJECT_ROOT=%~dp0"
-set "GA_RESTART_PORT=8800"
+set "GA_RESTART_PORT=8000"
 if defined GA_PORT set "GA_RESTART_PORT=%GA_PORT%"
-set "GA_RESTART_VAR_DIR=%~dp0var"
-set "GA_RESTART_LOG_DIR=%~dp0var\logs"
-set "GA_RESTART_DATABASE_URL=sqlite:///%~dp0var/generative-agents.db"
+set "GA_RESTART_VAR_DIR=%~dp0var\studio"
+if defined GA_VAR_DIR set "GA_RESTART_VAR_DIR=%GA_VAR_DIR%"
+for %%I in ("%GA_RESTART_VAR_DIR%") do set "GA_RESTART_VAR_DIR=%%~fI"
+set "GA_RESTART_LOG_DIR=%GA_RESTART_VAR_DIR%\logs"
+set "GA_RESTART_DATABASE_URL=sqlite:///%GA_RESTART_VAR_DIR%/generative-agents.db"
 set "GA_RESTART_DATABASE_URL=%GA_RESTART_DATABASE_URL:\=/%"
-set "GA_RESTART_STDOUT=%~dp0var\logs\web.stdout.log"
-set "GA_RESTART_STDERR=%~dp0var\logs\web.stderr.log"
-set "GA_RESTART_PREFLIGHT_LOG=%~dp0var\logs\web.preflight.log"
+if defined GA_DATABASE_URL set "GA_RESTART_DATABASE_URL=%GA_DATABASE_URL%"
+set "GA_RESTART_STDOUT=%GA_RESTART_LOG_DIR%\web.stdout.log"
+set "GA_RESTART_STDERR=%GA_RESTART_LOG_DIR%\web.stderr.log"
+set "GA_RESTART_PREFLIGHT_LOG=%GA_RESTART_LOG_DIR%\web.preflight.log"
 
 if not exist "%GA_RESTART_LOG_DIR%" mkdir "%GA_RESTART_LOG_DIR%"
 

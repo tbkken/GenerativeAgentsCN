@@ -34,9 +34,9 @@ python tools/link_local_source.py
 ga studio serve
 ~~~
 
-打开 [Studio](http://127.0.0.1:8800/)。健康检查地址是 [api/studio/health](http://127.0.0.1:8800/api/studio/health)。Web 默认使用 var/generative-agents.db 和 var/；启动参数见 `ga studio serve --help`。
+打开 [Studio](http://127.0.0.1:8000/)。健康检查地址是 [api/studio/health](http://127.0.0.1:8000/api/studio/health)。`ga studio serve` 默认使用当前工作目录下的 `var/generative-agents.db` 和 `var/`；启动参数见 `ga studio serve --help`。
 
-Web 页面、API 和回放共用一个监听端口，默认 `8800`。可用 `ga studio serve --port 8081` 临时指定端口，或设置环境变量 `GA_PORT`；命令行 `--port` 优先。生成式模型的默认连接地址为 `http://127.0.0.1:8888/v1`，向量模型为 `http://127.0.0.1:5002/v1`，均连接独立模型服务，在模型中心修改服务地址。公共模型修改不会自动更新已有实验和 Run 的副本。Runtime 能力通过身份绑定的进程内接口调用，默认 SQLite 数据库使用文件，均无需额外监听端口。
+Web 页面、API 和回放共用一个监听端口，默认 `8000`。可用 `ga studio serve --port 8081` 临时指定端口，或设置环境变量 `GA_PORT`；命令行 `--port` 优先。生成式模型的默认连接地址为 `http://127.0.0.1:8888/v1`，向量模型为 `http://127.0.0.1:5002/v1`，均连接独立模型服务，在模型中心修改服务地址。公共模型修改不会自动更新已有实验和 Run 的副本。Runtime 能力通过身份绑定的进程内接口调用，默认 SQLite 数据库使用文件，均无需额外监听端口。
 
 Windows 也可使用根目录的 `restart-web.bat` 启动或重启 Web。首次使用先安装项目；以下命令无需激活虚拟环境：
 
@@ -47,9 +47,13 @@ python -m venv .venv
 .\restart-web.bat
 ~~~
 
-脚本优先使用仓库的 `.venv\Scripts\python.exe`，没有该环境时才使用 PATH 中的 Python，并在停止旧服务前检查项目和 Web 依赖。若提示 `No module named 'generative_agents'`，表示所选 Python 尚未安装项目，按脚本显示的安装命令补齐即可。后台进程提前退出时会立即显示错误和日志路径；仅进程创建成功不代表服务可用，须看到健康检查通过的 `[OK]` 提示。启动日志位于 `var/logs/`。
+脚本优先使用仓库的 `.venv\Scripts\python.exe`，没有该环境时才使用 PATH 中的 Python，并在停止旧服务前检查项目和 Web 依赖。若提示 `No module named 'generative_agents'`，表示所选 Python 尚未安装项目，按脚本显示的安装命令补齐即可。后台进程提前退出时会立即显示错误和日志路径；仅进程创建成功不代表服务可用，须看到健康检查通过的 `[OK]` 提示。
 
-`restart-web.bat` 同样默认使用 `8800`，并读取 `GA_PORT`。例如在 PowerShell 中先执行 `$env:GA_PORT = '8081'`，再运行 `.\restart-web.bat`，即可在 `8081` 启动或重启 Web。
+`restart-web.bat` 默认使用仓库的 `var/studio/` 活动数据目录：数据库为其中的 `generative-agents.db`，素材和实验包也从该目录读取，启动日志与进程记录分别位于 `logs/` 和 `web.pid`。设置 `GA_VAR_DIR` 可改用其他完整数据目录，默认数据库路径随之切换；显式设置 `GA_DATABASE_URL` 时优先使用该数据库地址。脚本中的相对路径均以仓库根目录为基准。`data/studio/` 是原始数据快照，脚本不会自动读取或导入它。
+
+直接使用 CLI 访问启动脚本的同一份活动数据时，在仓库根目录运行 `ga studio serve --var-dir var/studio --database-url sqlite:///var/studio/generative-agents.db`；不指定这两个参数的 CLI 仍使用 `var/` 默认路径。
+
+`restart-web.bat` 同样默认使用 `8000`，并读取 `GA_PORT`。例如在 PowerShell 中先执行 `$env:GA_PORT = '8081'`，再运行 `.\restart-web.bat`，即可在 `8081` 启动或重启 Web。
 
 每次 editable 安装后，使用仓库 `.venv` 中的 Python 执行 `tools/link_local_source.py`，将源码关联改为相对于 `site-packages` 的路径；Windows 下为 `../../../src`。该关联按虚拟环境位置解析，与启动工作目录无关。`restart-web.bat` 也按自身目录选择 Python。pip 生成的 `ga` 启动器和虚拟环境的基础 Python 仍有安装位置要求；跨机器搬迁时应重新创建虚拟环境，再执行上述安装步骤。
 
