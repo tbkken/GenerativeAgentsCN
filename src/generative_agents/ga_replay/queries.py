@@ -159,6 +159,7 @@ def result_index(package):
 
 def read_state(package, step_no):
     """Seek from the closest reusable state, reducing only the missing prefix."""
+    from generative_agents.ga_replay.projections.conversations import merge_conversation
     with ReplayReader(package) as replay:
         if step_no < 0 or step_no > replay.status.committed_step:
             raise IndexError('Step is outside the committed Replay boundary')
@@ -190,7 +191,11 @@ def read_state(package, step_no):
                         if object_key:
                             state['object_states'][str(object_key)] = payload.get('after') or payload.get('state') or payload
                 for item in frame.get('conversations') or []:
-                    state['conversations'][str(item['conversation_id'])] = item
+                    conversation_id = str(item['conversation_id'])
+                    state['conversations'][conversation_id] = merge_conversation(
+                        state['conversations'].get(conversation_id), item,
+                        step_no=frame['step_no'], virtual_time=frame['virtual_time'],
+                    )
             _remember(snapshots, step_no, (signatures, copy.deepcopy(state)), maximum=8)
             _remember(_states, key, snapshots)
             return state

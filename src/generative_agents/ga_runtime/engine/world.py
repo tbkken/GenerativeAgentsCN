@@ -67,7 +67,13 @@ class Game:
             raise ValueError(
                 "run manifest must contain an inline maze/world definition"
             )
-        self.maze = Maze(copy.deepcopy(maze_definition), self.logger, context.random)
+        self.world_definition = copy.deepcopy(maze_definition)
+        self.environment_type = maze_definition.get("environment_type", "spatial_2d")
+        self.space_id = config.get("space_id")
+        self.world_name = config.get("world_name", "")
+        self.presentation = maze_definition.get("presentation")
+        self.maze = (None if self.environment_type == "social_1d" else
+                     Maze(copy.deepcopy(maze_definition), self.logger, context.random))
         self.game_object_interactions = GameObjectInteractionSystem(
             maze_definition,
             clock=context.clock,
@@ -127,6 +133,8 @@ class Game:
         self._conversation_threads: dict[str, dict[str, Any]] = {}
         self._open_conversation_by_participants: dict[str, str] = {}
         self._conversation_sequence = 0
+        from generative_agents.ga_runtime.engine.social import SocialWorld
+        self.social = SocialWorld(self) if self.environment_type == "social_1d" else None
 
     def get_agent(self, agent_key: str) -> ActorState:
         """获取智能体。
@@ -339,6 +347,8 @@ class Game:
     ) -> dict:
         """Commit the one interface-selected action and emit replay-complete facts."""
 
+        if getattr(self, "social", None) is not None:
+            return self.social.commit(agent_key, outcome, stride_minutes)
         agent = self.get_agent(agent_key)
         action = dict(outcome.get("world_action") or {})
         action_type = str(action.get("action_type") or "WAIT").upper()
@@ -720,8 +730,8 @@ class Game:
             "agents": {
                 agent_key: {
                     **agent.to_dict(),
-                    "coord": list(agent.coord),
-                    "path": [list(coord) for coord in agent.path or []],
+                    **({"space_id": agent.space_id} if agent.coord is None else
+                       {"coord": list(agent.coord), "path": [list(coord) for coord in agent.path or []]}),
                 }
                 for agent_key, agent in self.agents.items()
             },
@@ -745,6 +755,7 @@ class Game:
                 getattr(self, "_open_conversation_by_participants", {})
             ),
             "conversation_sequence": getattr(self, "_conversation_sequence", 0),
+            "social": self.social.snapshot() if getattr(self, "social", None) is not None else None,
         }
 
     def restore_runtime_state(self, snapshot: dict) -> None:
@@ -803,6 +814,11 @@ class Game:
             str(key): str(value) for key, value in open_threads.items()
         }
         self._conversation_sequence = int(snapshot.get("conversation_sequence") or 0)
+        if getattr(self, "social", None) is not None:
+            value = snapshot.get("social")
+            if not isinstance(value, Mapping):
+                raise ValueError("checkpoint is missing social message state")
+            self.social.restore(value)
 
     def storage_exporters(self):
         return {}

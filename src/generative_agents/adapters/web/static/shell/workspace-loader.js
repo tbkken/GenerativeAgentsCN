@@ -5,17 +5,19 @@
   const root = '/static/console/';
   const groups = {
     maps: ['resources/spatial-asset-workspace.js', 'resources/map-workspace.js'],
-    'map-editor': ['resources/render-materials.js', 'resources/map-navigation.js', 'resources/map-editor-v2.js'],
+    'map-editor': ['resources/render-materials.js', 'resources/map-navigation.js', 'resources/map-editor-v2.js', 'resources/social-map-editor.js'],
     crowds: ['resources/crowd-workspace.js'],
     skills: ['resources/skill-workspace.js'],
     models: ['resources/model-workspace.js'],
     spatial: ['resources/spatial-picker.js'],
     replay: ['resources/render-materials.js', 'vendor/phaser.min.js', 'replay/replay-player.js'],
+    'social-replay': ['replay/social-replay.js'],
   };
   const styles = {
     maps: ['resources/map-workspace.css'], crowds: ['resources/crowd-workspace.css'],
     skills: ['resources/skill-workspace.css'], models: ['resources/model-workspace.css'],
     spatial: ['resources/spatial-picker.css'],
+    'social-replay': ['replay/social-replay.css'],
   };
   function script(path) {
     if (pending.has(path)) return pending.get(path);

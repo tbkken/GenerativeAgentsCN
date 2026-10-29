@@ -171,6 +171,8 @@ def execute_run_directory(run_root: str | Path) -> RunStatus:
     paths = RunPaths(root=run_root, run_id=UUID(manifest.run_id))
     paths.ensure()
     with FileLock(str(run_root / "worker.lock"), timeout=0):
+        from generative_agents.ga_runtime.storage.preview import clear_runtime_preview
+        clear_runtime_preview(run_root)
         status_path = run_root / "status.json"
         status = RunStatus.model_validate(read_json(status_path))
         if status.run_id != manifest.run_id:

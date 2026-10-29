@@ -1384,6 +1384,7 @@
       $(metaId).textContent = name ? '当前实验内的独立副本' : `当前实验未提供${label}配置`;
     }
     if (!definition) return;
+    if (definition.world?.definition?.environment_type === 'social_1d') $('experimentMapMeta').textContent = `1D · ${definition.world.definition.presentation === 'forum' ? '论坛' : '群聊'} · 当前实验内的独立副本`;
     const agents = definition.agents || [];
     const enabled = definition.agents ? agents.filter(item => item.enabled).length : (state.experiment?.core_parameters?.agent_count ?? state.experiment?.agent_count ?? state.experiment?.resource_summary?.agent_count ?? 0);
     const enabledAgents = agents.filter(item => item.enabled);
@@ -1428,8 +1429,8 @@
     if (!state.agentDraftPage) state.selectedAgentKeys.forEach(key => { if (!availableKeys.has(key)) state.selectedAgentKeys.delete(key); });
     $('agentRows').innerHTML = agents.map(agent => {
       const living = agent.spatial?.address?.living_area || [];
-      const location = agent.initial_location?.join(' / ') || living.at(-1) || (agent.coord ? `${agent.coord[0]}, ${agent.coord[1]}` : '未设置');
-      const complete = agent.definition_complete ?? Boolean(agent.name && agent.scratch?.daily_plan && Array.isArray(agent.coord) && agent.coord.length === 2);
+      const location = agent.space_id ? '1D 社交空间成员' : agent.initial_location?.join(' / ') || living.at(-1) || (agent.coord ? `${agent.coord[0]}, ${agent.coord[1]}` : '未设置');
+      const complete = agent.definition_complete ?? Boolean(agent.name && agent.scratch?.daily_plan && (agent.space_id || Array.isArray(agent.coord) && agent.coord.length === 2));
       const model = agent.model_override || state.definition?.models?.chat?.model || '';
       if (state.agentEnabledChanges?.has(agent.agent_key)) agent={...agent,enabled:state.agentEnabledChanges.get(agent.agent_key)};
       const selected = state.selectedAgentKeys.has(agent.agent_key);
@@ -2568,6 +2569,7 @@
     state.replayReady = false;
     state.replayMarkerFacts.clear();
     state.replayAgentDefinitions = [];
+    $('resultMap')?.closest('.timeline-layout')?.classList.remove('social-timeline');
     if ($('replayTimelineMarkers')) $('replayTimelineMarkers').innerHTML = '';
     if ($('replayAgentSelect')) $('replayAgentSelect').innerHTML = '<option value="">选择 Agent</option>';
     if ($('replayCameraMode')) $('replayCameraMode').value = 'free';
@@ -2607,10 +2609,16 @@
     const replayAbortController = new AbortController();
     state.replayAbortController = replayAbortController;
     state.replayRunId = runId;
-    await window.WorkspaceLoader.load('replay');
+    const replayManifest = await api(`/runs/${runId}/replay/manifest`);
+    const social = replayManifest.environment_type === 'social_1d' || replayManifest.world?.definition?.environment_type === 'social_1d';
+    await window.WorkspaceLoader.load(social ? 'social-replay' : 'replay');
     if (generation !== state.resultGeneration || runId !== state.selectedRunId) return;
-    const replayPlayer = new GAReplayPlayer({
+    $('resultMap').closest('.timeline-layout').classList.toggle('social-timeline', social);
+    const Player = social ? window.GASocialReplayPlayer : GAReplayPlayer;
+    const replayPlayer = new Player({
       canvas: $('resultMapCanvas'),
+      container: $('resultMap'),
+      onSelection: key => applyReplayAgentSelection(key),
       onStatus: status => {
         if (runId !== state.selectedRunId || generation !== state.resultGeneration) return;
         $('replayStatus').textContent = status.state === 'AVAILABLE_STEP' ? `可播放至 Step ${status.availableStep}` : status.state;
@@ -2633,7 +2641,7 @@
       },
     });
     state.replayPlayer = replayPlayer;
-    await replayPlayer.loadRun(runId, { signal: replayAbortController.signal });
+    await replayPlayer.loadRun(runId, { signal: replayAbortController.signal, manifest: replayManifest });
     if (runId !== state.selectedRunId || generation !== state.resultGeneration || replayAbortController.signal.aborted) return null;
     state.replayAgentDefinitions = replayPlayer.manifest.agents;
     const composedReplay = false;
@@ -2641,13 +2649,13 @@
     const rosterHint = $('replayAgentRosterHint');
     const roster = $('replayAgentRoster');
     if (rosterTitle) rosterTitle.textContent = composedReplay ? '场景参与者' : '所有 Agent';
-    if (rosterHint) rosterHint.textContent = composedReplay
+    if (rosterHint) rosterHint.textContent = social ? '点击头像打开该智能体的私聊会话列表' : composedReplay
       ? '只展示运行快照中的物理角色；点击可跟随轨迹'
       : '点击头像或姓名跟随；再次点击恢复自由镜头';
     if (roster?.setAttribute) roster.setAttribute('aria-label', composedReplay ? '选择回放跟随场景参与者' : '选择回放跟随 Agent');
     const replayRoleLabel = agent => ({ DRIVER: '司机', PEDESTRIAN: '行人' })[agent.role] || agent.role || '';
     $('replayAgentSelect').innerHTML = '<option value="">选择 Agent</option>' + replayPlayer.manifest.agents.map(agent => `<option value="${escapeHtml(agent.agent_key)}">${escapeHtml(`${agent.display_name}${agent.role ? `（${replayRoleLabel(agent)}）` : ''}`)}</option>`).join('');
-    const restoredAgentKey = GAReplayPlayer.resolveAgentSelection(
+    const restoredAgentKey = Player.resolveAgentSelection(
       state.selectedReplayAgentKey,
       state.selectedReplayExperimentId,
       state.currentRun?.experiment_id,
@@ -2670,18 +2678,19 @@
   function renderReplayAgentRoster() {
     const definitions = state.replayAgentDefinitions || [];
     const resultsByKey = new Map((state.agentResults || []).map(item => [item.agent_key, item]));
-    $('replayCameraState').textContent = state.selectedReplayAgentKey
+    const social = Boolean(state.replayPlayer?.isSocial);
+    $('replayCameraState').textContent = social ? '点击头像查看私聊' : state.selectedReplayAgentKey
       ? `跟随 · ${definitions.find(item => item.agent_key === state.selectedReplayAgentKey)?.display_name || state.selectedReplayAgentKey}`
       : '自由镜头';
     $('replayAgentRoster').innerHTML = definitions.length ? definitions.map(agent => {
       const active = agent.agent_key === state.selectedReplayAgentKey;
       const result = resultsByKey.get(agent.agent_key);
       const name = agent.display_name || result?.display_name || agent.agent_key;
-      const portrait = result?.portrait_url || '';
+      const portrait = agent.portrait_url || result?.portrait_url || '';
       const role = ({ DRIVER: '司机', PEDESTRIAN: '行人' })[agent.role] || agent.role || '';
       const tool = agent.active_tool_instance_key ? ` · ${agent.active_tool_instance_key}` : '';
       const semanticName = role ? `${name}（${role}）` : name;
-      return `<button type="button" class="replay-agent-choice${active ? ' active' : ''}" data-replay-agent-key="${escapeHtml(agent.agent_key)}" role="option" aria-label="${escapeHtml(semanticName)}" aria-selected="${String(active)}" title="${escapeHtml(active ? `取消跟随 ${semanticName}` : `跟随 ${semanticName}`)}"><span class="replay-agent-fallback" ${portrait ? 'hidden' : ''}>${escapeHtml(name.slice(0, 1))}</span>${portrait ? `<img loading="lazy" decoding="async" src="${escapeHtml(portrait)}" alt="" onerror="this.hidden=true;this.previousElementSibling.hidden=false"/>` : ''}<strong>${escapeHtml(name)}</strong>${role ? `<small>${escapeHtml(role + tool)}</small>` : ''}</button>`;
+      return `<button type="button" class="replay-agent-choice${active ? ' active' : ''}" data-replay-agent-key="${escapeHtml(agent.agent_key)}" role="option" aria-label="${escapeHtml(semanticName)}" aria-selected="${String(active)}" title="${escapeHtml(social ? `查看 ${semanticName} 的私聊` : active ? `取消跟随 ${semanticName}` : `跟随 ${semanticName}`)}"><span class="replay-agent-fallback" ${portrait ? 'hidden' : ''}>${escapeHtml(name.slice(0, 1))}</span>${portrait ? `<img loading="lazy" decoding="async" src="${escapeHtml(portrait)}" alt="" onerror="this.hidden=true;this.previousElementSibling.hidden=false"/>` : ''}<strong>${escapeHtml(name)}</strong>${role ? `<small>${escapeHtml(role + tool)}</small>` : ''}</button>`;
     }).join('') : '<span>暂无可回放的 Agent</span>';
   }
 
@@ -2717,8 +2726,8 @@
     $('mapTimeLabel').textContent = `${formatTime(step.virtual_time)} · Step ${step.step_no}`;
     const selectedAgent = $('replayAgentSelect').value;
     if (selectedAgent) state.replayPlayer.selectAgent(selectedAgent);
-    const conversations = step.conversations || [];
-    const events = $('replayLayerKeyEvents').checked ? (step.domain_events || []) : [];
+    const conversations = (step.conversations || []).filter(item => !state.replayPlayer.isSocial || item.visibility === 'public');
+    const events = $('replayLayerKeyEvents').checked && !state.replayPlayer.isSocial ? (step.domain_events || []) : [];
     const facts = [
       ...conversations.map(item => ({ type: '对话', text: (item.messages || []).map(message => `${message.speaker_agent_key}: ${message.content}`).join(' · ') })),
       ...events.map(item => {
@@ -3939,7 +3948,12 @@
     $('agentEditVisionRadius').value = agent.perception?.vision_radius ?? 8;
     $('agentEditAttentionBandwidth').value = agent.perception?.attention_bandwidth ?? 8;
     renderSpatialEditor(agent.spatial || { address: {}, tree: {} });
-    document.querySelector('[data-content-tab="space"]').hidden = false;
+    const social = state.agentEditorContext?.ownerType?.startsWith('experiment') && (state.draft?.definition || state.definition)?.world?.definition?.environment_type === 'social_1d';
+    document.querySelector('[data-content-tab="space"]').hidden = social;
+    $('agentSpritePreview').closest('.agent-image-card').hidden = social;
+    $('agentEditSpriteDisplayTiles').closest('.field').hidden = social;
+    $('agentEditVisionRadius').closest('.field').hidden = social;
+    $('agentEditAttentionBandwidth').closest('.field').querySelector('.field-hint').textContent = social ? '限制每次读取返回的消息数量；可继续翻页查看公开历史。' : '限制每次感知返回的附近候选数量。';
     setContentTab('agent-editor', 'identity', { sync: false });
   }
 
@@ -4100,14 +4114,15 @@
     }
     if (!state.draft) throw new Error('当前没有可编辑 Draft');
     const key = $('agentEditKey').value.trim();
-    const spatial = readSpatialEditor();
-    validateInitialLocationAgainstCoord(spatial);
+    const social = state.draft.definition.world?.definition?.environment_type === 'social_1d';
+    const spatial = social ? null : readSpatialEditor();
+    if (!social) validateInitialLocationAgainstCoord(spatial);
     const hasPortrait = state.agentImageFiles.portrait || $('agentEditPortrait').value;
     const hasSprite = state.agentImageFiles.sprite || $('agentEditSprite').value;
-    if (!state.editingAgentKey && (!hasPortrait || !hasSprite)) {
+    if (!social && !state.editingAgentKey && (!hasPortrait || !hasSprite)) {
       throw new Error('新增 Agent 需要同时上传头像和 4×3 或 4×4 行走图');
     }
-    const spriteDisplayTiles = readAgentSpriteDisplayTiles();
+    const spriteDisplayTiles = social ? null : readAgentSpriteDisplayTiles();
     const images = await uploadStagedAgentImages();
     const previous = state.editingAgentKey ? state.draft.definition.agents.find(item => item.agent_key === state.editingAgentKey) : null;
     const agent = {
@@ -4121,14 +4136,13 @@
       model_override: previous?.model_override || null,
       tags: previous?.tags || [],
       goals: $('agentEditGoals').value.split(/\r?\n/).map(item => item.trim()).filter(Boolean),
-      coord: [Number($('agentEditX').value), Number($('agentEditY').value)],
+      ...(social ? {space_id: state.draft.definition.world.world_key} : {coord: [Number($('agentEditX').value), Number($('agentEditY').value)], spatial}),
       currently: $('agentEditCurrently').value,
       scratch: {
         age: Number($('agentEditAge').value), innate: $('agentEditInnate').value,
         learned: $('agentEditLearned').value, lifestyle: $('agentEditLifestyle').value,
         daily_plan: $('agentEditDailyPlan').value,
       },
-      spatial,
       perception: {
         mode: 'box',
         vision_radius: Number($('agentEditVisionRadius').value),
@@ -4836,6 +4850,7 @@
     state.batchAgentLocation = null;
     ['batchAgentEnabled', 'batchAgentModel', 'batchAgentLocation', 'batchAgentGoal', 'batchAgentTags'].forEach(id => { $(id).value = ''; });
     $('batchAgentLocationCoord').textContent = '选择后自动取中心附近的可行走格，并同步每个智能体的初始地址与已知空间。';
+    $('batchAgentLocation').closest('.field').hidden = state.draft?.definition?.world?.definition?.environment_type === 'social_1d';
     $('batchAgentMeta').textContent = `${state.selectedAgentKeys.size} 个 Agent 已选择；先预览差异，再一次应用。`;
     $('batchAgentPreview').innerHTML = '<span>填写变更后点击“预览差异”。</span>';
     $('applyBatchAgents').disabled = true; $('undoBatchAgents').disabled = !state.lastAgentBatchUndo;

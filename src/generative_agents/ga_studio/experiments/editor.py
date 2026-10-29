@@ -39,6 +39,7 @@ from generative_agents.ga_protocol.packages.definition import (
 )
 from generative_agents.ga_protocol.packages.resources import read_experiment_resource_set
 from generative_agents.ga_protocol.schemas.resources import ResourceIndex, ResourceRecord, ResourceRef
+from generative_agents.ga_protocol.schemas.resources import SocialExperimentPlacement
 from generative_agents.ga_protocol.packages.resources import ResourceSet
 from generative_agents.ga_studio.experiments.transaction import edit_experiment
 
@@ -161,6 +162,8 @@ class ExperimentResourceEditor:
         world.pop("schema_version", None)
         return dict(id=experiment_id, map_key=world.get("world_key", "world"),
                     name=world.get("world_name") or "实验地图", world=world,
+                    environment_type=world.get("definition", {}).get("environment_type", "spatial_2d"),
+                    presentation=world.get("definition", {}).get("presentation"),
                     row_version=digest, editable=editable,
                     validation={"valid": True, "errors": [], "warnings": []} if validated else None)
 
@@ -205,6 +208,7 @@ class ExperimentResourceEditor:
                         return self.map_detail(world, digest, editable, experiment_id, validated=validate_execution)
                     geometry = world.get("definition", {})
                     return listed([dict(summary(record), id=experiment_id, map_key=record.key,
+                                        environment_type=geometry.get("environment_type", "spatial_2d"), presentation=geometry.get("presentation"),
                                         dimensions=copy.deepcopy(geometry.get("size")), tile_size=geometry.get("tile_size"), validation=None)])
                 if resource == "map-editor/ville-document":
                     return editor_world(world).get("definition", {}).get("editor_v2") or {}
@@ -259,8 +263,9 @@ class ExperimentResourceEditor:
                         self.missing()
                     placement = placements[key]
                     record = chosen(placement.agent)
-                    agent = dict(copy.deepcopy(record.definition), agent_key=key, name=record.name,
-                                 coord=list(placement.coord), spatial=copy.deepcopy(placement.spatial))
+                    position = (dict(space_id=placement.space_id) if isinstance(placement, SocialExperimentPlacement)
+                                else dict(coord=list(placement.coord), spatial=copy.deepcopy(placement.spatial)))
+                    agent = dict(copy.deepcopy(record.definition), agent_key=key, name=record.name, **position)
                     return dict(summary(record), agent_key=key, definition=agent)
                 items = []
                 enabled_filter = query.get("enabled", "all")
@@ -273,9 +278,11 @@ class ExperimentResourceEditor:
                     portrait = record.definition.get("portrait_asset")
                     enabled = record.definition.get("enabled", True)
                     scratch = record.definition.get("scratch", {})
-                    complete = bool(record.name and scratch.get("daily_plan") and len(placement.coord) == 2)
-                    address = placement.spatial.get("address", {})
-                    initial = address.get("initial_location") or address.get("living_area") or []
+                    social = isinstance(placement, SocialExperimentPlacement)
+                    complete = bool(record.name and scratch.get("daily_plan") and (social or len(placement.coord) == 2))
+                    address = {} if social else placement.spatial.get("address", {})
+                    initial = ([chosen(assembly.map).name] if social else
+                               address.get("initial_location") or address.get("living_area") or [])
                     location = " > ".join(initial) if isinstance(initial, list) else str(initial)
                     model = record.definition.get("model_override") or default_model
                     if enabled_filter != "all" and enabled != (enabled_filter == "enabled"):
@@ -290,7 +297,7 @@ class ExperimentResourceEditor:
                         scratch.get("innate", ""), scratch.get("learned", ""), location, model,
                         " ".join(record.definition.get("tags", []))))
                     items.append(dict(summary(record), agent_key=agent_key,
-                                      enabled=enabled, coord=list(placement.coord),
+                                      enabled=enabled, **(dict(space_id=placement.space_id) if social else dict(coord=list(placement.coord))),
                                       currently=record.definition.get("currently") or next(iter(record.definition.get("goals", [])), ""),
                                       scratch={name: scratch.get(name) for name in ("age", "innate")},
                                       definition_complete=complete, initial_location=copy.deepcopy(initial),

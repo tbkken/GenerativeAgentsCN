@@ -83,14 +83,19 @@ class BrainRuntime:
             total_steps=total_steps,
             now=game.context.clock.get_date(),
             stride_minutes=stride_minutes,
-            coord=tuple(agent.coord),
-            address=tuple(tile.get_address()),
+            coord=tuple(agent.coord) if agent.coord is not None else None,
+            address=tuple(tile.get_address()) if tile is not None else (),
             spatial_semantics=tuple(
                 dict(item) for item in getattr(tile, "spatial_semantics", ())
             ),
             variables=self._agent_variables(
                 agent, external_observations=external_observations
             ),
+            environment_type=getattr(game, "environment_type", "spatial_2d"),
+            space_id=getattr(game, "space_id", None),
+            presentation=getattr(game, "presentation", None),
+            space_description=getattr(game, "world_definition", {}).get("description", ""),
+            space_rules=getattr(game, "world_definition", {}).get("rules", ""),
         )
         interfaces = SimulationAPI(
             game,
@@ -138,6 +143,11 @@ class BrainRuntime:
             "普通日常活动使用 ACT "
             "并直接写 Event 的 predicate、object 和 description；WAIT 只用于真实等待。"
         )
+        if getattr(game, "environment_type", "spatial_2d") == "social_1d":
+            task += (" 当前为1D交流环境，没有坐标、移动或物理对象。world-perceive只读公开内容及自己的私聊；"
+                     "按Skill SOP使用memory-stream-append保存所见，后续用memory-stream-search读取私有记忆。"
+                     "公开发言、发帖、回复及私聊使用SPEAK；本轮不发言使用WAIT并填写wait_reason。"
+                     "引用和回复只能使用真实message_id，记忆来源使用返回的source_event_id。")
         memory_snapshot = (
             self.memory_stream.begin_iteration(agent_key)
             if self.memory_stream is not None
@@ -308,7 +318,7 @@ class BrainRuntime:
                     for name, chat in agent.chats
                 ],
                 "schedule": [],
-                "address": tile.get_address(as_list=False),
+                "address": tile.get_address(as_list=False) if tile is not None else None,
                 "external_observations": [
                     dict(item) for item in external_observations
                 ],
@@ -523,8 +533,8 @@ class BrainRuntime:
             "current_action": agent.get_event().to_dict(),
             "schedule": [],
             "known_spatial_memory": {
-                "tree": agent.spatial.tree,
-                "named_addresses": agent.spatial.address,
+                "tree": agent.spatial.tree if agent.spatial is not None else {},
+                "named_addresses": agent.spatial.address if agent.spatial is not None else {},
             },
             "recent_concepts": [],
             "external_observations": [

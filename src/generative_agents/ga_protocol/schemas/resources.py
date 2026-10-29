@@ -69,11 +69,16 @@ class ExperimentPlacement(ProtocolModel):
     spatial: dict[str, Any]
 
 
+class SocialExperimentPlacement(ProtocolModel):
+    agent: ResourceRef
+    space_id: ResourceKey
+
+
 class ExperimentAssembly(ProtocolModel):
     schema_version: Literal[2] = 2
     map: ResourceRef
     brain: ResourceRef
-    placements: list[ExperimentPlacement] = Field(default_factory=list)
+    placements: list[ExperimentPlacement | SocialExperimentPlacement] = Field(default_factory=list)
     crowds: list[ResourceRef] = Field(default_factory=list)
     models: dict[Literal["chat", "embedding", "decision"], ResourceRef]
     simulation: dict[str, Any]

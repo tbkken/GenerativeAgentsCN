@@ -29,14 +29,14 @@
 - Skill 仅以包内 `skill_key` 引用；同 key 同内容可合并，同 key 异内容必须阻断并诊断；依赖缺失或非法依赖环必须在封存前失败。不得留下公共资源 ID、Revision、素材外键或运行期数据库查询条件。
 - Studio 公共 Skill 保存在数据库，由用户创建或显式导入，不自动填充内置 Skill 或 Brain。源码 `SKILL.md` 用于手写实验、导入导出或开发；测试样例仅属于测试。实验和 Run 使用各自物理副本。Run 启动时完整嵌入 `.gaexp`，之后不读当前实验目录或公共资源。
 - Skill 正文用 `$skill-key` 引用子 Skill、`@interface-name` 引用运行时接口，以自然语言描述目的、条件、输入来源、结果用途和停止方式。接口目录与引用解析由 Protocol 定义；文件与调用关系从正文和实际附件派生，不单独保存可编辑的依赖配置。编写或重建技能时使用 [Skill 编写规范](docs/skill-authoring.md)。
-- 校验必须覆盖四层层级、坐标/地址、素材、对象交互、Agent 初始位置语义及完整依赖；预检统计与明细一致，保存、上传和预检后立即同步服务端事实。可选 Skill 试运行由 Studio 准备临时闭包、适配层调用 Runtime；需仿真接口的 Skill 必须进入实验。不得强制正式运行前试跑 1～3 步。
+- 校验按地图类型执行：2D 覆盖四层层级、坐标/地址、素材、对象交互和 Agent 初始位置语义；1D 覆盖群聊/论坛形态、场所成员、消息关系与可见范围，不要求 Tile、坐标或行走图。两者均须校验完整依赖；预检统计与明细一致，保存、上传和预检后立即同步服务端事实。可选 Skill 试运行由 Studio 准备临时闭包、适配层调用 Runtime；需仿真接口的 Skill 必须进入实验。不得强制正式运行前试跑 1～3 步。
 
 ## 3. 文件协议、身份与安全
 
 统一使用 `ga-package` v2：`config` 为任意基础资源集合，`exp` 为资源内容与实验装配，`run` 完整内嵌实验并保存执行事实。目录是工作形态，基础资源 `.zip`、实验 `.gaexp`、运行 `.garun` 是确定性 ZIP 交换形态。清单中的 UUID 是唯一业务身份，目录或文件可改名；Replay 直接使用 `run_id`，不创建独立业务 ID。不读取旧 v1 包，不自动改写已有证据。
 
 - 地图、智能体、人群、技能、大脑、模型均可独立导入导出；基础配置入口可从 config、exp、run 中仅选所需资源。实验导出始终包含完整资源闭包。资源自身附件必须齐全；config 可保留显式未绑定的跨资源依赖，进入实验前必须绑定。同 key 异内容阻断整次导入，不静默覆盖或按名字绑定。
-- 公共 `ResourceSet` 统一资源内容、包内引用、附件和内容摘要。Agent 核心不含坐标与空间；出生位置属于实验装配。Skill 类型仅为 skill/brain，不区分单个技能与技能包；任意技能均可在 `SKILL.md` 中组合子技能、脚本和接口，对象根与子技能是装配后的使用角色。依赖内容摘要用于交换时辨识内容，草稿显式编辑时更新，不构成资源版本或引用锁。
+- 公共 `ResourceSet` 统一资源内容、包内引用、附件和内容摘要。Agent 核心不含坐标与空间；2D 出生位置与 1D 场所成员关系属于实验装配。Skill 类型仅为 skill/brain，不区分单个技能与技能包；任意技能均可在 `SKILL.md` 中组合子技能、脚本和接口，对象根与子技能是装配后的使用角色。依赖内容摘要用于交换时辨识内容，草稿显式编辑时更新，不构成资源版本或引用锁。
 
 | 操作 | 身份与输入 |
 | --- | --- |
@@ -63,7 +63,7 @@ assets/...                        commits/step-000001.json
                                   projection.json（可丢弃）
 ```
 
-- 实验 `manifest.json` 保存协议身份、`experiment_id`、展示元数据和安全的包内相对 POSIX 入口路径。`resources/index.json` 保存唯一一份资源内容及附件引用，地图内含语义索引；`runtime/assembly.json` 指定唯一 Brain、地图、模型用途、Agent 出生位置、人群与运行参数。执行视图按需装配，不重复持久化 Skill registry 或旧分散 entrypoints。
+- 实验 `manifest.json` 保存协议身份、`experiment_id`、展示元数据和安全的包内相对 POSIX 入口路径。`resources/index.json` 保存唯一一份资源内容及附件引用，2D 地图内含空间语义索引，1D 地图保存场所说明与规则；`runtime/assembly.json` 指定唯一 Brain、地图、模型用途、2D Agent 出生位置或 1D 场所成员关系、人群与运行参数。执行视图按需装配，不重复持久化 Skill registry 或旧分散 entrypoints。
 - 运行配置禁止 `map_id`、`map_snapshot_hash`、`revision_id`、`brain_revision_id`、`skill_revision_id`、`secret_ref` 等外部活引用。模型密钥不进包，只声明环境变量名（如 `GA_CHAT_API_KEY`），由目标机器注入。
 - `integrity/sha256.json` 覆盖清单及所有内容文件，排序计算 Bundle Hash，包含地图、Agent、Skill 文本/脚本、模型参数和素材等全部行为内容。内容哈希决定行为身份，不使用资源版本字段。
 - `run.json` 创建后不可变，含 `run_id`、请求步数、内嵌 `experiment_id`/根哈希和可选来源 Run；原子更新的 `status.json` 保存状态、当前 Attempt、最后提交 Step；`attempt.json` 保存启动边界与结局。
@@ -74,10 +74,11 @@ assets/...                        commits/step-000001.json
 
 ## 4. 空间、时间与上下文
 
-- 地图固定 `World → Sector → Arena → Game Object` 四层，均可定义语义；仅 Game Object 可绑定一个根 Skill，并通过子 Skill 组合行为。Tile 仅用于渲染、碰撞、寻路，不是公共感知合同。
-- 封存时生成包内空间语义索引。Runtime/Replay 使用同一索引；感知按相交节点返回紧凑、唯一的层级语义及附近 Agent、Event、对象，不逐 Tile 重建语义树。
-- `vision_radius` 是硬上限，模型只能缩小；`attention_bandwidth` 必须限制候选输出，同时保留当前位置的层级语义锚点。节点/对象按稳定 ID 去重，Event 按完整事实身份处理，不按名称或文本合并。
-- Scheduler 从 1 到 `steps` 确定性推进时间，Skill/Agent 不能自行推进。每轮 Brain/子 Skill 共享 `IterationContext`：Run、Attempt、Agent、Step、总步数、带时区的具体虚拟时间、步长、坐标、四层地址、当前空间语义、公共运行变量。
+- 地图类型分为 1D 社交环境与 2D 空间环境；3D/SimWorld 仅为后续方向。1D 创建时选择群聊或论坛，一张地图仅一种形态，两者均支持私聊。1D 使用场所身份与实验参与者，不伪造坐标、Tile 或四层地址。
+- 2D 地图固定 `World → Sector → Arena → Game Object` 四层，均可定义语义；仅 Game Object 可绑定一个根 Skill，并通过子 Skill 组合行为。Tile 仅用于渲染、碰撞、寻路，不是公共感知合同。
+- 2D 封存时生成包内空间语义索引。Runtime/Replay 使用同一索引；感知按相交节点返回紧凑、唯一的层级语义及附近 Agent、Event、对象，不逐 Tile 重建语义树。
+- 2D 的 `vision_radius` 是硬上限，模型只能缩小；`attention_bandwidth` 必须限制候选输出，同时保留当前位置的层级语义锚点。1D 公开内容对场所内所有参与者可感知，私聊仅参与者可感知，单次输出仍受注意力带宽约束。节点/对象按稳定 ID 去重，Event 按完整事实身份处理，不按名称或文本合并。
+- Scheduler 从 1 到 `steps` 确定性推进时间，Skill/Agent 不能自行推进。每轮 Brain/子 Skill 共享 `IterationContext`：Run、Attempt、Agent、Step、总步数、带时区的具体虚拟时间、步长和公共运行变量；2D 注入坐标、四层地址和空间语义，1D 注入场所及群聊/论坛说明。同 Step 按顺序执行，后执行的 Agent 可以感知本轮此前已生效的发言。
 - Skill 输出可成为后续 Skill 的输入，调用链由 Brain SOP 决定。对象响应只进入目标 Agent 下一轮上下文，必须恰好投递一次，不丢失或泄漏。
 
 ## 5. 接口调用、记忆与对象 Skill
@@ -85,6 +86,7 @@ assets/...                        commits/step-000001.json
 - 系统通过进程内接口提供公共感知、导航、记忆与动作能力，不使用 MCP 服务、传输或消息包装。Runtime 注入当前参与者身份并校验权限，禁止伪造身份、跨参与者读私有记忆或绕过校验改世界。模型函数调用只负责选择接口及参数，真实执行由身份绑定接口完成。
 - `world-perceive` 只读；`memory-stream-search/append/supersede/invalidate` 提供隔离持久记忆；`world-act` 是唯一世界动作入口。每名 Agent/对象每 Step 可多次读取，最多成功提交一次动作，第二次必须拒绝；无动作时可回退 `WAIT` 并记录原因。
 - 记忆以自然语言为主，可附 SPO、来源、证据、重要性；刚写入的有效记忆须可检索，替代/失效内容留历史但默认不当有效事实。已探索空间归参与者记忆，不靠每轮发送全图，也不强制活动编码字典。
+- 1D 继续由 Skill 在感知后调用现有记忆写入接口，后续使用记忆检索；不自动把公共消息写入所有人的记忆。记忆来源关联真实且有权访问的发言事实；消息原文及主题/回复关系属于世界事实，不由个人记忆摘要代替。主动不发言使用带原因的 `WAIT`，不生成消息，与运行失败回退分别记录。
 - Brain 需要循环安全上限和无进展检测，重复调用必须留下诊断。Thought、计划、反思及中间文本只供过程审计，不要求 Skill 额外输出回放机器合同。
 - 对象绑定 Skill 后默认用大模型按 SOP 自主运行、感知和响应交互，不要求脚本、主动/被动开关或触发器；不加入公共 Agent 目录或人物回放列表。对象有独立身份/记忆，只能修改自身状态；Agent 通过交互请求访问绑定 Skill 的对象，不能改其内部状态。
 - 对象感知复用四层语义、位置、活动、视野和注意力合同；只暴露范围内已执行运动轨迹，不暴露视野外坐标或以计划路径替代事实。状态的 `state` 外观标签公开，其余字段和私有记忆不自动公开。
@@ -95,10 +97,12 @@ assets/...                        commits/step-000001.json
 
 - 通用原语仅 `MOVE`、`ACT`、`WAIT`、`SPEAK`、`INTERACT`、`SET_OBJECT_STATE`。普通活动用 `ACT`，由 Skill 填写 `predicate`、`object`、可选 `description`，页面直接展示语义，不维护活动编码/显示字典或设施业务逻辑。
 - `WAIT` 只表示真实等待，可含原因和截止 Step/时间；不兜底普通活动。`SPEAK` 使用稳定、可复用且参与者隔离的 `conversation_id`，同一会话回复不新建线程。
+- 1D 的 `SPEAK` 支持公开群聊、论坛主题及嵌套回复、双人私聊；引用与回复使用真实消息身份，校验归属与读取权限。私聊正文不得通过公共感知、人物活动、搜索或引用预览泄漏。消息身份在轮内 World Commit 时产生，StepResult 保留同一身份和顺序。
 - 每条已提交世界变化都必须有 `Event(subject, predicate, object)` 和非空、足以确定性重建的 `structured_payload`。动作、对话、对象变化均由接口调用 → World Commit → StepResult 形成事实。
 - MOVE 分别保存内核位移事实与移动活动：内核保证 `Event(subject, "移动到", 实际地址)` 和实际路径；经提交的活动 predicate 成为 `movement_activity`，供状态、感知和回放共用。活动文字不能证明抵达。
 - StepResult 是帧、检查点、参与者状态、投影、质量和回放的共同事实源。事实类型只在 Protocol 定义，Runtime 构建/提交，Replay 读取/归约；LLM 原始文本、记忆或矛盾的临时状态不得驱动画面。
-- StepResult、世界事实、Checkpoint、Effect Ledger、Trace、日志和运行记忆必须保存在 Run 文件中。Replay 校验身份、内嵌实验哈希、帧连续性/哈希，只读已提交边界及包内素材，归约 Agent、Event、Effect、对话与对象状态，按 `L1 World → L2 Sector → L3 Arena → L4 Game Object` 绘制。
+- StepResult、世界事实、Checkpoint、Effect Ledger、Trace、日志和运行记忆必须保存在 Run 文件中。Replay 校验身份、内嵌实验哈希、帧连续性/哈希，只读已提交边界及包内素材，归约 Agent、Event、Effect、对话与对象状态；2D 按 `L1 World → L2 Sector → L3 Arena → L4 Game Object` 绘制，1D 按群聊消息流或主题及嵌套评论绘制。
+- 1D 运行页面可逐 Agent 显示带“未提交”标记的临时预览；整 Step 成功提交后确认，取消或失败时移除。预览不进入正式回放或结果导出，不改变 Step 原子提交、恢复与记忆回滚边界。界面底部展示智能体，点击头像进入其私聊会话列表，再进入会话内容；实验操作者可审计，Agent 的私聊读取权限不因此扩大。
 
 ## 7. 监督、质量与页面状态
 
@@ -125,7 +129,7 @@ assets/...                        commits/step-000001.json
 | 运行时接口 / 记忆 | `ga_runtime/capabilities/server.py` / `ga_runtime/memory/stream.py` |
 | 事实类型 / Replay | `ga_protocol/schemas/facts.py` / `ga_replay/api.py`、`reader.py`、`projections/` |
 
-ActorState 只保存身份、人物信息、位置、当前动作和剩余路径，不承载固定业务流程。作者地图/Skill 元数据在 `ga_studio/resources/map_document.py`、`skill_document.py`，导入时转换为 Protocol 合同并去除数据库定位信息。源码资源仅由 Studio `bundled/` 与 Web `static/` 持有；`static/shell` 协调页面/请求，`resources` 为编辑器，`replay` 为播放器，`vendor` 为前端依赖。`var/` 是用户数据，不是源码；重构不得改写案例证据或另建历史备份目录。
+ActorState 只保存身份、人物信息、当前动作及环境状态：2D 保存位置和剩余路径，1D 保存场所身份；不承载固定业务流程。作者地图/Skill 元数据在 `ga_studio/resources/map_document.py`、`skill_document.py`，导入时转换为 Protocol 合同并去除数据库定位信息。源码资源仅由 Studio `bundled/` 与 Web `static/` 持有；`static/shell` 协调页面/请求，`resources` 为编辑器，`replay` 为播放器，`vendor` 为前端依赖。`var/` 是用户数据，不是源码；重构不得改写案例证据或另建历史备份目录。
 
 开发、测试和排查使用的临时目录、一次性脚本、截图与日志统一放在仓库外的系统临时目录（如 `%TEMP%`）下，按任务隔离并在结束后清理；不得在项目内创建或遗留此类临时产物。测试显式指定临时目录时必须使用仓库外路径。正式交付物、案例证据及 `var/` 用户数据仍按既定目录保存，清理时不得误删。
 
@@ -170,6 +174,8 @@ python tools/verify_wheel.py <生成的.whl>
 - bug、体验建议、待复现、已修复分别记录证据、影响、建议和验收条件，待定不写成解决。每案独立保存 `map/`、`agents/`、`skill/`、`settings/`；新图先落入素材目录，再上传绑定，未经同意不换地图。UI 修改同步中文说明、精确 Skill、参数、概览和检查表；历史 JSON 标为参考，不作当前执行依据。
 
 ### 空间与行为
+
+以下几何、素材、出生位置、导航与对象状态图条款适用于 2D 案例；事实核验、私有记忆、SOP 与独立实验副本规则适用于所有地图类型。1D 案例核验场所成员、公开/私聊可见范围、发言顺序、回复与引用关系，不要求网格、坐标或行走图。
 
 - 先验画面和空间，再组织行为。住宅优先完整背景叠加语义，只为需换图的对象独立配图；联合检查人物/地图风格、尺寸、网格、比例、脚底锚点、遮挡，头像与行走图均上传应用并确认实验副本。
 - 状态图保持视角、位置、切片边界和尺寸一致，核对默认状态/键/图片；编辑器切换后还须用真实 `SET_OBJECT_STATE` 验证回放，ACT 描述不能证明换图。

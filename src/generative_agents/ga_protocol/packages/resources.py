@@ -274,7 +274,8 @@ def resource_content_hash(record: ResourceRecord, resources: ResourceSet, *, _vi
         geometry = definition.get("definition", {})
         # Author imports make the implicit tile unit explicit. That default
         # cannot turn an unchanged imported map into a content conflict.
-        geometry.setdefault("size_unit", "TILE")
+        if geometry.get("environment_type", "spatial_2d") == "spatial_2d":
+            geometry.setdefault("size_unit", "TILE")
         editor = geometry.get("editor")
         if isinstance(editor, dict):
             if not editor.get("spatial_assets"):

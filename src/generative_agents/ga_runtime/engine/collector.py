@@ -83,7 +83,8 @@ class StepResultCollector:
             or ()
         )
         remaining_path = tuple(tuple(coord) for coord in (remaining_path or ()))
-        to_coord = tuple(agent.coord)
+        to_coord = tuple(agent.coord) if agent.coord is not None else None
+        location = tuple(agent.get_tile().get_address()) if agent.get_tile() is not None else ()
         event = agent.get_event()
         description = event.get_describe() if event else ""
         predicate = event.predicate if event else ""
@@ -98,7 +99,7 @@ class StepResultCollector:
         self.builder.add_agent(
             AgentStepResult(
                 agent_key=agent_key,
-                from_coord=tuple(from_coord),
+                from_coord=tuple(from_coord) if from_coord is not None else None,
                 to_coord=to_coord,
                 path=observed_path,
                 action=ActionSnapshot(
@@ -112,7 +113,7 @@ class StepResultCollector:
                     ),
                 ),
                 activity_kind=activity,
-                location=tuple(agent.get_tile().get_address()),
+                location=location,
                 currently=info.get("currently"),
                 path_source="OBSERVED",
                 decision_context=self._decision_context(
@@ -133,9 +134,9 @@ class StepResultCollector:
                     if agent.get_event(False) is not None
                     else None
                 ),
-                "from_coord": list(from_coord),
-                "to_coord": list(to_coord),
-                "location": list(agent.get_tile().get_address()),
+                "from_coord": list(from_coord) if from_coord is not None else None,
+                "to_coord": list(to_coord) if to_coord is not None else None,
+                "location": list(location),
             },
             key=f"action:{agent_key}",
         )
@@ -225,7 +226,31 @@ class StepResultCollector:
             ValueError: 当参数值、配置内容或状态转换不符合约束时抛出。
         """
         kind = event.get("kind")
-        if kind == "conversation":
+        if kind == "social_message":
+            raw = dict(event["record"])
+            messages = tuple(ConversationMessage(
+                **{**item, "message_id": UUID(item["message_id"]),
+                   "reply_to_message_id": UUID(item["reply_to_message_id"]) if item.get("reply_to_message_id") else None,
+                   "quoted_message_id": UUID(item["quoted_message_id"]) if item.get("quoted_message_id") else None,
+                   "source_event_id": UUID(item["source_event_id"])}
+            ) for item in raw.pop("messages"))
+            record = ConversationRecord(**{**raw, "conversation_id": UUID(raw["conversation_id"]),
+                                          "participant_agent_keys": tuple(raw["participant_agent_keys"]),
+                                          "location": tuple(raw["location"]), "messages": messages})
+            self.builder.add_conversation(record)
+            for message in messages:
+                self._add_domain_event("AGENT_SPOKE", (message.speaker_agent_key,),
+                    {"subject": message.speaker_agent_key, "predicate": "发表", "object": message.content,
+                     "title": message.title or "发言", "structured_payload": {
+                         "message_id": str(message.message_id), "conversation_id": str(record.conversation_id),
+                         "speaker_agent_key": message.speaker_agent_key, "content": message.content,
+                         "visibility": record.visibility, "kind": record.kind, "space_id": record.space_id,
+                         "participant_agent_keys": list(record.participant_agent_keys),
+                         "reply_to_message_id": str(message.reply_to_message_id) if message.reply_to_message_id else None,
+                         "quoted_message_id": str(message.quoted_message_id) if message.quoted_message_id else None,
+                         "sequence": message.sequence, "actor_sequence": message.actor_sequence,
+                         "title": message.title}}, event_id=message.source_event_id)
+        elif kind == "conversation":
             self._sequences["conversation"] += 1
             sequence = self._sequences["conversation"]
             raw_conversation_id = event.get("conversation_id")
@@ -490,7 +515,7 @@ class StepResultCollector:
 
         self._capture_event(event)
 
-    def _add_domain_event(self, event_type: str, agent_keys, payload) -> None:
+    def _add_domain_event(self, event_type: str, agent_keys, payload, *, event_id=None) -> None:
         """执行`add``domain`事件的内部处理，供当前模块或类复用。
 
         参数:
@@ -505,7 +530,7 @@ class StepResultCollector:
         sequence = self._sequences["domain"]
         self.builder.add_domain_event(
             DomainEventRecord(
-                event_id=deterministic_record_id(
+                event_id=event_id or deterministic_record_id(
                     self.builder.run_id, self.builder.step_no, "domain", str(sequence)
                 ),
                 sequence=sequence,

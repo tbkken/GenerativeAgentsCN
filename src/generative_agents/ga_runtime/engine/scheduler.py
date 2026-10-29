@@ -15,6 +15,8 @@ from generative_agents.ga_runtime.engine.collector import StepResultCollector
 from generative_agents.ga_runtime.engine.results import StepResultBuilder
 from generative_agents.ga_runtime.models.retry import ModelCallCancelled, check_cancelled
 from generative_agents.ga_runtime.storage.execution import execution_span
+from generative_agents.ga_runtime.storage.preview import clear_runtime_preview, publish_runtime_preview
+from generative_agents.ga_runtime.memory.action import Action
 
 
 class StepCommitter(Protocol):
@@ -63,7 +65,7 @@ class SimulationRunner:
         if self.checkpoint_interval_steps < 1:
             raise ValueError("checkpoint_interval_steps must be positive")
         self.agent_status = {
-            agent_key: {"coord": tuple(agent.coord), "path": tuple(agent.path or ())}
+            agent_key: {"coord": tuple(agent.coord) if agent.coord is not None else None, "path": tuple(agent.path or ())}
             for agent_key, agent in self.game.agents.items()
         }
 
@@ -88,6 +90,9 @@ class SimulationRunner:
         target_step = self.completed_steps + steps
         self._bind_agent_step(self.completed_steps + 1)
         self.game.reset_game()
+        social = getattr(self.game, "social", None)
+        if social is not None:
+            clear_runtime_preview(self.context.paths.root)
         for offset in range(steps):
             # 不开始新的步骤；取消发生于步内时，丢弃整个未提交步骤。
             if (
@@ -106,6 +111,9 @@ class SimulationRunner:
             )
             memory_stream = getattr(self.context, "memory_stream", None)
             memory_snapshot = None
+            social_snapshot = social.snapshot() if social is not None else None
+            actor_snapshot = ({key: (agent.action.to_dict(), agent.profile.currently)
+                               for key, agent in self.game.agents.items()} if social is not None else {})
             if memory_stream is not None:
                 memory_snapshot = memory_stream.begin_step(
                     step_no,
@@ -130,7 +138,7 @@ class SimulationRunner:
                             actor_name=actor_name, actor_kind="agent",
                             step_no=step_no, actor_index=actor_index, actor_total=len(self.agent_status),
                         ):
-                            from_coord = tuple(agent.coord)
+                            from_coord = tuple(agent.coord) if agent.coord is not None else None
                             outcome = self.game.agent_think(
                                 agent_key,
                                 status,
@@ -160,8 +168,11 @@ class SimulationRunner:
                             )
                             # Agent.path 属于 Game.snapshot_state。运行中断后必须恢复尚未消费的原路径，
                             # 不能直接跳到终点，也不能重新寻路，否则恢复前后的轨迹会分叉。
-                            status["coord"] = tuple(agent.coord)
+                            status["coord"] = tuple(agent.coord) if agent.coord is not None else None
                             status["path"] = tuple(agent.path or ())
+                            if social is not None:
+                                publish_runtime_preview(self.context, builder, committed_step=self.completed_steps,
+                                    actor_sequence=actor_index, actor_total=len(self.agent_status))
                     check_cancelled(self.context.control)
                     run_objects = getattr(self.game, "run_game_object_skills", None)
                     if callable(run_objects):
@@ -185,13 +196,21 @@ class SimulationRunner:
                     )
                     check_cancelled(self.context.control)
                     self.committer.commit(result, force_checkpoint=force_checkpoint)
-                except ModelCallCancelled:
+                except BaseException as exc:
                     if memory_snapshot is not None:
                         memory_stream.rollback_step(memory_snapshot)
+                    if social_snapshot is not None:
+                        social.restore(social_snapshot)
+                        for key, (action_state, currently) in actor_snapshot.items():
+                            self.game.agents[key].action = Action.from_dict(action_state, clock=self.context.clock)
+                            self.game.agents[key].profile.currently = currently
                     execution = getattr(self.context, "execution_trace", None)
                     if execution is not None:
-                        execution.rollback(error_code="ModelCallCancelled", cancelled=True)
+                        execution.rollback(error_code=type(exc).__name__, cancelled=isinstance(exc, ModelCallCancelled))
                     raise
+                finally:
+                    if social is not None:
+                        clear_runtime_preview(self.context.paths.root)
             self.completed_steps = step_no
             if not terminal_boundary:
                 self.context.clock.forward(stride_minutes)

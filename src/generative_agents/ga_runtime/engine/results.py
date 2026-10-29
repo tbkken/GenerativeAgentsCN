@@ -28,6 +28,10 @@ class StepResultBuilder:
         """Facts already produced in this Step, for bounded object observations."""
         return tuple(self._domain_events)
 
+    @property
+    def conversations(self) -> tuple[ConversationRecord, ...]:
+        return tuple(self._conversations)
+
     def _append(self, target: list[Any], value: Any) -> None:
         """执行`append`的内部处理，供当前模块或类复用。
 

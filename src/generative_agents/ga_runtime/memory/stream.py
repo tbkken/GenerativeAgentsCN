@@ -127,6 +127,9 @@ class FileMemoryStream:
         object: str | None = None,
         address=(),
         evidence_memory_ids=(),
+        source_event_id: str | None = None,
+        source_message_id: str | None = None,
+        source_conversation_id: str | None = None,
         emit_event: bool = True,
         _supersedes_memory_id: str | None = None,
         **_ignored,
@@ -170,6 +173,9 @@ class FileMemoryStream:
                 "object": object,
                 "address": list(address),
                 "evidence_memory_ids": list(evidence_memory_ids),
+                "source_event_id": source_event_id,
+                "source_message_id": source_message_id,
+                "source_conversation_id": source_conversation_id,
                 "created_attempt_id": self.attempt_id,
                 "supersedes_memory_id": _supersedes_memory_id,
                 "superseded_by_memory_id": None,
@@ -299,6 +305,9 @@ class FileMemoryStream:
             object=original.get("object"),
             address=original.get("address") or (),
             evidence_memory_ids=evidence,
+            source_event_id=original.get("source_event_id"),
+            source_message_id=original.get("source_message_id"),
+            source_conversation_id=original.get("source_conversation_id"),
             emit_event=False,
             _supersedes_memory_id=memory_id,
         )
@@ -352,6 +361,10 @@ class FileMemoryStream:
             "expires_at": item.get("expires_at"),
             "replacement_memory_id": replacement_memory_id,
             "reason": str(reason or "").strip() or None,
+            "source_event_id": item.get("source_event_id"),
+            "evidence_memory_ids": list(item.get("evidence_memory_ids") or []),
+            "event": {key: copy.deepcopy(item.get(key)) for key in ("subject", "predicate", "object", "address")}
+                     if any(item.get(key) for key in ("subject", "predicate", "object")) else {},
         }
 
     @staticmethod

@@ -31,7 +31,9 @@ def test_agent_deletion_is_list_scoped_and_spatial_data_uses_form_tables():
     assert "function deleteSelectedAgents" in source
     assert "function flattenSpatialTree" in source
     assert "function readSpatialEditor" in source
-    assert "const spatial = readSpatialEditor();" in source
+    assert "const spatial = social ? null : readSpatialEditor();" in source
+    assert "if (!social) validateInitialLocationAgainstCoord(spatial);" in source
+    assert "social ? {space_id: state.draft.definition.world.world_key}" in source
     assert "function stageAgentImage" in source
     assert "async function uploadStagedAgentImages" in source
     assert "form.append('portrait'" in source and "form.append('sprite'" in source

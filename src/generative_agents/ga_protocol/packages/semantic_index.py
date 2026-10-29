@@ -5,6 +5,7 @@ import hashlib
 from collections.abc import Mapping, Sequence
 from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.schemas.world import WorldDocument
+from generative_agents.ga_protocol.schemas.environments import SocialWorldDefinition, environment_type
 
 def _portable_editor(document: dict) -> dict:
     value = copy.deepcopy(document)
@@ -32,6 +33,9 @@ def build_semantic_index(world: dict) -> tuple[dict, dict]:
     definition = prepared.get("definition")
     if not isinstance(definition, dict):
         raise PackageError("definition.world.definition must be an object")
+    if environment_type(prepared) == "social_1d":
+        prepared["definition"] = SocialWorldDefinition.model_validate(definition).model_dump()
+        return prepared, {}
     from generative_agents.ga_protocol.spatial.navigation import compile_collision
 
     if definition.get("editor_v2"):

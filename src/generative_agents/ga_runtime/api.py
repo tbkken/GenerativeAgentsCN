@@ -18,10 +18,14 @@ __all__ = [
     "FileRunSupervisor",
     "execute_run_directory",
     "load_experiment_directory",
+    "read_runtime_preview",
 ]
 
 
 def __getattr__(name: str):
+    if name == "read_runtime_preview":
+        from generative_agents.ga_runtime.storage.preview import read_runtime_preview
+        return read_runtime_preview
     if name == 'ArtifactJobs':
         from generative_agents.ga_runtime.storage.jobs import ArtifactJobs
         return ArtifactJobs

@@ -33,6 +33,9 @@ class MapCreate(Request):
     map_key: str | None = None
     source_map_id: str | None = None
     blueprint_key: str | None = None
+    environment_type: Literal['spatial_2d', 'social_1d'] = 'spatial_2d'
+    presentation: Literal['chat', 'forum'] = 'chat'
+    rules: str = Field(default='', max_length=20000)
     width: int = Field(default=48, ge=1, le=240)
     height: int = Field(default=32, ge=1, le=240)
     tile_size: int = Field(default=32, ge=8, le=128)
@@ -186,6 +189,9 @@ def create_resource_router(database, skill_registry) -> APIRouter:
                 map_key=body.map_key,
                 source_map_id=body.source_map_id,
                 blueprint_key=body.blueprint_key,
+                environment_type=body.environment_type,
+                presentation=body.presentation,
+                rules=body.rules,
                 width=body.width,
                 height=body.height,
                 tile_size=body.tile_size,

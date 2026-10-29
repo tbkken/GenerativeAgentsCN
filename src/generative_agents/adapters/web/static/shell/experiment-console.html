@@ -1847,16 +1847,19 @@
 
   <div class="modal-backdrop" id="createMapModal" role="dialog" aria-modal="true" aria-labelledby="createMapTitle">
     <div class="modal">
-      <div class="modal-head"><div><h2 id="createMapTitle">新建公共地图</h2><p>从空白网格、场景构建向导或现有地图副本开始。</p></div><button class="close" id="closeCreateMap" aria-label="关闭">×</button></div>
+      <div class="modal-head"><div><h2 id="createMapTitle">新建公共地图</h2><p>选择 1D 群聊 / 论坛，或 2D 空间地图。3D 将在后续支持。</p></div><button class="close" id="closeCreateMap" aria-label="关闭">×</button></div>
       <div class="modal-body map-inline-form">
+        <div class="field full"><label for="newMapEnvironmentType">地图类型</label><select class="control" id="newMapEnvironmentType"><option value="spatial_2d">2D · 空间地图</option><option value="social_1d">1D · 社交空间</option><option disabled>3D · 后续支持</option></select></div>
+        <div class="field full" data-map-create-social hidden><label for="newMapPresentation">展现方式</label><select class="control" id="newMapPresentation"><option value="chat">群聊</option><option value="forum">论坛</option></select><small>每张地图固定一种展现方式，两者均支持私聊。</small></div>
+        <div class="field full" data-map-create-social hidden><label for="newMapRules">场所规则</label><textarea class="control" id="newMapRules" rows="4" placeholder="讨论主题、参与者身份与交流约定…"></textarea></div>
         <div class="field"><label for="newMapName">地图名称</label><input class="control" id="newMapName" maxlength="120" placeholder="例如：海滨小镇" /></div>
         <div class="field"><label for="newMapKey">稳定键（可选）</label><input class="control" id="newMapKey" maxlength="64" autocapitalize="none" spellcheck="false" placeholder="例如：commute-home-office" /><small>支持小写字母、数字和连字符；留空或无法规范化时自动生成。</small></div>
-        <div class="field full"><label for="newMapBlueprint">构建方式</label><select class="control" id="newMapBlueprint"><option value="">空白地图（自由绘制）</option></select><small id="newMapBlueprintHint">创建一个不继承斯坦福小镇的空白地图。</small></div>
-        <div class="field full"><label for="newMapSource">复制现有地图（可选）</label><select class="control" id="newMapSource"><option value="">不复制</option></select><small>选择现有地图后，将不再使用上面的构建向导。</small></div>
-        <div class="field"><label for="newMapWidth">宽度（格）</label><div class="input-unit"><input class="control" id="newMapWidth" type="number" min="1" max="240" step="1" value="48" /><span>格</span></div></div>
-        <div class="field"><label for="newMapHeight">高度（格）</label><div class="input-unit"><input class="control" id="newMapHeight" type="number" min="1" max="240" step="1" value="32" /><span>格</span></div></div>
-        <div class="field"><label for="newMapTileSize">单格 Tile 尺寸</label><div class="input-unit"><input class="control" id="newMapTileSize" type="number" min="8" max="128" step="1" value="32" /><span>px</span></div></div>
-        <div class="field full"><small id="newMapPixelSize">1 表示 1 个 Tile；最终像素尺寸：1536 × 1024 px（系统自动换算）</small></div>
+        <div class="field full" data-map-create-spatial><label for="newMapBlueprint">构建方式</label><select class="control" id="newMapBlueprint"><option value="">空白地图（自由绘制）</option></select><small id="newMapBlueprintHint">创建一个不继承斯坦福小镇的空白地图。</small></div>
+        <div class="field full" data-map-create-spatial><label for="newMapSource">复制现有地图（可选）</label><select class="control" id="newMapSource"><option value="">不复制</option></select><small>选择现有地图后，将不再使用上面的构建向导。</small></div>
+        <div class="field" data-map-create-spatial><label for="newMapWidth">宽度（格）</label><div class="input-unit"><input class="control" id="newMapWidth" type="number" min="1" max="240" step="1" value="48" /><span>格</span></div></div>
+        <div class="field" data-map-create-spatial><label for="newMapHeight">高度（格）</label><div class="input-unit"><input class="control" id="newMapHeight" type="number" min="1" max="240" step="1" value="32" /><span>格</span></div></div>
+        <div class="field" data-map-create-spatial><label for="newMapTileSize">单格 Tile 尺寸</label><div class="input-unit"><input class="control" id="newMapTileSize" type="number" min="8" max="128" step="1" value="32" /><span>px</span></div></div>
+        <div class="field full" data-map-create-spatial><small id="newMapPixelSize">1 表示 1 个 Tile；最终像素尺寸：1536 × 1024 px（系统自动换算）</small></div>
         <div class="field full"><label for="newMapDescription">用途说明</label><textarea class="control" id="newMapDescription" maxlength="10000" placeholder="这张地图适合哪些实验…"></textarea></div>
       </div>
       <div class="modal-foot"><button class="btn" id="cancelCreateMap">取消</button><button class="btn btn-primary" id="confirmCreateMap">创建并编辑</button></div>

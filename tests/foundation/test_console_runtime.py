@@ -644,7 +644,7 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert 'id="replayLayerAgentNames"' not in results
     assert 'id="replayLayerActionBubbles"' not in results
     assert 'id="replayLayerConversations"' not in results
-    assert "const conversations = step.conversations || [];" in source
+    assert "const conversations = (step.conversations || []).filter(item => !state.replayPlayer.isSocial || item.visibility === 'public');" in source
     assert 'id="replayCameraMode" aria-label="回放镜头模式" hidden' in results
     assert 'id="replayAgentSelect" aria-label="回放 Agent" hidden' in results
     assert 'id="replayCameraState">自由镜头' in results

@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Annotated, Any, Literal, Union
 from urllib.parse import urlsplit, urlunsplit
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
+from generative_agents.ga_protocol.schemas.environments import SocialWorldDefinition, environment_type
 
 from pydantic import (
     AnyHttpUrl,
@@ -456,6 +457,8 @@ class WorldConfig(StrictModel):
         """
         if self.map_snapshot_hash and not self.map_id:
             raise ValueError("map_snapshot_hash requires map_id")
+        if environment_type(self) == "social_1d":
+            object.__setattr__(self, "definition", SocialWorldDefinition.model_validate(self.definition).model_dump())
         return self
 
 
@@ -496,8 +499,8 @@ class AgentTemplateDefinition(StrictModel):
     perception: AgentPerceptionLimits = Field(default_factory=AgentPerceptionLimits)
 
 
-class AgentDefinition(StrictModel):
-    """单个智能体的完整发布配置，包含认知状态和空间状态。"""
+class AgentIdentityDefinition(StrictModel):
+    """Shared participant identity and author-provided personal information."""
     agent_key: Key
     enabled: bool = True
     name: Annotated[
@@ -510,11 +513,20 @@ class AgentDefinition(StrictModel):
     model_override: str | None = None
     tags: list[str] = Field(default_factory=list)
     goals: list[str] = Field(default_factory=list)
-    coord: tuple[int, int]
     currently: str = ""
     scratch: AgentScratch
-    spatial: AgentSpatial = Field(default_factory=AgentSpatial)
     perception: AgentPerceptionLimits = Field(default_factory=AgentPerceptionLimits)
+
+
+class AgentDefinition(AgentIdentityDefinition):
+    """A participant placed in a two-dimensional spatial world."""
+    coord: tuple[int, int]
+    spatial: AgentSpatial = Field(default_factory=AgentSpatial)
+
+
+class SocialAgentDefinition(AgentIdentityDefinition):
+    """A member of a logical public space, without fabricated coordinates."""
+    space_id: Key
 
 
 class ExperimentDefinition(StrictModel):
@@ -526,7 +538,7 @@ class ExperimentDefinition(StrictModel):
     results: ResultsConfig = Field(default_factory=ResultsConfig)
     models: ModelsConfig
     world: WorldConfig
-    agents: list[AgentDefinition] = Field(default_factory=list)
+    agents: list[AgentDefinition | SocialAgentDefinition] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_internal_relations(self) -> "ExperimentDefinition":
@@ -548,6 +560,13 @@ class ExperimentDefinition(StrictModel):
         agent_keys = [agent.agent_key for agent in self.agents]
         if len(agent_keys) != len(set(agent_keys)):
             raise ValueError("agent_key must be unique within an experiment")
+        social = environment_type(self.world) == "social_1d"
+        for agent in self.agents:
+            if social:
+                if not isinstance(agent, SocialAgentDefinition) or agent.space_id != self.world.world_key:
+                    raise ValueError("social Agent membership must identify the experiment's public space")
+            elif not isinstance(agent, AgentDefinition):
+                raise ValueError("spatial Agent requires coordinates and spatial information")
         return self
 
 

@@ -40,7 +40,7 @@ class DocumentResourceUpdate(PortableRequest):
 
 class PlacementRequest(PortableRequest):
     agent_id: str
-    coord: tuple[int, int]
+    coord: tuple[int, int] | None = None
 
 class ExperimentWorkspaceCreate(PortableRequest):
     name: str = Field(min_length=1, max_length=120)

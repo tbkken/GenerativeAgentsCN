@@ -148,6 +148,7 @@ class ReplayReader:
 
     def state_at(self, step_no: int) -> dict:
         """Reduce committed facts into a Web-friendly state projection."""
+        from generative_agents.ga_replay.projections.conversations import merge_conversation
 
         agents: dict[str, dict] = {}
         object_states: dict[str, object] = {}
@@ -172,7 +173,11 @@ class ReplayReader:
                 if object_id:
                     object_states[str(object_id)] = copy.deepcopy(structured["after"])
             for conversation in result.get("conversations") or []:
-                conversations[str(conversation["conversation_id"])] = conversation
+                conversation_id = str(conversation['conversation_id'])
+                conversations[conversation_id] = merge_conversation(
+                    conversations.get(conversation_id), conversation,
+                    step_no=result['step_no'], virtual_time=virtual_time,
+                )
         return {
             "step_no": step_no,
             "virtual_time": virtual_time,

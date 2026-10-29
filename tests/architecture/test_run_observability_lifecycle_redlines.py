@@ -293,7 +293,9 @@ def test_def_054_replay_player_is_packaged_external_and_not_dom_dot_fallback():
     assert 'vendor/phaser.min.js' not in shell and 'replay/replay-player.js' not in shell
     assert loader.count('vendor/phaser.min.js') == 1
     assert loader.count('replay/replay-player.js') == 1
-    assert "WorkspaceLoader.load('replay')" in console
+    assert "WorkspaceLoader.load(social ? 'social-replay' : 'replay')" in console
+    assert loader.count('replay/social-replay.js') == 1
+    assert (PLAYER.parent / 'social-replay.js').is_file()
     assert not [
         body
         for body in __import__("re").findall(r"<script[^>]*>(.*?)</script>", shell, __import__("re").S)
@@ -301,7 +303,8 @@ def test_def_054_replay_player_is_packaged_external_and_not_dom_dot_fallback():
     ]
     assert ".map-agent" not in shell
     assert "button.className = 'map-agent'" not in console
-    assert "new GAReplayPlayer" in console
+    assert "const Player = social ? window.GASocialReplayPlayer : GAReplayPlayer;" in console
+    assert "new Player({" in console
     assert "resultMapCanvas" in console
 
 
@@ -339,7 +342,16 @@ def test_def_065_switch_run_reconciles_replay_selection_and_inspector():
     ]
     program = r"""
 const [teardownSource, ensureSource, clearInspectorSource] = process.argv.slice(1);
-const window = {WorkspaceLoader:{load:async () => {}}};
+const loadedModules = [];
+const window = {WorkspaceLoader:{load:async name => { loadedModules.push(name); }}};
+const api = async path => {
+  if (!path.endsWith('/replay/manifest')) throw new Error(`unexpected request ${path}`);
+  const social = path.includes('/run-social/');
+  return {environment_type:social ? 'social_1d' : 'spatial_2d', agents:
+    path.includes('/run-new/') || social
+      ? [{agent_key:'resident-001',display_name:'George'}]
+      : [{agent_key:'resident-002',display_name:'Maria'}]};
+};
 const inspectorIds = [
   'replayInspectorLocation','replayInspectorAction','replayInspectorCurrently',
   'replayInspectorConversation','replayInspectorMemories','replayInspectorSchedule'
@@ -351,6 +363,7 @@ const select = {
   set innerHTML(value){ this._html=String(value); this._value=''; }
 };
 const elements = {
+  resultMap:{closest:() => ({classList:{remove(){},toggle(){}}})}, resultMapCanvas:{},
   replayAgentSelect:select, replayTimelineMarkers:{innerHTML:''}, replayStatus:{textContent:''},
   replayCameraMode:{value:'free'}, replayCameraState:{textContent:''}, replayAgentRoster:{innerHTML:''},
   timelinePlay:{textContent:''}, timelineRange:{max:0,min:0,value:0,disabled:false},
@@ -372,17 +385,19 @@ class GAReplayPlayer {
     return agents.some(agent => agent.agent_key === selectedKey) ? selectedKey : null;
   }
   constructor(options){ this.options=options; this.availableStep=3; this.currentStep=3; this.selectedAgentKey=null; activePlayer=this; }
-  async loadRun(runId){
+  async loadRun(runId, options){
     this.runId=runId;
-    this.manifest={agents: runId === 'run-new'
-      ? [{agent_key:'resident-001',display_name:'George'}]
-      : [{agent_key:'resident-002',display_name:'Maria'}]};
+    this.manifest=options.manifest;
   }
   async refreshAvailable(){}
   destroy(){}
   selectAgent(key){ this.selectedAgentKey=key || null; }
   followAgent(key){ this.followedAgentKey=key || null; }
 }
+class GASocialReplayPlayer extends GAReplayPlayer {
+  constructor(options){ super(options); this.isSocial=true; }
+}
+window.GASocialReplayPlayer=GASocialReplayPlayer;
 const renderReplayStep = () => {};
 const renderReplayInspector = () => {};
 const syncReplayControls = () => {};
@@ -405,6 +420,15 @@ eval(ensureSource);
   }
   if (inspectorIds.some(id => elements[id].textContent.startsWith('STALE:'))) {
     throw new Error('new Run kept an Inspector fact owned by the previous Run/Agent');
+  }
+  state.selectedRunId='run-social'; state.resultGeneration=4;
+  state.selectedReplayAgentKey='resident-001'; state.selectedReplayExperimentId='revision-1';
+  await ensureReplayPlayer('run-social',4);
+  if (!(activePlayer instanceof GASocialReplayPlayer) || select.value !== 'resident-001') {
+    throw new Error('social Run did not restore selection through its dedicated player');
+  }
+  if (JSON.stringify(loadedModules) !== JSON.stringify(['replay','replay','social-replay'])) {
+    throw new Error('Run environment loaded the wrong renderer module');
   }
 })().catch(error => { console.error(error); process.exit(1); });
 """

@@ -70,7 +70,7 @@ def export_run_artifact(root, facts, *, job_type, parameters, quality=None, memo
                 files = []
                 for path in root.rglob('*'):
                     relative = path.relative_to(root)
-                    if not path.is_file() or path.is_symlink() or relative.parts[0] in {'artifacts', 'artifact-metadata', 'artifact-jobs', 'orphaned'} or any((part.startswith('.') for part in relative.parts)) or (relative.as_posix() in {'projection.json', 'integrity/sha256.json'}) or path.name.endswith('.lock'):
+                    if not path.is_file() or path.is_symlink() or relative.parts[0] in {'artifacts', 'artifact-metadata', 'artifact-jobs', 'orphaned'} or any((part.startswith('.') for part in relative.parts)) or (relative.as_posix() in {'projection.json', 'runtime-preview.json', 'integrity/sha256.json'}) or path.name.endswith('.lock'):
                         continue
                     if relative.parts[0] in {'frames', 'commits', 'checkpoints', 'recovery'}:
                         boundary = relative.parts[1].removeprefix('step-').removesuffix('.json.gz').removesuffix('.json')

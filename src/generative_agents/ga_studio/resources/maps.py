@@ -16,6 +16,7 @@ from pydantic import ValidationError
 
 from generative_agents.ga_protocol.packages.hashing import canonical_json_bytes
 from generative_agents.ga_studio.resources.map_document import MapEditorDocumentV2
+from generative_agents.ga_protocol.schemas.environments import SocialWorldDefinition, environment_type
 from generative_agents.ga_protocol.spatial.navigation import compile_collision
 from generative_agents.ga_protocol.schemas.experiment import WorldConfig
 from generative_agents.ga_protocol.schemas.spatial_assets import SpatialAssetContract
@@ -65,6 +66,8 @@ def normalize_public_world(world: WorldConfig | dict[str, Any]) -> WorldConfig:
         mode="json", exclude_none=False
     )
     payload["definition"] = copy.deepcopy(payload.get("definition") or {})
+    if environment_type(payload) == "social_1d":
+        return WorldConfig.model_validate(payload)
     payload["definition"]["size_unit"] = "TILE"
     if payload["definition"].get("editor_v2"):
         try:
@@ -955,6 +958,9 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
         返回以字段名或业务键组织的结构化映射。
     """
 
+    if environment_type(world) == "social_1d":
+        SocialWorldDefinition.model_validate(world.definition)
+        return []
     definition = world.definition
     errors: list[dict[str, str]] = []
     size = definition.get("size") if isinstance(definition, dict) else None
@@ -1255,6 +1261,8 @@ def _referenced_spatial_asset_ids(world: WorldConfig) -> set[str]:
 
 def _hydrate_spatial_assets(session: Session, world: WorldConfig) -> WorldConfig:
     """Resolve mutable authoring asset ids into a self-contained world document."""
+    if environment_type(world) == "social_1d":
+        return world.model_copy(deep=True)
     payload = world.model_dump(mode="json", exclude_none=False)
     definition = payload["definition"]
     editor = definition.setdefault("editor", {})
@@ -1403,6 +1411,9 @@ class WorldMapService:
         width: int = 48,
         height: int = 32,
         tile_size: int = 32,
+        environment_type: str = "spatial_2d",
+        presentation: str = "chat",
+        rules: str = "",
     ) -> dict[str, Any]:
         """创建地图。
 
@@ -1432,7 +1443,11 @@ class WorldMapService:
                 "地图稳定键必须由小写字母、数字和连字符组成",
                 status_code=422,
             )
-        if not (1 <= width <= 240 and 1 <= height <= 240 and 8 <= tile_size <= 128):
+        if environment_type not in {"social_1d", "spatial_2d"}:
+            raise ServiceError("UNSUPPORTED_ENVIRONMENT", "当前支持 1D 社交地图与 2D 空间地图", status_code=422)
+        if environment_type == "social_1d" and blueprint_key:
+            raise ServiceError("MAP_CREATE_SOURCE_CONFLICT", "1D 地图不能使用空间构建蓝图", status_code=422)
+        if environment_type == "spatial_2d" and not (1 <= width <= 240 and 1 <= height <= 240 and 8 <= tile_size <= 128):
             raise ServiceError(
                 "INVALID_MAP_DIMENSIONS",
                 "地图宽高必须是 1–240 的整数格数；1 表示一个 Tile。Tile 尺寸需在 8–128 像素之间",
@@ -1463,6 +1478,16 @@ class WorldMapService:
                 if source_map is None:
                     raise not_found("map", source_map_id)
                 world = normalize_public_world(source_map.world_json)
+                if world.definition.get("environment_type") == "social_1d":
+                    description = description or world.definition["description"]
+                    world = WorldConfig(world_key=stable_key, world_name=name, assets=world.assets,
+                                        definition={**world.definition, "description": description})
+            elif environment_type == "social_1d":
+                try:
+                    content = SocialWorldDefinition(presentation=presentation, description=description, rules=rules)
+                except ValidationError as exc:
+                    raise ServiceError("INVALID_SOCIAL_MAP", str(exc), status_code=422) from exc
+                world = WorldConfig(world_key=stable_key, world_name=name, definition=content.model_dump())
             elif blueprint is not None:
                 world = normalize_public_world(
                     _commute_blueprint_world(
@@ -1617,6 +1642,8 @@ class WorldMapService:
                                WorldMap.updated_at, WorldMap.created_at,
                                WorldMap.world_json["definition"]["size"].label("dimensions"),
                                WorldMap.world_json["definition"]["tile_size"].as_integer().label("tile_size"),
+                               WorldMap.world_json["definition"]["environment_type"].as_string().label("environment_type"),
+                               WorldMap.world_json["definition"]["presentation"].as_string().label("presentation"),
                                WorldMap.validation_json["valid"].as_boolean().label("valid"))
             count_statement = select(func.count()).select_from(WorldMap)
             archive_predicate = (
@@ -1661,6 +1688,7 @@ class WorldMapService:
         valid = result.pop("valid")
         result["validation"] = {"valid": valid} if valid is not None else None
         result["lock_version"] = result["row_version"]
+        result["environment_type"] = result.get("environment_type") or "spatial_2d"
         return result
 
     def set_archived(self, map_id: str, *, archived: bool) -> dict[str, Any]:
@@ -1720,6 +1748,8 @@ class WorldMapService:
         normalized = normalize_public_world(world)
         digest = world_hash(normalized)
         now = _utc_now()
+        metadata = ({"name": normalized.world_name, "description": normalized.definition["description"]}
+                    if environment_type(normalized) == "social_1d" else {})
         with self.database.session_factory.begin() as session:
             result = session.execute(update(WorldMap).where(
                 WorldMap.id == map_id,
@@ -1730,6 +1760,7 @@ class WorldMapService:
                 validation_json=None,
                 row_version=WorldMap.row_version + 1,
                 updated_at=now,
+                **metadata,
             ))
             if result.rowcount != 1:
                 if session.get(WorldMap, map_id) is None:
@@ -1782,6 +1813,14 @@ class WorldMapService:
             world = _hydrate_spatial_assets(
                 session, normalize_public_world(public_map.world_json)
             )
+            if environment_type(world) == "social_1d":
+                public_map.validation_json = {
+                    "valid": True, "errors": [], "warnings": [],
+                    "checks": [{"code": "SOCIAL_SPACE_CONTRACT", "message": "社交场所类型、展示方式与规则", "status": "PASSED"}],
+                }
+                public_map.updated_at = _utc_now()
+                session.flush()
+                return self._map_detail(session, public_map)
             editor_errors, editor_warnings = _validate_map_editor_v2(
                 world, skill_registry=self.skill_registry
             )
@@ -1859,6 +1898,8 @@ class WorldMapService:
             "map_key": public_map.map_key,
             "name": public_map.name,
             "description": public_map.description,
+            "environment_type": environment_type(world),
+            "presentation": definition.get("presentation"),
             "row_version": public_map.row_version,
             "lock_version": public_map.row_version,
             "world_hash": world_hash(world),

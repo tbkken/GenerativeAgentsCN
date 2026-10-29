@@ -23,7 +23,13 @@ def simulation_interface_catalog() -> list[dict[str, Any]]:
                         "type": "integer",
                         "minimum": 0,
                         "maximum": 100,
-                    }
+                    },
+                    "message_id": {"type": "string", "description": "In a 1D world, read one accessible message by its real ID."},
+                    "conversation_id": {"type": "string", "description": "In a 1D world, read messages in this conversation or forum topic."},
+                    "after_message_id": {"type": "string", "description": "Read accessible messages after this message; omitted selects the latest messages."},
+                    "before_message_id": {"type": "string", "description": "Read earlier accessible messages for pagination."},
+                    "limit": {"type": "integer", "minimum": 1, "maximum": 100},
+                    "participant_offset": {"type": "integer", "minimum": 0, "description": "Page through the 1D space's participant names within attention bandwidth."},
                 },
                 "additionalProperties": False,
             },
@@ -113,6 +119,10 @@ def simulation_interface_catalog() -> list[dict[str, Any]]:
                         "items": {"type": "string"},
                     },
                     "message": {"type": "string"},
+                    "visibility": {"type": "string", "enum": ["public", "private"]},
+                    "title": {"type": "string", "description": "Required when creating a public forum topic."},
+                    "reply_to_message_id": {"type": "string", "description": "Real parent message ID in the same conversation; forum replies may be nested."},
+                    "quoted_message_id": {"type": "string", "description": "Quote an accessible public message, or a private message in the same private conversation. The runtime resolves its original content."},
                     "conversation_id": {
                         "type": "string",
                         "description": (
@@ -137,7 +147,7 @@ def simulation_interface_catalog() -> list[dict[str, Any]]:
                         "type": "string",
                         "description": (
                             "For WAIT, explain the external condition or schedule "
-                            "boundary being awaited."
+                            "boundary being awaited, or the reason for remaining silent in a 1D world."
                         ),
                     },
                     "expected_until_step": {
@@ -201,6 +211,7 @@ def simulation_interface_catalog() -> list[dict[str, Any]]:
                         "subject": {"type": "string"},
                         "predicate": {"type": "string"},
                         "object": {"type": "string"},
+                        "source_event_id": {"type": "string", "description": "Stable source event ID returned by world-perceive; the runtime checks access before saving it."},
                         "address": {
                             "type": "array",
                             "items": {"type": "string"},

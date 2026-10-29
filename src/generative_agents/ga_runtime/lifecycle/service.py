@@ -182,7 +182,7 @@ class RunService:
             staging = temporary / "run"
             staging.mkdir()
             try:
-                excluded = {"worker.lock", "checkpoint.lock", "artifact.lock", INTEGRITY_MANIFEST}
+                excluded = {"worker.lock", "checkpoint.lock", "artifact.lock", "runtime-preview.json", INTEGRITY_MANIFEST}
                 for path in sorted(run_root.rglob("*")):
                     if path.is_symlink():
                         raise PackageError(f"Run contains a symbolic link: {path}")

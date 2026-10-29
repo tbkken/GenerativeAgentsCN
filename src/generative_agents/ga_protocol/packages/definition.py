@@ -17,7 +17,7 @@ from generative_agents.ga_protocol.packages.resources import (
 )
 from generative_agents.ga_protocol.packages.semantic_index import build_semantic_index
 from generative_agents.ga_protocol.schemas.manifests import ExperimentManifest, SkillPackageEntry, SkillPackageRegistry
-from generative_agents.ga_protocol.schemas.resources import ExperimentAssembly, ExperimentPlacement, ResourceIndex
+from generative_agents.ga_protocol.schemas.resources import ExperimentAssembly, ExperimentPlacement, SocialExperimentPlacement, ResourceIndex
 from generative_agents.ga_protocol.schemas.experiment import DecisionModelConfig
 from generative_agents.ga_protocol.packages.reading import file_fingerprint, read_package_json
 
@@ -72,8 +72,9 @@ def assemble_experiment_definition(manifest: ExperimentManifest, resources: Reso
         record = resources.get(placement.agent)
         if record.kind != "agent":
             raise PackageError("experiment placement must identify an Agent")
-        agents.append(dict(copy.deepcopy(record.definition), agent_key=record.key, name=record.name,
-                           coord=list(placement.coord), spatial=copy.deepcopy(placement.spatial)))
+        location = (dict(space_id=placement.space_id) if isinstance(placement, SocialExperimentPlacement)
+                    else dict(coord=list(placement.coord), spatial=copy.deepcopy(placement.spatial)))
+        agents.append(dict(copy.deepcopy(record.definition), agent_key=record.key, name=record.name, **location))
     crowds = []
     for reference in assembly.crowds:
         record = resources.get(reference)
@@ -142,6 +143,8 @@ def experiment_overview(root: Path) -> tuple[dict, dict, dict]:
                'enabled_agent_count': sum(bool(resources.get(p.agent).definition.get('enabled', True)) for p in assembly.placements),
                'skill_bound_objects': 0}
     world_definition = world.definition.get('definition') or {}
+    summary['environment_type'] = world_definition.get('environment_type', 'spatial_2d')
+    summary['presentation'] = world_definition.get('presentation')
     nodes = (world_definition.get('editor_v2') or {}).get('hierarchy_nodes') or []
     summary['skill_bound_objects'] = sum(len(node.get('skill_bindings') or []) for node in nodes if node.get('kind') == 'GAME_OBJECT')
     assets = (world_definition.get('editor') or {}).get('spatial_assets') or {}
@@ -207,17 +210,24 @@ def write_experiment_definition(root: str | Path, definition: dict, *, resource_
     world_key, world_name = world.pop("world_key"), world.pop("world_name")
     map_record = _record("map", world_key, world_name, world, old=old,
                          dependencies=[ResourceRef(kind="skill", key=key) for key in sorted(object_skill_keys(world))])
+    if world.get("definition", {}).get("environment_type") == "social_1d":
+        map_record.description = world["definition"].get("description", "")
     records.append(map_record)
     placements = []
     for raw in definition.get("agents", []):
         core = copy.deepcopy(raw)
         key, name = core.pop("agent_key"), core.pop("name")
         try:
-            coord, spatial = core.pop("coord"), core.pop("spatial")
+            if world.get("definition", {}).get("environment_type") == "social_1d":
+                placement = SocialExperimentPlacement(agent=ResourceRef(kind="agent", key=key), space_id=core.pop("space_id"))
+                if placement.space_id != world_key:
+                    raise PackageError(f"Agent {key} belongs to a different public space")
+            else:
+                placement = ExperimentPlacement(agent=ResourceRef(kind="agent", key=key), coord=core.pop("coord"), spatial=core.pop("spatial"))
         except KeyError as exc:
             raise PackageError(f"Agent {key} requires an explicit experiment placement") from exc
         records.append(_record("agent", key, name, core, old=old))
-        placements.append(ExperimentPlacement(agent=ResourceRef(kind="agent", key=key), coord=coord, spatial=spatial))
+        placements.append(placement)
     crowd_refs = []
     for raw in definition.get("crowds", []):
         members = [ResourceRef(kind="agent", key=key) for key in raw["agent_keys"]]

@@ -72,7 +72,7 @@ class AgentPlacement:
     """Experiment-owned placement for one selected public Agent."""
 
     agent_id: str
-    coord: tuple[int, int]
+    coord: tuple[int, int] | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -547,8 +547,11 @@ class ExperimentWorkspaceService:
         return result
 
     def _materialize_agents(self, session, agent_ids, *, world, placements):
-        tiles = self._walkable_tiles(world)
+        social = world.get("definition", {}).get("environment_type") == "social_1d"
+        tiles = [] if social else self._walkable_tiles(world)
         placement_by_agent = {item.agent_id: item.coord for item in placements}
+        if social and any(coord is not None for coord in placement_by_agent.values()):
+            raise StudioResourceError("1D 社交地图的参与者不能设置空间坐标")
         unknown = sorted(set(placement_by_agent) - set(agent_ids))
         if unknown:
             raise StudioResourceError(f"placements refer to unselected Agents: {unknown}")
@@ -566,20 +569,24 @@ class ExperimentWorkspaceService:
                 raise StudioResourceError(f"duplicate Agent key in selection: {source.agent_key}")
             seen_keys.add(source.agent_key)
             coord = placement_by_agent.get(agent_id)
-            if coord is None:
+            if coord is None and not social:
                 coord = next((candidate for candidate in free if candidate not in occupied), None)
-            if coord is None or coord in occupied or coord not in tile_by_coord:
+            if not social and (coord is None or coord in occupied or coord not in tile_by_coord):
                 raise StudioResourceError(f"Agent placement is unavailable: {source.agent_key} at {coord}")
-            occupied.add(coord)
-            address = list(tile_by_coord[coord]["address"])
+            if not social:
+                occupied.add(coord)
+                address = list(tile_by_coord[coord]["address"])
             payload = source.model_dump(mode="json", exclude_none=False)
             portrait_id = payload.pop("portrait_asset_id", None)
             sprite_id = payload.pop("sprite_asset_id", None)
-            payload["coord"] = list(coord)
-            payload["spatial"] = {
-                "address": {"initial_location": address},
-                "tree": self._spatial_tree(address),
-            }
+            if social:
+                payload["space_id"] = world["world_key"]
+            else:
+                payload["coord"] = list(coord)
+                payload["spatial"] = {
+                    "address": {"initial_location": address},
+                    "tree": self._spatial_tree(address),
+                }
             payload["portrait_asset"] = self._agent_asset(
                 session, portrait_id, source.agent_key, "portrait", assets
             )

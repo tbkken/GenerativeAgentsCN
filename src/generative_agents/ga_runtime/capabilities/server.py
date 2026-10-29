@@ -68,10 +68,37 @@ class SimulationAPI:
         return reader(object_key)
 
     def descriptors(self) -> list[dict[str, Any]]:
-        return [
+        descriptors = [
             descriptor for descriptor in simulation_interface_catalog()
             if self.memory_stream is not None or not descriptor["name"].startswith("memory-stream-")
         ]
+        social = getattr(self.game, "social", None) is not None
+        for descriptor in descriptors:
+            properties = descriptor["parameters"]["properties"]
+            if descriptor["name"] == "world-perceive":
+                if social:
+                    properties.pop("radius_tiles", None)
+                    descriptor["description"] = ("Read public messages and your own private conversations in this 1D space. "
+                        "The current Step's earlier messages are visible. Read-only: use memory-stream-append explicitly "
+                        "to remember observations. Results respect attention bandwidth; paginate with returned message IDs.")
+                else:
+                    for key in ("message_id", "conversation_id", "after_message_id", "before_message_id", "limit", "participant_offset"):
+                        properties.pop(key, None)
+            elif descriptor["name"] == "world-act" and social:
+                allowed = {"action_type", "message", "visibility", "title", "participant_agent_keys", "conversation_id",
+                           "reply_to_message_id", "quoted_message_id", "start_new_conversation", "end_conversation",
+                           "description", "wait_reason", "expected_until_step", "expected_until_time"}
+                descriptor["parameters"]["properties"] = {key: value for key, value in properties.items() if key in allowed}
+                properties["action_type"]["enum"] = ["SPEAK", "WAIT"]
+                descriptor["description"] = ("Choose one action. SPEAK publishes a public message or forum post/reply; "
+                    "visibility=private and one participant sends a private message. Only a new forum topic needs title. "
+                    "Use real reply/quote IDs; a successful action ends this iteration. WAIT with wait_reason means silence.")
+            elif descriptor["name"] == "world-act":
+                for key in ("visibility", "title", "reply_to_message_id", "quoted_message_id"):
+                    properties.pop(key, None)
+            elif descriptor["name"] == "memory-stream-append" and not social:
+                properties.pop("source_event_id", None)
+        return [item for item in descriptors if not (social and item["name"] == "world-navigate")]
 
     def invoke(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         try:
@@ -101,6 +128,13 @@ class SimulationAPI:
                 payload.setdefault("kind", "event")
                 payload.setdefault("poignancy", 1)
                 payload.setdefault("address", list(self.iteration.address))
+                if payload.get("source_event_id"):
+                    social = getattr(self.game, "social", None)
+                    if social is None:
+                        raise ValueError("source_event_id is not an accessible message fact")
+                    source = social.source(self.memory_owner_key, payload["source_event_id"])
+                    payload["source_message_id"] = source["message_id"]
+                    payload["source_conversation_id"] = source["conversation_id"]
                 value = self.memory_stream.append(**payload)
             elif name == "memory-stream-supersede" and self.memory_stream is not None:
                 value = self.memory_stream.supersede(
@@ -172,6 +206,8 @@ class SimulationAPI:
                 "next_coord_role": "FIRST_PATH_TILE_NOT_DESTINATION"}
 
     def _perceive(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
+        if getattr(self.game, "social", None) is not None:
+            return self.game.social.perceive(self.memory_owner_key, arguments)
         agent = self._observer()
         percept_config = getattr(agent, "percept_config", {}) or {}
         vision_radius = max(0, int(percept_config.get("vision_r", 4)))
@@ -400,6 +436,10 @@ class SimulationAPI:
     def _plan_action(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
         if self._action is not None:
             raise ValueError("world-act already selected an action for this iteration")
+        if getattr(self.game, "social", None) is not None:
+            payload = self.game.social.validate_action(self.memory_owner_key, arguments)
+            self._action = PlannedWorldAction(payload["action_type"], payload)
+            return {"accepted": True, "action_type": payload["action_type"]}
         action_type = str(arguments.get("action_type") or "").strip().upper()
         if action_type not in {
             "MOVE",

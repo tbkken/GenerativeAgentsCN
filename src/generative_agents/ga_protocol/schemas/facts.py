@@ -56,8 +56,8 @@ class AgentStepResult:
     """单个智能体在当前步骤的位置、剩余路径和动作结果。"""
 
     agent_key: str
-    from_coord: tuple[int, int]
-    to_coord: tuple[int, int]
+    from_coord: tuple[int, int] | None
+    to_coord: tuple[int, int] | None
     path: tuple[tuple[int, int], ...]
     action: ActionSnapshot
     activity_kind: ActivityKind
@@ -66,6 +66,13 @@ class AgentStepResult:
     schedule_item_id: str | None = None
     path_source: str = "OBSERVED"
     decision_context: Mapping[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        if self.from_coord is None or self.to_coord is None:
+            if self.from_coord is not None or self.to_coord is not None or self.path or self.location:
+                raise ValueError("non-spatial Agent facts must not contain coordinates, paths or addresses")
+            if self.activity_kind == ActivityKind.MOVING or self.action.movement_activity:
+                raise ValueError("non-spatial Agents cannot move")
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,6 +83,12 @@ class ConversationMessage:
     sequence: int
     speaker_agent_key: str
     content: str
+    reply_to_message_id: UUID | None = None
+    quoted_message_id: UUID | None = None
+    title: str | None = None
+    step_no: int | None = None
+    actor_sequence: int | None = None
+    source_event_id: UUID | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -83,13 +96,24 @@ class ConversationRecord:
     """发生在本步的完整对话及参与者、地点和持续时间。"""
 
     conversation_id: UUID
-    participant_agent_keys: tuple[str, str]
+    participant_agent_keys: tuple[str, ...]
     location: tuple[str, ...]
     messages: tuple[ConversationMessage, ...]
     summary: str | None = None
     ended_reason: str | None = None
     duration_minutes: int | None = None
     duration_source: str = "ESTIMATED"
+    visibility: str = "private"
+    kind: str = "direct"
+    space_id: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.visibility not in {"public", "private"} or self.kind not in {"chat", "forum", "direct"}:
+            raise ValueError("invalid conversation visibility or kind")
+        if self.visibility == "private" and len(set(self.participant_agent_keys)) != 2:
+            raise ValueError("private conversation requires exactly two participants")
+        if self.visibility == "public" and self.kind == "direct":
+            raise ValueError("public conversation cannot be direct")
 
 
 @dataclass(frozen=True, slots=True)
@@ -254,6 +278,30 @@ class StepResult:
         if len(agent_keys) != len(set(agent_keys)):
             raise ValueError("agents must contain at most one result per agent_key")
         self._validate_world_fact_consistency()
+        events = {item.event_id: item for item in self.domain_events}
+        seen_messages = set()
+        for conversation in self.conversations:
+            if conversation.space_id is None:
+                continue
+            if conversation.location:
+                raise ValueError("social conversations cannot contain a spatial address")
+            for message in conversation.messages:
+                if message.message_id in seen_messages or message.step_no != self.step_no:
+                    raise ValueError("social message identity or Step is invalid")
+                seen_messages.add(message.message_id)
+                if not message.content.strip() or message.sequence < 1 or not message.actor_sequence or message.actor_sequence < 1:
+                    raise ValueError("social messages require content and positive execution order")
+                if message.speaker_agent_key not in conversation.participant_agent_keys:
+                    raise ValueError("message speaker is not a conversation participant")
+                source = events.get(message.source_event_id)
+                if source is None or source.event_type != "AGENT_SPOKE":
+                    raise ValueError("social message must reference its committed speech event")
+                payload = source.payload.get("structured_payload") or {}
+                if (payload.get("message_id") != str(message.message_id)
+                        or payload.get("conversation_id") != str(conversation.conversation_id)
+                        or payload.get("content") != message.content
+                        or payload.get("visibility") != conversation.visibility):
+                    raise ValueError("social message disagrees with its committed speech event")
         if not self.effects:
             object.__setattr__(self, "effects", self._project_effects())
 
@@ -267,6 +315,8 @@ class StepResult:
             if len(event.agent_keys) != 1 or event.agent_keys[0] not in agents:
                 raise ValueError("AGENT_MOVED must identify exactly one Agent result")
             agent = agents[event.agent_keys[0]]
+            if agent.from_coord is None or agent.to_coord is None:
+                raise ValueError("non-spatial Agents cannot produce AGENT_MOVED")
             payload = event.payload
             structured = payload.get("structured_payload")
             if not isinstance(structured, Mapping) or not structured:
@@ -440,8 +490,8 @@ class StepResult:
             agents=tuple(
                 AgentStepResult(
                     agent_key=item["agent_key"],
-                    from_coord=tuple(item["from_coord"]),
-                    to_coord=tuple(item["to_coord"]),
+                    from_coord=tuple(item["from_coord"]) if item["from_coord"] is not None else None,
+                    to_coord=tuple(item["to_coord"]) if item["to_coord"] is not None else None,
                     path=tuple(tuple(coord) for coord in item["path"]),
                     action=ActionSnapshot(**item["action"]),
                     activity_kind=ActivityKind(item["activity_kind"]),
@@ -464,6 +514,12 @@ class StepResult:
                             sequence=int(message["sequence"]),
                             speaker_agent_key=message["speaker_agent_key"],
                             content=message["content"],
+                            reply_to_message_id=optional_uuid(message.get("reply_to_message_id")),
+                            quoted_message_id=optional_uuid(message.get("quoted_message_id")),
+                            title=message.get("title"),
+                            step_no=message.get("step_no"),
+                            actor_sequence=message.get("actor_sequence"),
+                            source_event_id=optional_uuid(message.get("source_event_id")),
                         )
                         for message in item.get("messages", ())
                     ),
@@ -471,6 +527,9 @@ class StepResult:
                     ended_reason=item.get("ended_reason"),
                     duration_minutes=item.get("duration_minutes"),
                     duration_source=item.get("duration_source", "ESTIMATED"),
+                    visibility=item.get("visibility", "private"),
+                    kind=item.get("kind", "direct"),
+                    space_id=item.get("space_id"),
                 )
                 for item in value.get("conversations", ())
             ),

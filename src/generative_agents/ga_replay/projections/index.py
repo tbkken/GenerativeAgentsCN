@@ -2,6 +2,8 @@
 from __future__ import annotations
 
 from generative_agents.ga_replay.projections.console import agent_views, definition_names, event_view
+from generative_agents.ga_replay.projections.conversations import merge_conversation
+from generative_agents.ga_replay.projections.memories import memory_metadata
 
 
 def advance_views(facts, previous=None, *, start=0):
@@ -26,26 +28,8 @@ def advance_views(facts, previous=None, *, start=0):
             key = str(raw.get('conversation_id') or '')
             if not key:
                 continue
-            participants = list(raw.get('participant_agent_keys') or [])
-            old = conversations.get(key)
-            item = dict(old) if old else {'conversation_id': key, 'start_step': step, 'started_at': virtual_time,
-                'duration_minutes': 0, 'duration_source': raw.get('duration_source') or 'RECORDED',
-                'location': ' / '.join(str(value) for value in raw.get('location') or []),
-                'participants': participants, 'participant_names': [names.get(str(value), str(value)) for value in participants],
-                'message_count': 0, 'summary': None, 'ended_reason': None, 'messages': []}
-            messages = list(item['messages'])
-            known = {message['message_id'] for message in messages}
-            for message in raw.get('messages') or []:
-                message_id = str(message.get('message_id') or f"{key}:{message.get('sequence')}")
-                if message_id in known:
-                    continue
-                known.add(message_id)
-                speaker = str(message.get('speaker_agent_key') or '')
-                messages.append({**message, 'message_id': message_id, 'speaker_name': names.get(speaker, speaker), 'observed_at': virtual_time})
-            item.update(messages=messages, message_count=len(messages),
-                        duration_minutes=raw.get('duration_minutes') or item['duration_minutes'],
-                        summary=raw.get('summary') or item['summary'], ended_reason=raw.get('ended_reason') or item['ended_reason'])
-            conversations[key] = item
+            conversations[key] = merge_conversation(conversations.get(key), raw,
+                step_no=step, virtual_time=virtual_time, names=names)
         for raw in frame.get('memory_deltas') or []:
             agent, key = str(raw.get('agent_key') or ''), str(raw.get('memory_id') or '')
             if not agent or not key:
@@ -56,6 +40,7 @@ def advance_views(facts, previous=None, *, start=0):
                 'description': raw.get('description'), 'poignancy': raw.get('poignancy'), 'created_step': step,
                 'created_at': raw.get('created_at') or virtual_time, 'last_accessed_step': None, 'removed_step': None,
                 'supersedes_memory_id': raw.get('supersedes_memory_id'), 'superseded_by_memory_id': None, 'invalidated_reason': None}
+            item.update(memory_metadata(raw, item))
             kind = raw.get('kind') or 'CREATED'
             if kind == 'ACCESSED':
                 item['last_accessed_step'] = step
@@ -78,7 +63,8 @@ def advance_views(facts, previous=None, *, start=0):
             item, detail = agents[key], details[key]
             action = dict(raw.get('action') or {})
             activity = raw.get('activity_kind') or 'OTHER'
-            coord = list(raw.get('to_coord') or raw.get('coord') or item['coord'])
+            raw_coord = raw.get('to_coord') or raw.get('coord') or item['coord']
+            coord = list(raw_coord) if raw_coord is not None else None
             address = ' / '.join(str(value) for value in raw.get('location') or raw.get('address') or [])
             view = {'step_no': step, 'virtual_time': virtual_time, 'coord': coord, 'address': address,
                     'action': action.get('description') or '', 'emoji': action.get('emoji'), 'activity_kind': activity,
@@ -93,7 +79,7 @@ def advance_views(facts, previous=None, *, start=0):
                         latest_action=action.get('description') or '', latest_virtual_time=virtual_time,
                         run_status=facts['summary']['status'])
             item['action_count'] += 1
-            item['movement_steps'] += int(list(raw.get('from_coord') or coord) != coord)
+            item['movement_steps'] += int(coord is not None and list(raw.get('from_coord') or coord) != coord)
             item['activity_minutes'][activity] = item['activity_minutes'].get(activity, 0) + stride
         for raw in frame.get('schedule_revisions') or []:
             key = str(raw.get('agent_key') or '')
@@ -115,7 +101,8 @@ def advance_views(facts, previous=None, *, start=0):
         detail['conversations'] = [value for value in conversation_items if key in value['participants']]
         detail['memories'] = [value for value in memory_items if value['agent_key'] == key]
         item['conversation_count'] = len(detail['conversations'])
-        item['message_count'] = sum(value['message_count'] for value in detail['conversations'])
+        item['message_count'] = sum(message.get('speaker_agent_key') == key
+                                    for value in detail['conversations'] for message in value['messages'])
         item['memory_created_count'] = len(detail['memories'])
         item['plan_count'], item['event_count'] = len(detail['plan_revisions']), len(detail['events'])
         detail['content_counts'] = {'plans': item['plan_count'], 'actions': item['action_count'], 'events': item['event_count'],

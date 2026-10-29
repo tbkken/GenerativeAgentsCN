@@ -29,6 +29,8 @@ function setup(agents) {
         id, hidden: false, disabled: false, textContent: '',
         get value() { return value; }, set value(next) { value = String(next); },
         classList: { toggle() {} }, querySelectorAll: () => [],
+        closest: selector => node(`${id}:${selector}`),
+        querySelector: selector => node(`${id}:${selector}`),
         focus() { context.document.activeElement = this; },
       });
     }
@@ -132,4 +134,31 @@ test('sealed Agent shows its size read-only and reopening a draft restores editi
   assert.equal(node('agentEditSpriteDisplayTiles').value, '');
   assert.equal(node('agentEditSpriteDisplayTiles').disabled, false);
   assert.equal(node('saveAgentEditor').hidden, false);
+});
+
+test('a social participant saves without coordinates, spatial memory or walking images', async () => {
+  const {context,node,savedDrafts}=setup([]);
+  context.state.draft.definition.world={world_key:'discussion',definition:{environment_type:'social_1d',presentation:'chat'}};
+  context.openAgentEditor();
+  assert.equal(node('[data-content-tab="space"]').hidden,true);
+  assert.equal(node('agentSpritePreview:.agent-image-card').hidden,true);
+  assert.equal(node('agentEditVisionRadius:.field').hidden,true);
+  node('agentEditName').value='讨论者';
+  context.readSpatialEditor=()=>{throw Error('social participant must not require a spatial form');};
+  await context.saveAgentEditor();
+  const saved=savedDrafts[0].agents[0];
+  assert.equal(saved.space_id,'discussion');
+  assert.equal('coord' in saved,false); assert.equal('spatial' in saved,false);
+  assert.equal(saved.sprite_asset,null); assert.equal(saved.portrait_asset,null);
+});
+
+test('switching from social to spatial restores position and walking-image controls',()=>{
+  const {context,node}=setup([agent('person',2)]);
+  context.state.draft.definition.world={world_key:'discussion',definition:{environment_type:'social_1d'}};
+  context.openAgentEditor('person');
+  assert.equal(node('agentSpritePreview:.agent-image-card').hidden,true);
+  context.state.draft.definition.world={world_key:'town',definition:{environment_type:'spatial_2d'}};
+  context.openAgentEditor('person');
+  assert.equal(node('agentSpritePreview:.agent-image-card').hidden,false);
+  assert.equal(node('[data-content-tab="space"]').hidden,false);
 });

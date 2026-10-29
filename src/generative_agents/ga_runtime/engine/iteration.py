@@ -25,10 +25,15 @@ class IterationContext:
     total_steps: int
     now: datetime
     stride_minutes: int
-    coord: tuple[int, int]
+    coord: tuple[int, int] | None
     address: tuple[str, ...]
     spatial_semantics: tuple[Mapping[str, Any], ...] = ()
     variables: Mapping[str, Any] = field(default_factory=dict)
+    environment_type: str = "spatial_2d"
+    space_id: str | None = None
+    presentation: str | None = None
+    space_description: str = ""
+    space_rules: str = ""
 
     def __post_init__(self) -> None:
         if self.step_no < 1:
@@ -41,13 +46,13 @@ class IterationContext:
             raise ValueError("IterationContext.now must be timezone-aware")
 
     def as_dict(self) -> dict[str, Any]:
-        return {
+        result = {
             "run_id": str(self.run_id),
             "attempt_id": str(self.attempt_id),
             "agent": {
                 "agent_key": self.agent_key,
                 "name": self.agent_name,
-                "coord": list(self.coord),
+                "coord": list(self.coord) if self.coord is not None else None,
                 "address": list(self.address),
             },
             "step": {
@@ -59,6 +64,14 @@ class IterationContext:
             "spatial_semantics": [dict(item) for item in self.spatial_semantics],
             "variables": dict(self.variables),
         }
+        if self.environment_type == "social_1d":
+            result["agent"].pop("coord")
+            result["agent"].pop("address")
+            result.pop("spatial_semantics")
+            result["environment"] = {"environment_type": self.environment_type,
+                                     "space_id": self.space_id, "presentation": self.presentation,
+                                     "description": self.space_description, "rules": self.space_rules}
+        return result
 
 
 @dataclass(frozen=True, slots=True)

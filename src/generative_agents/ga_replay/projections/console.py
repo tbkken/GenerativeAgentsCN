@@ -16,6 +16,8 @@ from generative_agents.ga_protocol.packages.io import checked_package_path
 from generative_agents.ga_protocol.packages.io import iter_package_files
 from generative_agents.ga_protocol.packages.artifacts import read_artifact_provenance
 from generative_agents.ga_protocol.packages.definition import _experiment_definition
+from generative_agents.ga_replay.projections.conversations import merge_conversation
+from generative_agents.ga_replay.projections.memories import memory_metadata
 _render_manifests = OrderedDict()
 _render_manifest_lock = RLock()
 
@@ -78,27 +80,33 @@ def event_view(self_event: dict[str, Any], *, step_no: int, virtual_time: str, n
 
 def conversation_views(facts: dict[str, Any], names: dict[str, str]) -> list[dict[str, Any]]:
     conversations: dict[str, dict[str, Any]] = {}
-    seen_messages: dict[str, set[str]] = {}
     for frame in facts['frames']:
         for raw in frame.get('conversations') or []:
             conversation_id = str(raw.get('conversation_id') or '')
             if not conversation_id:
                 continue
-            participants = list(raw.get('participant_agent_keys') or [])
-            item = conversations.setdefault(conversation_id, {'conversation_id': conversation_id, 'start_step': frame['step_no'], 'started_at': frame['virtual_time'], 'duration_minutes': raw.get('duration_minutes') or 0, 'duration_source': raw.get('duration_source') or 'RECORDED', 'location': ' / '.join((str(value) for value in raw.get('location') or [])), 'participants': participants, 'participant_names': [names.get(str(key), str(key)) for key in participants], 'message_count': 0, 'summary': raw.get('summary'), 'ended_reason': raw.get('ended_reason'), 'messages': []})
-            item['duration_minutes'] = raw.get('duration_minutes') or item['duration_minutes']
-            item['summary'] = raw.get('summary') or item['summary']
-            item['ended_reason'] = raw.get('ended_reason') or item['ended_reason']
-            known = seen_messages.setdefault(conversation_id, set())
-            for message in raw.get('messages') or []:
-                message_id = str(message.get('message_id') or f"{conversation_id}:{message.get('sequence')}")
-                if message_id in known:
-                    continue
-                known.add(message_id)
-                speaker = str(message.get('speaker_agent_key') or '')
-                item['messages'].append({**dict(message), 'message_id': message_id, 'speaker_name': names.get(speaker, speaker), 'observed_at': frame['virtual_time']})
-            item['message_count'] = len(item['messages'])
+            conversations[conversation_id] = merge_conversation(
+                conversations.get(conversation_id), raw, step_no=frame['step_no'],
+                virtual_time=frame['virtual_time'], names=names,
+            )
     return sorted(conversations.values(), key=lambda item: item['start_step'], reverse=True)
+
+
+def social_view(facts: dict[str, Any], step_no: int | None = None) -> dict[str, Any]:
+    """Project exactly the requested committed boundary, including thread lists."""
+    committed = int(facts['summary']['committed_step'])
+    selected = committed if step_no is None else step_no
+    if selected < 0 or selected > committed:
+        raise IndexError('Step is outside the committed Replay boundary')
+    definition = facts['definition']['world']['definition']
+    if definition.get('environment_type', 'spatial_2d') != 'social_1d':
+        raise ValueError('This Run does not use a 1D map')
+    prefix = {**facts, 'frames': [frame for frame in facts['frames'] if frame['step_no'] <= selected]}
+    conversations = (facts['conversations'] if selected == committed and 'conversations' in facts
+                     else conversation_views(prefix, definition_names(facts)))
+    return {'run_id': facts['summary']['run_id'], 'step_no': selected,
+            'source_step': committed, 'environment_type': 'social_1d',
+            'presentation': definition['presentation'], 'conversations': conversations}
 
 def memory_views(facts: dict[str, Any], names: dict[str, str]) -> list[dict[str, Any]]:
     memories: dict[tuple[str, str], dict[str, Any]] = {}
@@ -110,6 +118,7 @@ def memory_views(facts: dict[str, Any], names: dict[str, str]) -> list[dict[str,
             if not agent_key or not memory_id:
                 continue
             item = memories.setdefault((agent_key, memory_id), {'memory_id': memory_id, 'agent_key': agent_key, 'agent_name': names.get(agent_key, agent_key), 'type': raw.get('memory_type') or 'EVENT', 'origin': 'STEP_RESULT', 'state': 'ACTIVE', 'description': raw.get('description'), 'poignancy': raw.get('poignancy'), 'created_step': frame['step_no'], 'created_at': raw.get('created_at') or frame['virtual_time'], 'last_accessed_step': None, 'removed_step': None, 'supersedes_memory_id': raw.get('supersedes_memory_id'), 'superseded_by_memory_id': None, 'invalidated_reason': None})
+            item.update(memory_metadata(raw, item))
             kind = str(raw.get('kind') or 'CREATED')
             if kind == 'ACCESSED':
                 item['last_accessed_step'] = frame['step_no']
@@ -134,7 +143,7 @@ def agent_views(facts: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, 
     conversations = conversation_views(facts, names)
     memories = memory_views(facts, names)
     for key, definition in definitions.items():
-        coord = list(definition.get('coord') or [0, 0])
+        coord = list(definition['coord']) if definition.get('coord') is not None else None
         address_parts = ((definition.get('spatial') or {}).get('address') or {}).get('initial_location') or []
         base = {'agent_key': key, 'display_name': names.get(key, key), 'coord': coord, 'address': ' / '.join((str(value) for value in address_parts)), 'currently': definition.get('initial_currently') or '', 'action_count': 0, 'movement_steps': 0, 'conversation_count': 0, 'message_count': 0, 'memory_created_count': 0, 'activity_minutes': {'REST': 0, 'CHAT': 0, 'MOVING': 0, 'OTHER': 0}, 'updated_step': 0, 'definition': {**definition, **(definition.get('scratch') or {}), 'initial_currently': definition.get('currently') or ''}, 'portrait_url': packaged_asset_url(facts['summary']['run_id'], definition.get('portrait_asset')), 'plan_count': 0, 'event_count': 0, 'latest_activity_kind': 'OTHER', 'latest_action': definition.get('initial_currently') or '', 'latest_virtual_time': None, 'run_status': facts['summary']['status']}
         items[key] = base
@@ -148,7 +157,8 @@ def agent_views(facts: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, 
             item = items[key]
             action = dict(agent.get('action') or {})
             activity = str(agent.get('activity_kind') or 'OTHER')
-            coord = list(agent.get('to_coord') or agent.get('coord') or item['coord'])
+            raw_coord = agent.get('to_coord') or agent.get('coord') or item['coord']
+            coord = list(raw_coord) if raw_coord is not None else None
             address = ' / '.join((str(value) for value in agent.get('location') or agent.get('address') or []))
             step_view = {'step_no': frame['step_no'], 'virtual_time': frame['virtual_time'], 'coord': coord, 'address': address, 'action': action.get('description') or '', 'emoji': action.get('emoji'), 'activity_kind': activity, 'sample_kind': agent.get('path_source') or 'OBSERVED', 'currently': agent.get('currently'), 'decision_context': agent.get('decision_context') or {}}
             detail = details[key]
@@ -158,7 +168,7 @@ def agent_views(facts: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, 
             item['address'] = address
             item['currently'] = agent.get('currently') or action.get('description') or item['currently']
             item['action_count'] += 1
-            if list(agent.get('from_coord') or coord) != coord:
+            if coord is not None and list(agent.get('from_coord') or coord) != coord:
                 item['movement_steps'] += 1
             item['activity_minutes'].setdefault(activity, 0)
             item['activity_minutes'][activity] += stride
@@ -185,7 +195,8 @@ def agent_views(facts: dict[str, Any]) -> tuple[list[dict[str, Any]], dict[str, 
     for key, item in items.items():
         own_conversations = details[key]['conversations']
         item['conversation_count'] = len(own_conversations)
-        item['message_count'] = sum((value['message_count'] for value in own_conversations))
+        item['message_count'] = sum(message.get('speaker_agent_key') == key
+                                    for value in own_conversations for message in value['messages'])
         item['memory_created_count'] = len(details[key]['memories'])
         item['plan_count'] = len(details[key]['plan_revisions'])
         item['event_count'] = len(details[key]['events'])
@@ -237,8 +248,11 @@ def replay_web_manifest(run_id: str, facts: dict[str, Any]) -> dict[str, Any]:
     world = dict(facts['definition']['world'])
     definition = dict(world.get('definition') or {})
     world['definition'] = definition
+    environment_type = definition.get('environment_type', 'spatial_2d')
+    social = environment_type == 'social_1d'
     definition.pop('semantic_index', None)
-    definition['tiles'] = [{key: tile[key] for key in ('coord', 'tile', 'palette_key', 'visual_slice_id', 'visual_slice_part') if key in tile} if isinstance(tile, dict) else tile for tile in definition.get('tiles') or []]
+    if not social:
+        definition['tiles'] = [{key: tile[key] for key in ('coord', 'tile', 'palette_key', 'visual_slice_id', 'visual_slice_part') if key in tile} if isinstance(tile, dict) else tile for tile in definition.get('tiles') or []]
     editor = definition.get('editor') or {}
     editor_v2 = dict(definition.get('editor_v2') or {})
     editor_v2['material_sources'] = [dict(item) if isinstance(item, dict) else item for item in editor_v2.get('material_sources') or []]
@@ -261,12 +275,19 @@ def replay_web_manifest(run_id: str, facts: dict[str, Any]) -> dict[str, Any]:
         bounds = node.get('bounds') or {}
         extensions = node.get('extensions') or {}
         objects.append({'instance_key': str(node.get('id') or 'game-object'), 'x': float(bounds.get('x') or 0), 'y': float(bounds.get('y') or 0), 'appearance': dict(extensions.get('appearance') or {}), 'state': dict(node.get('initial_state') or {})})
-    world['render_asset'] = {'status': 'READY', 'source': 'RUN_PACKAGE', 'renderer': 'SPATIAL_GRID', 'pixels_per_tile': max(8, min(int(definition.get('tile_size') or 16), 64)), 'palette': palette, 'objects': objects}
+    world['render_asset'] = ({'status': 'READY', 'source': 'RUN_PACKAGE',
+                             'renderer': 'SOCIAL_FORUM' if definition['presentation'] == 'forum' else 'SOCIAL_CHAT'}
+                            if social else {'status': 'READY', 'source': 'RUN_PACKAGE', 'renderer': 'SPATIAL_GRID', 'pixels_per_tile': max(8, min(int(definition.get('tile_size') or 16), 64)), 'palette': palette, 'objects': objects})
     agents = []
     for item in facts['definitions']:
         if not item.get('enabled', True):
             continue
         key = str(item.get('agent_key') or '')
+        if social:
+            agents.append({'agent_key': key, 'display_name': item.get('name') or item.get('display_name') or key,
+                           'portrait_url': packaged_asset_url(run_id, item.get('portrait_asset')),
+                           'space_id': item.get('space_id') or world['world_key']})
+            continue
         sprite_path = item.get('sprite_asset')
         sprite_url = packaged_asset_url(run_id, sprite_path)
         sprite = {'status': 'READY', 'source': 'RUN_PACKAGE', 'texture_url': sprite_url, 'atlas_url': f"/static/console/replay/assets/agent-sprite-{item.get('sprite_layout') or '4x4'}.json", 'layout': item.get('sprite_layout') or '4x4'} if sprite_url else {'status': 'MISSING', 'source': 'NONE', 'error_code': 'AGENT_SPRITE_ASSET_UNRESOLVED'}
@@ -274,6 +295,8 @@ def replay_web_manifest(run_id: str, facts: dict[str, Any]) -> dict[str, Any]:
         agents.append({'agent_key': key, 'display_name': item.get('name') or item.get('display_name') or key, 'initial_coord': list(item.get('coord') or [0, 0]), 'sprite_asset': sprite, 'sprite_display_tiles': item.get('sprite_display_tiles'), 'role': 'PEDESTRIAN' if any(('pedestrian' in value or '行人' in value for value in tags)) else None})
     summary = facts['summary']
     result = {'schema_version': 2, 'generator_version': 'ga-replay-package-v1', 'source_kind': 'RUN_FRAMES', 'run_id': run_id, 'experiment_id': summary['experiment_id'], 'definition_hash': '', 'world': world, 'source_step': summary['committed_step'], 'available_step': summary['committed_step'], 'stride_minutes': int(facts['definition']['simulation'].get('stride_minutes') or 1), 'execution_mode': 'SKILL_BRAIN', 'brain_skill': facts['definition']['engine'].get('brain_skill') or '', 'step_interval_ms': None, 'start_time': facts['definition']['simulation'].get('start_time'), 'requested_steps': summary['requested_steps'], 'timezone': facts['definition'].get('experiment', {}).get('timezone') or 'Asia/Shanghai', 'agents': agents, 'partial': summary['status'] != 'COMPLETED'}
+    result.update(environment_type=environment_type, presentation=definition.get('presentation'),
+                  renderer=world['render_asset']['renderer'])
     with _render_manifest_lock:
         _render_manifests[run_id] = (facts['definition'], result)
         while len(_render_manifests) > 4:

@@ -13,9 +13,30 @@ from generative_agents.ga_protocol.packages.io import iter_package_files
 from generative_agents.ga_replay.api import definition_names, event_view, conversation_views, memory_views, agent_views, checkpoint_documents
 from generative_agents.ga_replay.api import read_slice, result_index, read_metadata, artifact_page, trace_page, trace_record
 from generative_agents.ga_replay.api import execution_observation
+from generative_agents.ga_replay.api import social_view
+from generative_agents.ga_runtime.api import read_runtime_preview
 from generative_agents.ga_protocol.packages.reading import open_readonly_package
 
 def install_routes(router, ctx):
+
+    @router.get('/runs/{run_id}/runtime-preview')
+    def runtime_preview(run_id: str, response: Response):
+        response.headers['Cache-Control'] = 'no-store'
+        location = ctx.run_location(run_id)
+        preview = read_runtime_preview(location)
+        if preview is not None:
+            return {**preview, 'status': 'RUNNING', 'active': True}
+        summary, status = read_metadata(location, attempts=False)
+        return {'run_id': run_id, 'attempt_id': status.active_attempt_id,
+                'committed_step': summary['committed_step'], 'status': summary['status'],
+                'active': False, 'uncommitted': False, 'conversations': []}
+
+    @router.get('/runs/{run_id}/results/social')
+    def result_social(run_id: str, step_no: int | None=Query(default=None, ge=0)):
+        try:
+            return social_view(result_index(ctx.run_location(run_id)), step_no)
+        except (IndexError, ValueError) as exc:
+            raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     @router.get('/runs/{run_id}/execution')
     def run_execution(run_id: str, attempt_id: str | None=None, step_no: int | None=Query(default=None, ge=1),

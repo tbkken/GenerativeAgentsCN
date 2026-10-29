@@ -102,6 +102,15 @@
     get changed() { return this._changed; }
     get changeRevision() { return this._changeRevision; }
 
+    destroy() {
+      this.resizeObserver?.disconnect();
+      this.skillCatalogController?.abort();
+      this.skillCatalogGeneration += 1;
+      clearTimeout(this.brushCloseTimer);
+      this._changed = false;
+      this.root.replaceChildren();
+    }
+
     set changed(value) {
       const next = Boolean(value);
       this._changed = next;

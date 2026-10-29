@@ -322,7 +322,8 @@ def validate_experiment_directory(root: Path, *, verify_hashes: bool = True) -> 
         if decision_roots:
             raise PackageError("对象根 Skill 必须使用生成式模型，再调用决策子 Skill：" + ", ".join(sorted(decision_roots)))
         semantic = world.get("definition", {}).get("semantic_index")
-        _validate_world_and_agents(world, {"agents": definition["agents"]}, semantic)
+        if world.get("definition", {}).get("environment_type", "spatial_2d") == "spatial_2d":
+            _validate_world_and_agents(world, {"agents": definition["agents"]}, semantic)
         agent_keys = {agent["agent_key"] for agent in definition["agents"]}
         for crowd in definition["crowds"]:
             if set(crowd["agent_keys"]) - agent_keys:

@@ -16,12 +16,18 @@ class ActorState:
         self._current_step_no = None
         self._result_events = []
         self.percept_config = copy.deepcopy(config['percept'])
-        self.spatial = Spatial(**copy.deepcopy(config['spatial']), random_source=random_source)
+        self.spatial = (Spatial(**copy.deepcopy(config['spatial']), random_source=random_source)
+                        if maze is not None else None)
+        self.space_id = config.get('space_id')
         self.profile = ActorProfile(copy.deepcopy(config['scratch']), config.get('currently', ''))
         self.status = copy.deepcopy(config.get('status', {}))
         self.plan = copy.deepcopy(config.get('plan', {}))
         self.chats = copy.deepcopy(config.get('chats', []))
         self.coord, self.path = None, []
+        if maze is None:
+            self.action = (Action.from_dict(config['action'], clock=clock) if 'action' in config else
+                           Action(Event(self.name), None, clock=clock))
+            return
         initial_coord = tuple(config['coord'])
         if 'action' in config:
             self.action = Action.from_dict(config['action'], clock=clock)
@@ -33,7 +39,7 @@ class ActorState:
 
     def abstract(self):
         return {'name': self.name, 'currently': self.profile.currently,
-                'tile': self.get_tile().abstract(), 'status': self.status,
+                'tile': self.get_tile().abstract() if self.maze is not None else None, 'status': self.status,
                 'chats': self.chats, 'action': self.action.abstract()}
 
     def __str__(self):
@@ -49,7 +55,7 @@ class ActorState:
         return events
 
     def get_tile(self):
-        return self.maze.tile_at(self.coord)
+        return self.maze.tile_at(self.coord) if self.maze is not None else None
 
     def get_event(self, as_act=True):
         return self.action.event if as_act else self.action.obj_event
