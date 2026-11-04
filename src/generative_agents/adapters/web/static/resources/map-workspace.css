@@ -44,6 +44,10 @@
 
 .map-catalog-toolbar .search { max-width: 440px; width: 100%; }
 .map-catalog-toolbar .filter-tabs { flex: 0 0 auto; }
+.simworld-directory {display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 0}
+.simworld-directory label {font-weight:600}
+.simworld-directory select {flex:1 1 200px;max-width:440px;min-width:0}
+.simworld-directory small {flex-basis:100%;color:var(--muted)}
 
 .map-catalog-grid {
   display: grid;
@@ -830,3 +834,67 @@ body.map-editor-mode .me2-layout {
 .social-map-editor textarea {min-height: 110px; resize: vertical;}
 .social-map-example {padding: 20px; border: 1px solid #dce7e0; border-radius: 12px; background: #f5f9f6;}
 [data-map-create-social][hidden],[data-map-create-spatial][hidden] {display:none !important;}
+.scene-viewer {display:grid; gap:14px; width:100%; min-width:0}
+.scene-viewer header,.scene-controls {display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px}
+.scene-viewer header p {margin:4px 0; color:#51675e}
+.scene-connection {padding:5px 10px; border-radius:5px; background:#e8f1ec; color:#244d40; font-size:13px}
+.scene-controls {justify-content:flex-start}
+.scene-controls span {font-size:13px; color:#53665c}
+.scene-stage {position:relative; overflow:hidden; aspect-ratio:16/9; max-height:75vh; border-radius:8px; background:#19251f; cursor:crosshair; touch-action:none}
+.scene-stage:focus-visible {outline:3px solid #478673}
+.scene-stage img {position:absolute; inset:0; width:100%; height:100%; object-fit:contain}
+.scene-stage[hidden],.scene-controls[hidden],.scene-stage img[hidden] {display:none}
+
+/* A visible 3D map viewer replaces the author canvas in either workspace. */
+.map-editor-layout:has(.scene-viewer) {display:block; min-height:0; border:0; border-radius:0}
+.main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) {display:flex; flex-direction:column; height:100dvh; min-height:0}
+.main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) > :is(.topbar,.experiment-scope-notice),
+.main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) #resourceTabs {display:none}
+.main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) > .content {
+  flex:1; min-height:0; width:100%; max-width:none; margin:0; padding:0; overflow:auto;
+}
+#publicMapEditor:has(.scene-viewer-live),#publicMapEditor:has(.scene-viewer-live) > div {height:100%; min-width:0; min-height:0}
+.scene-viewer-live {
+  container-type:size; display:flex; flex-direction:column; justify-content:center; align-items:stretch;
+  gap:4px; height:100%; min-height:0; background:#17211e;
+}
+.scene-surface {display:flex; justify-content:center; flex:none; min-width:0; min-height:0}
+.scene-surface .scene-stage {
+  aspect-ratio:var(--scene-aspect,1.777778);
+  width:min(100cqw,calc((100cqh - var(--scene-controls-height,44px) - 4px) * var(--scene-aspect,1.777778)));
+  height:auto; min-height:0; max-height:none; max-width:100%; border-radius:0;
+}
+.scene-feedback {position:absolute; inset:auto 12px 12px; display:flex; align-items:center; gap:10px; width:fit-content; max-width:calc(100% - 24px);
+  padding:7px 12px; background:rgba(17,35,28,.9); color:white; border-radius:6px; font-size:13px}
+.scene-viewer-live .scene-controls {display:flex; flex:none; flex-wrap:wrap; gap:7px 14px; align-items:center; justify-content:flex-start; padding:6px 10px}
+.scene-views, .scene-utilities {display:flex; align-items:center; gap:6px; flex-wrap:wrap}
+.scene-views {max-height:20vh; overflow:auto; padding:2px}
+.scene-utilities {margin-inline-start:auto}
+.scene-controls .scene-view-label {color:#d4e2da; font-size:12px; font-weight:600}
+.scene-controls button,.scene-utilities summary,.scene-feedback button {font:inherit; font-size:13px; line-height:1.3; color:#254638;
+  border:1px solid #bfd2c7; border-radius:5px; background:white; padding:6px 9px; cursor:pointer}
+.scene-controls button[aria-pressed="true"] {color:white; background:#236450; border-color:#236450}
+.scene-controls button[aria-busy="true"] {outline:2px dotted #619482; outline-offset:1px}
+.scene-controls button:disabled {cursor:default; opacity:.55}
+.scene-utilities details {position:relative}
+.scene-utilities details p {position:absolute; inset:auto 0 100% auto; z-index:2; width:min(300px,70vw); background:white;
+  box-shadow:0 4px 18px #162c2a30; border:1px solid #c7d5cd; border-radius:6px; padding:10px; margin:0 0 6px; font-size:13px}
+.scene-feedback[hidden],.scene-viewer-live [hidden]{display:none!important}
+.scene-viewer-live:fullscreen {background:#17221d; height:100%; width:100%; padding:8px}
+.scene-viewer-live:fullscreen .scene-view-label {color:#d2e1d6}
+@media(max-width:620px) {
+  body.map-editor-mode:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) {overflow:auto}
+  body:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) .sidebar {min-height:0; height:auto}
+  .main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer),.main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) > .content,
+  #page-maps:has(.scene-viewer-live),#mapEditorShell:has(.scene-viewer-live),#publicMapEditor:has(.scene-viewer-live),
+  #publicMapEditor:has(.scene-viewer-live) > div {height:auto; overflow:visible}
+  .main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) > .content {padding:0}
+  .scene-viewer-live:not(:fullscreen) {height:auto; container-type:normal}
+  .scene-viewer-live:not(:fullscreen) .scene-stage {width:100%}
+}
+
+.scene-navigation:empty {display:none}
+.scene-unavailable {align-content:center; justify-items:start; gap:12px; padding:clamp(16px,4vw,46px); color:#263d32}
+.scene-unavailable strong {font-size:clamp(18px,3vw,26px)}
+.scene-unavailable p {font-size:14px; color:#4e6256; margin:8px 0 14px}
+.scene-unavailable .scene-stage {max-width:640px; width:100%; cursor:default}

@@ -26,13 +26,59 @@ def center(tmp_path):
     registry.create(name='test-social', description='讨论项目进度')
     app = FastAPI()
     app.include_router(create_resource_router(database, registry))
-    app.include_router(create_model_service_router(database, tmp_path))
+    app.include_router(create_model_service_router(database, tmp_path, model_urls={}))
     with TestClient(app) as client:
         yield client, HostModelCredentials(database, tmp_path), tmp_path
     database.close()
 
 
 URL = '/api/studio/resources/model-services'
+
+
+def test_host_suggestions_follow_config_but_saved_models_survive_restart(tmp_path, monkeypatch):
+    from generative_agents.adapters.web.app import create_studio_app
+
+    db_url = f"sqlite:///{(tmp_path / 'studio.db').as_posix()}"
+
+    def start(name, urls):
+        config = tmp_path / f'{name}.toml'
+        config.write_text('[models]\n' + ''.join(f'{key} = "{value}"\n' for key, value in urls.items()),
+                          encoding='utf-8')
+        monkeypatch.setenv('GA_SERVICES_CONFIG', str(config))
+        return TestClient(create_studio_app(database_url=db_url, var_dir=tmp_path))
+
+    original = {kind: f'https://first.example/{kind}/v1' for kind in ('chat', 'embedding', 'decision')}
+    with start('first-host', original) as client:
+        listing = client.get(URL).json()
+        assert listing['suggested_urls'] == original
+        seeded, = listing['items']
+        detail_url = f"{URL}/{seeded['id']}"
+        detail = client.get(detail_url).json()
+        assert {kind: cfg['base_url'] for kind, cfg in detail['config'].items()} == {
+            'chat': original['chat'], 'embedding': original['embedding']}
+        body = dict(name=detail['name'], model='custom-chat', purpose='chat',
+                    base_url='https://custom.example/provider/v4', row_version=detail['row_version'])
+        saved = client.put(detail_url, json=body)
+        assert saved.status_code == 200, saved.text
+        saved_detail = client.get(detail_url).json()
+        decision = client.post(URL, json=dict(name='Remote Laya', model='laya', purpose='decision',
+                                              base_url='https://custom.example/v8/systemone'))
+        assert decision.status_code == 201, decision.text
+        decision_url = f"{URL}/{decision.json()['id']}"
+        saved_decision = client.get(decision_url).json()
+
+    changed = {kind: f'https://second.example/{kind}/v2' for kind in original}
+    with start('second-host', changed) as client:
+        listing = client.get(URL).json()
+        assert listing['suggested_urls'] == changed
+        assert {model['id'] for model in listing['items']} == {seeded['id'], saved_decision['id']}
+        assert client.get(detail_url).json() == saved_detail
+        assert client.get(decision_url).json() == saved_decision
+        for item in listing['items']:
+            assert client.post(f"/api/studio/resources/model-presets/{item['id']}/archive").is_success
+
+    with start('archived-library', changed) as client:
+        assert client.get(URL).json()['items'] == []
 
 
 def create(client, purpose='chat', key='secret-test-123'):

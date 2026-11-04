@@ -9,11 +9,11 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from uuid import UUID, uuid4
 
-from filelock import FileLock
-
 from generative_agents.ga_protocol.schemas.manifests import AttemptRecord
 from generative_agents.ga_protocol.schemas.manifests import AttemptState
 from generative_agents.ga_protocol.packages.io import PackageError
+from generative_agents.ga_protocol.packages.io import checked_package_path
+from generative_agents.ga_protocol.schemas.manifests import RunManifest
 from generative_agents.ga_protocol.schemas.manifests import RunState
 from generative_agents.ga_protocol.schemas.manifests import RunStatus
 from generative_agents.ga_protocol.packages.io import atomic_write_json
@@ -24,6 +24,7 @@ from generative_agents.ga_protocol.schemas.engine import get_algorithm_profile
 from generative_agents.ga_runtime.skills.brain import BrainRuntime
 from generative_agents.ga_runtime.skills.objects import ObjectSkillRuntime
 from generative_agents.ga_runtime.storage.checkpoints import CheckpointBundleWriter
+from generative_agents.ga_runtime.capabilities.simworld import SimWorldRun, SceneUnavailable
 from generative_agents.ga_runtime.storage.checkpoints import CheckpointSnapshot
 from generative_agents.ga_runtime.engine.context import RunPaths
 from generative_agents.ga_runtime.engine.context import RecoveryPaths
@@ -39,6 +40,7 @@ from generative_agents.ga_runtime.lifecycle.control import FileRunControl
 from generative_agents.ga_runtime.memory.stream import FileMemoryStream
 from generative_agents.ga_runtime.lifecycle.package import LoadedExperiment
 from generative_agents.ga_runtime.lifecycle.package import load_experiment_directory
+from generative_agents.ga_runtime.storage.preview import clear_runtime_preview
 
 
 class RuntimeModelRegistry:
@@ -122,7 +124,7 @@ def _read_checkpoint(paths: RunPaths, committed_step: int):
     return checkpoint.path, state, conversation
 
 
-def _quarantine_uncommitted(paths: RunPaths, boundary: int) -> None:
+def _quarantine_uncommitted(paths: RunPaths, boundary: int, checkpoint: Path | None) -> None:
     """Preserve failed commit outputs outside the new Attempt's writable paths."""
     batch = paths.orphaned / f'recovery-{uuid4()}'
     for directory, pattern in ((paths.frames, 'step-*.json.gz'), (paths.root / 'commits', 'step-*.json'), (paths.checkpoints, 'step-*'), (paths.root / 'recovery', 'step-*')):
@@ -130,17 +132,18 @@ def _quarantine_uncommitted(paths: RunPaths, boundary: int) -> None:
             step = candidate.name.removeprefix('step-').removesuffix('.json.gz').removesuffix('.json')
             if not step.isdigit() or int(step) <= boundary:
                 continue
-            if candidate.is_symlink() or candidate.resolve().parent != directory.resolve():
+            if checked_package_path(candidate).parent != directory.resolve():
                 raise PackageError('unsafe uncommitted Run output path')
-            destination = batch / directory.name / candidate.name
-            destination.resolve().relative_to(paths.orphaned.resolve())
+            destination = checked_package_path(batch / directory.name / candidate.name)
+            destination.relative_to(paths.orphaned)
             destination.parent.mkdir(parents=True, exist_ok=True)
             candidate.replace(destination)
-    if boundary > 0:
-        for selected in (paths, RecoveryPaths(paths.root, paths.run_id)):
-            if (selected.checkpoints / f'step-{boundary:06d}').is_dir():
-                reader = CheckpointBundleWriter(selected, lambda _result: CheckpointSnapshot(state={}, conversation={}))
-                reader.select_for_recovery(boundary, orphan_root=batch / selected.checkpoints.name)
+    if checkpoint is not None:
+        # The exact boundary may have one valid copy and one damaged copy.
+        # Update the pointer of the validated source without touching the other.
+        selected = paths if checkpoint.parent == paths.checkpoints else RecoveryPaths(paths.root, paths.run_id)
+        reader = CheckpointBundleWriter(selected, lambda _result: CheckpointSnapshot(state={}, conversation={}))
+        reader.select_for_recovery(boundary, orphan_root=batch / selected.checkpoints.name)
 
 
 def _restore_storage(checkpoint: Path | None, attempt_root: Path) -> tuple[Path, Path]:
@@ -163,26 +166,95 @@ def _attempt_files(run_root: Path) -> list[Path]:
     return sorted(attempts.glob("*/attempt.json")) if attempts.is_dir() else []
 
 
-def execute_run_directory(run_root: str | Path) -> RunStatus:
+def _close_unfinished_attempts(run_root: Path, status: RunStatus, reason: str) -> AttemptRecord | None:
+    """The worker lock proves no Attempt in this directory is still writing."""
+    latest_attempt = None
+    published_outcome = None
+    now = datetime.now(UTC)
+    for path in _attempt_files(run_root):
+        attempt = AttemptRecord.model_validate(read_json(path))
+        if attempt.run_id != status.run_id or path.parent.name != attempt.attempt_id:
+            raise PackageError(f"Attempt identity disagrees with its Run: {path}")
+        if status.status in {RunState.CREATED, RunState.QUEUED} and (
+            latest_attempt is None or attempt.ordinal > latest_attempt.ordinal
+        ):
+            # attempt.json is published before status.active_attempt_id at startup.
+            latest_attempt = attempt
+        active = attempt.attempt_id == status.active_attempt_id
+        if attempt.status != AttemptState.RUNNING:
+            if active:
+                published_outcome = attempt
+            continue
+        if active and status.status in {RunState.COMPLETED, RunState.CANCELLED, RunState.PAUSED}:
+            # Run status may have been published immediately before the process died.
+            attempt.status = AttemptState(status.status.value)
+        else:
+            attempt.status = AttemptState.FAILED
+            attempt.failure = reason
+        attempt.finished_at = now
+        atomic_write_json(path, attempt.model_dump(mode="json"))
+    if latest_attempt is not None:
+        status.active_attempt_id = latest_attempt.attempt_id
+    return published_outcome
+
+
+def settle_interrupted_run_locked(run_root: Path, reason: str) -> RunStatus:
+    """Reconcile a vanished worker under worker.lock, without executing any Step."""
+    status_path = run_root / "status.json"
+    manifest = RunManifest.model_validate(read_json(run_root / "run.json"))
+    status = RunStatus.model_validate(read_json(status_path))
+    if status.run_id != manifest.run_id:
+        raise PackageError("Run status belongs to another Run")
+    active = (status.status in {RunState.QUEUED, RunState.RUNNING, RunState.FINALIZING}
+              or (status.status == RunState.CREATED and bool(_attempt_files(run_root))))
+    invalid_boundary = False
+    if active:
+        try:
+            validate_run_directory(run_root)
+        except (OSError, ValueError, KeyError, TypeError) as exc:
+            reason = f"{reason}；Step {status.committed_step} 恢复校验失败：{exc}"
+            invalid_boundary = True
+    try:
+        outcome = _close_unfinished_attempts(run_root, status, reason if active else status.reason or reason)
+    except (OSError, ValueError) as exc:
+        if not active:
+            raise
+        reason = f"{reason}；Attempt 记录校验失败：{exc}"
+        outcome = None
+    if active:
+        previous_state = status.status
+        status.status = RunState.FAILED
+        status.reason = reason
+        # An active worker may have closed its Attempt immediately before dying.
+        # In QUEUED, the pointer may still identify the *previous* Attempt.
+        if (not invalid_boundary and previous_state in {RunState.RUNNING, RunState.FINALIZING}
+                and outcome and outcome.status in {AttemptState.PAUSED, AttemptState.CANCELLED, AttemptState.FAILED}):
+            status.status = RunState(outcome.status.value)
+            status.reason = outcome.failure or reason
+        status.updated_at = datetime.now(UTC)
+        atomic_write_json(status_path, status.model_dump(mode="json"))
+    clear_runtime_preview(run_root)
+    return status
+
+
+def execute_run_directory(run_root: str | Path, *, launch_token: str | None = None) -> RunStatus:
     """Start or resume a Run at its latest complete checkpoint."""
 
-    run_root = Path(run_root).resolve()
-    manifest = validate_run_directory(run_root)
-    paths = RunPaths(root=run_root, run_id=UUID(manifest.run_id))
-    paths.ensure()
-    with FileLock(str(run_root / "worker.lock"), timeout=0):
-        from generative_agents.ga_runtime.storage.preview import clear_runtime_preview
-        clear_runtime_preview(run_root)
+    from generative_agents.ga_runtime.supervision.ownership import worker_execution
+    run_root = checked_package_path(Path(run_root))
+    with worker_execution(run_root, launch_token=launch_token):
+        manifest = validate_run_directory(run_root)
+        paths = RunPaths(root=run_root, run_id=UUID(manifest.run_id))
+        paths.ensure()
         status_path = run_root / "status.json"
         status = RunStatus.model_validate(read_json(status_path))
-        if status.run_id != manifest.run_id:
-            raise PackageError("Run status belongs to another Run")
+        clear_runtime_preview(run_root)
+        _close_unfinished_attempts(run_root, status, status.reason or "上一仿真进程已退出")
         if status.status == RunState.COMPLETED:
             raise PackageError("a completed Run must be rerun, not resumed")
-        if status.committed_step >= manifest.requested_steps:
-            status.status = RunState.COMPLETED
-            atomic_write_json(status_path, status.model_dump(mode="json"))
-            return status
+        if status.committed_step == manifest.requested_steps:
+            experiment = load_experiment_directory(run_root / manifest.experiment.path)
+            return _finalize_run(paths, status, experiment.definition.engine.brain_skill)
 
         control = FileRunControl(run_root)
         # QUEUED controls were reset by the explicit submit operation. Never
@@ -206,8 +278,24 @@ def execute_run_directory(run_root: str | Path) -> RunStatus:
             status.updated_at = datetime.now(UTC)
             atomic_write_json(status_path, status.model_dump(mode="json"))
             return status
-        _quarantine_uncommitted(paths, status.committed_step)
+        _quarantine_uncommitted(paths, status.committed_step, checkpoint)
         attempt_id = uuid4()
+        scene = None
+        world = experiment.definition.world.definition
+        if world.get("environment_type") == "spatial_3d":
+            scene = SimWorldRun(manifest.run_id, world["simworld_scene_id"], control=control)
+            try:
+                scene.open(experiment.definition, checkpoint_state, status.committed_step, attempt_id,
+                           require_existing=(status.active_attempt_id is not None or status.committed_step > 0
+                                             or (run_root / "simworld-pending-step.json").is_file()),
+                           origin_run_id=manifest.lineage.origin_run_id)
+            except (SceneUnavailable, ModelCallCancelled) as exc:
+                # Repeated offline resume requests do not create zero-progress Attempts.
+                status.status = RunState.CANCELLED if control.cancel_requested else RunState.PAUSED
+                status.reason = str(exc)
+                status.updated_at = datetime.now(UTC)
+                atomic_write_json(status_path, status.model_dump(mode="json"))
+                return status
         attempt_no = len(_attempt_files(run_root)) + 1
         attempt_root = run_root / "attempts" / str(attempt_id)
         attempt_root.mkdir(parents=True, exist_ok=False)
@@ -250,14 +338,26 @@ def execute_run_directory(run_root: str | Path) -> RunStatus:
                 logger=logger,
                 status=status,
                 status_path=status_path,
+                scene=scene,
             )
+            if status.status == RunState.FINALIZING:
+                return _finalize_run(paths, status, experiment.definition.engine.brain_skill, attempt)
             attempt.status = {
-                RunState.COMPLETED: AttemptState.COMPLETED,
                 RunState.PAUSED: AttemptState.PAUSED,
                 RunState.CANCELLED: AttemptState.CANCELLED,
             }.get(status.status, AttemptState.PAUSED)
             attempt.finished_at = datetime.now(UTC)
             atomic_write_json(attempt_path, attempt.model_dump(mode="json"))
+            return status
+        except SceneUnavailable as exc:
+            status = RunStatus.model_validate(read_json(status_path))
+            status.status = RunState.CANCELLED if control.cancel_requested else RunState.PAUSED
+            attempt.status = AttemptState.CANCELLED if control.cancel_requested else AttemptState.PAUSED
+            status.reason = str(exc)
+            status.updated_at = attempt.finished_at = datetime.now(UTC)
+            atomic_write_json(attempt_path, attempt.model_dump(mode="json"))
+            atomic_write_json(status_path, status.model_dump(mode="json"))
+            _write_quality_report(paths, status, experiment.definition.engine.brain_skill)
             return status
         except ModelCallCancelled:
             # Model discovery and other Attempt preparation can be cancelled
@@ -275,14 +375,19 @@ def execute_run_directory(run_root: str | Path) -> RunStatus:
         except Exception as exc:
             # Committer updates the status file each Step; the outer object is stale.
             status = RunStatus.model_validate(read_json(status_path))
-            attempt.status = AttemptState.FAILED
-            attempt.failure = str(exc) or exc.__class__.__name__
-            attempt.finished_at = datetime.now(UTC)
+            failure = str(exc) or exc.__class__.__name__
+            if status.status == RunState.FAILED and status.reason:
+                failure = status.reason
+            attempt = AttemptRecord.model_validate(read_json(attempt_path))
+            if attempt.status == AttemptState.RUNNING:
+                attempt.status = AttemptState.FAILED
+                attempt.failure = failure
+                attempt.finished_at = datetime.now(UTC)
+                atomic_write_json(attempt_path, attempt.model_dump(mode="json"))
             status.status = RunState.FAILED
-            status.reason = attempt.failure
+            status.reason = failure
             status.active_attempt_id = str(attempt_id)
             status.updated_at = datetime.now(UTC)
-            atomic_write_json(attempt_path, attempt.model_dump(mode="json"))
             atomic_write_json(status_path, status.model_dump(mode="json"))
             raise
 
@@ -303,6 +408,7 @@ def _execute_attempt(
     logger,
     status: RunStatus,
     status_path: Path,
+    scene=None,
 ) -> RunStatus:
     definition = experiment.definition
     agent_storage, memory_storage = _restore_storage(checkpoint, attempt_root)
@@ -384,10 +490,12 @@ def _execute_attempt(
     runner = build_runner(
         context,
         definition,
+        experiment_root=experiment.root,
         embedding_api_key=experiment.embedding_api_key,
         checkpoint_state=checkpoint_state,
         checkpoint_conversation=checkpoint_conversation,
         storage_root=agent_storage,
+        scene=scene,
     )
     runner.completed_steps = status.committed_step
     runner.committer = _StatusCommitter(runner.committer, status_path, manifest.requested_steps)
@@ -404,42 +512,81 @@ def _execute_attempt(
     status.updated_at = datetime.now(UTC)
     if completed >= manifest.requested_steps:
         status.status = RunState.FINALIZING
-        status.reason = "all Steps committed; building final quality artifacts"
-    elif control.cancel_requested:
+        return status
+    if control.cancel_requested:
         status.status = RunState.CANCELLED
         status.reason = "cancel requested; uncommitted Step discarded"
     else:
         status.status = RunState.PAUSED
         status.reason = "pause requested at a complete Step boundary"
     atomic_write_json(status_path, status.model_dump(mode="json"))
+    _write_quality_report(paths, status, definition.engine.brain_skill)
+    return status
+
+
+def _finalize_run(paths: RunPaths, status: RunStatus, brain_skill: str,
+                  attempt: AttemptRecord | None = None) -> RunStatus:
+    """Complete only the remaining file commits; no model or simulation is started."""
+    status_path = paths.root / "status.json"
+    status.status = RunState.FINALIZING
+    status.reason = "所有 Step 已提交，正在生成质量报告"
+    status.updated_at = datetime.now(UTC)
+    atomic_write_json(status_path, status.model_dump(mode="json"))
+    try:
+        _write_quality_report(paths, status, brain_skill)
+        if attempt is not None:
+            attempt.status = AttemptState.COMPLETED
+            attempt.finished_at = datetime.now(UTC)
+            atomic_write_json(paths.root / "attempts" / attempt.attempt_id / "attempt.json",
+                              attempt.model_dump(mode="json"))
+        status.status = RunState.COMPLETED
+        status.reason = None
+        status.updated_at = datetime.now(UTC)
+        atomic_write_json(status_path, status.model_dump(mode="json"))
+    except Exception as exc:
+        status.status = RunState.FAILED
+        status.reason = f"Step {status.committed_step} 已提交，运行收尾失败：{exc}"
+        status.updated_at = datetime.now(UTC)
+        atomic_write_json(status_path, status.model_dump(mode="json"))
+        raise
+    return status
+
+
+def _write_quality_report(paths: RunPaths, status: RunStatus, brain_skill: str) -> None:
+    path = checked_package_path(paths.artifacts / "quality-report.json")
+    evaluated_at = status.updated_at.isoformat()
+    if path.is_file():
+        # A crash may have published the report before publishing COMPLETED.
+        # Rebuild from committed facts, preserving its original evaluation time.
+        try:
+            previous = read_json(path)
+        except PackageError:
+            previous = None
+        if (isinstance(previous, dict) and previous.get("source_run_id") == status.run_id
+                and previous.get("source_committed_step") == status.committed_step
+                and isinstance(previous.get("evaluated_at"), str)):
+            evaluated_at = previous["evaluated_at"]
     try:
         # Deterministic diagnostics are part of Runtime. Optional model-based
         # evaluators belong to an explicit experiment evaluation configuration
         # and must not silently add another model call after execution.
         quality = project_run_quality(
             paths.root,
-            run_id=manifest.run_id,
+            run_id=status.run_id,
             committed_step=status.committed_step,
-            brain_skill=definition.engine.brain_skill,
-            evaluated_at=status.updated_at.isoformat(),
+            brain_skill=brain_skill,
+            evaluated_at=evaluated_at,
         )
-        atomic_write_json(run_root_artifact(paths, "quality-report.json"), quality)
     except Exception as exc:
         # Execution outcome and quality evaluation are independent dimensions.
-        atomic_write_json(
-            run_root_artifact(paths, "quality-report.json"),
-            {
-                "quality_status": "UNAVAILABLE",
-                "issues": [],
-                "evaluation_error": str(exc) or exc.__class__.__name__,
-            },
-        )
-    if status.status == RunState.FINALIZING:
-        status.status = RunState.COMPLETED
-        status.reason = None
-        status.updated_at = datetime.now(UTC)
-        atomic_write_json(status_path, status.model_dump(mode="json"))
-    return status
+        quality = {
+            "quality_status": "UNAVAILABLE",
+            "source_run_id": status.run_id,
+            "source_committed_step": status.committed_step,
+            "issues": [],
+            "evaluation_error": str(exc) or exc.__class__.__name__,
+        }
+    atomic_write_json(path, quality)
 
 
 def datetime_from_checkpoint(checkpoint: Path):
@@ -447,7 +594,3 @@ def datetime_from_checkpoint(checkpoint: Path):
     if not isinstance(bundle, dict) or not isinstance(bundle.get("virtual_time"), str):
         raise PackageError("checkpoint virtual_time is missing")
     return datetime.fromisoformat(bundle["virtual_time"])
-
-
-def run_root_artifact(paths: RunPaths, name: str) -> Path:
-    return paths.artifacts / name

@@ -22,7 +22,7 @@ from generative_agents.ga_studio.api import ExperimentResourceEditor, Experiment
 from generative_agents.adapters.web.routes.resources import SkillTrial, SkillDecisionCompile
 
 
-def create_experiment_resource_router(database, var_dir):
+def create_experiment_resource_router(database, var_dir, *, compiler_config=None):
     workspace = ExperimentWorkspaceService(database, package_root=Path(var_dir) / "packages", var_dir=var_dir)
     editor = ExperimentResourceEditor(workspace)
     router = APIRouter(prefix="/api/studio/experiments/{experiment_id}/resources", tags=["experiment-resources"])
@@ -81,7 +81,8 @@ def create_experiment_resource_router(database, var_dir):
                     return execute_skill_trial(destination, credentials=credentials)
             if request.method == "POST" and len(parts) == 3 and parts[0] == "skills" and parts[2] == "decision-compile":
                 body = SkillDecisionCompile.model_validate(body).model_dump(exclude_none=True)
-                return compile_skill_decision(**editor.prepare_decision_compile(experiment_id, parts[1], body))
+                draft = editor.prepare_decision_compile(experiment_id, parts[1], body, compiler_config=compiler_config)
+                return compile_skill_decision(**draft)
             result = editor.write(experiment_id, resource_path, request.method, body)
             return Response(status_code=204) if result is None else result
         except ValidationError as exc:

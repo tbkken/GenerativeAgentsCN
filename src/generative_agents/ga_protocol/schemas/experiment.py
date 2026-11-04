@@ -459,6 +459,11 @@ class WorldConfig(StrictModel):
             raise ValueError("map_snapshot_hash requires map_id")
         if environment_type(self) == "social_1d":
             object.__setattr__(self, "definition", SocialWorldDefinition.model_validate(self.definition).model_dump())
+        elif environment_type(self) == "spatial_3d":
+            from generative_agents.ga_protocol.schemas.environments import SimWorldMap
+            if self.assets:
+                raise ValueError("SimWorld 场景只保存远端场景 ID，不允许地图附件")
+            object.__setattr__(self, "definition", SimWorldMap.model_validate(self.definition).model_dump())
         return self
 
 
@@ -508,6 +513,9 @@ class AgentIdentityDefinition(StrictModel):
     ]
     portrait_asset: str | None = None
     sprite_asset: str | None = None
+    avatar_3d_asset: str | None = None
+    avatar_ue_asset: str | None = None
+    avatar_ue_manifest_asset: str | None = None
     sprite_layout: Literal["4x3", "4x4"] = "4x4"
     sprite_display_tiles: float | None = Field(default=None, ge=0.5, le=6.0)
     model_override: str | None = None
@@ -529,6 +537,11 @@ class SocialAgentDefinition(AgentIdentityDefinition):
     space_id: Key
 
 
+class Spatial3DAgentDefinition(AgentIdentityDefinition):
+    spawn_anchor: Literal["auto"] = "auto"
+    yaw_deg: float = Field(default=0, allow_inf_nan=False)
+
+
 class ExperimentDefinition(StrictModel):
     """从物理实验包入口组装出的内核运行定义。"""
     schema_version: Literal[1] = 1
@@ -538,7 +551,7 @@ class ExperimentDefinition(StrictModel):
     results: ResultsConfig = Field(default_factory=ResultsConfig)
     models: ModelsConfig
     world: WorldConfig
-    agents: list[AgentDefinition | SocialAgentDefinition] = Field(default_factory=list)
+    agents: list[AgentDefinition | SocialAgentDefinition | Spatial3DAgentDefinition] = Field(default_factory=list)
 
     @model_validator(mode="after")
     def validate_internal_relations(self) -> "ExperimentDefinition":
@@ -560,11 +573,14 @@ class ExperimentDefinition(StrictModel):
         agent_keys = [agent.agent_key for agent in self.agents]
         if len(agent_keys) != len(set(agent_keys)):
             raise ValueError("agent_key must be unique within an experiment")
-        social = environment_type(self.world) == "social_1d"
+        kind = environment_type(self.world)
         for agent in self.agents:
-            if social:
+            if kind == "social_1d":
                 if not isinstance(agent, SocialAgentDefinition) or agent.space_id != self.world.world_key:
                     raise ValueError("social Agent membership must identify the experiment's public space")
+            elif kind == "spatial_3d":
+                if not isinstance(agent, Spatial3DAgentDefinition):
+                    raise ValueError(f"3D Agent {agent.agent_key} requires a valid spawn_anchor")
             elif not isinstance(agent, AgentDefinition):
                 raise ValueError("spatial Agent requires coordinates and spatial information")
         return self

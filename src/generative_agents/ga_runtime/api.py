@@ -16,6 +16,8 @@ __all__ = [
     "LoadedExperiment",
     "RunService",
     "FileRunSupervisor",
+    "reconcile_run",
+    "process_observation",
     "execute_run_directory",
     "load_experiment_directory",
     "read_runtime_preview",
@@ -53,6 +55,14 @@ def __getattr__(name: str):
         from generative_agents.ga_runtime.supervision.processes import FileRunSupervisor
 
         return FileRunSupervisor
+    if name == "reconcile_run":
+        from generative_agents.ga_runtime.supervision.ownership import reconcile_run
+
+        return reconcile_run
+    if name == "process_observation":
+        from generative_agents.ga_runtime.supervision.ownership import process_observation
+
+        return process_observation
     if name == "execute_run_directory":
         from generative_agents.ga_runtime.lifecycle.executor import execute_run_directory
 

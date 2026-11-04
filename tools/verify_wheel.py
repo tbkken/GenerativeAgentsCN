@@ -37,6 +37,9 @@ def verify(wheel: Path) -> None:
         }
         for name, source in expected.items():
             assert archive.read(name) == source.read_bytes(), name
+        settings, = [name for name in archive.namelist()
+                     if name.endswith(".data/data/share/generative-agents-cn/services.toml")]
+        assert archive.read(settings) == (ROOT / "services.toml").read_bytes(), settings
     print(json.dumps({"wheel": wheel.name, "files": len(expected),
                       "sha256": hashlib.sha256(wheel.read_bytes()).hexdigest()}), flush=True)
     with tempfile.TemporaryDirectory(prefix="ga-installed-release-") as temporary:

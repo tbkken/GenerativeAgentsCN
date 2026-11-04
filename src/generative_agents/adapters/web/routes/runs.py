@@ -3,13 +3,38 @@ from __future__ import annotations
 import shutil
 from uuid import uuid4
 from fastapi import HTTPException, Query
-from generative_agents.ga_protocol.schemas.manifests import RunStatus
-from generative_agents.ga_protocol.packages.io import open_package
+from generative_agents.ga_protocol.packages.reading import open_readonly_package
 from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.validation import validate_run_directory
+from generative_agents.ga_protocol.schemas.manifests import RunStatus
 from generative_agents.ga_protocol.packages.locking import package_lock
 from generative_agents.adapters.web.routes.requests import ResumeRunRequest
 from generative_agents.adapters.web.context import _catalog_item
 from generative_agents.ga_replay.api import ReplayReader, read_run_quality
+from generative_agents.ga_runtime.api import reconcile_run
+
+
+def recovery_options(location, run_id):
+    if location.is_dir():
+        reconcile_run(location)
+    with open_readonly_package(location) as root:
+        status = RunStatus.model_validate(read_json(root / 'status.json'))
+        if status.run_id != run_id:
+            raise HTTPException(status_code=409, detail='Run 状态身份与目录索引不一致')
+        step = status.committed_step
+        action = None
+        reason = None
+        if status.status.value in {'PAUSED', 'FAILED'}:
+            try:
+                validate_run_directory(root, sealed=location.is_file())
+                action = 'finalize' if step == status.total_steps else 'restart' if step == 0 else 'resume'
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                reason = str(exc)
+        else:
+            reason = '只有暂停或失败的仿真可以恢复'
+        return {'run_id': run_id, 'status': status.status.value, 'active_attempt_id': status.active_attempt_id,
+                'committed_step': step, 'recoverable_step': step if action else 0,
+                'recoverable': bool(action), 'recovery_action': action, 'recovery_reason': reason}
 
 def install_routes(router, ctx):
 
@@ -30,10 +55,7 @@ def install_routes(router, ctx):
 
     @router.get('/runs/{run_id}/recovery')
     def run_recovery(run_id: str):
-        with ReplayReader(ctx.run_location(run_id)) as replay:
-            summary = replay.summary()
-        return {'run_id': run_id, 'recoverable_step': summary['recoverable_step'],
-                'recoverable': summary['status'] in {'PAUSED', 'FAILED'} and summary['recoverable_step'] > 0}
+        return recovery_options(ctx.run_location(run_id), run_id)
 
     @router.delete('/runs/{run_id}', status_code=204)
     def delete_run(run_id: str):
@@ -62,22 +84,15 @@ def install_routes(router, ctx):
     @router.post('/runs/{run_id}/resume')
     @ctx.jobs.action('RESUME_RUN')
     def resume_run(run_id: str, body: ResumeRunRequest | None=None):
-        from generative_agents.ga_protocol.facts.recovery import boundary_snapshot
         with package_lock(ctx.package_root / 'runs' / f'{run_id}.resume-submit.identity'):
             location = ctx.run_location(run_id)
-            with open_package(location) as root:
-                status = RunStatus.model_validate(read_json(root / 'status.json'))
-                if status.status.value not in {'PAUSED', 'FAILED'}:
-                    raise HTTPException(status_code=409, detail='只有暂停或失败的仿真可以恢复')
-                if body and body.expected_attempt_id and (body.expected_attempt_id != status.active_attempt_id):
-                    raise HTTPException(status_code=409, detail='Attempt 已变化，请重新打开恢复确认')
-                if body and body.checkpoint_step != status.committed_step:
-                    raise HTTPException(status_code=409, detail=f'必须从已提交边界 Step {status.committed_step} 恢复，不能重复执行已提交步骤')
-                try:
-                    if status.committed_step:
-                        boundary_snapshot(root, run_id, status.committed_step)
-                except (OSError, ValueError) as exc:
-                    raise HTTPException(status_code=409, detail=str(exc)) from exc
+            options = recovery_options(location, run_id)
+            if not options['recoverable']:
+                raise HTTPException(status_code=409, detail=options['recovery_reason'])
+            if body and 'expected_attempt_id' in body.model_fields_set and body.expected_attempt_id != options['active_attempt_id']:
+                raise HTTPException(status_code=409, detail='Attempt 已变化，请重新打开恢复确认')
+            if body and body.checkpoint_step is not None and body.checkpoint_step != options['committed_step']:
+                raise HTTPException(status_code=409, detail=f"必须从已提交边界 Step {options['committed_step']} 恢复，不能重复执行已提交步骤")
             run_root = ctx.runtime.materialize(location, extracted_destination=ctx.package_root / 'runs' / f'workspace-{uuid4().hex}') if location.is_file() else location
             return ctx.submit_directory(run_root)
 
@@ -109,4 +124,7 @@ def install_routes(router, ctx):
 
     @router.get('/runs/{run_id}/process')
     def runtime_process(run_id: str):
-        return ctx.supervisor.process_status(run_id)
+        location = ctx.run_location(run_id)
+        if location.is_dir():
+            reconcile_run(location)
+        return ctx.supervisor.process_status(run_id, location if location.is_dir() else None)

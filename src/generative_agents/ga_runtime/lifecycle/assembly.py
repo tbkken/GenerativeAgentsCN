@@ -71,7 +71,7 @@ def build_file_committer(context: SimulationContext, game: Game, *, checkpoint_r
     recovery = CheckpointBundleWriter(RecoveryPaths(root=context.paths.root, run_id=context.paths.run_id), lambda _result: CheckpointSnapshot(state=game.snapshot_state(), conversation=game.conversation, storage_exporters=game.storage_exporters(), runtime_storage_exporters=game.runtime_storage_exporters()), retention=2)
     return FileStepCommitter(FrameStore(context.paths), FileResultProjector(context.paths), checkpoint, recovery)
 
-def build_runner(context: SimulationContext, definition, *, embedding_api_key: str='', checkpoint_state: Mapping | None=None, checkpoint_conversation: Mapping | None=None, storage_root: str | Path | None=None) -> SimulationRunner:
+def build_runner(context: SimulationContext, definition, *, experiment_root: Path, embedding_api_key: str='', checkpoint_state: Mapping | None=None, checkpoint_conversation: Mapping | None=None, storage_root: str | Path | None=None, scene=None) -> SimulationRunner:
     """构建`runner`。
 
     参数:
@@ -88,9 +88,14 @@ def build_runner(context: SimulationContext, definition, *, embedding_api_key: s
     config = ConfigAdapter().game_config(definition, embedding_api_key=embedding_api_key)
     if checkpoint_state is not None:
         config = apply_checkpoint_state(config, checkpoint_state)
+    if config["maze"].get("environment_type") == "spatial_3d":
+        if scene is None:
+            raise ValueError("3D Run 需要已核实的 SimWorld 会话")
+        for key, (coord, yaw) in scene.poses.items():
+            config["agents"][key].update(coord=list(coord), yaw_deg=yaw)
     if storage_root is not None:
         config['storage_root'] = str(Path(storage_root))
-    game = Game(config, copy.deepcopy(checkpoint_conversation or {}), context=context)
+    game = Game(config, copy.deepcopy(checkpoint_conversation or {}), context=context, scene=scene)
     if checkpoint_state is not None:
         game.restore_runtime_state(dict(checkpoint_state))
     return SimulationRunner(context=context, game=game, committer=build_file_committer(context, game, checkpoint_retention=definition.simulation.checkpoint_retention), checkpoint_interval_steps=definition.simulation.checkpoint_interval_steps)

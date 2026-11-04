@@ -8,10 +8,12 @@ from generative_agents.ga_runtime.memory.spatial import Spatial
 from generative_agents.ga_runtime.engine.profile import ActorProfile
 
 class ActorState:
-    def __init__(self, config, maze, conversation, logger, *, clock, random_source):
+    def __init__(self, config, maze, conversation, logger, *, clock, random_source, ground=None):
         self.name = config['name']
         self.agent_key = config.get('agent_key', self.name)
         self.maze, self.conversation, self.logger = maze, conversation, logger
+        self.ground = ground
+        self.presentation_clips = tuple(config.get('presentation_clips', ())) if ground is not None else ()
         self._clock, self._rng = clock, random_source
         self._current_step_no = None
         self._result_events = []
@@ -27,6 +29,10 @@ class ActorState:
         if maze is None:
             self.action = (Action.from_dict(config['action'], clock=clock) if 'action' in config else
                            Action(Event(self.name), None, clock=clock))
+            if ground is not None:
+                self.coord = tuple(config['coord'])
+                self.path = [tuple(point) for point in config.get('path', [])]
+                self.yaw_deg = float(config['yaw_deg'])
             return
         initial_coord = tuple(config['coord'])
         if 'action' in config:
@@ -36,6 +42,10 @@ class ActorState:
             self.action = Action(Event(self.name, address=address),
                                  Event(address[-1], address=address), clock=clock)
         self.move(initial_coord, copy.deepcopy(config.get('path', [])))
+
+    def validate_presentation_clip(self, clip):
+        if clip not in self.presentation_clips:
+            raise ValueError("presentation_clip must name an animation available to this Agent")
 
     def abstract(self):
         return {'name': self.name, 'currently': self.profile.currently,
@@ -68,6 +78,9 @@ class ActorState:
         return value
 
     def move(self, coord, path=None):
+        if getattr(self, "ground", None) is not None:
+            self.coord, self.path = coord, list(path or ())
+            return {}
         events = {}
 
         def _update_tile(coord):

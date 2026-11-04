@@ -1,5 +1,8 @@
 """Experiment lifecycle and live Run status must remain separate file projections."""
+from contextlib import nullcontext
+
 from fastapi.testclient import TestClient
+from filelock import FileLock
 
 from generative_agents.ga_protocol.packages.io import atomic_write_json
 from generative_agents.ga_protocol.packages.io import read_json
@@ -25,18 +28,20 @@ def test_lifecycle_does_not_follow_stale_catalog_or_resumed_run(tmp_path):
         assert draft["latest_run"]["status"] == "PAUSED"
         client.post(url + "/seal").raise_for_status()
         for live_state in ("QUEUED", "RUNNING", "PAUSED", "RUNNING", "COMPLETED"):
-            status["status"] = live_state
-            atomic_write_json(run_root / "status.json", status)
-            detail = client.get(url).json()
-            assert detail["status"] == "SEALED" and not detail["editable"]
-            assert detail["current_published"]["state"] == "SEALED"
-            assert detail["latest_run"]["status"] == live_state
-            assert client.get(url + "/runs").json()["items"][0]["status"] == live_state
-            assert client.get(f"/api/studio/runs/{status['run_id']}").json()["status"] == live_state
-            listing = client.get("/api/studio/experiments").json()
-            assert listing["total"] == 1
-            assert listing["items"][0]["status"] == "SEALED"
-            assert listing["items"][0]["latest_run"]["status"] == live_state
+            worker = FileLock(str(run_root / "worker.lock")) if live_state == "RUNNING" else nullcontext()
+            with worker:
+                status["status"] = live_state
+                atomic_write_json(run_root / "status.json", status)
+                detail = client.get(url).json()
+                assert detail["status"] == "SEALED" and not detail["editable"]
+                assert detail["current_published"]["state"] == "SEALED"
+                assert detail["latest_run"]["status"] == live_state
+                assert client.get(url + "/runs").json()["items"][0]["status"] == live_state
+                assert client.get(f"/api/studio/runs/{status['run_id']}").json()["status"] == live_state
+                listing = client.get("/api/studio/experiments").json()
+                assert listing["total"] == 1
+                assert listing["items"][0]["status"] == "SEALED"
+                assert listing["items"][0]["latest_run"]["status"] == live_state
         # The index intentionally remains PAUSED: the UI must not use it as Run truth.
         records = client.get("/api/studio/packages?kind=run").json()["items"]
         assert records[0]["status"] == "PAUSED"

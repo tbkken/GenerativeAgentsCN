@@ -17,10 +17,10 @@ class StudioSession:
         self.database, self.skills = database, skills
         self.spatial_assets, self.resources = spatial_assets, resources
 
-    def initialize(self):
+    def initialize(self, *, model_urls: dict[str, str]):
         spatial_assets, resources = self.spatial_assets, self.resources
         spatial_assets.ensure_builtin_assets()
-        if not resources.list_model_presets():
+        if not resources.list_model_presets(include_archived=True):
             resources.create_model_preset(
                 name="本机默认模型",
                 preset_key="local-default",
@@ -29,12 +29,12 @@ class StudioSession:
                     "chat": {
                         "provider": "vllm",
                         "model": "Qwen3.8-27B-UD-Q4_K_XL",
-                        "base_url": "http://127.0.0.1:8888/v1",
+                        "base_url": model_urls["chat"],
                     },
                     "embedding": {
                         "provider": "openai_compatible",
                         "model": "auto",
-                        "base_url": "http://127.0.0.1:5002/v1",
+                        "base_url": model_urls["embedding"],
                     },
                 },
             )

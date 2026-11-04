@@ -22,6 +22,9 @@ ga = "generative_agents.adapters.cli.main:main"
 [tool.setuptools]
 include-package-data = true
 
+[tool.setuptools.data-files]
+"share/generative-agents-cn" = ["services.toml"]
+
 [tool.setuptools.packages.find]
 where = ["src"]
 include = ["generative_agents*"]

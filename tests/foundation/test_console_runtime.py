@@ -719,7 +719,7 @@ def test_recoverable_run_action_uses_resume_without_a_rerun_action():
     assert 'id="resumeRunStep"' in shell
     assert 'id="resumeRunNextStep"' in shell
     assert "function openResumeRunModal(detail = null)" in source
-    assert "['PAUSED', 'FAILED', 'INTERRUPTED'].includes(run.status)" in source
+    assert "['PAUSED', 'FAILED'].includes(run.status)" in source
     assert "controlRun('resume', { checkpointStep:" in source
     assert "state.pendingResumeRunId !== state.selectedRunId" in source
 
@@ -755,10 +755,10 @@ const paused = snapshot({status:'PAUSED', recoverable:true, recoverable_step:7})
 const running = snapshot({status:'RUNNING', recoverable:false, recoverable_step:7});
 if (JSON.stringify(failed) !== JSON.stringify({
   pauseHidden:true, cancelHidden:true, continueHidden:false,
-  continueText:'继续执行 · Step 30',
+  continueText:'从第 31 步继续',
 })) process.exit(1);
 if (!unavailable.continueHidden) process.exit(2);
-if (paused.continueHidden || paused.continueText !== '继续执行 · Step 7' || paused.cancelHidden) process.exit(3);
+if (paused.continueHidden || paused.continueText !== '从第 8 步继续' || paused.cancelHidden) process.exit(3);
 if (running.pauseHidden || running.cancelHidden || !running.continueHidden) process.exit(4);
 """
     subprocess.run(

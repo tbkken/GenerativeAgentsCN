@@ -18,7 +18,8 @@ from sqlalchemy import select
 from generative_agents.ga_studio.storage.assets import AssetStore
 from generative_agents.ga_protocol.schemas.experiment import ModelsConfig
 from generative_agents.ga_protocol.schemas.experiment import SimulationConfig
-from generative_agents.ga_protocol.packages.io import PackageError
+from generative_agents.ga_protocol.packages.io import PackageError, sha256_file
+from generative_agents.ga_protocol.packages.attachments import AttachmentFiles
 from generative_agents.ga_protocol.packages.io import atomic_write_bytes
 from generative_agents.ga_protocol.packages.io import atomic_write_json
 from generative_agents.ga_protocol.packages.io import open_package
@@ -45,6 +46,7 @@ from generative_agents.ga_protocol.packages.locking import package_lock
 from generative_agents.ga_protocol.packages.definition import _experiment_definition, write_experiment_definition
 from generative_agents.ga_studio.experiments.transaction import edit_experiment
 from generative_agents.ga_studio.resources.exchange import ResourceExchangeService, require_resolved_resource_dependencies, resource_extra_files
+from generative_agents.ga_protocol.schemas.environments import SimWorldMap
 from generative_agents.ga_protocol.schemas.resources import ResourceRef
 
 
@@ -73,6 +75,8 @@ class AgentPlacement:
 
     agent_id: str
     coord: tuple[int, int] | None = None
+    spawn_anchor: str | None = None
+    yaw_deg: float | None = None
 
 
 @dataclass(frozen=True, slots=True)
@@ -81,7 +85,7 @@ class ExperimentSelection:
 
     name: str
     goal: str
-    map_id: str
+    map_id: str | None
     brain_skill_id: str
     model_preset_id: str
     embedding_model_preset_id: str | None = None
@@ -93,6 +97,7 @@ class ExperimentSelection:
     key: str | None = None
     timezone: str = "Asia/Shanghai"
     simulation: Mapping[str, Any] | None = None
+    simworld_scene_id: str | None = None
 
 
 class ExperimentWorkspaceService:
@@ -118,17 +123,46 @@ class ExperimentWorkspaceService:
         self.catalog = StudioPackageCatalogService(database)
         self.builder = ExperimentPackageBuilder()
 
+    def simworld_scene_selection(self, experiment_id: str):
+        row = self.catalog.get("experiment", experiment_id)
+        if row is None:
+            raise PackageError("实验不存在")
+        with package_lock(Path(row.location)), open_package(Path(row.location)) as root:
+            manifest, definition = _experiment_definition(root)
+            if manifest["experiment"]["experiment_id"] != experiment_id:
+                raise PackageError("实验身份与地图请求不一致")
+            scene = SimWorldMap.model_validate(definition["world"]["definition"])
+            participants = [{"agent_key": a["agent_key"], "name": a["name"],
+                             "spawn_anchor": a["spawn_anchor"], "yaw_deg": a["yaw_deg"]}
+                            for a in definition["agents"] if a.get("enabled", True)]
+            return scene.simworld_scene_id, participants
+
+    def simworld_scene_id(self, experiment_id: str) -> str:
+        return self.simworld_scene_selection(experiment_id)[0]
+
+    def simworld_scene_participants(self, experiment_id: str) -> list:
+        return self.simworld_scene_selection(experiment_id)[1]
+
+    @staticmethod
+    def remote_world(scene_id: str) -> dict:
+        scene = SimWorldMap(simworld_scene_id=scene_id)
+        return {"world_key": "simworld-scene", "world_name": scene_id,
+                "definition": scene.model_dump(), "assets": []}
+
     def create(self, selection: ExperimentSelection) -> dict[str, Any]:
         experiment_id = str(uuid4())
         workspace = self.package_root / "experiments" / f"workspace-{uuid4().hex}"
         with self.database.session_factory() as session:
-            public_map = session.get(WorldMap, selection.map_id)
-            self._available(public_map, "Map", selection.map_id)
-            require_resolved_resource_dependencies(session, "map", public_map.id)
-            world = self.map_service.materialize_validated_world(
-                session,
-                public_map.id,
-            ).model_dump(mode="json", exclude_none=False)
+            if bool(selection.map_id) == bool(selection.simworld_scene_id):
+                raise StudioResourceError("请选择一张公共地图或一个 SimWorld 场景")
+            if selection.simworld_scene_id:
+                world = self.remote_world(selection.simworld_scene_id)
+            else:
+                public_map = session.get(WorldMap, selection.map_id)
+                self._available(public_map, "Map", selection.map_id)
+                require_resolved_resource_dependencies(session, "map", public_map.id)
+                world = self.map_service.materialize_validated_world(
+                    session, public_map.id).model_dump(mode="json", exclude_none=False)
 
             selected_agent_ids = self._expand_agents(
                 session,
@@ -176,7 +210,7 @@ class ExperimentWorkspaceService:
             if selection.decision_model_preset_id and ("model", selection.decision_model_preset_id) not in model_selections:
                 model_selections.append(("model", selection.decision_model_preset_id))
             selected_resources = ResourceExchangeService(self.database, asset_store=self.asset_store).materialize_resources(
-                [("map", selection.map_id), *[("agent", key) for key in selected_agent_ids],
+                [*([("map", selection.map_id)] if selection.map_id else []), *[("agent", key) for key in selected_agent_ids],
                  *[("crowd", key) for key in selection.crowd_ids], *model_selections],
                 include_dependencies=False,
             )
@@ -367,6 +401,7 @@ class ExperimentWorkspaceService:
         destination = self.package_root / "experiments" / f"workspace-{uuid4().hex}"
         try:
             with open_package(Path(row.location)) as source:
+                validate_experiment_directory(source)
                 shutil.copytree(source, destination)
             integrity = destination / "integrity" / "sha256.json"
             integrity.unlink(missing_ok=True)
@@ -412,6 +447,8 @@ class ExperimentWorkspaceService:
         integrity_path = root / "integrity" / "sha256.json"
         if expected_content_sha256 and read_json(integrity_path)['root_sha256'] != expected_content_sha256:
             raise WorkspaceConflictError('实验已被其他保存操作修改，请重新打开实验后再保存；本次修改未覆盖已有内容。')
+        if any(Path(name).suffix.lower() in {".pak", ".glb", ".umap", ".uexp", ".uasset"} for name in assets):
+            raise PackageError("实验不能写入 SimWorld 关卡和角色文件")
         original_integrity = integrity_path.read_bytes()
         created: list[Path] = []
         try:
@@ -427,6 +464,8 @@ class ExperimentWorkspaceService:
                 target = (root / relative).resolve()
                 target.relative_to(root)
                 if target.exists():
+                    if target.is_file() and sha256_file(target) == hashlib.sha256(content).hexdigest():
+                        continue
                     raise PackageError(f"experiment asset already exists: {logical_path}")
                 atomic_write_bytes(target, bytes(content))
                 created.append(target)
@@ -547,11 +586,18 @@ class ExperimentWorkspaceService:
         return result
 
     def _materialize_agents(self, session, agent_ids, *, world, placements):
-        social = world.get("definition", {}).get("environment_type") == "social_1d"
-        tiles = [] if social else self._walkable_tiles(world)
-        placement_by_agent = {item.agent_id: item.coord for item in placements}
-        if social and any(coord is not None for coord in placement_by_agent.values()):
-            raise StudioResourceError("1D 社交地图的参与者不能设置空间坐标")
+        definition = world["definition"]
+        environment = definition.get("environment_type", "spatial_2d")
+        grid = environment == "spatial_2d"
+        street = environment == "spatial_3d"
+        tiles = self._walkable_tiles(world) if grid else []
+        placement_by_agent = {item.agent_id: item for item in placements}
+        if len(placement_by_agent) != len(placements):
+            raise StudioResourceError("人物装配重复")
+        if not grid and any(item.coord is not None for item in placements):
+            raise StudioResourceError("当前地图不接受二维空间坐标")
+        if not street and any(item.spawn_anchor is not None or item.yaw_deg is not None for item in placements):
+            raise StudioResourceError("当前地图不接受三维出生锚点")
         unknown = sorted(set(placement_by_agent) - set(agent_ids))
         if unknown:
             raise StudioResourceError(f"placements refer to unselected Agents: {unknown}")
@@ -568,18 +614,21 @@ class ExperimentWorkspaceService:
             if source.agent_key in seen_keys:
                 raise StudioResourceError(f"duplicate Agent key in selection: {source.agent_key}")
             seen_keys.add(source.agent_key)
-            coord = placement_by_agent.get(agent_id)
-            if coord is None and not social:
+            placement = placement_by_agent.get(agent_id)
+            coord = placement.coord if placement else None
+            if coord is None and grid:
                 coord = next((candidate for candidate in free if candidate not in occupied), None)
-            if not social and (coord is None or coord in occupied or coord not in tile_by_coord):
+            if grid and (coord is None or coord in occupied or coord not in tile_by_coord):
                 raise StudioResourceError(f"Agent placement is unavailable: {source.agent_key} at {coord}")
-            if not social:
+            if grid:
                 occupied.add(coord)
                 address = list(tile_by_coord[coord]["address"])
             payload = source.model_dump(mode="json", exclude_none=False)
-            portrait_id = payload.pop("portrait_asset_id", None)
-            sprite_id = payload.pop("sprite_asset_id", None)
-            if social:
+            if street:
+                if placement and placement.spawn_anchor not in (None, "auto"):
+                    raise StudioResourceError("3D 出生位置由 SimWorld 分配")
+                payload.update(spawn_anchor="auto", yaw_deg=(placement.yaw_deg or 0) if placement else 0)
+            elif not grid:
                 payload["space_id"] = world["world_key"]
             else:
                 payload["coord"] = list(coord)
@@ -587,12 +636,12 @@ class ExperimentWorkspaceService:
                     "address": {"initial_location": address},
                     "tree": self._spatial_tree(address),
                 }
-            payload["portrait_asset"] = self._agent_asset(
-                session, portrait_id, source.agent_key, "portrait", assets
-            )
-            payload["sprite_asset"] = self._agent_asset(
-                session, sprite_id, source.agent_key, "sprite", assets
-            )
+            for role in ("avatar_3d", "avatar_ue", "avatar_ue_manifest"):
+                payload.pop(f"{role}_asset_id", None)
+            for role in ("portrait", "sprite"):
+                asset_id = payload.pop(f"{role}_asset_id", None)
+                if asset_id or role in ("portrait", "sprite"):
+                    payload[f"{role}_asset"] = self._agent_asset(session, asset_id, source.agent_key, role, assets)
             agents.append(payload)
         return agents, assets
 
@@ -637,8 +686,9 @@ class ExperimentWorkspaceService:
             "image/png": ".png",
             "image/jpeg": ".jpg",
             "image/webp": ".webp",
-            "application/json": ".json",
-        }.get(asset.media_type, "")
+        }.get(asset.media_type)
+        if not extension:
+            raise StudioResourceError(f"Agent {role} requires an image")
         logical = f"assets/agents/{agent_key}/{role}{extension}"
         targets[logical] = self._asset_source(asset)
         return logical
@@ -684,12 +734,12 @@ class ExperimentWorkspaceService:
             if asset is None:
                 raise StudioResourceError(f"Map asset bytes are unavailable: {logical} ({digest})")
             content = self._asset_source(asset)
-            raw = content if isinstance(content, bytes) else Path(content).read_bytes()
-            if hashlib.sha256(raw).hexdigest() != digest or len(raw) != reference["size"]:
+            supplied = AttachmentFiles({logical: content})
+            if supplied.digest(logical) != digest or supplied.size(logical) != reference["size"]:
                 raise StudioResourceError(f"地图素材内容校验失败：{logical}")
-            if logical in result and result[logical] != raw:
+            if logical in result and AttachmentFiles(result).digest(logical) != digest:
                 raise StudioResourceError(f"地图包内素材路径冲突：{logical}")
-            result[logical] = raw
+            result[logical] = content
         return result
 
     @staticmethod

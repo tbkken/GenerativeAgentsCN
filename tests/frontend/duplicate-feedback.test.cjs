@@ -58,6 +58,7 @@ function setup() {
     },
   };
   vm.createContext(context);
+  vm.runInContext(fs.readFileSync('src/generative_agents/adapters/web/static/resources/simworld-scenes.js','utf8'),context);
   vm.runInContext(code, context);
   return {context, state, nodes, notices, records, requests, experiment};
 }

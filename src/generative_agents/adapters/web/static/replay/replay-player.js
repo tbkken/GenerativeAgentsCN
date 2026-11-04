@@ -166,18 +166,26 @@
     }
 
     async play() {
-      if (this.timer || !this.runId || !this.ready || this.availableStep < 1) return;
-      if (this.pendingStep !== null) await this.seek(this.pendingStep);
-      if (this.currentStep >= this.availableStep) await this.seek(1);
-      if (!this.runId || !this.ready) return;
+      if (this.timer || this.playRequest || !this.runId || !this.ready || this.availableStep < 1) return;
       const runId = this.runId;
       const generation = this.generation;
+      const request = this.playRequest = {};
+      this.onStatus({ state: 'PLAYING', runId });
+      try {
+        await this._preparePlayback(this.pendingStep ?? this.currentStep);
+        if (this.playRequest !== request || !this._owns(runId, generation) || !this.ready) return;
+      } catch (error) {
+        if (this.playRequest === request) this.pause();
+        throw error;
+      } finally {
+        if (this.playRequest === request) this.playRequest = null;
+      }
       const scheduleNext = () => {
-        this.timer = setTimeout(async () => {
-          if (!this.timer || !this._owns(runId, generation) || !this.ready) return;
+        const tick = this.timer = setTimeout(async () => {
+          if (this.timer !== tick || !this._owns(runId, generation) || !this.ready) return;
           try {
-            await this.stepBy(1);
-            if (!this.timer) return;
+            await this.stepBy(1, { playback:true });
+            if (this.timer !== tick) return;
             if (this.currentStep >= this.availableStep) {
               this.pause();
               return;
@@ -186,13 +194,20 @@
           } catch (error) {
             this._fail(error);
           }
-        }, Math.max(80, 700 / this.speed));
+        }, this._playbackDelay());
       };
-      this.onStatus({ state: 'PLAYING', runId: this.runId });
       scheduleNext();
     }
 
+    async _preparePlayback(start) {
+      if (start >= this.availableStep) await this.seek(1, { startPlayback:true });
+      else if (this.pendingStep !== null) await this.seek(start, { startPlayback:true });
+    }
+
+    _playbackDelay() { return Math.max(80, 700 / this.speed); }
+
     pause({ notify = true } = {}) {
+      this.playRequest = null;
       if (this.timer) clearInterval(this.timer);
       this.timer = null;
       if (notify && this.runId && this.ready) {
@@ -200,15 +215,15 @@
       }
     }
 
-    async stepBy(delta) {
+    async stepBy(delta, options) {
       const base = this.pendingStep ?? this.currentStep;
-      return this.seek(Math.max(1, Math.min(this.availableStep, base + Number(delta || 0))));
+      return this.seek(Math.max(1, Math.min(this.availableStep, base + Number(delta || 0))), options);
     }
 
     setSpeed(value) {
       const next = Number(value);
       if (!Number.isFinite(next) || next <= 0 || next > 16) throw new Error('invalid replay speed');
-      const playing = Boolean(this.timer);
+      const playing = Boolean(this.timer || this.playRequest);
       this.pause();
       this.speed = next;
       if (playing) this.play().catch(error => this._fail(error));
@@ -312,7 +327,7 @@
       }
     }
 
-    async seek(stepNo) {
+    async seek(stepNo, options) {
       if (!this.runId || this.availableStep < 1) return null;
       const target = Math.max(1, Math.min(this.availableStep, Number(stepNo)));
       const request = ++this.seekRequest;
@@ -325,7 +340,7 @@
       if (!step || step.step_no !== target) return null;
       this.currentStep = target;
       this.currentStepFact = step;
-      this._renderStep(step);
+      await this._renderStep(step, options);
       return step;
     }
 
@@ -455,6 +470,7 @@
         object.updateVisual?.(object.state);
         if (object.glyph) object.glyph.setText(this._appearanceGlyph(object.appearance, object.state));
       });
+      return state;
     }
 
     _withStartup(start) {

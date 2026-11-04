@@ -33,7 +33,7 @@ class MapCreate(Request):
     map_key: str | None = None
     source_map_id: str | None = None
     blueprint_key: str | None = None
-    environment_type: Literal['spatial_2d', 'social_1d'] = 'spatial_2d'
+    environment_type: Literal['spatial_2d', 'social_1d', 'spatial_3d'] = 'spatial_2d'
     presentation: Literal['chat', 'forum'] = 'chat'
     rules: str = Field(default='', max_length=20000)
     width: int = Field(default=48, ge=1, le=240)
@@ -96,7 +96,7 @@ class SpatialAssetUpdate(Request):
     description: str | None = None
 
 
-def create_resource_router(database, skill_registry) -> APIRouter:
+def create_resource_router(database, skill_registry, *, compiler_config=None) -> APIRouter:
     router = APIRouter(prefix="/api/studio/resources", tags=["studio-resources"])
     maps = WorldMapService(database, skill_registry=skill_registry)
     spatial_assets = SpatialAssetService(database)
@@ -141,6 +141,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
     def list_maps(
         q: str | None = None,
         archived: Literal["active", "archived", "all"] = "active",
+        for_experiment: bool = False,
         page: int = Query(default=1, ge=1),
         page_size: int = Query(default=20, ge=1, le=100),
     ):
@@ -148,6 +149,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
             lambda: maps.list_maps(
                 query=q,
                 archived=archived,
+                for_experiment=for_experiment,
                 page=page,
                 page_size=page_size,
             )
@@ -333,7 +335,7 @@ def create_resource_router(database, skill_registry) -> APIRouter:
     @router.post("/skills/{skill_name}/decision-compile")
     def compile_decision_skill(skill_name: str, body: SkillDecisionCompile):
         return call(lambda: compile_public_skill_decision(database, skill_registry, skill_name,
-            body.markdown, scripts=body.scripts))
+            body.markdown, compiler_config=compiler_config, scripts=body.scripts))
 
     @router.get("/skills/{skill_name}/dependencies")
     def get_skill_dependencies(skill_name: str):

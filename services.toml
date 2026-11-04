@@ -1,0 +1,27 @@
+# 本机服务地址。修改后重启对应服务；不要在这里存放密钥。
+[studio]
+host = "127.0.0.1"
+port = 8000
+
+[simworld]
+# 在本机启动时，网页连接和双击脚本从同一 URL 取端口。
+# 使用远程 GPU 主机时，填服务根地址（不要加 /v1），本机仅启动 Studio。
+url = "http://127.0.0.1:8786"
+
+[models]
+# 新建模型的建议地址；已有模型在 Studio 的「模型中心」修改。
+chat = "http://127.0.0.1:8888/v1"
+embedding = "http://127.0.0.1:5002/v1"
+decision = "http://127.0.0.1:5003/v1"
+
+[decision_compiler]
+# 仅在 Studio 编辑判别式 Skill 时调用，把正文解析为输出结构。
+# 使用 OpenAI 兼容的聊天接口；实验运行时的判别模型仍由实验指定。
+base_url = "https://ark.cn-beijing.volces.com/api/plan/v3"
+model = "deepseek-v4.1-flash"
+timeout_seconds = 90
+max_tokens = 4096
+temperature = 0.0
+enable_thinking = false
+# 复用本机已有的加密凭据；也可填写环境变量名。无需认证时填 ""。
+credential_env = "GA_MODEL_0CC6FA48607B43BC8F06EBBF50EE3569"

@@ -7,6 +7,9 @@ from __future__ import annotations
 
 import copy
 import hashlib
+import json
+import tempfile
+import shutil
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from pathlib import Path, PurePosixPath
@@ -16,9 +19,10 @@ from uuid import uuid4
 from pydantic import TypeAdapter, ValidationError
 
 from generative_agents.ga_protocol.packages.io import (
-    PackageError, atomic_write_bytes, atomic_write_json, canonical_json_bytes,
-    checked_package_path, open_package, read_json, verify_integrity, write_integrity_manifest,
+    PackageError, atomic_write_json, canonical_json_bytes,
+    checked_package_path, extract_archive, read_json, verify_integrity, write_integrity_manifest,
 )
+from generative_agents.ga_protocol.packages.attachments import AttachmentFiles
 from generative_agents.ga_protocol.schemas.manifests import (
     ConfigManifest, ExperimentManifest, RunManifest, validate_package_path,
 )
@@ -32,8 +36,12 @@ from generative_agents.ga_protocol.skills.dependencies import validate_interface
 @dataclass
 class ResourceSet:
     resources: list[ResourceRecord] = field(default_factory=list)
-    files: dict[str, bytes] = field(default_factory=dict)
+    files: AttachmentFiles = field(default_factory=AttachmentFiles)
     roots: list[ResourceRef] = field(default_factory=list)
+
+    def __post_init__(self):
+        if not isinstance(self.files, AttachmentFiles):
+            self.files = AttachmentFiles(self.files)
 
     def by_ref(self) -> dict[tuple[str, str], ResourceRecord]:
         return {record.identity: record for record in self.resources}
@@ -83,7 +91,8 @@ def object_skill_keys(value: object) -> set[str]:
 def resource_attachment_paths(value: object) -> set[str]:
     """Discover file references in map/agent/spatial content, not arbitrary prose."""
     result: set[str] = set()
-    path_fields = {"logical_path", "portrait_asset", "sprite_asset", "asset_path", "image_path", "bundled_path", "entrypoint"}
+    path_fields = {"logical_path", "portrait_asset", "sprite_asset", "avatar_3d_asset", "avatar_ue_asset", "avatar_ue_manifest_asset",
+                   "model_asset", "ue_asset", "portable_road_asset", "thumbnail_asset", "asset_path", "image_path", "bundled_path", "entrypoint"}
     if isinstance(value, dict):
         for key, child in value.items():
             if key in path_fields and isinstance(child, str) and child:
@@ -123,7 +132,15 @@ def skill_document(record: ResourceRecord, resources: ResourceSet):
     return SkillRegistry(Path("."))._parse(markdown, Path(record.key) / "SKILL.md", kind, file_contents=files)
 
 
+def _validate_avatar_assets(definition, files):
+    if any(definition.get(key) for key in ("avatar_3d_asset", "avatar_ue_asset", "avatar_ue_manifest_asset")):
+        raise PackageError("SimWorld 三维形象由服务管理，不得打包模型或 UE 产物")
+
+
 def validate_resource_set(resources: ResourceSet, *, require_dependencies: bool = True) -> None:
+    if any(PurePosixPath(path).suffix.lower() in {".pak", ".glb", ".umap", ".uexp", ".uasset"}
+           for path in resources.files):
+        raise PackageError("SimWorld 关卡和三维模型不得作为包内附件")
     identities = [record.identity for record in resources.resources]
     if not identities:
         raise PackageError("resource set must contain at least one resource")
@@ -131,13 +148,12 @@ def validate_resource_set(resources: ResourceSet, *, require_dependencies: bool 
         raise PackageError("resource kind/key pairs must be unique")
     by_ref = resources.by_ref()
     normalized_files: set[str] = set()
-    for name, content in resources.files.items():
+    for name in resources.files:
         normalized = validate_package_path(name)
         if name != normalized or name.casefold() in normalized_files:
             raise PackageError(f"ambiguous resource attachment path: {name}")
         normalized_files.add(name.casefold())
-        if not isinstance(content, bytes):
-            raise PackageError(f"resource attachment must contain bytes: {name}")
+        resources.files.source(name)
         if name in {"manifest.json", "run.json", "resources/index.json", "runtime/assembly.json", "integrity/sha256.json"}:
             raise PackageError(f"attachment collides with package metadata: {name}")
     owned_files: set[str] = set()
@@ -159,10 +175,9 @@ def validate_resource_set(resources: ResourceSet, *, require_dependencies: bool 
             path = asset["logical_path"]
             if path not in resources.files:
                 raise PackageError(f"resource asset is missing: {path}")
-            content = resources.files[path]
-            if asset.get("asset_hash") != "sha256:" + hashlib.sha256(content).hexdigest():
+            if asset.get("asset_hash") != "sha256:" + resources.files.digest(path):
                 raise PackageError(f"resource asset hash mismatch: {path}")
-            if asset.get("size") != len(content):
+            if asset.get("size") != resources.files.size(path):
                 raise PackageError(f"resource asset size mismatch: {path}")
         deps = {ref.identity for ref in record.dependencies}
         if len(deps) != len(record.dependencies):
@@ -174,8 +189,13 @@ def validate_resource_set(resources: ResourceSet, *, require_dependencies: bool 
                 raise PackageError(f"{location} requires a display name")
             if record.kind == "agent":
                 AgentCore.model_validate(record.definition)
+                _validate_avatar_assets(record.definition, resources.files)
             elif record.kind == "map":
                 WorldConfig.model_validate(dict(record.definition, world_key=record.key, world_name=record.name))
+                geometry = record.definition.get("definition", {})
+                if geometry.get("environment_type") == "spatial_3d":
+                    if record.attachments or record.definition.get("assets"):
+                        raise PackageError("SimWorld 地图不能包含本地附件")
                 needed = {("skill", key) for key in object_skill_keys(record.definition)}
                 if not needed <= deps:
                     raise PackageError(f"map object Skill dependencies are undeclared: {sorted(needed - deps)}")
@@ -257,7 +277,7 @@ def resource_content_hash(record: ResourceRecord, resources: ResourceSet, *, _vi
         raise PackageError(f"cyclic resource dependency: {record.kind}/{record.key}")
     visiting.add(record.identity)
     definition = copy.deepcopy(record.definition)
-    files = {path: hashlib.sha256(resources.files[path]).hexdigest() for path in record.attachments}
+    files = {path: resources.files.digest(path) for path in record.attachments}
     if record.kind == "map":
         # A public map and its experiment copy have the same content identity:
         # tile semantics are derived, never an independent author revision.
@@ -284,6 +304,9 @@ def resource_content_hash(record: ResourceRecord, resources: ResourceSet, *, _vi
                 geometry.pop("editor", None)
     elif record.kind == "agent":
         definition = AgentCore.model_validate(definition).model_dump(mode="json")
+        for field_name in ("avatar_3d_asset", "avatar_ue_asset", "avatar_ue_manifest_asset"):
+            if definition[field_name] is None:
+                definition.pop(field_name)
     elif record.kind == "model":
         definition = {purpose: TypeAdapter({"chat": ChatModelConfig, "embedding": EmbeddingModelConfig,
                                            "decision": DecisionModelConfig}[purpose])
@@ -362,25 +385,32 @@ def select_resources(resources: ResourceSet, roots: Sequence[ResourceRef], *, in
         record.dependencies = [ref.model_copy(update={"expected_sha256": resource_content_hash(by_ref[ref.identity], resources)})
                                if ref.identity in by_ref else ref for ref in record.dependencies]
     paths = {path for record in records for path in record.attachments}
-    result = ResourceSet(records, {path: resources.files[path] for path in sorted(paths)},
+    result = ResourceSet(records, resources.files.subset(sorted(paths)),
                          normalized_roots)
     validate_resource_set(result, require_dependencies=include_dependencies)
     return result
 
 
-def read_resource_index(root: Path, index_path: str) -> ResourceSet:
+def read_resource_index(root: Path, index_path: str, *, snapshot=None, owner=None) -> ResourceSet:
     root = checked_package_path(root)
     try:
         index = ResourceIndex.model_validate(read_json(root / validate_package_path(index_path)))
     except ValidationError as exc:
         raise PackageError(f"invalid shared resource index: {exc}") from exc
     paths = {path for record in index.resources for path in record.attachments}
-    files = {}
+    files = AttachmentFiles(owner=owner)
     for path in sorted(paths):
         source = checked_package_path(root / path)
         try:
             source.relative_to(root)
-            files[path] = source.read_bytes()
+            if not source.is_file():
+                raise PackageError(f"missing attachment: {path}")
+            if snapshot is not None:
+                target = snapshot / path
+                target.parent.mkdir(parents=True, exist_ok=True)
+                shutil.copyfile(source, target)
+                source = target
+            files[path] = source
         except (ValueError, OSError) as exc:
             raise PackageError(f"resource attachment is missing or unsafe: {path}") from exc
     return ResourceSet(index.resources, files, index.roots)
@@ -395,8 +425,11 @@ def read_experiment_resource_set(root: str | Path, *, verify_hashes: bool = Fals
 
 
 def read_resource_set(path: str | Path, *, verify_hashes: bool = True) -> ResourceSet:
-    source = Path(path)
-    with open_package(source) as root:
+    source = checked_package_path(Path(path))
+    owner = tempfile.TemporaryDirectory(prefix="ga-resource-snapshot-")
+    snapshot = Path(owner.name)
+    try:
+        root = source if source.is_dir() else extract_archive(source, snapshot / "package")
         if (root / "run.json").is_file():
             from generative_agents.ga_protocol.packages.validation import validate_run_integrity
             run = validate_run_integrity(root, sealed=verify_hashes and source.is_file())
@@ -409,12 +442,16 @@ def read_resource_set(path: str | Path, *, verify_hashes: bool = True) -> Resour
             raise PackageError(f"unsupported or invalid package manifest: {exc}") from exc
         if verify_hashes:
             verify_integrity(root)
-        resources = read_resource_index(root, manifest.entrypoints.resources)
+        resources = read_resource_index(root, manifest.entrypoints.resources,
+                                        snapshot=snapshot if source.is_dir() else None, owner=owner)
         validate_resource_set(resources, require_dependencies=kind != "config")
         if kind == "exp":
             from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
             validate_experiment_directory(root, verify_hashes=False)
         return resources
+    except BaseException:
+        owner.cleanup()
+        raise
 
 
 def write_resource_set(root: str | Path, resources: ResourceSet, *, index_path: str = "resources/index.json",
@@ -428,10 +465,10 @@ def write_resource_set(root: str | Path, resources: ResourceSet, *, index_path: 
     if (root / index_path).is_file():
         previous = ResourceIndex.model_validate(read_json(root / index_path))
         previous_paths = {path for record in previous.resources for path in record.attachments}
-    for name, content in sorted(resources.files.items()):
+    for name in sorted(resources.files):
         target = checked_package_path(root / name)
         target.relative_to(root)
-        atomic_write_bytes(target, content)
+        resources.files.write_to(name, target)
     index = ResourceIndex(resources=sorted(resources.resources, key=lambda record: record.identity), roots=resources.roots)
     atomic_write_json(root / index_path, index.model_dump(mode="json"))
     for name in sorted(previous_paths - set(resources.files)):

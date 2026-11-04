@@ -1174,6 +1174,7 @@
             <button class="btn btn-primary" id="saveBtn">保存草稿</button>
           </div>
           <div class="map-editor-actions" id="mapEditorActions" hidden>
+            <button class="btn" id="replaceExperimentMap" hidden>更换实验地图</button>
             <span class="map-autosave-status" id="mapAutosaveStatus" data-state="saved" role="status" aria-live="polite">地图已保存</span>
             <button class="btn btn-danger-soft" id="deleteMapBtn">删除地图</button>
             <button class="btn" id="saveMapBtn">保存地图</button>
@@ -1191,6 +1192,7 @@
             <button class="btn btn-primary" id="skillSave">保存内容</button>
           </div>
           <div class="result-header-actions" id="resultHeaderActions" hidden>
+            <a class="btn" id="directRunLink" hidden>独立打开此 Run</a>
             <button class="btn btn-primary" id="runContinueBtn" hidden>继续执行</button>
             <button class="btn" id="exportResultsBtn">导出结果</button>
           </div>
@@ -1225,6 +1227,13 @@
 
         <section class="page" id="page-maps">
           <div class="map-catalog-shell resource-catalog" id="mapCatalogShell" data-resource-catalog>
+            <section class="simworld-directory" id="publicSceneDirectory" aria-label="SimWorld 在线场景" hidden>
+              <label for="publicScene">SimWorld 在线场景</label>
+              <select class="control" id="publicScene"><option value="">请选择 3D 场景</option></select>
+              <button type="button" class="btn" id="openPublicScene">查看在线场景</button>
+              <button type="button" class="btn btn-sm" id="refreshPublicScenes">刷新场景</button>
+              <small role="status" id="publicSceneStatus" hidden></small>
+            </section>
             <div class="toolbar map-catalog-toolbar resource-toolbar">
               <div class="filter-tabs" id="mapStatusFilters" role="tablist" aria-label="地图状态筛选">
                 <button class="filter-tab active" data-map-filter="all">全部地图</button>
@@ -1349,16 +1358,16 @@
           <div class="content-workspace">
             <div class="overview-panel">
               <section class="overview-section" aria-labelledby="overviewDefinitionTitle">
-                <div class="panel-intro"><div><h2 id="overviewDefinitionTitle">实验定义</h2><p>名称和目标与故事用于说明实验意图，执行前后都可以更新。</p></div></div>
+                <div class="panel-intro"><div><h2 id="overviewDefinitionTitle">实验定义</h2><p id="experimentDefinitionHelp">查看实验名称、目标与故事。</p></div></div>
                 <div class="form-grid" id="overviewMetadataFields">
-                  <div class="field"><label for="experimentNameDraft">实验名称</label><input class="control" id="experimentNameDraft" maxlength="120" /></div>
-                  <div class="field" style="grid-column:1/-1"><label for="experimentGoalDraft">实验目标与故事</label><textarea class="control" id="experimentGoalDraft" maxlength="10000" rows="4" placeholder="说明要观察的完整故事、时间范围和预期结果"></textarea></div>
-                  <div class="field" style="grid-column:1/-1"><button class="btn" id="saveExperimentMetadata" type="button">保存实验定义</button></div>
+                  <div class="field"><label for="experimentNameDraft">实验名称</label><input class="control" id="experimentNameDraft" maxlength="120" readonly /></div>
+                  <div class="field" style="grid-column:1/-1"><label for="experimentGoalDraft">实验目标与故事</label><textarea class="control" id="experimentGoalDraft" maxlength="10000" rows="4" placeholder="说明要观察的完整故事、时间范围和预期结果" readonly></textarea></div>
+                  <div class="field" style="grid-column:1/-1"><button class="btn" id="saveExperimentMetadata" type="button" disabled>保存实验定义</button></div>
                 </div>
               </section>
 
               <section class="overview-section" aria-labelledby="overviewResourcesTitle">
-                <div class="panel-intro"><div><h2 id="overviewResourcesTitle">资源组合</h2><p>这里展示当前实验的独立副本，可前往对应模块查看和修改。已封存实验需要先复制为新实验。</p></div><span class="chip blue">只读</span></div>
+                <div class="panel-intro"><div><h2 id="overviewResourcesTitle">资源组合</h2><p>查看本实验选用的资源。草稿可以编辑；已封存实验需要先复制为新实验。</p></div><span class="chip blue">只读</span></div>
                 <div class="form-grid readonly-composition" id="experimentCompositionFields">
                   <div class="field"><label for="experimentBrainRevisionSelect">大脑</label><select class="control" id="experimentBrainRevisionSelect" disabled><option value="">正在加载大脑…</option></select><small class="field-hint" id="experimentBrainRevisionMeta">实验使用的大脑</small></div>
                   <div class="field"><label for="experimentMapSelect">地图</label><select class="control" id="experimentMapSelect" disabled><option value="">正在加载地图…</option></select><small class="field-hint" id="experimentMapMeta">实验使用的地图</small></div>
@@ -1372,6 +1381,7 @@
 
         <section class="page" id="page-results">
           <div id="resultWorkspace">
+            <p id="runSupervisionNotice" class="execution-progress" role="status" hidden></p>
             <section class="execution-progress" id="executionProgress" aria-labelledby="executionProgressTitle" hidden>
               <span id="executionProgressTitle">已提交</span> <strong id="executionCommitted">—</strong>，<strong id="executionActorCount">—</strong>
               <p id="executionProgressError" role="status" hidden></p>
@@ -1386,6 +1396,7 @@
                 <button class="result-tab" role="tab" aria-selected="false" data-result-tab="models">模型配置</button>
                 <button class="result-tab" role="tab" aria-selected="false" data-result-tab="artifacts">结果与导出</button>
               </div>
+              <button class="btn" id="sealExperimentBtn" hidden>封存实验</button>
               <button class="btn btn-primary result-configuration-action" id="publishBtn">执行实验</button>
             </div>
 
@@ -1621,7 +1632,7 @@
       <p id="resourceExchangeConflict" role="status" aria-live="polite"></p>
       <p id="resourceExchangeStatus" role="status" aria-live="polite"></p>
     </div>
-    <div class="modal-foot"><button class="btn" id="resourceExchangeCancel">关闭</button><button class="btn btn-primary" id="resourceExchangeSubmit" disabled>导入所选资源</button></div>
+    <div class="modal-foot"><button class="btn btn-primary" id="resourceExchangeSubmit" disabled>导入所选资源</button></div>
   </dialog>
 
   <div class="context-menu" id="experimentContextMenu" hidden>
@@ -1638,7 +1649,7 @@
     <div class="modal resource-delete-modal">
       <div class="modal-head"><div><span class="eyebrow">DESTRUCTIVE ACTION</span><h2 id="resourceDeleteTitle">确认删除</h2></div><button class="close" id="closeResourceDelete" aria-label="关闭">×</button></div>
       <div class="modal-body"><div class="resource-delete-warning"><span>!</span><div><strong id="resourceDeleteName">当前资源</strong><p id="resourceDeleteMessage">删除公共资源不会影响已经导入实验的物理副本。</p></div></div></div>
-      <div class="modal-foot"><button class="btn" id="cancelResourceDelete">取消</button><button class="btn btn-danger" id="confirmResourceDelete">确认删除</button></div>
+      <div class="modal-foot"><button class="btn btn-danger" id="confirmResourceDelete">确认删除</button></div>
     </div>
   </div>
 
@@ -1660,23 +1671,23 @@
         <div class="publish-validation-summary" id="publishValidationSummary"><strong>正在执行仿真前检查…</strong></div>
       </div>
       <p id="publishLaunchStatus" role="status" aria-live="polite" style="padding:0 24px"></p>
-      <div class="modal-foot"><button class="btn" id="cancelModal">取消</button><button class="btn btn-primary" id="confirmPublish">确认执行</button></div>
+      <div class="modal-foot"><button class="btn btn-primary" id="confirmPublish">确认执行</button></div>
     </div>
   </div>
 
   <div class="modal-backdrop" id="resumeRunModal" role="dialog" aria-modal="true" aria-labelledby="resumeRunTitle">
     <div class="modal">
-      <div class="modal-head"><div><h2 id="resumeRunTitle">继续当前仿真？</h2><p>从已验证的恢复点继续，原失败记录和结果会完整保留。</p></div><button class="close" id="closeResumeRun" aria-label="关闭">×</button></div>
+      <div class="modal-head"><div><h2 id="resumeRunTitle">继续当前仿真？</h2><p>保留原 Run、执行记录和已提交结果。</p></div><button class="close" id="closeResumeRun" aria-label="关闭">×</button></div>
       <div class="modal-body">
         <div class="manifest-preview">
           <div class="manifest-row"><span>当前仿真</span><strong id="resumeRunIdentity">待确认</strong></div>
-          <div class="manifest-row"><span>有效恢复点</span><strong id="resumeRunStep">Step —</strong></div>
+          <div class="manifest-row"><span>已提交边界</span><strong id="resumeRunStep">Step —</strong></div>
           <div class="manifest-row"><span>继续位置</span><strong id="resumeRunNextStep">Step —</strong></div>
           <div class="manifest-row"><span>实验配置</span><strong>保持不变</strong></div>
           <p id="resumeRunFeedback" role="status" aria-live="polite"></p>
         </div>
       </div>
-      <div class="modal-foot"><button class="btn" id="cancelResumeRun">取消</button><button class="btn btn-primary" id="confirmResumeRun">继续执行</button></div>
+      <div class="modal-foot"><button class="btn btn-primary" id="confirmResumeRun">继续执行</button></div>
     </div>
   </div>
 
@@ -1699,7 +1710,7 @@
           </div>
         </div>
         <div class="wizard-panel" data-wizard-panel="2">
-          <div class="section-title"><h3>选择大脑、地图与人群</h3><button type="button" class="help-tip" aria-label="实验资源说明" data-tooltip="创建时完整复制所选资源及依赖，实验草稿可继续编辑；封存后不可修改，需要调整时复制为新的独立实验。">?</button></div>
+          <div class="section-title"><h3>选择大脑、地图与人群</h3><button type="button" class="help-tip" aria-label="实验资源说明" data-tooltip="大脑、Skill、人群和模型配置复制进实验。1D、2D 地图也会复制；3D 地图只保存 SimWorld 场景 ID。">?</button></div>
           <div class="creation-resource-grid">
             <div class="field"><label for="newExperimentChatModel">生成式模型</label><select class="control" id="newExperimentChatModel"><option value="">请选择已配置模型</option></select></div>
           <div class="field"><label for="newExperimentDecisionModel">决策模型（可选）</label><select class="control" id="newExperimentDecisionModel"><option value="">不配置决策模型</option></select><small>大脑的调用链包含决策 Skill 时，请选择决策模型。</small></div>
@@ -1712,7 +1723,8 @@
             <div class="field">
               <label for="newExperimentMap">地图</label>
               <select class="control" id="newExperimentMap"><option value="">正在加载地图…</option></select>
-              <small>必须选择一张地图；创建时完整复制地图、素材和对象 Skill，公共地图后续修改不会影响本实验。</small>
+              <small id="experimentSceneInfo" role="status" hidden></small>
+              <small>1D、2D 地图复制进实验。3D 地图只保存场景 ID，使用时连接 SimWorld。</small>
             </div>
             <div class="field creation-crowd-field">
               <label id="newExperimentCrowdsLabel">人群（可多选）</label>
@@ -1729,7 +1741,7 @@
             <div class="create-summary-row"><span>地图</span><strong id="createSummaryMap">未选择</strong></div>
             <div class="create-summary-row"><span>人群</span><strong id="createSummaryCrowds">尚未选择</strong></div>
             <div class="create-summary-row"><span>Agent 导入</span><strong id="createSummaryAgents">按名称去重并自动放置</strong></div>
-            <div class="create-summary-row"><span>资源策略</span><strong>创建时完整复制，草稿可编辑，封存后不可修改</strong></div>
+            <div class="create-summary-row"><span>资源策略</span><strong id="createSummaryResourcePolicy">选择地图后查看</strong></div>
             <div class="create-summary-row"><span>初始状态</span><strong>草稿（DRAFT）· 尚未执行</strong></div>
           </div>
         </div>
@@ -1747,7 +1759,6 @@
           <button class="leave-choice" id="discardAndLeave"><strong>放弃修改</strong><span>恢复到上次保存状态并返回，不可撤销。</span></button>
         </div>
       </div>
-      <div class="modal-foot"><button class="btn" id="cancelLeave">继续编辑</button></div>
     </div>
   </div>
 
@@ -1779,6 +1790,8 @@
                 </article>
                 <p class="agent-image-storage-note">图片随当前智能体保存；实验中的图片修改不会影响基础配置。</p>
               </div>
+              <div class="field" id="agentSpawnField" hidden><strong>3D 出生位置</strong><span>由 SimWorld 自动安排</span><small>场景使用 SimWorld 提供的人形角色。</small></div>
+              <div class="field" id="agentYawField" hidden><label for="agentSpawnYaw">初始朝向（度）</label><input type="number" step="any" class="control" id="agentSpawnYaw"></div>
               <div class="field" style="grid-column:1/-1"><label for="agentEditCurrently">当前目标</label><textarea class="control" id="agentEditCurrently"></textarea></div>
               <div class="field"><label for="agentEditSpriteDisplayTiles">地图显示大小</label><div class="input-unit"><input class="control" id="agentEditSpriteDisplayTiles" type="number" min="0.5" max="6" step="0.1" placeholder="沿用系统默认" /><span>格</span></div><small class="field-hint">仅影响回放中的行走图显示大小，不改变坐标、碰撞或感知。留空沿用系统默认；行走图每帧的透明边也会影响人物肉眼大小。</small></div>
               <div class="field"><label for="agentEditVisionRadius">感知视野上限</label><div class="input-unit"><input class="control" id="agentEditVisionRadius" type="number" min="1" max="10000" value="8" /><span>格</span></div><small class="field-hint">Brain 可以请求更小范围，不能越过此上限。</small></div>
@@ -1818,7 +1831,7 @@
           </div>
         </div>
       </div>
-      <div class="modal-foot"><span id="agentSaveProgress" role="status" aria-live="polite" style="margin-right:auto"></span><button class="btn" id="cancelAgentEditor">取消</button><button class="btn btn-primary" id="saveAgentEditor">保存 Agent</button></div>
+      <div class="modal-foot"><span id="agentSaveProgress" role="status" aria-live="polite" style="margin-right:auto"></span><button class="btn btn-primary" id="saveAgentEditor">保存 Agent</button></div>
     </div>
   </div>
 
@@ -1829,7 +1842,7 @@
         <div class="field"><label for="newCrowdName">人群名称</label><input class="control" id="newCrowdName" placeholder="例如：社区经营者" /></div>
         <div class="field"><label for="newCrowdDescription">用途说明</label><textarea class="control" id="newCrowdDescription" placeholder="说明这个人群适合哪些实验…"></textarea></div>
       </div>
-      <div class="modal-foot"><button class="btn" id="cancelCreateCrowd">取消</button><button class="btn btn-primary" id="confirmCreateCrowd">创建并管理 Agent</button></div>
+      <div class="modal-foot"><button class="btn btn-primary" id="confirmCreateCrowd">创建并管理 Agent</button></div>
     </div>
   </div>
 
@@ -1841,17 +1854,25 @@
         <div class="crowd-agent-selection-meta"><strong id="crowdAgentSelectionCount">已选择 0 个 Agent</strong><span>公共 Agent 全局可编辑，可加入多个人群；实验导入后即断开关联。</span></div>
         <div class="crowd-agent-registry" id="crowdAgentList"><div class="empty-state"><strong>正在加载 Agent 完整定义…</strong></div></div>
       </div>
-      <div class="modal-foot"><button class="btn" id="cancelCrowdAgentManager">取消</button><button class="btn btn-primary" id="confirmCrowdAgentManager">应用到人群草稿</button></div>
+      <div class="modal-foot"><button class="btn btn-primary" id="confirmCrowdAgentManager">应用到人群草稿</button></div>
     </div>
   </div>
 
+  <div class="modal-backdrop" id="replaceMapModal" role="dialog" aria-modal="true" aria-labelledby="replaceMapTitle">
+    <div class="modal">
+      <div class="modal-head"><h2 id="replaceMapTitle">更换实验地图</h2><button class="close" id="closeReplaceMap" aria-label="关闭">×</button></div>
+      <div class="modal-body"><div class="field"><label for="replacementMap">新地图</label><select class="control" id="replacementMap"><option value="">请选择地图</option></select><small id="replacementSceneInfo" role="status" hidden></small><small>更换后需按新地图安排参与者的位置。</small></div></div>
+      <div class="modal-foot"><button class="btn btn-primary" id="confirmReplaceMap">更换地图</button></div>
+    </div>
+  </div>
   <div class="modal-backdrop" id="createMapModal" role="dialog" aria-modal="true" aria-labelledby="createMapTitle">
     <div class="modal">
-      <div class="modal-head"><div><h2 id="createMapTitle">新建公共地图</h2><p>选择 1D 群聊 / 论坛，或 2D 空间地图。3D 将在后续支持。</p></div><button class="close" id="closeCreateMap" aria-label="关闭">×</button></div>
+      <div class="modal-head"><h2 id="createMapTitle">新建公共地图</h2><button class="close" id="closeCreateMap" aria-label="关闭">×</button></div>
       <div class="modal-body map-inline-form">
-        <div class="field full"><label for="newMapEnvironmentType">地图类型</label><select class="control" id="newMapEnvironmentType"><option value="spatial_2d">2D · 空间地图</option><option value="social_1d">1D · 社交空间</option><option disabled>3D · 后续支持</option></select></div>
+        <div class="field full"><label for="newMapEnvironmentType">地图类型</label><select class="control" id="newMapEnvironmentType"><option value="social_1d">1D 社交空间</option><option value="spatial_2d">2D 平面空间</option><option value="spatial_3d">3D 具身智能</option></select></div>
+        <div class="field full" id="mapScenePicker" hidden><label for="newMapScene">SimWorld 预制场景</label><select class="control" id="newMapScene"><option value="">请选择场景</option></select><small id="mapSceneInfo" role="status" hidden></small></div>
         <div class="field full" data-map-create-social hidden><label for="newMapPresentation">展现方式</label><select class="control" id="newMapPresentation"><option value="chat">群聊</option><option value="forum">论坛</option></select><small>每张地图固定一种展现方式，两者均支持私聊。</small></div>
-        <div class="field full" data-map-create-social hidden><label for="newMapRules">场所规则</label><textarea class="control" id="newMapRules" rows="4" placeholder="讨论主题、参与者身份与交流约定…"></textarea></div>
+        <div class="field full" data-map-create-social hidden><label for="newMapRules">场所规则（可选）</label><textarea class="control" id="newMapRules" rows="4" placeholder="例如：引用他人观点时，请回复原发言。"></textarea><small>参与者每轮都会读到这些交流约定。</small></div>
         <div class="field"><label for="newMapName">地图名称</label><input class="control" id="newMapName" maxlength="120" placeholder="例如：海滨小镇" /></div>
         <div class="field"><label for="newMapKey">稳定键（可选）</label><input class="control" id="newMapKey" maxlength="64" autocapitalize="none" spellcheck="false" placeholder="例如：commute-home-office" /><small>支持小写字母、数字和连字符；留空或无法规范化时自动生成。</small></div>
         <div class="field full" data-map-create-spatial><label for="newMapBlueprint">构建方式</label><select class="control" id="newMapBlueprint"><option value="">空白地图（自由绘制）</option></select><small id="newMapBlueprintHint">创建一个不继承斯坦福小镇的空白地图。</small></div>
@@ -1862,7 +1883,7 @@
         <div class="field full" data-map-create-spatial><small id="newMapPixelSize">1 表示 1 个 Tile；最终像素尺寸：1536 × 1024 px（系统自动换算）</small></div>
         <div class="field full"><label for="newMapDescription">用途说明</label><textarea class="control" id="newMapDescription" maxlength="10000" placeholder="这张地图适合哪些实验…"></textarea></div>
       </div>
-      <div class="modal-foot"><button class="btn" id="cancelCreateMap">取消</button><button class="btn btn-primary" id="confirmCreateMap">创建并编辑</button></div>
+      <div class="modal-foot"><button class="btn btn-primary" id="confirmCreateMap">创建并编辑</button></div>
     </div>
   </div>
 
@@ -1874,7 +1895,7 @@
         <div class="field"><label for="newCanvasWidth">宽度（格）</label><input class="control" id="newCanvasWidth" type="number" min="1" max="256" value="32" /></div>
         <div class="field"><label for="newCanvasHeight">高度（格）</label><input class="control" id="newCanvasHeight" type="number" min="1" max="256" value="32" /></div>
       </div></div>
-      <div class="modal-foot"><button class="btn" id="cancelCreateCanvas">取消</button><button class="btn btn-primary" id="confirmCreateCanvas">创建画布</button></div>
+      <div class="modal-foot"><button class="btn btn-primary" id="confirmCreateCanvas">创建画布</button></div>
     </div>
   </div>
 
@@ -1902,7 +1923,7 @@
         <div class="delete-agent-summary"><strong id="deleteAgentsSummary">尚未选择 Agent</strong><span>历史 Run 内的物理副本不会被改动。</span></div>
         <div class="delete-agent-list" id="deleteAgentsPreview"></div>
       </div>
-      <div class="modal-foot"><button class="btn" id="cancelDeleteAgents">取消</button><button class="btn btn-danger" id="confirmDeleteAgents">确认删除</button></div>
+      <div class="modal-foot"><button class="btn btn-danger" id="confirmDeleteAgents">确认删除</button></div>
     </div>
   </div>
 
@@ -1913,7 +1934,7 @@
         <div class="field"><label for="agentImportStrategy">重名冲突</label><select class="control" id="agentImportStrategy"><option value="merge">更新同名 Agent，保留未提供字段</option><option value="replace">完整替换同名 Agent</option><option value="skip">跳过同名 Agent</option></select></div>
         <div class="batch-preview" id="agentImportPreview"><span>请选择 CSV 或 JSON 文件。</span></div>
       </div>
-      <div class="modal-foot"><button class="btn" id="cancelAgentImport">取消</button><button class="btn btn-primary" id="confirmAgentImport" disabled>确认导入</button></div>
+      <div class="modal-foot"><button class="btn btn-primary" id="confirmAgentImport" disabled>确认导入</button></div>
     </div>
   </div>
 
@@ -1924,7 +1945,7 @@
         <p class="model-trace-status" id="modelTraceStatus" role="status" hidden></p>
         <div class="model-trace-detail" id="modelTraceDetail" hidden></div>
       </div>
-      <div class="modal-foot"><button type="button" class="btn" id="tracePayloadMore" hidden>继续加载 Payload</button><button type="button" class="btn btn-primary" id="closeModelTraceDone">关闭</button></div>
+      <div class="modal-foot"><button type="button" class="btn" id="tracePayloadMore" hidden>继续加载 Payload</button></div>
     </div>
   </div>
 
@@ -1932,7 +1953,7 @@
     <div class="modal wide">
       <div class="modal-head"><div><h2 id="operationHistoryTitle">操作与诊断历史</h2><p>Toast 会自动消失，但成功、警告和失败都会保留在这里。</p></div><button class="close" id="closeOperationHistory" aria-label="关闭">×</button></div>
       <div class="modal-body"><div class="operation-history-list" id="operationHistoryList"><div class="empty-state"><strong>暂无操作记录</strong></div></div></div>
-      <div class="modal-foot"><button class="btn" id="copyLatestDiagnostic">复制最近诊断</button><button class="btn btn-primary" id="closeOperationHistoryDone">完成</button></div>
+      <div class="modal-foot"><button class="btn" id="copyLatestDiagnostic">复制最近诊断</button></div>
     </div>
   </div>
 

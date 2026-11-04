@@ -7,6 +7,7 @@ from pathlib import Path
 
 import uvicorn
 
+from generative_agents.adapters.service_config import load_services
 from generative_agents.adapters.web.app import create_studio_app
 
 
@@ -36,12 +37,18 @@ def main(argv=None) -> int:
     异常:
         SystemExit: 当底层操作报告该异常条件时抛出。
     """
-    args = build_parser().parse_args(argv)
-    return serve(args)
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    try:
+        return serve(args)
+    except ValueError as exc:
+        parser.error(str(exc))
 
 
 def serve(args) -> int:
     """Run the sole Web application for both CLI entry points."""
+    services = load_services(studio_host=args.host, studio_port=args.port)
+    services.check_local_ports()
     if args.max_concurrent_runs < 1:
         raise SystemExit("--max-concurrent-runs must be positive")
     if args.var_dir:
@@ -53,8 +60,8 @@ def serve(args) -> int:
     )
     uvicorn.run(
         app,
-        host=args.host,
-        port=args.port,
+        host=services.studio_host,
+        port=services.studio_port,
         workers=1,
         log_level=args.log_level,
     )

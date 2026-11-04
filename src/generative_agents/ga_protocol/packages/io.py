@@ -115,12 +115,23 @@ def atomic_write_bytes(path: Path, content: bytes) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if path.is_file():
         with open_shared_reader(path) as handle:
-            if handle.read() == content:
+            if path.stat().st_size == len(content) and all(
+                handle.read(1024 * 1024) == content[offset:offset + 1024 * 1024]
+                for offset in range(0, len(content), 1024 * 1024)
+            ):
                 return
+    with atomic_output(path) as handle:
+        handle.write(content)
+
+
+@contextmanager
+def atomic_output(path: Path):
+    """Publish a streamed file only after all content is durable."""
+    path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_name(f".{path.name}.{uuid4().hex}.tmp")
     try:
         with temporary.open("xb") as handle:
-            handle.write(content)
+            yield handle
             handle.flush()
             os.fsync(handle.fileno())
         delays = iter((0.02, 0.05, 0.1, 0.2, 0.4, 0.8))
@@ -264,7 +275,10 @@ def seal_directory(source: Path, archive: Path) -> Path:
                 info.compress_type = zipfile.ZIP_DEFLATED
                 info.create_system = 3
                 info.external_attr = (stat.S_IFREG | 0o644) << 16
-                package.writestr(info, path.read_bytes(), compress_type=zipfile.ZIP_DEFLATED, compresslevel=9)
+                info.file_size = path.stat().st_size
+                info._compresslevel = 9
+                with open_shared_reader(path) as source_file, package.open(info, "w") as member:
+                    shutil.copyfileobj(source_file, member, 1024 * 1024)
         os.replace(temporary, archive)
     finally:
         temporary.unlink(missing_ok=True)

@@ -15,6 +15,7 @@ class Event:
         describe=None,
         emoji=None,
         movement_activity=None,
+        presentation_clip=None,
     ):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -38,6 +39,7 @@ class Event:
         self.address = address or []
         self.emoji = emoji or ""
         self.movement_activity = normalize_movement_activity(movement_activity)
+        self.presentation_clip = presentation_clip
 
     def __str__(self):
         """执行`str`的内部处理，供当前模块或类复用。
@@ -144,6 +146,7 @@ class Event:
             "address": self.address,
             "emoji": self.emoji,
             "movement_activity": dict(self.movement_activity) if self.movement_activity else None,
+            **({"presentation_clip": self.presentation_clip} if self.presentation_clip else {}),
         }
 
     def get_describe(self, with_subject=True):

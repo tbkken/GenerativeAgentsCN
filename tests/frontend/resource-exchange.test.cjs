@@ -130,7 +130,7 @@ test('a newly selected upload rejects an older preview even after its response r
   assert.match(requests[2].url, /\/preview\/first$/);
 });
 
-test('closing a loaded preview releases it and a late uploaded preview is also released', async () => {
+test('Escape retains a loaded preview; explicit close releases it and late uploads', async () => {
   const {api, element, requests} = browser();
   api.setPage('maps');
   await element('importResourcePackageBtn').listeners.click();
@@ -138,6 +138,11 @@ test('closing a loaded preview releases it and a late uploaded preview is also r
   const first = element('resourceExchangeFile').listeners.change();
   requests[0].resolve(reply({token:'first', source_kind:'config', resources:[]}));
   await first;
+  const dialog = element('resourceExchangeDialog');
+  let prevented = false;
+  dialog.listeners.cancel({preventDefault() {prevented = true;}});
+  assert.ok(prevented && dialog.open);
+  assert.equal(requests.length, 1);
   element('resourceExchangeClose').listeners.click();
   assert.match(requests[1].url, /\/preview\/first$/);
   assert.equal(requests[1].options.method, 'DELETE');

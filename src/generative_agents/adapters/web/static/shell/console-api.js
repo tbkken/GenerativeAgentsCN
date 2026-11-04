@@ -168,6 +168,7 @@
     const section = document.createElement('section');
     section.className = 'overview-section overview-release';
     publishAction.className = 'btn btn-primary btn-block';
+    section.appendChild($('sealExperimentBtn'));
     section.appendChild(publishAction);
     overviewPanel.appendChild(section);
   }
@@ -183,7 +184,7 @@
     .replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;')
     .replaceAll('"', '&quot;').replaceAll("'", '&#039;');
   const statusLabels = {
-    DRAFT: '草稿', SEALED: '已封存', QUEUED: '排队中', STARTING: '正在启动', RUNNING: '运行中',
+    DRAFT: '草稿', SEALED: '已封存', CREATED: '已创建', QUEUED: '排队中', STARTING: '正在启动', RUNNING: '运行中', FINALIZING: '正在收尾',
     PAUSE_REQUESTED: '正在暂停', PAUSED: '已暂停', CANCEL_REQUESTED: '正在取消',
     COMPLETED: '已完成', CANCELLED: '已取消', FAILED: '失败', INTERRUPTED: '已中断',
   };
@@ -238,6 +239,13 @@
     const editorParams = new URLSearchParams(url.search);
     url.search = '';
     url.hash = '';
+    if (state.standaloneRunId && pageName === 'results') {
+      url.pathname = `/runs/${encodeURIComponent(state.standaloneRunId)}`;
+      if (state.resultTab !== 'timeline') url.searchParams.set('result_tab', state.resultTab);
+      if (state.resultTab === 'operations') url.searchParams.set('tab', state.operationTab);
+      if (state.resultTab === 'agents') url.searchParams.set('tab', state.selectedAgentContent);
+      return `${url.pathname}${url.search}`;
+    }
     url.pathname = window.ResourceScope?.experimentId && pageName !== 'experiments' ? `/experiments/${encodeURIComponent(window.ResourceScope.experimentId)}` : '/';
     if (isGlobalPage(pageName) && pageName !== 'experiments') {
       url.searchParams.set('view', pageName);
@@ -325,12 +333,13 @@
       stopExperimentListRefresh();
       window.SkillWorkspace?.invalidate?.();
       window.ModelWorkspace?.deactivate?.();
-      if (window.MapWorkspace) window.MapWorkspace.openGeneration = (window.MapWorkspace.openGeneration || 0) + 1;
+      window.MapWorkspace?.deactivate?.();
       window.CrowdWorkspace?.deactivate?.();
     }
     if (isGlobal) clearDuplicateFeedback();
     window.SkillWorkspace?.deactivateTopbar?.();
     state.workspacePage = pageName;
+    state.replayPlayer?.setSceneVisible?.(pageName === 'results' && state.resultTab === 'timeline');
     resourceTabs.sync(pageName);
     window.ResourceExchange?.setPage(pageName);
     document.querySelectorAll('.nav-item[data-page]').forEach(item => {
@@ -348,7 +357,9 @@
     const catalogNames = {experiments:'实验', maps:'地图', 'public-agents':'智能体', crowds:'智能体', skills:'技能', brains:'技能', 'model-catalog':'模型'};
     $('topbarTitle').textContent = window.ResourceScope?.experimentId ? state.currentExperimentName : catalogNames[pageName] || state.currentExperimentName || '当前实验';
     $('catalogDescription').hidden = !isGlobal;
-    $('catalogDescription').textContent = pageName === 'experiments' ? '打开实验后，进入独立的实验工作区。' : pageName === 'public-agents' ? '基础配置 · 出生位置与空间在实验内设置。' : '基础配置 · 创建实验时复制，后续修改互不影响。';
+    $('catalogDescription').textContent = pageName === 'experiments' ? '打开实验后，进入独立的实验工作区。'
+      : pageName === 'public-agents' ? '基础配置 · 出生位置与空间在实验内设置。'
+      : pageName === 'maps' ? '1D、2D 地图可复制到实验；3D 地图使用 SimWorld 在线场景。' : '基础配置 · 管理可供实验选用的资源。';
     $('statusPill').hidden = isGlobal;
     $('experimentHeaderMeta').hidden = isGlobal;
     $('backToHub').classList.toggle('visible', !isGlobal);
@@ -465,6 +476,10 @@
   }
 
   async function requestGlobalNavigation(pageName) {
+    if (state.standaloneRunId) {
+      window.location.assign(pageName === 'experiments' ? '/' : `/?view=${encodeURIComponent(pageName)}`);
+      return;
+    }
     if (state.workspacePage === 'model-catalog' && window.ModelWorkspace && !await window.ModelWorkspace.mayLeave()) return;
     if (window.ResourceScope?.experimentId && pageName === 'experiments') { window.location.assign('/'); return; }
     if (state.dirty) {
@@ -506,9 +521,17 @@
 
   function setWorkspaceMode() {
     state.workspaceReadonly = !state.draft;
+    const definitionReadonly = state.workspaceReadonly || state.experiment?.editable === false;
+    $('experimentNameDraft').readOnly = definitionReadonly;
+    $('experimentGoalDraft').readOnly = definitionReadonly;
+    $('saveExperimentMetadata').disabled = definitionReadonly;
+    $('experimentDefinitionHelp').textContent = definitionReadonly
+      ? '实验已封存。如需调整名称、目标或故事，请复制为新的独立实验。'
+      : '可在草稿阶段修改实验名称、目标与故事。';
     document.body.classList.toggle('readonly-mode', state.workspaceReadonly);
-    $('workspaceNotice').hidden = !experimentHasRun();
-    const workspaceMessage = experimentHasRun()
+    $('workspaceNotice').hidden = !state.workspaceReadonly;
+    $('sealExperimentBtn').hidden = state.workspaceReadonly;
+    const workspaceMessage = state.workspaceReadonly
       ? '实验包已封存；地图、大脑、Agent、参数和模型配置均保持不变。需要调整时请复制为新的独立实验。'
       : '';
     $('workspaceNoticeHelp').dataset.tooltip = workspaceMessage;
@@ -563,6 +586,7 @@
     $('runQualityBanner').hidden = !state.runHistory.length;
     closeLogStream();
     if (tabName !== 'timeline') state.replayPlayer?.pause();
+    state.replayPlayer?.setSceneVisible?.(state.workspacePage === 'results' && tabName === 'timeline');
     if (state.selectedRunId && state.workspacePage === 'results') {
       state.resultDataVersion = null;
       refreshResultData(state.selectedRunId, state.resultGeneration, {force:true}).then(() => {
@@ -611,6 +635,10 @@
     const mapOption = $('newExperimentMap')?.selectedOptions?.[0];
     if ($('createSummaryBrain')) $('createSummaryBrain').textContent = $('newExperimentBrain')?.value ? brainOption?.textContent || $('newExperimentBrain').value : '未选择';
     if ($('createSummaryMap')) $('createSummaryMap').textContent = mapOption?.textContent?.replace(/ · v\d+(?: · 默认)?$/, '') || '未选择';
+    const mapChoice=$('newExperimentMap').value;
+    $('createSummaryResourcePolicy').textContent = !mapChoice ? '选择地图后查看'
+      : mapChoice.startsWith('simworld:') ? '大脑、Skill、人群和模型配置复制进实验；3D 地图只保存 SimWorld 场景 ID。'
+      : '大脑、Skill、人群、模型配置和地图复制进实验。';
     const crowdSummary = window.CrowdWorkspace?.getCreationSummary?.() || { names: [], crowdCount: 0, agentCount: 0, duplicateCount: 0 };
     if ($('createSummaryCrowds')) $('createSummaryCrowds').textContent = crowdSummary.names.length ? crowdSummary.names.join('、') : '未选择';
     if ($('createSummaryAgents')) $('createSummaryAgents').textContent = crowdSummary.crowdCount
@@ -721,7 +749,7 @@
     $('resourceDeleteMessage').textContent = message || '删除公共资源不会影响已经导入实验的物理副本。';
     return new Promise(resolve => {
       state.pendingResourceDelete = { resolve };
-      openModal('resourceDeleteModal', 'cancelResourceDelete');
+      openModal('resourceDeleteModal', 'closeResourceDelete');
     });
   }
 
@@ -736,10 +764,8 @@
   window.confirmResourceDeletion = confirmResourceDeletion;
 
   function handleModalKeydown(event, modal) {
-    if (modal.id === 'agentEditorModal' && state.agentSaving && event.key === 'Escape') { event.preventDefault(); return true; }
     if (event.key === 'Escape') {
       event.preventDefault();
-      closeModal(modal.id);
       return true;
     }
     if (event.key === 'Tab') {
@@ -857,23 +883,28 @@
   }
 
   async function openResumeRunModal(detail = null) {
-    if (!detail && state.currentRun) {
-      const runId=state.currentRun.run_id;
-      const recovery=await api(`/runs/${runId}/recovery`);
-      if (runId !== state.selectedRunId) return;
-      state.currentRun={...state.currentRun,...recovery};
+    const runId = state.currentRun?.run_id;
+    const generation = state.resultGeneration;
+    if (!runId || (detail && detail.run_id !== runId)) throw new Error('仿真已切换，请重新打开检查点');
+    const recovery = await api(`/runs/${runId}/recovery`);
+    if (runId !== state.selectedRunId || generation !== state.resultGeneration) return;
+    const run = state.currentRun = {...state.currentRun, ...recovery};
+    renderRunActions(run);
+    if (!recovery.recoverable) throw new Error(recovery.recovery_reason || '当前仿真没有可用的恢复点');
+    const step = recovery.recoverable_step;
+    if (detail && (!detail.resumable || detail.step_no !== step || detail.active_attempt_id !== recovery.active_attempt_id)) {
+      throw new Error('恢复边界或 Attempt 已变化，请重新打开检查点');
     }
-    const run = state.currentRun;
-    if (detail && detail.run_id !== run?.run_id) throw new Error('仿真已切换，请重新打开检查点');
-    if (detail ? !detail.resumable : !isRunRecoverable(run)) throw new Error(detail?.recovery_reason || '当前仿真没有可用的恢复点');
-    const step = Number(detail?.step_no || run.recoverable_step);
+    const finalizing = recovery.recovery_action === 'finalize';
     state.pendingResumeRunId = run.run_id;
     state.pendingResumeStep = step;
     state.pendingResumeAttemptId = detail?.active_attempt_id || run.active_attempt_id;
-    $('resumeRunFeedback').textContent = '保持原 Run，创建新 Attempt；从下一步继续，已提交步骤不会重新执行。';
+    $('resumeRunTitle').textContent = finalizing ? '补完当前仿真收尾？' : '继续当前仿真？';
+    $('confirmResumeRun').textContent = finalizing ? '完成收尾' : '继续执行';
+    $('resumeRunFeedback').textContent = finalizing ? '所有步骤已提交。将核验最后一步并补完报告。' : step === 0 ? '尚未提交任何步骤。将读取 Run 内嵌实验，从 Step 1 启动。' : '将在原 Run 下创建新的 Attempt，从下一步继续执行。';
     $('resumeRunIdentity').textContent = run.run_id.slice(0, 12);
     $('resumeRunStep').textContent = `Step ${step}`;
-    $('resumeRunNextStep').textContent = `Step ${step + 1}`;
+    $('resumeRunNextStep').textContent = finalizing ? '生成报告并完成收尾' : `Step ${step + 1}`;
     openModal('resumeRunModal', 'confirmResumeRun');
   }
 
@@ -1197,7 +1228,19 @@
     if (duplicateFeedbackGeneration === null) clearDuplicateFeedback();
     if (navigateToExperiment(id, targetPage, preferredRunId)) return;
     const generation = ++state.experimentOpenGeneration;
-    const experiment = await api(`/experiments/${id}`);
+    let experiment;
+    try { experiment = await api(`/experiments/${id}`); }
+    catch (error) {
+      if (error.status !== 404 || targetPage !== 'results' || !preferredRunId) throw error;
+      const run = await api(`/runs/${encodeURIComponent(preferredRunId)}`);
+      if (generation !== state.experimentOpenGeneration || !ownsDuplicateFeedback()) return;
+      if (run.experiment_id !== id) throw error;
+      const destination = new URL(`/runs/${encodeURIComponent(run.run_id)}`, window.location.href);
+      const params = new URLSearchParams(window.location.search);
+      for (const key of ['result_tab', 'tab']) if (params.has(key)) destination.searchParams.set(key, params.get(key));
+      window.location.replace(destination.href);
+      return 'redirected';
+    }
     if (generation !== state.experimentOpenGeneration || !ownsDuplicateFeedback()) return;
     const snapshot = {
       id: experiment.experiment_id,
@@ -1304,10 +1347,10 @@
     if (!state.selectedExperimentId || !state.experiment) {
       throw new Error('请先打开实验');
     }
+    if (!state.draft || state.experiment.editable === false) throw new Error('实验已封存，请复制为新的独立实验后再修改');
     const name = $('experimentNameDraft').value.trim();
     const goal = $('experimentGoalDraft').value.trim();
     if (!name) throw new Error('实验名称不能为空');
-    if (!state.draft) throw new Error('封存实验不可修改；请先复制为新的独立实验');
     state.experiment.name = name;
     state.experiment.goal = goal;
     state.draft.definition.experiment.name = name;
@@ -1385,6 +1428,11 @@
     }
     if (!definition) return;
     if (definition.world?.definition?.environment_type === 'social_1d') $('experimentMapMeta').textContent = `1D · ${definition.world.definition.presentation === 'forum' ? '论坛' : '群聊'} · 当前实验内的独立副本`;
+    const world=definition.world?.definition;
+    if ((world?.environment_type || state.experiment?.core_parameters?.environment_type)==='spatial_3d') {
+      $('experimentMapMeta').textContent = world && !world.simworld_scene_id ? '未关联 SimWorld 在线场景'
+        : `3D 具身智能 · SimWorld 在线场景${world?.simworld_scene_id ? ' '+world.simworld_scene_id : ''}`;
+    }
     const agents = definition.agents || [];
     const enabled = definition.agents ? agents.filter(item => item.enabled).length : (state.experiment?.core_parameters?.agent_count ?? state.experiment?.agent_count ?? state.experiment?.resource_summary?.agent_count ?? 0);
     const enabledAgents = agents.filter(item => item.enabled);
@@ -1425,12 +1473,13 @@
   }
 
   function renderAgentDraft(agents) {
+    const street=((state.draft?.definition || state.definition)?.world?.definition?.environment_type || state.experiment?.core_parameters?.environment_type)==='spatial_3d';
     const availableKeys = new Set(agents.map(agent => agent.agent_key));
     if (!state.agentDraftPage) state.selectedAgentKeys.forEach(key => { if (!availableKeys.has(key)) state.selectedAgentKeys.delete(key); });
     $('agentRows').innerHTML = agents.map(agent => {
       const living = agent.spatial?.address?.living_area || [];
-      const location = agent.space_id ? '1D 社交空间成员' : agent.initial_location?.join(' / ') || living.at(-1) || (agent.coord ? `${agent.coord[0]}, ${agent.coord[1]}` : '未设置');
-      const complete = agent.definition_complete ?? Boolean(agent.name && agent.scratch?.daily_plan && (agent.space_id || Array.isArray(agent.coord) && agent.coord.length === 2));
+      const location = street ? 'SimWorld 自动安排' : agent.space_id ? '1D 社交空间成员' : agent.initial_location?.join(' / ') || living.at(-1) || agent.coord?.join(', ') || '未设置';
+      const complete = agent.definition_complete ?? Boolean(agent.name && agent.scratch?.daily_plan && (street || agent.space_id || Array.isArray(agent.coord) && agent.coord.length === 2));
       const model = agent.model_override || state.definition?.models?.chat?.model || '';
       if (state.agentEnabledChanges?.has(agent.agent_key)) agent={...agent,enabled:state.agentEnabledChanges.get(agent.agent_key)};
       const selected = state.selectedAgentKeys.has(agent.agent_key);
@@ -1486,7 +1535,7 @@
     const changes = {};
     if ($('batchAgentEnabled').value) changes.enabled = $('batchAgentEnabled').value === 'true';
     if ($('batchAgentModel').value.trim()) changes.model_override = $('batchAgentModel').value.trim();
-    if (state.batchAgentLocation) {
+    if (state.batchAgentLocation && hasBatchGrid()) {
       changes.coord = [...state.batchAgentLocation.coord];
       changes.initial_location = [...state.batchAgentLocation.path];
     }
@@ -1495,6 +1544,10 @@
     if (tags.length) changes.add_tags = tags;
     if (!Object.keys(changes).length) throw new Error('请至少填写一项批量修改');
     return changes;
+  }
+
+  function hasBatchGrid() {
+    return (state.draft?.definition?.world?.definition?.environment_type || 'spatial_2d') === 'spatial_2d';
   }
 
   function renderAgentBatchPreview(preview) {
@@ -1775,6 +1828,8 @@
     state.agentDetailGeneration += 1;
     state.currentRun = null;
     state.agentResults = [];
+    state.runConnectionLost = false;
+    $('runSupervisionNotice').hidden = true;
     state.agentDetailSignatures.clear();
     state.agentDetailCache.clear();
     state.agentContentPages.clear();
@@ -1865,6 +1920,8 @@
     resetOperationsWorkspaceForRunSwitch();
     state.selectedRunId = runId;
     state.currentRun = null;
+    state.runConnectionLost = false;
+    $('runSupervisionNotice').hidden = true;
     renderRunQuality(null);
     state.replayAuditSteps = new Map();
     state.qualityOffset=0; state.artifactOffset=0; state.checkpointOffset=0;
@@ -1876,9 +1933,8 @@
     state.resultPollTimer = null;
     clearResultDurationTimer();
     if (state.resultRefreshTimer) clearTimeout(state.resultRefreshTimer);
-    await refreshResultData(runId, generation);
-    if (generation !== state.resultGeneration) return;
-    scheduleDetailPoll();
+    try { await refreshResultData(runId, generation); }
+    finally { if (generation === state.resultGeneration) scheduleDetailPoll(); }
   }
 
   function scheduleResultRefresh(runId, generation) {
@@ -1910,12 +1966,22 @@
   async function refreshResultDataUnlocked(runId, generation = state.resultGeneration, { silent = false, force = false } = {}) {
     if (state.deletingRunId === runId || document.visibilityState === 'hidden') return;
     const requestGeneration = state.resultRequestGeneration = (state.resultRequestGeneration || 0) + 1;
-    const run = await api(`/runs/${runId}`);
     const current = () => generation === state.resultGeneration && runId === state.selectedRunId && requestGeneration === state.resultRequestGeneration;
+    let run;
+    try { run = await api(`/runs/${runId}`); }
+    catch (error) {
+      if (current() && (error.code === 'CONTROL_PLANE_NETWORK_ERROR' || [502, 503, 504].includes(error.status))) {
+        state.runConnectionLost = true;
+        renderRunActions(state.currentRun || {});
+      }
+      throw error;
+    }
     if (!current()) return;
+    state.runConnectionLost = false;
     state.currentRun = run;
     const historyIndex = state.runHistory.findIndex(item => item.run_id === runId);
     if (historyIndex >= 0) state.runHistory[historyIndex] = {...state.runHistory[historyIndex], ...run};
+    else if (state.standaloneRunId === runId) state.runHistory = [run];
     renderRunSelect(runId);
     renderRunActions(run);
     startResultDurationTimer(run);
@@ -2060,9 +2126,13 @@
     const selectedId = state.selectedExperimentId;
     const selectedRunId = state.selectedRunId;
     const resultGeneration = state.resultGeneration;
+    if (state.standaloneRunId) {
+      await refreshResultData(state.standaloneRunId, resultGeneration, {silent: true});
+      return;
+    }
     const selectedChanged = Boolean(selectedId && (full || experimentIds.has(selectedId)));
-    await refreshArtifactJobs();
-    const tasks = state.workspacePage === 'experiments' ? [loadExperiments({ silent: true })] : [];
+    const tasks = [refreshArtifactJobs()];
+    if (state.workspacePage === 'experiments') tasks.push(loadExperiments({ silent: true }));
     if (selectedChanged) {
       tasks.push(syncSelectedExperiment({ refreshOverview: true }));
       if (state.workspacePage === 'results') {
@@ -2079,7 +2149,7 @@
     if (!state.bootstrapped || document.visibilityState === 'hidden') return false;
     if (state.workspacePage === 'experiments') return false;
     const run = state.workspacePage === 'results' ? state.currentRun : state.experiment?.latest_run;
-    return Boolean(state.activeArtifactJobs || (run && !['COMPLETED','FAILED','CANCELLED','PAUSED'].includes(run.status)));
+    return Boolean(state.activeArtifactJobs || (state.workspacePage === 'results' && state.selectedRunId && state.runConnectionLost) || (run && !['COMPLETED','FAILED','CANCELLED','PAUSED'].includes(run.status)));
   }
 
   function scheduleDetailPoll() {
@@ -2095,7 +2165,7 @@
   }
 
   async function startGlobalActivityStream() {
-    if (!window.ResourceScope?.experimentId && !state.selectedExperimentId) {
+    if (!window.ResourceScope?.experimentId && !state.selectedExperimentId && !state.standaloneRunId) {
       scheduleExperimentListPoll();
       return;
     }
@@ -2103,9 +2173,7 @@
   }
 
   function isRunRecoverable(run) {
-    return Boolean(run?.recoverable ?? (Number(run?.committed_step || run?.completed_steps) > 0))
-      && Number(run.recoverable_step || run.committed_step || run.completed_steps) > 0
-      && ['PAUSED', 'FAILED', 'INTERRUPTED'].includes(run.status);
+    return Boolean(run?.recoverable ?? run?.recovery_check_required) && ['PAUSED', 'FAILED'].includes(run.status);
   }
 
   function renderRunActions(run) {
@@ -2113,13 +2181,28 @@
     const cancel = $('runCancelBtn');
     const remove = $('deleteRunBtn');
     const continueRun = $('runContinueBtn');
-    const canContinue = isRunRecoverable(run);
-    pauseResume.hidden = run.status !== 'RUNNING';
+    const directLink = $('directRunLink');
+    directLink.hidden = !run.run_id || Boolean(state.standaloneRunId);
+    if (!directLink.hidden) directLink.href = `/runs/${encodeURIComponent(run.run_id)}`;
+    const offline = state.runConnectionLost;
+    const canContinue = !offline && isRunRecoverable(run);
+    const step = run.recoverable_step ?? run.committed_step ?? run.completed_steps;
+    pauseResume.hidden = offline || run.status !== 'RUNNING';
     pauseResume.textContent = '暂停仿真';
-    cancel.hidden = !['QUEUED', 'RUNNING', 'PAUSE_REQUESTED', 'PAUSED'].includes(run.status);
-    remove.hidden = ['QUEUED', 'STARTING', 'RUNNING', 'PAUSE_REQUESTED', 'PAUSED', 'CANCEL_REQUESTED'].includes(run.status);
+    cancel.hidden = offline || !['QUEUED', 'RUNNING', 'PAUSE_REQUESTED', 'PAUSED'].includes(run.status);
+    remove.hidden = offline || ['QUEUED', 'STARTING', 'RUNNING', 'FINALIZING', 'PAUSE_REQUESTED', 'PAUSED', 'CANCEL_REQUESTED'].includes(run.status);
     continueRun.hidden = !canContinue;
-    continueRun.textContent = canContinue ? `继续执行 · Step ${run.recoverable_step || run.committed_step || run.completed_steps}` : '继续执行';
+    continueRun.textContent = step === 0 ? '从第 1 步开始' : step != null && step === run.requested_steps ? '完成收尾' : canContinue ? `从第 ${step + 1} 步继续` : '继续执行';
+    const notice = $('runSupervisionNotice');
+    const lastStep = run.committed_step ?? run.completed_steps;
+    const process = run.process;
+    const failure = run.status === 'FAILED' && run.reason ? `${run.reason}（${lastStep ? `已提交到 Step ${lastStep}` : '尚未提交任何步骤'}）` : null;
+    const diagnostic = offline ? `Web 连接中断，正在重新确认仿真状态。${lastStep != null ? `上次确认已提交到 Step ${lastStep}。` : ''}`
+      : run.recovery_reason || failure
+        || (process?.heartbeat_stale ? '执行进程仍持有锁，心跳延迟，正在核对进度。'
+          : process?.liveness === 'unknown' ? '正在核对执行者身份，暂不能确认进度。' : null);
+    notice.textContent = diagnostic || '';
+    notice.hidden = !diagnostic;
     $('resultRunControls').hidden = state.workspacePage !== 'results' || (pauseResume.hidden && cancel.hidden && remove.hidden);
   }
 
@@ -2611,20 +2694,22 @@
     state.replayRunId = runId;
     const replayManifest = await api(`/runs/${runId}/replay/manifest`);
     const social = replayManifest.environment_type === 'social_1d' || replayManifest.world?.definition?.environment_type === 'social_1d';
-    await window.WorkspaceLoader.load(social ? 'social-replay' : 'replay');
+    const street = replayManifest.environment_type === 'spatial_3d';
+    await window.WorkspaceLoader.load(social ? 'social-replay' : street ? 'street-replay' : 'replay');
     if (generation !== state.resultGeneration || runId !== state.selectedRunId) return;
     $('resultMap').closest('.timeline-layout').classList.toggle('social-timeline', social);
-    const Player = social ? window.GASocialReplayPlayer : GAReplayPlayer;
+    const Player = social ? window.GASocialReplayPlayer : street ? window.GAStreetReplayPlayer : GAReplayPlayer;
     const replayPlayer = new Player({
       canvas: $('resultMapCanvas'),
       container: $('resultMap'),
+      isTimelineVisible: () => state.workspacePage === 'results' && state.resultTab === 'timeline',
       onSelection: key => applyReplayAgentSelection(key),
       onStatus: status => {
         if (runId !== state.selectedRunId || generation !== state.resultGeneration) return;
         $('replayStatus').textContent = status.state === 'AVAILABLE_STEP' ? `可播放至 Step ${status.availableStep}` : status.state;
         if (status.state === 'LOADING') state.replayReady = false;
         if (status.state === 'READY') state.replayReady = true;
-        state.replayPlaying = status.state === 'PLAYING';
+        if (status.state !== 'AVAILABLE_STEP') state.replayPlaying = status.state === 'PLAYING';
         if (Number.isFinite(status.availableStep)) {
           $('timelineRange').max = status.availableStep;
         }
@@ -2649,7 +2734,8 @@
     const rosterHint = $('replayAgentRosterHint');
     const roster = $('replayAgentRoster');
     if (rosterTitle) rosterTitle.textContent = composedReplay ? '场景参与者' : '所有 Agent';
-    if (rosterHint) rosterHint.textContent = social ? '点击头像打开该智能体的私聊会话列表' : composedReplay
+    if (rosterHint) rosterHint.textContent = social ? '点击头像打开该智能体的私聊会话列表' : street
+      ? '点击头像，以第三人称跟随该人物；再次点击返回自由镜头' : composedReplay
       ? '只展示运行快照中的物理角色；点击可跟随轨迹'
       : '点击头像或姓名跟随；再次点击恢复自由镜头';
     if (roster?.setAttribute) roster.setAttribute('aria-label', composedReplay ? '选择回放跟随场景参与者' : '选择回放跟随 Agent');
@@ -3276,7 +3362,7 @@
     const storageRows = detail.storage.groups.map(item => `<li><strong>${escapeHtml(item.agent_key)}</strong> / ${escapeHtml(item.index_type)} · ${item.file_count ?? '—'} 文件 · ${item.size_bytes} bytes</li>`).join('') || '<li>无存储快照</li>';
     const fileRows = detail.files.map(item => `<li><code>${escapeHtml(item.path)}</code> · ${item.size_bytes} bytes · ${escapeHtml((item.sha256 || '').slice(0, 12))}</li>`).join('');
     $('checkpointDetailGrid').innerHTML = `
-      <div><strong>恢复操作</strong><p>${escapeHtml(detail.recovery_reason || `将从 Step ${detail.step_no + 1} 继续，保留原 Run 并创建新 Attempt。`)}</p><button class="btn btn-primary" data-checkpoint-resume ${detail.resumable ? '' : 'disabled'}>确认恢复此仿真…</button></div>
+      <div><strong>恢复操作</strong><p>${escapeHtml(detail.recovery_reason || (detail.step_no === state.currentRun?.requested_steps ? '所有步骤已提交，可核验并补完报告。' : `将从 Step ${detail.step_no + 1} 继续，保留原 Run 并创建新 Attempt。`))}</p><button class="btn btn-primary" data-checkpoint-resume ${detail.resumable ? '' : 'disabled'}>确认恢复此仿真…</button></div>
       <div><strong>Bundle / 校验</strong><p>${escapeHtml(detail.status)} · ${escapeHtml(detail.validation?.code || '—')}<br>Step ${detail.step_no} · Attempt ${escapeHtml(detail.attempt_id || '—')}<br><code>${escapeHtml(detail.bundle_sha256 || '')}</code></p></div>
       <div><strong>Agent 状态 (${detail.agent_state.count})</strong><ul>${agentRows}</ul></div>
       <div><strong>对话 (${detail.conversations.count})</strong><ul>${conversationRows}</ul></div>
@@ -3471,8 +3557,8 @@
     const brainResourceId = $('newExperimentBrain').value;
     const brainSkill = $('newExperimentBrain').selectedOptions[0]?.dataset.skillName;
     if (!brainResourceId || !brainSkill) throw new Error('新实验必须选择一个 Brain Skill');
-    const mapId = $('newExperimentMap').value;
-    if (!mapId) throw new Error('新实验必须选择一张地图');
+    const mapChoice = $('newExperimentMap');
+    if (!mapChoice.value) throw new Error('新实验必须选择一张地图');
     const modelPresetId = $('newExperimentChatModel').value;
     const embeddingModelPresetId = $('newExperimentEmbeddingModel').value;
     const decisionModelPresetId = $('newExperimentDecisionModel').value;
@@ -3484,7 +3570,7 @@
         goal: $('newExperimentGoal').value.trim(),
         owner: $('newExperimentOwner').value.trim(),
         tags: $('newExperimentTag').value.split(/[,，]/).map(item => item.trim()).filter(Boolean),
-        map_id: mapId,
+        ...window.SimWorldScenes.selection(mapChoice.value),
         brain_skill_id: brainResourceId,
         model_preset_id: modelPresetId,
         embedding_model_preset_id: embeddingModelPresetId,
@@ -3529,7 +3615,7 @@
     try {
       await new Promise(resolve => requestAnimationFrame(resolve));
       if (!ownsFeedback()) return;
-      setDuplicateStatus('正在复制地图素材…');
+      setDuplicateStatus('正在复制实验资源…');
       const created = await api(`/experiments/${experimentId}/duplicate`, {
         method: 'POST', body: JSON.stringify({}),
       });
@@ -3918,7 +4004,6 @@
     $('agentPortraitFile').disabled = readonly;
     $('agentSpriteFile').disabled = readonly;
     $('saveAgentEditor').hidden = readonly;
-    $('cancelAgentEditor').textContent = readonly ? '关闭' : '取消';
   }
 
   function readAgentSpriteDisplayTiles() {
@@ -3949,10 +4034,18 @@
     $('agentEditAttentionBandwidth').value = agent.perception?.attention_bandwidth ?? 8;
     renderSpatialEditor(agent.spatial || { address: {}, tree: {} });
     const social = state.agentEditorContext?.ownerType?.startsWith('experiment') && (state.draft?.definition || state.definition)?.world?.definition?.environment_type === 'social_1d';
-    document.querySelector('[data-content-tab="space"]').hidden = social;
-    $('agentSpritePreview').closest('.agent-image-card').hidden = social;
-    $('agentEditSpriteDisplayTiles').closest('.field').hidden = social;
+    const world = (state.draft?.definition || state.definition)?.world?.definition;
+    const street = state.agentEditorContext?.ownerType?.startsWith('experiment') && world?.environment_type === 'spatial_3d';
+    if ($('agentSpawnField')) {
+      $('agentSpawnField').hidden = !street;
+      $('agentYawField').hidden = !street;
+      if (street) $('agentSpawnYaw').value=agent.yaw_deg ?? 0;
+    }
+    document.querySelector('[data-content-tab="space"]').hidden = social || street;
+    $('agentSpritePreview').closest('.agent-image-card').hidden = social || street;
+    $('agentEditSpriteDisplayTiles').closest('.field').hidden = social || street;
     $('agentEditVisionRadius').closest('.field').hidden = social;
+    $('agentEditVisionRadius').closest('.input-unit').querySelector('span').textContent = street ? '米' : '格';
     $('agentEditAttentionBandwidth').closest('.field').querySelector('.field-hint').textContent = social ? '限制每次读取返回的消息数量；可继续翻页查看公开历史。' : '限制每次感知返回的附近候选数量。';
     setContentTab('agent-editor', 'identity', { sync: false });
   }
@@ -4080,8 +4173,8 @@
         agent_key: $('agentEditKey').value.trim(),
         enabled: previous.enabled ?? true,
         name: $('agentEditName').value.trim(),
-        portrait_asset_id: previous.portrait_asset_id || images.portrait || null,
-        sprite_asset_id: previous.sprite_asset_id || images.sprite || null,
+        portrait_asset_id: images.portrait || previous.portrait_asset_id || null,
+        sprite_asset_id: images.sprite || previous.sprite_asset_id || null,
         sprite_layout: images.sprite_layout,
         sprite_display_tiles: spriteDisplayTiles,
         model_override: previous.model_override || null,
@@ -4115,16 +4208,18 @@
     if (!state.draft) throw new Error('当前没有可编辑 Draft');
     const key = $('agentEditKey').value.trim();
     const social = state.draft.definition.world?.definition?.environment_type === 'social_1d';
-    const spatial = social ? null : readSpatialEditor();
-    if (!social) validateInitialLocationAgainstCoord(spatial);
+    const street = state.draft.definition.world?.definition?.environment_type === 'spatial_3d';
+    const grid = !social && !street;
+    const spatial = grid ? readSpatialEditor() : null;
+    if (grid) validateInitialLocationAgainstCoord(spatial);
     const hasPortrait = state.agentImageFiles.portrait || $('agentEditPortrait').value;
     const hasSprite = state.agentImageFiles.sprite || $('agentEditSprite').value;
-    if (!social && !state.editingAgentKey && (!hasPortrait || !hasSprite)) {
+    if (grid && !state.editingAgentKey && (!hasPortrait || !hasSprite)) {
       throw new Error('新增 Agent 需要同时上传头像和 4×3 或 4×4 行走图');
     }
-    const spriteDisplayTiles = social ? null : readAgentSpriteDisplayTiles();
     const images = await uploadStagedAgentImages();
     const previous = state.editingAgentKey ? state.draft.definition.agents.find(item => item.agent_key === state.editingAgentKey) : null;
+    const spriteDisplayTiles = street ? previous?.sprite_display_tiles ?? null : social ? null : readAgentSpriteDisplayTiles();
     const agent = {
       agent_key: key,
       enabled: previous?.enabled ?? true,
@@ -4136,7 +4231,8 @@
       model_override: previous?.model_override || null,
       tags: previous?.tags || [],
       goals: $('agentEditGoals').value.split(/\r?\n/).map(item => item.trim()).filter(Boolean),
-      ...(social ? {space_id: state.draft.definition.world.world_key} : {coord: [Number($('agentEditX').value), Number($('agentEditY').value)], spatial}),
+      ...(street ? {spawn_anchor:'auto', yaw_deg: Number($('agentSpawnYaw').value)} :
+        social ? {space_id: state.draft.definition.world.world_key} : {coord: [Number($('agentEditX').value), Number($('agentEditY').value)], spatial}),
       currently: $('agentEditCurrently').value,
       scratch: {
         age: Number($('agentEditAge').value), innate: $('agentEditInnate').value,
@@ -4185,7 +4281,7 @@
     $('deleteAgentsSummary').textContent = `将删除 ${selected.length} 个 Agent`;
     $('deleteAgentsPreview').innerHTML = selected.map(agent => `<div class="delete-agent-item"><strong>${escapeHtml(agent.name)}</strong><code>${escapeHtml(agent.agent_key)}</code></div>`).join('');
     $('confirmDeleteAgents').disabled = false;
-    openModal('deleteAgentsModal', 'cancelDeleteAgents', $('deleteSelectedAgentsBtn'));
+    openModal('deleteAgentsModal', 'closeDeleteAgents', $('deleteSelectedAgentsBtn'));
   }
 
   async function deleteSelectedAgents() {
@@ -4304,7 +4400,7 @@
     const runId = state.selectedRunId;
     const experimentId = state.selectedExperimentId;
     const generation = state.resultGeneration;
-    const body = action === 'resume' && options.checkpointStep
+    const body = action === 'resume' && options.checkpointStep != null
       ? JSON.stringify({ checkpoint_step: options.checkpointStep, expected_attempt_id: options.attemptId || null })
       : action === 'cancel'
       ? JSON.stringify({ force: options.force ?? true })
@@ -4315,10 +4411,15 @@
     if (runId === state.selectedRunId
       && experimentId === state.selectedExperimentId
       && generation === state.resultGeneration) {
-      state.currentRun = run;
-      renderRunActions(run);
+      if (run.status) {
+        state.resultRequestGeneration = (state.resultRequestGeneration || 0) + 1;
+        state.currentRun = run;
+        renderRunActions(run);
+        scheduleDetailPoll();
+      }
       try {
-        await Promise.all([
+        if (state.standaloneRunId) await refreshResultData(runId, generation, {force: true});
+        else await Promise.all([
           syncSelectedExperiment({ refreshOverview: true }),
           refreshRunHistoryList(state.selectedExperimentId, state.selectedRunId),
         ]);
@@ -4608,11 +4709,10 @@
     renderWizardStep();
   });
   $('closeModal').addEventListener('click', () => closeModal('publishModal'));
-  $('cancelModal').addEventListener('click', () => closeModal('publishModal'));
-  [$('closeResourceDelete'), $('cancelResourceDelete')].forEach(button => button.addEventListener('click', () => settleResourceDeletion(false)));
+  $('closeResourceDelete').addEventListener('click', () => settleResourceDeletion(false));
   $('confirmResourceDelete').addEventListener('click', () => settleResourceDeletion(true));
-  [$('closeResumeRun'), $('cancelResumeRun')].forEach(button => button.addEventListener('click', () => closeModal('resumeRunModal')));
-  [$('closeLeaveModal'), $('cancelLeave')].forEach(button => button.addEventListener('click', () => closeModal('leaveModal')));
+  $('closeResumeRun').addEventListener('click', () => closeModal('resumeRunModal'));
+  $('closeLeaveModal').addEventListener('click', () => closeModal('leaveModal'));
   $('saveAndLeave').addEventListener('click', () => {
     saveDraft().then(() => {
       closeModal('leaveModal');
@@ -4634,23 +4734,7 @@
       goToPage(destination);
     }).catch(reportError);
   });
-  document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.addEventListener('click', event => {
-    if (event.target !== backdrop) return;
-    if (backdrop.id === 'agentEditorModal' && state.agentSaving) return;
-    if (backdrop.id === 'agentEditorModal' && state.agentEditorContext?.ownerType?.startsWith('public')) {
-      closeSharedAgentEditor();
-      return;
-    }
-    closeModal(backdrop.id);
-  }));
   $('agentEditorModal').addEventListener('keydown', event => {
-    if (state.agentSaving && event.key === 'Escape') { event.preventDefault(); event.stopPropagation(); return; }
-    if (event.key === 'Escape' && state.agentEditorContext?.ownerType?.startsWith('public')) {
-      event.preventDefault();
-      event.stopPropagation();
-      closeSharedAgentEditor();
-      return;
-    }
     if (handleModalKeydown(event, $('agentEditorModal'))) event.stopPropagation();
   });
   document.addEventListener('keydown', event => {
@@ -4753,8 +4837,8 @@
   });
   $('archiveSelectedBtn').addEventListener('click', () => batchArchiveSelected('ARCHIVE').catch(reportError));
   $('restoreSelectedBtn').addEventListener('click', () => batchArchiveSelected('RESTORE').catch(reportError));
-  $('operationHistoryBtn').addEventListener('click', () => { renderOperationHistory(); openModal('operationHistoryModal', 'closeOperationHistoryDone'); });
-  [$('closeOperationHistory'), $('closeOperationHistoryDone')].forEach(button => button.addEventListener('click', () => closeModal('operationHistoryModal')));
+  $('operationHistoryBtn').addEventListener('click', () => { renderOperationHistory(); openModal('operationHistoryModal', 'closeOperationHistory'); });
+  $('closeOperationHistory').addEventListener('click', () => closeModal('operationHistoryModal'));
   $('copyLatestDiagnostic').addEventListener('click', () => {
     const item = state.operationHistory.find(entry => entry.diagnostic);
     if (!item) { showToast('当前没有可复制的诊断信息。', '暂无诊断'); return; }
@@ -4787,6 +4871,25 @@
   });
   $('saveExperimentMetadata')?.addEventListener('click', () => {
     saveExperimentMetadata().catch(reportError);
+  });
+  $('sealExperimentBtn').addEventListener('click', async event => {
+    const experimentId = state.selectedExperimentId;
+    if (!experimentId || !state.draft || state.launchingRun || state.preparingLaunch) return;
+    const button = event.currentTarget;
+    button.disabled = true;
+    state.preparingLaunch = true;
+    try {
+      await ensureDraftReadyForRun();
+      await api(`/experiments/${experimentId}/seal`, { method: 'POST' });
+      if (experimentId !== state.selectedExperimentId) return;
+      await syncSelectedExperiment({ refreshDefinition: true });
+      if (experimentId === state.selectedExperimentId) showToast('可重新打开地图查看封存的场景。', '实验已封存');
+    } catch (error) {
+      if (experimentId === state.selectedExperimentId) reportError(error);
+    } finally {
+      state.preparingLaunch = false;
+      button.disabled = false;
+    }
   });
   $('publishBtn').addEventListener('click', event => {
     event.stopImmediatePropagation();
@@ -4850,13 +4953,14 @@
     state.batchAgentLocation = null;
     ['batchAgentEnabled', 'batchAgentModel', 'batchAgentLocation', 'batchAgentGoal', 'batchAgentTags'].forEach(id => { $(id).value = ''; });
     $('batchAgentLocationCoord').textContent = '选择后自动取中心附近的可行走格，并同步每个智能体的初始地址与已知空间。';
-    $('batchAgentLocation').closest('.field').hidden = state.draft?.definition?.world?.definition?.environment_type === 'social_1d';
+    $('batchAgentLocation').closest('.field').hidden = !hasBatchGrid();
     $('batchAgentMeta').textContent = `${state.selectedAgentKeys.size} 个 Agent 已选择；先预览差异，再一次应用。`;
     $('batchAgentPreview').innerHTML = '<span>填写变更后点击“预览差异”。</span>';
     $('applyBatchAgents').disabled = true; $('undoBatchAgents').disabled = !state.lastAgentBatchUndo;
     openModal('batchAgentModal', 'batchAgentEnabled');
   });
   $('chooseBatchAgentLocation').addEventListener('click', async () => {
+    if (!hasBatchGrid()) return;
     await window.WorkspaceLoader.load('spatial');
     if (!state.draft) return;
     const experimentId = state.selectedExperimentId;
@@ -4885,10 +4989,10 @@
     event.stopImmediatePropagation();
     try { openDeleteSelectedAgents(); } catch (error) { reportError(error); }
   }, true);
-  [$('closeDeleteAgents'), $('cancelDeleteAgents')].forEach(button => button.addEventListener('click', () => {
+  $('closeDeleteAgents').addEventListener('click', () => {
     state.pendingAgentDeleteKeys = [];
     closeModal('deleteAgentsModal');
-  }));
+  });
   $('confirmDeleteAgents').addEventListener('click', () => deleteSelectedAgents().catch(reportError));
   [$('closeBatchAgent')].forEach(button => button.addEventListener('click', () => closeModal('batchAgentModal')));
   $('previewBatchAgents').addEventListener('click', () => previewAgentBatch().catch(reportError));
@@ -4900,7 +5004,7 @@
     const file = event.target.files?.[0]; event.target.value = '';
     if (file) stageAgentImport(file).catch(reportError);
   });
-  [$('closeAgentImport'), $('cancelAgentImport')].forEach(button => button.addEventListener('click', () => closeModal('agentImportModal')));
+  $('closeAgentImport').addEventListener('click', () => closeModal('agentImportModal'));
   $('confirmAgentImport').addEventListener('click', () => applyAgentImport().catch(reportError));
   $('agentRows').addEventListener('click', event => {
     const button = event.target.closest('.agent-edit-btn');
@@ -4984,11 +5088,11 @@
       $('agentSaveProgress').textContent = '';
     }
   }, true);
-  [$('closeAgentEditor'), $('cancelAgentEditor')].forEach(button => button.addEventListener('click', event => {
+  $('closeAgentEditor').addEventListener('click', event => {
     event.stopImmediatePropagation();
     if (state.agentEditorContext?.ownerType?.startsWith('public')) closeSharedAgentEditor();
-    else { releaseAgentImageObjectUrls(); closeModal('agentEditorModal'); }
-  }, true));
+    else closeModal('agentEditorModal');
+  }, true);
   $('resultAgentButtons').addEventListener('click', event => {
     const tab = event.target.closest('.agent-result-tab');
     if (!tab) return;
@@ -5229,7 +5333,7 @@
     if (!row || !state.selectedRunId) return;
     openModelTrace(row.dataset.traceId, row);
   });
-  [$('closeModelTrace'), $('closeModelTraceDone')].forEach(button => button.addEventListener('click', () => closeModal('modelTraceModal')));
+  $('closeModelTrace').addEventListener('click', () => closeModal('modelTraceModal'));
   $('tracePayloadMore').addEventListener('click', () => loadTraceDetail({ append: true }));
   $('tracePurposeFilter').addEventListener('keydown', event => {
     if (event.key === 'Enter') $('refreshTraces').click();
@@ -5382,7 +5486,7 @@
     }
     button.disabled = true;
     button.textContent = '正在恢复…';
-    $('resumeRunFeedback').textContent = '正在校验恢复边界并提交新 Attempt，请勿重复点击…';
+    $('resumeRunFeedback').textContent = '正在校验边界并提交恢复请求…';
     controlRun('resume', { checkpointStep: state.pendingResumeStep, attemptId: state.pendingResumeAttemptId }).then(() => {
       closeModal('resumeRunModal');
       state.pendingResumeRunId = null;
@@ -5463,10 +5567,26 @@
     const requestedView = params.get('view');
     const targetPage = requestedView && ['overview', 'results', 'maps', 'agents', 'crowds', 'skills', 'brains', 'models'].includes(requestedView)
       ? requestedView
-      : 'overview';
+      : params.has('run_id') ? 'results' : 'overview';
     const requestedTab = params.get('tab');
     const requestedResultTabParam = params.get('result_tab');
     const requestedResultTab = requestedResultTabParam === 'summary' ? 'timeline' : requestedResultTabParam || 'timeline';
+
+    const runPath = location.pathname?.match(/^\/runs\/([^/]+)\/?$/);
+    if (runPath) {
+      state.standaloneRunId = decodeURIComponent(runPath[1]);
+      state.currentExperimentName = '仿真结果';
+      document.body.classList.add('standalone-run');
+      $('experimentScopeNotice').querySelector('strong').textContent = `Run ${state.standaloneRunId}`;
+      $('experimentScopeNotice').querySelector('span').textContent = '本页读取 Run 内嵌实验和已提交结果。';
+      if (requestedResultTab === 'agents' && requestedTab) state.selectedAgentContent = requestedTab;
+      if (requestedResultTab === 'operations' && requestedTab) setOperationTab(requestedTab, {sync: false});
+      setResultTab(['timeline', 'agents', 'operations', 'quality', 'artifacts'].includes(requestedResultTab) ? requestedResultTab : 'timeline', {sync: false});
+      goToPage('results');
+      state.bootstrapped = true;
+      await loadResults(state.standaloneRunId);
+      return;
+    }
 
     // Apply deep-link state before loading the experiment. Result renderers use
     // these values while creating Agent panels, so a direct URL must never
@@ -5491,7 +5611,7 @@
       goToPage(requestedView);
       syncWorkspaceUrl();
     } else if (experimentId) {
-      await openExperiment(experimentId, targetPage, params.get('run_id'));
+      if (await openExperiment(experimentId, targetPage, params.get('run_id')) === 'redirected') return;
       if (targetPage === 'results') {
         setResultTab(requestedResultTab, { sync: false });
         if (requestedResultTab === 'operations' && requestedTab) {

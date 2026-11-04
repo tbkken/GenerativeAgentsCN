@@ -39,7 +39,7 @@ from generative_agents.ga_protocol.packages.definition import (
 )
 from generative_agents.ga_protocol.packages.resources import read_experiment_resource_set
 from generative_agents.ga_protocol.schemas.resources import ResourceIndex, ResourceRecord, ResourceRef
-from generative_agents.ga_protocol.schemas.resources import SocialExperimentPlacement
+from generative_agents.ga_protocol.schemas.resources import SocialExperimentPlacement, Spatial3DExperimentPlacement
 from generative_agents.ga_protocol.packages.resources import ResourceSet
 from generative_agents.ga_studio.experiments.transaction import edit_experiment
 
@@ -263,8 +263,7 @@ class ExperimentResourceEditor:
                         self.missing()
                     placement = placements[key]
                     record = chosen(placement.agent)
-                    position = (dict(space_id=placement.space_id) if isinstance(placement, SocialExperimentPlacement)
-                                else dict(coord=list(placement.coord), spatial=copy.deepcopy(placement.spatial)))
+                    position = (placement.model_dump(mode="json", exclude={"agent"}))
                     agent = dict(copy.deepcopy(record.definition), agent_key=key, name=record.name, **position)
                     return dict(summary(record), agent_key=key, definition=agent)
                 items = []
@@ -279,9 +278,10 @@ class ExperimentResourceEditor:
                     enabled = record.definition.get("enabled", True)
                     scratch = record.definition.get("scratch", {})
                     social = isinstance(placement, SocialExperimentPlacement)
-                    complete = bool(record.name and scratch.get("daily_plan") and (social or len(placement.coord) == 2))
-                    address = {} if social else placement.spatial.get("address", {})
-                    initial = ([chosen(assembly.map).name] if social else
+                    street = isinstance(placement, Spatial3DExperimentPlacement)
+                    complete = bool(record.name and scratch.get("daily_plan") and (social or street or len(placement.coord) == 2))
+                    address = placement.spatial.get("address", {}) if hasattr(placement, "spatial") else {}
+                    initial = ([chosen(assembly.map).name] if social else [placement.spawn_anchor] if street else
                                address.get("initial_location") or address.get("living_area") or [])
                     location = " > ".join(initial) if isinstance(initial, list) else str(initial)
                     model = record.definition.get("model_override") or default_model
@@ -297,7 +297,7 @@ class ExperimentResourceEditor:
                         scratch.get("innate", ""), scratch.get("learned", ""), location, model,
                         " ".join(record.definition.get("tags", []))))
                     items.append(dict(summary(record), agent_key=agent_key,
-                                      enabled=enabled, **(dict(space_id=placement.space_id) if social else dict(coord=list(placement.coord))),
+                                      enabled=enabled, **placement.model_dump(mode="json", exclude={"agent", "spatial"}),
                                       currently=record.definition.get("currently") or next(iter(record.definition.get("goals", [])), ""),
                                       scratch={name: scratch.get(name) for name in ("age", "innate")},
                                       definition_complete=complete, initial_location=copy.deepcopy(initial),
@@ -377,7 +377,7 @@ class ExperimentResourceEditor:
             experiment_directory='experiment' if scene_id else None, agent_key=agent_key)
         return credentials
 
-    def prepare_decision_compile(self, experiment_id, key, body):
+    def prepare_decision_compile(self, experiment_id, key, body, *, compiler_config):
         """Compile an unsaved experiment Skill using the Studio author model."""
         with self.package(experiment_id) as (root, ep, digest, editable):
             if not editable:
@@ -387,11 +387,55 @@ class ExperimentResourceEditor:
             if entry is None:
                 self.missing()
             skill = self.skill(root, entry)
-        config, model, credentials = decision_compiler_model(self.workspace.database, self.workspace.package_root.parent)
         return {"markdown": body["markdown"], "skill_key": key, "kind": skill["kind"],
                 "scripts": decision_compile_scripts(skill["scripts"], body.get("scripts")),
-                "config": {**config, "model": model},
-                "api_key": credentials["GA_SKILL_TRIAL_KEY"]}
+                **decision_compiler_model(self.workspace.database, self.workspace.package_root.parent, compiler_config)}
+
+    def select_map(self, body, definition, resources):
+        """Replace the map and reset placements; public geometry never transfers between maps."""
+        map_id, scene_id = body.get("map_id"), body.get("simworld_scene_id")
+        if bool(map_id) == bool(scene_id):
+            raise ExperimentResourceError(422, "请选择一张公共地图或一个 SimWorld 场景")
+        if scene_id:
+            world = self.workspace.remote_world(scene_id)
+        else:
+            from generative_agents.ga_protocol.packages.resources import resource_content_hash
+            from generative_agents.ga_studio.resources.exchange import ResourceExchangeService
+            exchange = ResourceExchangeService(self.workspace.database, asset_store=self.workspace.asset_store)
+            incoming = exchange.resource_set("map", map_id, include_dependencies=True)
+            record = incoming.get(incoming.roots[0])
+            world = dict(copy.deepcopy(record.definition), world_key=record.key, world_name=record.name)
+            existing = resources.by_ref()
+            for item in incoming.resources:
+                if item.kind == "map":
+                    continue
+                previous = existing.get(item.identity)
+                if previous and resource_content_hash(previous, resources) != resource_content_hash(item, incoming):
+                    raise PackageError(f"替换地图的资源与草稿冲突：{item.key}")
+                if not previous:
+                    resources.resources.append(item)
+            for path in incoming.files:
+                if path in resources.files and resources.files.digest(path) != incoming.files.digest(path):
+                    raise PackageError(f"替换地图的附件与草稿冲突：{path}")
+            resources.files.include(incoming.files, set(incoming.files))
+
+        kind = world["definition"].get("environment_type", "spatial_2d")
+        tiles = iter(self.workspace._walkable_tiles(world)) if kind == "spatial_2d" else iter(())
+        for agent in definition.get("agents", []):
+            for field in ("coord", "spatial", "space_id", "spawn_anchor", "yaw_deg"):
+                agent.pop(field, None)
+            if kind == "social_1d":
+                agent["space_id"] = world["world_key"]
+            elif kind == "spatial_3d":
+                agent.update(spawn_anchor="auto", yaw_deg=0)
+            else:
+                tile = next(tiles, None)
+                if tile is None:
+                    raise PackageError("新地图没有足够的可用出生点")
+                address = tile["address"]
+                agent.update(coord=tile["coord"], spatial={"address": {"initial_location": address},
+                            "tree": self.workspace._spatial_tree(address)})
+        return world
 
     def write(self, experiment_id, resource, method, body):
         expected = body.get("row_version") or body.get("expected_content_sha256")
@@ -407,7 +451,12 @@ class ExperimentResourceEditor:
                     self.missing()
                 if method == "POST" and parts[2:] != ["validate"]:
                     raise ExperimentResourceError(405, "不支持此地图操作")
-                world = copy.deepcopy(body.get("world") or definition["world"])
+                if parts[2:] == ["selection"] and method == "PUT":
+                    world = self.select_map(body, definition, resources)
+                else:
+                    if parts[2:] not in ([], ["validate"]):
+                        raise ExperimentResourceError(404, "地图操作不存在")
+                    world = copy.deepcopy(body.get("world") or definition["world"])
                 assets = world.setdefault("assets", [])
                 known = {item["logical_path"] for item in assets}
                 for source in world.get("definition", {}).get("editor_v2", {}).get("material_sources", []):

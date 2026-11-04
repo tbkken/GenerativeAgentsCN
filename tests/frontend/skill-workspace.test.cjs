@@ -407,7 +407,7 @@ test('default and header cursors append to the body, and selections crossing the
   assert.equal(empty.nodes.skillSource.value, header.trimEnd() + '\n\n@world-act');
 });
 
-test('Escape cancels insertion and restores the body selection; script and read-only editors cannot insert', () => {
+test('Escape preserves the interface picker; explicit close restores the body selection', () => {
   const f = setup(); f.select(documentFor('root', '保留原文'));
   f.api.state.dependencies = dependenciesFor('root'); f.api.bindPanel();
   f.nodes.skillSource.setSelectionRange(1, 3);
@@ -415,6 +415,9 @@ test('Escape cancels insertion and restores the body selection; script and read-
   let prevented = false;
   f.handlers.get('skillInterfacePicker:cancel')({preventDefault() {prevented = true;}});
   assert.equal(prevented, true);
+  assert.equal(f.nodes.skillInterfacePicker.open, true);
+  assert.equal(f.context.document.activeElement, f.nodes.skillInterfaceSearch);
+  f.handlers.get('skillInterfacePickerClose:click')();
   assert.equal(f.nodes.skillSource.value, '保留原文');
   assert.equal(f.nodes.skillSource.selectionStart, 1);
   assert.equal(f.nodes.skillSource.selectionEnd, 3);

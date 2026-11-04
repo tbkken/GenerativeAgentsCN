@@ -110,11 +110,16 @@ function ui(options) {
   return {document, selections, handle, find};
 }
 
-test('cancelling a spawn selection leaves caller state untouched, confirm emits copied path and coordinate', () => {
+test('outside clicks and Escape preserve the spawn selection until closed or confirmed', () => {
   const path = ['世界', '区域', '房间'], options = {world: world([tile(2, 3, path)]), selectedPath: path, mode: 'spawn'};
   let view = ui(options);
   assert.equal(view.find('.spatial-picker-confirm').disabled, false);
-  view.find('.spatial-picker-cancel').onclick();
+  const backdrop = view.find('.spatial-picker-backdrop');
+  backdrop.onclick?.({target: backdrop});
+  view.document.listeners.get('keydown')({key: 'Escape', preventDefault() {}, stopImmediatePropagation() {}});
+  assert.equal(view.find('.spatial-picker-backdrop'), backdrop);
+  assert.equal(view.selections.length, 0);
+  view.find('.spatial-picker-close').onclick();
   assert.equal(view.selections.length, 0);
   assert.equal(view.document.body.children.length, 0);
   assert.equal(view.document.listeners.size, 0);

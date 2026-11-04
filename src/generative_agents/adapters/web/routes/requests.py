@@ -41,6 +41,8 @@ class DocumentResourceUpdate(PortableRequest):
 class PlacementRequest(PortableRequest):
     agent_id: str
     coord: tuple[int, int] | None = None
+    spawn_anchor: str | None = None
+    yaw_deg: float | None = Field(default=None, allow_inf_nan=False)
 
 class ExperimentWorkspaceCreate(PortableRequest):
     name: str = Field(min_length=1, max_length=120)
@@ -49,7 +51,8 @@ class ExperimentWorkspaceCreate(PortableRequest):
     tags: list[str] = Field(default_factory=list, max_length=20)
     key: str | None = None
     timezone: str = 'Asia/Shanghai'
-    map_id: str
+    map_id: str | None = None
+    simworld_scene_id: str | None = Field(default=None, min_length=1, max_length=120, pattern=r'^[a-z0-9][a-z0-9-]*$')
     brain_skill_id: str
     model_preset_id: str
     embedding_model_preset_id: str | None = None
@@ -72,7 +75,7 @@ class ExperimentSettingsUpdate(PortableRequest):
     expected_content_sha256: str = Field(min_length=1)
 
 class ResumeRunRequest(PortableRequest):
-    checkpoint_step: int | None = Field(default=None, ge=1)
+    checkpoint_step: int | None = Field(default=None, ge=0)
     expected_attempt_id: str | None = None
 
 class SecretCreate(PortableRequest):

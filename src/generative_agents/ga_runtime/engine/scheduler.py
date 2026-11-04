@@ -196,6 +196,8 @@ class SimulationRunner:
                     )
                     check_cancelled(self.context.control)
                     self.committer.commit(result, force_checkpoint=force_checkpoint)
+                    if getattr(self.game, "scene_intents", None):
+                        self.game.scene_intents.committed()
                 except BaseException as exc:
                     if memory_snapshot is not None:
                         memory_stream.rollback_step(memory_snapshot)

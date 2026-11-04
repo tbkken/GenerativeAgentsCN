@@ -373,6 +373,8 @@ def validate_run_directory(root: Path, *, sealed: bool = False) -> RunManifest:
     status = RunStatus.model_validate(read_json(root / "status.json"))
     if status.run_id != manifest.run_id or status.total_steps != manifest.requested_steps:
         raise PackageError("Run status identity or step budget disagrees with its manifest")
+    if status.committed_step > manifest.requested_steps:
+        raise PackageError("Run committed_step exceeds requested_steps")
     validate_committed_frames(root, manifest.run_id, status.committed_step)
     if status.committed_step:
         boundary_snapshot(root, manifest.run_id, status.committed_step)

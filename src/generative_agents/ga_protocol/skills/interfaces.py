@@ -89,6 +89,10 @@ def simulation_interface_catalog() -> list[dict[str, Any]]:
                     )},
                     "object": {"type": "string"},
                     "emoji": {"type": "string"},
+                    "presentation_clip": {"type": "string", "description": (
+                        "Optional animation for this committed action only, from this 3D Agent's available clips. "
+                        "Omit for normal locomotion or rest. It does not change the action or path."
+                    )},
                     "target_address": {
                         "type": "array",
                         "items": {"type": "string"},

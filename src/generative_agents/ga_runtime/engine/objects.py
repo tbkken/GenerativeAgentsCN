@@ -19,7 +19,7 @@ class GameObjectAffordance:
     description: str
     default_request: str
     interaction_radius_tiles: float
-    coord: tuple[float, float]
+    coord: tuple[float, float] | tuple[float, float, float]
     bounds: tuple[float, float, float, float]
     address: tuple[str, ...]
     object_state: Mapping[str, Any]
@@ -304,6 +304,8 @@ class GameObjectInteractionSystem:
     @staticmethod
     def _initial_states_from_world(world: Mapping[str, Any]):
         """Yield every Game Object state, including objects without a Skill."""
+        if world.get("environment_type") == "spatial_3d":
+            return
 
         editor = world.get("editor_v2")
         if isinstance(editor, Mapping):

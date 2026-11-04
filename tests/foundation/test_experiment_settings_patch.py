@@ -37,6 +37,17 @@ def _experiment_with_crowds(package_root):
     return root
 
 
+def test_studio_does_not_accept_simworld_avatar_bytes(tmp_path):
+    var = tmp_path / 'var'
+    root = _experiment_with_crowds(var / 'packages')
+    original = {p.relative_to(root): p.read_bytes() for p in root.rglob('*') if p.is_file()}
+    app = create_studio_app(database_url='sqlite:///' + (tmp_path / 'studio.db').as_posix(), var_dir=var)
+    with TestClient(app) as client:
+        res = client.post('/api/studio/simworld/avatars/adopt', files={'file': ('character.glb', b'glTF')})
+        assert res.status_code == 404
+    assert {p.relative_to(root): p.read_bytes() for p in root.rglob('*') if p.is_file()} == original
+
+
 @pytest.mark.parametrize('operation', ['rename', 'delete'])
 def test_settings_patch_saves_agents_and_crowd_members_together(tmp_path, operation):
     var = tmp_path / 'var'

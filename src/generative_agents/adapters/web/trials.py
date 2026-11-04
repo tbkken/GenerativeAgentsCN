@@ -6,9 +6,9 @@ from generative_agents.ga_runtime.api import compile_skill_decision
 from generative_agents.ga_studio.api import prepare_skill_decision_compile
 
 
-def compile_public_skill_decision(database, registry, name, markdown, *, scripts=None):
+def compile_public_skill_decision(database, registry, name, markdown, *, compiler_config, scripts=None):
     settings = prepare_skill_decision_compile(database, registry, name, markdown,
-                                               scripts=scripts)
+                                             compiler_config=compiler_config, scripts=scripts)
     return compile_skill_decision(**settings)
 
 def run_skill_trial(database, registry, name, input_text, *, model_preset_id=None,

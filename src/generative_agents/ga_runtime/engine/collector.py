@@ -84,7 +84,9 @@ class StepResultCollector:
         )
         remaining_path = tuple(tuple(coord) for coord in (remaining_path or ()))
         to_coord = tuple(agent.coord) if agent.coord is not None else None
-        location = tuple(agent.get_tile().get_address()) if agent.get_tile() is not None else ()
+        ground = getattr(agent, "ground", None)
+        location = (tuple(ground.location(to_coord)) if ground else
+                    tuple(agent.get_tile().get_address()) if agent.get_tile() is not None else ())
         event = agent.get_event()
         description = event.get_describe() if event else ""
         predicate = event.predicate if event else ""
@@ -102,10 +104,13 @@ class StepResultCollector:
                 from_coord=tuple(from_coord) if from_coord is not None else None,
                 to_coord=to_coord,
                 path=observed_path,
+                from_yaw_deg=outcome.get("from_yaw_deg"),
+                to_yaw_deg=agent.yaw_deg if ground else None,
                 action=ActionSnapshot(
                     description=description,
                     emoji=getattr(event, "emoji", None),
                     movement_activity=getattr(event, "movement_activity", None),
+                    presentation_clip=getattr(event, "presentation_clip", None),
                     object_description=(
                         agent.get_event(False).get_describe()
                         if agent.get_event(False) is not None
@@ -501,6 +506,7 @@ class StepResultCollector:
                     "object": object_value,
                     "structured_payload": dict(structured_payload),
                 },
+                event_id=UUID(event["event_id"]) if event.get("event_id") else None,
             )
 
     def capture_event(self, event: Mapping) -> None:

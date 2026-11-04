@@ -55,10 +55,11 @@ class ObjectAPI(SimulationAPI):
         return super()._public_object_state(object_key)
 
     def descriptors(self) -> list[dict]:
-        return [
+        descriptors = [
             descriptor for descriptor in object_interface_catalog()
             if self.memory_stream is not None or not descriptor["name"].startswith("memory-stream-")
         ]
+        return descriptors
 
     def _perceive(self, arguments: Mapping[str, Any]) -> dict:
         result = super()._perceive(arguments)
@@ -72,8 +73,8 @@ class ObjectAPI(SimulationAPI):
             path = payload.get("executed_path") or [payload.get("to_coord")]
             segments, current = [], []
             for coord in path:
-                visible = (isinstance(coord, (list, tuple)) and len(coord) == 2
-                           and max(abs(coord[i] - center[i]) for i in (0, 1)) <= radius)
+                visible = (isinstance(coord, (list, tuple)) and len(coord) == len(center) and
+                           max(abs(coord[i] - center[i]) for i in (0, 1)) <= radius)
                 if visible:
                     current.append(list(coord))
                 elif current:

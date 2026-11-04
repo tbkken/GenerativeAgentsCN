@@ -68,3 +68,30 @@ test('workspace editability depends on experiment lifecycle, not a Run state', (
   assert.equal(context.state.workspaceReadonly, true);
   assert.equal(nodes.saveBtn.textContent, '查看仿真');
 });
+
+test('overview definition locks when seal status arrives and on reopening, and unlocks for a new draft', async () => {
+  const nodes = {};
+  const context = {
+    state: {selectedExperimentId:'one', draft:{}, workspacePage:'overview', experiment:{editable:true}},
+    $: id => nodes[id] ||= {dataset:{},setAttribute(){}},
+    document: {body:{classList:{toggle(){}}},querySelectorAll:()=>[]},
+  };
+  vm.createContext(context);
+  vm.runInContext(cut('  function experimentHasRun(', '  function setContentTab(')
+    + cut('  async function saveExperimentMetadata(', '  function enqueueDraftMutation('), context);
+  function check(locked) {
+    context.setWorkspaceMode();
+    assert.equal(nodes.experimentNameDraft.readOnly,locked);
+    assert.equal(nodes.experimentGoalDraft.readOnly,locked);
+    assert.equal(nodes.saveExperimentMetadata.disabled,locked);
+    assert.match(nodes.experimentDefinitionHelp.textContent,locked?/复制为新的独立实验/:/草稿阶段修改/);
+  }
+  check(false);
+  context.state.experiment.editable=false; // The status response precedes the full sealed definition.
+  check(true);
+  await assert.rejects(context.saveExperimentMetadata(),/已封存/);
+  context.state.draft=null;
+  check(true);
+  context.state.experiment={editable:true}; context.state.draft={};
+  check(false);
+});

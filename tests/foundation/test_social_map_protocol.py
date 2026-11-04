@@ -140,5 +140,5 @@ def test_social_map_http_contract_does_not_require_spatial_fields(database_url, 
         saved = client.put(f"/api/studio/resources/maps/{detail['id']}", json={"row_version": detail["row_version"], "world": world})
         assert saved.status_code == 200, saved.text
         assert saved.json()["world"]["definition"]["rules"] == "引用真实消息后回复"
-        rejected = client.post("/api/studio/resources/maps", json={"name": "尚未实现", "environment_type": "spatial_3d"})
+        rejected = client.post("/api/studio/resources/maps", json={"name": "未知地图", "environment_type": "unsupported"})
         assert rejected.status_code == 422

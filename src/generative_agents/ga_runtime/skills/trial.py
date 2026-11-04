@@ -39,7 +39,7 @@ def execute_skill_trial(directory, *, credentials=None, control=None):
     try:
         if request.get("experiment_directory"):
             scene = build_trial_scene(root, request, paths=paths, attempt_id=attempt_id,
-                                      control=control, recorder=recorder)
+                                      control=control, recorder=recorder, required_interfaces=required)
         model_config = {
             **config, "base_url": base_url, "model": model, "api_key": api_key,
             "provider": config.get("provider", "vllm"),

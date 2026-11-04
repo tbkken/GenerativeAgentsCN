@@ -1,6 +1,7 @@
 """Web orchestration: Studio locations, Runtime controls, Replay views."""
 from __future__ import annotations
 import json
+import logging
 from pathlib import Path
 from typing import Any
 from fastapi import HTTPException, Response
@@ -16,6 +17,7 @@ from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.io import checked_package_path
 from generative_agents.ga_runtime.api import RunService as PortableRunService
 from generative_agents.ga_runtime.api import FileRunSupervisor
+from generative_agents.ga_runtime.api import reconcile_run
 from generative_agents.ga_studio.api import StudioPackageCatalogService
 from generative_agents.ga_studio.api import AssetService
 from generative_agents.ga_studio.api import SecretService
@@ -26,6 +28,8 @@ from functools import wraps
 from generative_agents.ga_protocol.packages.locking import package_lock
 from generative_agents.ga_protocol.packages.definition import _experiment_definition
 from generative_agents.ga_replay.api import read_run_facts_unlocked
+
+_ACTIVE = {'QUEUED', 'RUNNING', 'FINALIZING'}
 
 def _catalog_item(row) -> dict:
     return {'package_kind': row.package_kind, 'package_id': row.package_id, 'experiment_id': row.experiment_id, 'run_id': row.run_id, 'location': row.location, 'display_name': row.display_name, 'status': row.package_status, 'content_sha256': row.content_sha256, 'is_archive': row.is_archive, 'updated_at': row.updated_at.isoformat()}
@@ -121,9 +125,23 @@ class WebContext:
             status = 404 if 'does not exist' in str(exc) else 409 if 'changed' in str(exc) else 422
             raise HTTPException(status_code=status, detail=str(exc)) from exc
 
+    def reconcile_local_runs(self):
+        runs = checked_package_path(self.package_root / 'runs')
+        if not runs.is_dir():
+            return
+        for location in runs.iterdir():
+            try:
+                if location.is_dir() and not location.is_symlink() and (location / 'run.json').is_file() and (location / 'status.json').is_file():
+                    reconcile_run(checked_package_path(location))
+            except (OSError, ValueError, KeyError, TypeError) as exc:
+                logging.getLogger(__name__).warning('Cannot reconcile Run at %s: %s', location, exc)
+
     def run_summary(self, row) -> dict:
         try:
-            summary, status = read_metadata(Path(row.location))
+            location = self.run_location(row.run_id)
+            if location.is_dir():
+                reconcile_run(location)
+            summary, status = read_metadata(location)
             quality = None
         except (PackageError, OSError) as exc:
             location = Path(row.location)
@@ -144,12 +162,18 @@ class WebContext:
         started_at = attempts[0].get('started_at') if attempts else None
         terminal = summary['status'] in {'COMPLETED', 'FAILED', 'CANCELLED'}
         finished_at = attempts[-1].get('finished_at') if terminal and attempts else None
-        return {**summary, 'id': summary['run_id'], 'status': summary['status'], 'completed_steps': summary['committed_step'], 'requested_steps': summary['requested_steps'], 'active_attempt_id': status.active_attempt_id, 'started_at': started_at, 'finished_at': finished_at, 'recovery_check_required': summary['status'] in {'PAUSED', 'FAILED'}, 'quality_summary': None, 'updated_at': status.updated_at.isoformat()}
+        process = self.supervisor.process_status(row.run_id, location) if location.is_dir() and summary['status'] in _ACTIVE else None
+        return {**summary, 'id': summary['run_id'], 'status': summary['status'], 'reason': status.reason, 'process': process, 'completed_steps': summary['committed_step'], 'requested_steps': summary['requested_steps'], 'active_attempt_id': status.active_attempt_id, 'started_at': started_at, 'finished_at': finished_at, 'recovery_check_required': not summary.get('package_error') and summary['status'] in {'PAUSED', 'FAILED'}, 'quality_summary': None, 'updated_at': status.updated_at.isoformat()}
 
     def run_list_summary(self, row) -> dict:
-        manifest, status = read_run_status(Path(row.location))
+        location = checked_package_path(Path(row.location))
+        if not location.is_relative_to(self.package_root):
+            raise HTTPException(status_code=409, detail='catalog package is outside the managed package root')
+        manifest, status = read_run_status(location)
         if manifest.run_id != row.run_id or manifest.experiment.experiment_id != row.experiment_id:
             raise HTTPException(status_code=409, detail='Run 包身份与目录索引不一致')
+        if location.is_dir() and status.status.value in _ACTIVE:
+            status = reconcile_run(location)
         return {'id': manifest.run_id, 'run_id': manifest.run_id, 'experiment_id': manifest.experiment.experiment_id, 'status': status.status.value, 'completed_steps': status.committed_step, 'requested_steps': manifest.requested_steps, 'active_attempt_id': status.active_attempt_id}
 
     def read_run_facts(self, run_id: str) -> dict[str, Any]:
@@ -204,7 +228,8 @@ class WebContext:
         try:
             from generative_agents.ga_studio.api import HostModelCredentials
             environment = HostModelCredentials(self.database, self.package_root.parent).run_environment(run_root)
-            self.supervisor.submit(run_root, environment=environment)
+            from generative_agents.adapters.service_config import scene_url
+            self.supervisor.submit(run_root, environment={**environment, "GA_SIMWORLD_URL": scene_url()})
         except Exception as exc:
             self.catalog.upsert(run_root)
             raise HTTPException(status_code=409, detail=str(exc)) from exc

@@ -6,7 +6,9 @@ Run workers receive only Run directories; Replay reads those same files.
 
 from __future__ import annotations
 
+import asyncio
 from contextlib import asynccontextmanager
+import logging
 from pathlib import Path
 from time import perf_counter
 
@@ -15,6 +17,7 @@ from fastapi.middleware.gzip import GZipMiddleware
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
+from generative_agents.adapters.service_config import decision_compiler_config, model_suggestions
 from generative_agents.ga_studio.api import StudioSession
 from generative_agents.ga_protocol.schemas.errors import ServiceError
 from generative_agents.ga_protocol.packages.io import PackageError
@@ -32,6 +35,8 @@ def create_studio_app(
     migrate: bool = True,
     max_concurrent_runs: int = 2,
 ) -> FastAPI:
+    model_urls = model_suggestions()
+    compiler = decision_compiler_config()
     root = Path(var_dir).expanduser().resolve()
     root.mkdir(parents=True, exist_ok=True)
     studio = StudioSession(database_url, root, migrate=migrate)
@@ -39,12 +44,28 @@ def create_studio_app(
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
-        studio.initialize()
+        studio.initialize(model_urls=model_urls)
         app.state.database = database
         app.state.skill_registry = skills
+        stop = asyncio.Event()
+
+        async def monitor_runs():
+            while not stop.is_set():
+                try:
+                    await asyncio.to_thread(portable_router.reconcile_local_runs)
+                except Exception:
+                    logging.getLogger(__name__).exception('Could not inspect local Run directories')
+                try:
+                    await asyncio.wait_for(stop.wait(), timeout=5)
+                except TimeoutError:
+                    pass
+
+        monitor = asyncio.create_task(monitor_runs())
         try:
             yield
         finally:
+            stop.set()
+            await monitor
             portable_router.operation_jobs.close()
             studio.close()
 
@@ -70,13 +91,13 @@ def create_studio_app(
         response = await call_next(request)
         if request.url.path.startswith('/api/'):
             response.headers['Server-Timing'] = f'app;dur={(perf_counter() - started) * 1000:.2f}'
-        if request.url.path == "/" or request.url.path.startswith(("/experiments/", "/static/console/")):
+        if request.url.path == "/" or request.url.path.startswith(("/experiments/", "/runs/", "/static/console/")):
             response.headers["Cache-Control"] = "no-cache, must-revalidate"
         return response
 
-    app.include_router(create_resource_router(database, skills))
-    app.include_router(create_model_service_router(database, root))
-    app.include_router(create_experiment_resource_router(database, root))
+    app.include_router(create_resource_router(database, skills, compiler_config=compiler))
+    app.include_router(create_model_service_router(database, root, model_urls=model_urls))
+    app.include_router(create_experiment_resource_router(database, root, compiler_config=compiler))
     portable_router = create_portable_router(database, package_root=root / 'packages',
                                               max_concurrent_runs=max_concurrent_runs)
     app.include_router(portable_router)
@@ -97,6 +118,7 @@ def create_studio_app(
         return studio.health()
 
     @app.get("/experiments/{experiment_id}", response_class=FileResponse, include_in_schema=False)
+    @app.get("/runs/{run_id}", response_class=FileResponse, include_in_schema=False)
     @app.get("/", response_class=FileResponse, include_in_schema=False)
     def index():
         return FileResponse(console_static / "shell/experiment-console.html")

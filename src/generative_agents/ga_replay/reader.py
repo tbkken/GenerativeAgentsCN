@@ -4,9 +4,7 @@ from __future__ import annotations
 from generative_agents.ga_replay.cache import _validated_directory, read_run_quality
 
 import copy
-import json
 import mimetypes
-import zipfile
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -159,19 +157,13 @@ class ReplayReader:
             for agent in result.get("agents") or []:
                 agents[agent["agent_key"]] = {
                     "coord": agent.get("to_coord"),
+                    **({"yaw_deg": agent["to_yaw_deg"]} if agent.get("to_yaw_deg") is not None else {}),
                     "location": agent.get("location"),
                     "currently": agent.get("currently"),
                     "action": agent.get("action"),
                     "path": agent.get("path"),
                 }
-            for event in result.get("domain_events") or []:
-                if event.get("event_type") != "GAME_OBJECT_STATE_CHANGED":
-                    continue
-                payload = event.get("payload") or {}
-                structured = payload.get("structured_payload") or {}
-                object_id = structured.get("object_key")
-                if object_id:
-                    object_states[str(object_id)] = copy.deepcopy(structured["after"])
+            _reduce_object_states(result, object_states)
             for conversation in result.get("conversations") or []:
                 conversation_id = str(conversation['conversation_id'])
                 conversations[conversation_id] = merge_conversation(
@@ -185,6 +177,45 @@ class ReplayReader:
             "object_states": object_states,
             "conversations": conversations,
         }
+
+
+def _reduce_object_states(result, object_states):
+    for event in result.get("domain_events") or []:
+        if event.get("event_type") != "GAME_OBJECT_STATE_CHANGED":
+            continue
+        payload = event.get("payload") or {}
+        structured = payload.get("structured_payload") or {}
+        object_id = structured.get("object_key")
+        if object_id:
+            object_states[str(object_id)] = copy.deepcopy(structured["after"])
+
+
+def run_scene_reference(package: Path, run_id: str) -> dict:
+    """Replay holds its own facts and a catalogue ID, never scene or avatar bytes."""
+    from generative_agents.ga_protocol.schemas.environments import SimWorldMap
+    with ReplayReader(package) as replay:
+        if replay.manifest.run_id != run_id:
+            raise PackageError("Run 包与所选身份不符")
+        scene = SimWorldMap.model_validate(replay.experiment_world()["definition"])
+        return {"scene_id": scene.simworld_scene_id, "experiment_sha256": replay.manifest.experiment.root_sha256,
+                "participants": {a["agent_key"]: None for a in replay.experiment_agents() if a.get("enabled", True)}}
+
+
+def read_run_scene_step(package: Path, run_id: str, experiment_sha256: str, step_no: int):
+    """Read a frame for an already loaded scene, without reopening its static assets."""
+    with open_readonly_package(Path(package)) as root:
+        manifest = RunManifest.model_validate(read_json(root / "run.json"))
+        status = RunStatus.model_validate(read_json(root / "status.json"))
+        if manifest.run_id != run_id or status.run_id != run_id or manifest.experiment.root_sha256 != experiment_sha256:
+            raise PackageError("Run 包或内嵌实验与当前回放会话身份不符")
+        if not 1 <= step_no <= status.committed_step:
+            raise PackageError("请选择已提交的回放 Step")
+        frame = read_committed_frame(root, run_id, step_no)
+        states = {}
+        for n in range(1, step_no + 1):
+            current = frame if n == step_no else read_committed_frame(root, run_id, n)
+            _reduce_object_states(current, states)
+        return {**frame, "object_states": states}
 
 
 def _run_summary(root, manifest, status):

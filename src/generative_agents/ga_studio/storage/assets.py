@@ -94,6 +94,8 @@ class AssetStore:
         safe_name = self._safe_logical_name(logical_name)
         temporary = self.temporary_root / f"upload-{uuid4()}.tmp"
         digest = hashlib.sha256()
+        if Path(safe_name).suffix.lower() in {".pak", ".glb", ".umap", ".uexp", ".uasset"}:
+            raise AssetValidationError("SimWorld 地图和三维模型必须保留在远端服务")
         size = 0
         prefix = bytearray()
         try:
@@ -214,6 +216,8 @@ class AssetStore:
         """
         if prefix.startswith(b"\x89PNG\r\n\x1a\n"):
             return "image/png"
+        if prefix.startswith(b"glTF"):
+            raise AssetValidationError("三维模型由 SimWorld 管理")
         if prefix.startswith(b"\xff\xd8\xff"):
             return "image/jpeg"
         if len(prefix) >= 12 and prefix[:4] == b"RIFF" and prefix[8:12] == b"WEBP":

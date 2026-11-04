@@ -6,6 +6,23 @@ Studio 用于编辑公共作者资源和实验；Runtime 执行自包含实验�
 
 架构约束、文件协议、代码入口与验收规则统一见 [AGENTS.md](AGENTS.md)。
 
+在根目录的 [services.toml](services.toml) 配置 Studio 和 SimWorld 服务地址。「基础配置 → 地图」直接查看服务端已安装的场景；新建实验时可选远端场景。实验只存场景 ID，公共地图和实验共用在线查看器。3D 运行通过服务执行动作，Run 保存已提交的实际位置、动作和对话。服务不在线时可读历史事实，不能打开 UE 实景。[3D 集成与能力边界](docs/simworld-3d-scene-design.md)
+
+本机查看东京街区，双击 [start-simworld.bat](start-simworld.bat)。控制台和 UE 游戏窗口会保持打开；关闭网页只释放相机。再次双击会替换所配置端口上属于该服务的进程和 UE。日志在 `%LOCALAPPDATA%\GenerativeAgentsCN\SimWorld-<端口>\logs`。
+
+**修改端口和服务地址**
+
+| [services.toml](services.toml) 配置项 | 生效位置 |
+| --- | --- |
+| `[studio]` 的 `host`、`port` | Web 监听、`restart-web.bat` 的健康检查与打开地址、`ga studio serve` |
+| `[simworld]` 的 `url` | 本机 UE 启动端口，以及 Studio 选图、实时画面、相机和角色服务的连接地址 |
+| `[models]` 的 `chat`、`embedding`、`decision` | 新建模型时的建议地址；空模型库初始化时使用其中的生成式和向量地址 |
+| `[decision_compiler]` | Studio 从判别式 Skill 正文解析输出结构时实际调用的生成式 LLM；公共 Skill 和实验草稿共用 |
+
+例如，把 `[simworld]` 下的 `url` 改为 `"http://127.0.0.1:8790"`，网页和启动脚本就会使用同一新端口。换端口前先停止旧端口的实例，然后重启场景服务和 Web。远程部署时填远程 HTTP(S) 地址，由 GPU 主机管理场景服务，本机只启动 Studio。已保存的模型在模型中心修改；已选入实验和 Run 的模型连接保留其快照。UE 相机的内部控制端口由服务按会话自动分配。
+
+源代码安装默认读取本项目的文件；仅安装 wheel 时使用随包的同一份默认配置。要使用本机专用配置，将 `GA_SERVICES_CONFIG` 设为另一份 TOML 的绝对路径，只需写下要覆盖的项。临时 Web 参数按「`--host/--port` → `GA_HOST/GA_PORT` → TOML」优先；`GA_SIMWORLD_URL` 优先于 TOML，未指定完整 URL 时也可用 `GA_SIMWORLD_PORT` 临时覆盖本机直连端口。不要把 API Key 或 `GA_SIMWORLD_TOKEN` 写入此文件。
+
 **安装与启动**
 
 在仓库根目录操作。需要 Python 3.11 或更高版本；前端回归测试另需 Node.js。
@@ -34,9 +51,9 @@ python tools/link_local_source.py
 ga studio serve
 ~~~
 
-打开 [Studio](http://127.0.0.1:8000/)。健康检查地址是 [api/studio/health](http://127.0.0.1:8000/api/studio/health)。`ga studio serve` 默认使用当前工作目录下的 `var/generative-agents.db` 和 `var/`；启动参数见 `ga studio serve --help`。
+打开终端显示的 Studio 地址，健康检查位于同一地址下的 `/api/studio/health`。`ga studio serve` 默认使用当前工作目录下的 `var/generative-agents.db` 和 `var/`；启动参数见 `ga studio serve --help`。
 
-Web 页面、API 和回放共用一个监听端口，默认 `8000`。可用 `ga studio serve --port 8081` 临时指定端口，或设置环境变量 `GA_PORT`；命令行 `--port` 优先。生成式模型的默认连接地址为 `http://127.0.0.1:8888/v1`，向量模型为 `http://127.0.0.1:5002/v1`，均连接独立模型服务，在模型中心修改服务地址。公共模型修改不会自动更新已有实验和 Run 的副本。Runtime 能力通过身份绑定的进程内接口调用，默认 SQLite 数据库使用文件，均无需额外监听端口。
+Web 页面、API 和回放共用一个监听端口。Runtime 能力通过身份绑定的进程内接口调用，默认 SQLite 数据库使用文件，均无需额外监听端口。
 
 Windows 也可使用根目录的 `restart-web.bat` 启动或重启 Web。首次使用先安装项目；以下命令无需激活虚拟环境：
 
@@ -49,11 +66,26 @@ python -m venv .venv
 
 脚本优先使用仓库的 `.venv\Scripts\python.exe`，没有该环境时才使用 PATH 中的 Python，并在停止旧服务前检查项目和 Web 依赖。若提示 `No module named 'generative_agents'`，表示所选 Python 尚未安装项目，按脚本显示的安装命令补齐即可。后台进程提前退出时会立即显示错误和日志路径；仅进程创建成功不代表服务可用，须看到健康检查通过的 `[OK]` 提示。
 
+看到 `[OK]` 后，窗口会显示本次 Web 启动以来的标准输出和错误日志，并持续显示新内容。按 `Ctrl+C` 或关闭窗口即可结束查看，Web 服务会继续在后台运行。自动化调用可用 `.\restart-web.bat --no-follow`，在健康检查通过后立即返回。
+
 `restart-web.bat` 默认使用仓库的 `var/studio/` 活动数据目录：数据库为其中的 `generative-agents.db`，素材和实验包也从该目录读取，启动日志与进程记录分别位于 `logs/` 和 `web.pid`。设置 `GA_VAR_DIR` 可改用其他完整数据目录，默认数据库路径随之切换；显式设置 `GA_DATABASE_URL` 时优先使用该数据库地址。脚本中的相对路径均以仓库根目录为基准。`data/studio/` 是原始数据快照，脚本不会自动读取或导入它。
 
 直接使用 CLI 访问启动脚本的同一份活动数据时，在仓库根目录运行 `ga studio serve --var-dir var/studio --database-url sqlite:///var/studio/generative-agents.db`；不指定这两个参数的 CLI 仍使用 `var/` 默认路径。
 
-`restart-web.bat` 同样默认使用 `8000`，并读取 `GA_PORT`。例如在 PowerShell 中先执行 `$env:GA_PORT = '8081'`，再运行 `.\restart-web.bat`，即可在 `8081` 启动或重启 Web。
+**可选：在 Windows 本机运行 3D 场景服务**
+
+场景服务以独立的 Python 安装包 `ga-simworld-service` 发布。本机启动器默认用本项目的 `.venv`，也可用 `GA_SIMWORLD_PYTHON` 指向已安装服务的其他 `python.exe`。使用预制地图、遥控相机无需官方 `simworld` Python SDK，也不读取 SDK 或场景服务的源码目录。
+
+新建环境时，取得场景服务的 wheel 后安装一次即可。例如把安装包放在 `dist\simworld\`，在项目根目录执行：
+
+~~~powershell
+.\.venv\Scripts\python.exe -m pip install ".\dist\simworld\ga_simworld_service-0.2.2-py3-none-any.whl[windows-launcher]"
+.\start-simworld.bat
+~~~
+
+UE 游戏运行环境和地图 PAK 单独安装。默认从本项目的上一级目录寻找 `SimWorld_Base_Windows\Base20260201\Windows\SimWorld\Binaries\Win64\SimWorld.exe` 和 `SimWorld_Windows\AdditionEnvironmentPaks\Windows`。也可设置 `GA_PREVIEW_UE_EXE` 为游戏可执行文件、`GA_SIMWORLD_MAP_PAKS` 为地图目录。观看东京街区需要与该运行环境匹配的 `pakchunk2007-Windows.pak`，无需 UE Editor。
+
+在线行动、恢复和实景回放需要场景服务 0.2.2。角色由服务端在所选关卡生成。Runtime 记录真实动作回执和位姿，观察者可在「实验结果 → 仿真回放」查看已提交步、跟随人物或看本步空间事实。SimWorld 服务不可用时仍可读 Run 的文字事实；历史实景取决于服务能否找到该 Run 对应的关卡。
 
 每次 editable 安装后，使用仓库 `.venv` 中的 Python 执行 `tools/link_local_source.py`，将源码关联改为相对于 `site-packages` 的路径；Windows 下为 `../../../src`。该关联按虚拟环境位置解析，与启动工作目录无关。`restart-web.bat` 也按自身目录选择 Python。pip 生成的 `ga` 启动器和虚拟环境的基础 Python 仍有安装位置要求；跨机器搬迁时应重新创建虚拟环境，再执行上述安装步骤。
 
@@ -71,7 +103,7 @@ python -m venv .venv
 
 创建入口仅区分“技能”和“大脑”，生成式技能能组合子技能，无需选择“技能包”类型。技能正文用 `$child-skill` 引用子技能、`@world-perceive` 等标记引用接口，并以自然语言描述调用条件、输入与结果用途。技能页面的“文件与调用关系”展示实时正文引用、递归子技能和实际脚本。详见 [Skill 编写规范](docs/skill-authoring.md)。
 
-技能配置的“LLM 类型”默认是生成式模型，也可选择决策模型。决策技能仍用自然语言编写完整正文：配置时由生成式模型自动识别是/否、多分类或评分及候选项，页面只读展示解析结果；正文修改后保存前重新解析。在模型中心为一项生成式模型勾选“用于解析决策 Skill”，公共技能和实验内技能统一使用该设置，Skill 详情无需选择解析模型；这项 Studio 设置及凭据不进入实验或 Run 包。运行时保留完整正文作为决策指令，直接调用各自配置的 Laya，不再调用生成式模型解析。在模型中心配置本地服务 `http://127.0.0.1:5003/v1/systemone`、模型 `laya-multilingual`，无需 API Key；在实验模型详情中配置实验的决策模型。使用流程与结果解释见 [LLM 类型与决策问题](docs/skill-authoring.md#llm-类型与决策问题)。
+选择决策模型类型后，Studio 使用 [services.toml](services.toml) 的 `[decision_compiler]` 解析 Skill 正文，提取是/否、多分类或评分问题及其候选项。要更换解析模型，修改该节的 `base_url`、`model` 和相应的凭据名称，再重启 Web。模型中心无需勾选解析模型。保存后的问题结构随 Skill 进入实验快照；实验运行时直接调用实验指定的 Laya，不再请求解析 LLM。[配置和使用决策 Skill](docs/skill-authoring.md#llm-类型与决策问题)
 
 技能详情的“试运行”只需输入自然语言情境；生成式技能直接接收输入原文，决策技能直接把输入发送给决策模型，无需填写运行时上下文 JSON。纯文本技能可独立试运行；依赖环境接口时，选择已有实验及其中的 Agent，系统从实验初始场景装配真实地图、身份、位置、时间和感知限制。公共技能按 LLM 类型选择可用模型，实验内的技能使用包内模型配置。修改技能后先保存，再试运行当前内容及其子技能。
 

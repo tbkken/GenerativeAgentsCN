@@ -62,6 +62,18 @@ test('opening an experiment renders its embedded Brain and map from the lightwei
   assert.deepEqual(requests, ['/experiments/hall']);
 });
 
+test('the lightweight 3D overview labels the online scene before and after loading its definition',async()=>{
+  const {context,state,nodes}=setup();
+  const remote=experiment('street','brain','map-15');
+  remote.core_parameters.environment_type='spatial_3d';
+  context.api=async()=>remote;
+  await context.openExperiment('street');
+  assert.match(nodes.experimentMapMeta.textContent,/SimWorld 在线场景/);
+  state.definition.world={world_name:'map-15',definition:{environment_type:'spatial_3d',simworld_scene_id:'map-15'}};
+  context.fillDefinitionOverview(state.definition,state.revision);
+  assert.match(nodes.experimentMapMeta.textContent,/SimWorld 在线场景 map-15/);
+});
+
 test('saving settings and refreshing the current experiment preserve then update resource labels', async () => {
   const {context, state, nodes, requests} = setup();
   await context.openExperiment('hall');

@@ -352,16 +352,19 @@ test('selecting decision automatically compiles the complete natural language on
   assert.equal(f.requests.filter(request => request.options?.method === 'PUT').length, 1);
 });
 
-test('decision settings omit the explanation and compiler selector while preserving parsing and results', async () => {
+test('public decision settings name the config section and display only the compiler used for this parse', async () => {
   const f = skillEditor(decisionSkill());
   f.mountDefinition();
   assert.doesNotMatch(f.api.renderDecisionSettings(), /自动提取决策配置|从 SKILL 正文识别|保存前会重新解析|用于解析的生成式模型|skillDecisionCompilerModel|使用当前实验内的生成式模型解析/);
+  assert.match(f.api.renderDecisionSettings(), /services\.toml.*\[decision_compiler\]/);
+  assert.doesNotMatch(f.api.renderDecisionSettings(), /chat-model/);
   assert.match(f.api.renderDecisionSettings(), /重新解析|已解析|完整问题说明/);
   assert.equal(f.choices.length, 0);
   f.element('skillSource').value += '\n补充条件'; f.api.sourceChanged();
   assert.match(f.api.renderDecisionSettings(), /解析正文|需要解析/);
   await f.element('skillCompileDecision').fire('click');
   assert.equal(f.requests.filter(request => request.url.endsWith('/decision-compile')).length, 1);
+  assert.match(f.api.renderDecisionSettings(), /已解析 · 解析模型 chat-model/);
   assert.equal(f.choices.length, 0);
 });
 
@@ -466,11 +469,26 @@ test('compile failure blocks saving and leaves the original natural language int
   assert.equal(f.element('skillSave').disabled, false);
 });
 
+test('a failed reparse keeps the previous questions and reports the compiler configuration error', async () => {
+  const markdown = decisionSkill();
+  const f = skillEditor(markdown, 'skill', {fetchResponse: async () => ({
+    ok:false, status:422, json:async () => ({detail:{message:'请在 services.toml 配置解析模型。'}}),
+  })});
+  assert.equal(await f.api.compileDecision(true), false);
+  assert.equal(f.api.state.current.markdown, markdown);
+  const result = f.api.renderDecisionSettings();
+  assert.match(result, /重新解析失败，保留上次结果/);
+  assert.match(result, /role="alert">请在 services\.toml 配置解析模型/);
+  assert.match(result, /完整问题说明/);
+  assert.equal(f.choices.length, 0);
+});
+
 test('experiment compilation delegates model selection to the server without changing the resource digest', async () => {
   let optionsCount = 0, savedCount = 0;
   const scope = {experimentId: 'experiment-one', base: '/api/studio/experiments/experiment-one/resources',
     options: value => {optionsCount++; return value;}, saved() {savedCount++;}};
   const f = skillEditor('---\nname: decide-next-action\nllm_type: decision\n---\n是否继续？', 'skill', {scope});
+  assert.match(f.api.renderDecisionSettings(), /services\.toml.*\[decision_compiler\]/);
   assert.equal(await f.api.compileDecision(), true);
   assert.equal(f.choices.length, 0);
   assert.equal(f.requests[0].url, '/api/studio/experiments/experiment-one/resources/skills/decide-next-action/decision-compile');
@@ -478,6 +496,7 @@ test('experiment compilation delegates model selection to the server without cha
   assert.deepEqual(JSON.parse(f.requests[0].options.body).scripts, {});
   assert.equal(optionsCount, 0);
   assert.equal(savedCount, 0);
+  assert.match(f.api.renderDecisionSettings(), /已解析 · 解析模型 chat-model/);
 });
 
 test('compilation submits current draft scripts and discards a result after scripts change', async () => {
@@ -518,6 +537,7 @@ test('readonly decision skills expose no question editing and cannot request com
   assert.equal(f.element('skillLlmType').disabled, true);
   assert.match(f.api.renderDecisionSettings(), /id="skillCompileDecision" disabled/);
   assert.doesNotMatch(f.api.renderDecisionSettings(), /data-decision-field|<textarea/);
+  assert.doesNotMatch(f.api.renderDecisionSettings(), /services\.toml|chat-model/);
   assert.equal(await f.api.compileDecision(true), true);
   assert.equal(f.requests.length, 0);
   const brain = skillEditor('---\nname: decide-next-action\n---\n# Brain', 'brain');
@@ -585,7 +605,7 @@ for (const decisionId of ['', 'chosen-decision']) {
     const source = read('shell/console-api.js');
     const start = source.indexOf('  async function createExperiment()');
     const code = source.slice(start, source.indexOf('  function setDuplicateStatus(', start));
-    const values = {newExperimentBrain: 'brain-resource', newExperimentMap: 'map-resource', newExperimentChatModel: 'chat-resource',
+    const values = {newExperimentBrain: 'brain-resource', newExperimentMap: decisionId ? 'simworld:map-15' : 'map-resource', newExperimentChatModel: 'chat-resource',
       newExperimentEmbeddingModel: 'embedding-resource', newExperimentDecisionModel: decisionId, newExperimentName: '决策实验',
       newExperimentGoal: '判断并执行', newExperimentOwner: '作者', newExperimentTag: '决策，测试'};
     let submitted;
@@ -596,8 +616,12 @@ for (const decisionId of ['', 'chosen-decision']) {
       api: async (url, options) => {assert.equal(url, '/experiments'); submitted = JSON.parse(options.body); return {experiment_id: 'created'};},
       closeModal() {}, loadExperiments: async () => {}, openExperiment: async id => opened.push(id), showToast() {},
     };
-    vm.createContext(context); vm.runInContext(code, context);
+    vm.createContext(context);
+    vm.runInContext(read('resources/simworld-scenes.js'), context);
+    vm.runInContext(code, context);
     await context.createExperiment();
+    assert.equal(submitted.map_id,decisionId ? undefined : 'map-resource');
+    assert.equal(submitted.simworld_scene_id,decisionId ? 'map-15' : undefined);
     assert.equal(submitted.model_preset_id, 'chat-resource');
     assert.equal(submitted.embedding_model_preset_id, 'embedding-resource');
     assert.equal(submitted.brain_skill_id, 'brain-resource');

@@ -1,0 +1,12 @@
+.street-result-map { background: #f5f8f6; }
+.street-result-map::after, .street-result-map > canvas[hidden],
+.timeline-layout:has(.street-result-map) label:has(#replayLayerTrails) { display: none; }
+.street-replay { display: flex; flex-direction: column; height: 100%; }
+.street-replay-scene { flex: 1; min-height: 0; overflow: auto; }
+.street-replay-waiting {display:grid;min-height:100%;place-content:center;margin:0;padding:16px;color:#53665c;text-align:center}
+.street-activities { flex:none; max-height:22%; overflow:auto; margin:0; padding:6px 12px; list-style:none; font-size:13px; color:#244436; }
+.street-activities:empty { display:none; }
+.street-replay > details { flex: none; max-height: 38%; overflow: auto; padding: 8px 12px; font-size: 13px; color: #304d40; }
+.street-replay > details > summary { cursor: pointer; }
+.street-replay > details ul { padding-left: 1.2rem; overflow-wrap: anywhere; }
+.street-replay > details li + li { margin-top: .3rem; }

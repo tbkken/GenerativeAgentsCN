@@ -3,27 +3,23 @@ import hashlib
 import json
 
 import pytest
-from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from generative_agents.ga_protocol.schemas.trials import SkillTrialError
 from generative_agents.ga_protocol.skills.metadata import skill_frontmatter
-from generative_agents.adapters.web.routes.resources import create_resource_router
-from generative_agents.adapters.web.routes.models import create_model_service_router
-from generative_agents.adapters.web.routes.experiment_resources import create_experiment_resource_router
 from generative_agents.ga_studio.catalog.packages import StudioPackageCatalogService
 from generative_agents.ga_studio.experiments.builder import ExperimentPackageBuilder, SkillSource
 from generative_agents.ga_studio.resources.catalog import StudioResourceService
-from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
-from generative_agents.ga_studio.storage.database import create_database
-from generative_agents.ga_studio.storage.models import Base
-from generative_agents.ga_studio.storage.model_settings import StudioModelSettings
+from generative_agents.adapters.web.app import create_studio_app
+from generative_agents.ga_studio.storage.credentials import HostModelCredentials
+from generative_agents.ga_protocol.packages.io import seal_directory
 from tests.test_portable_package_protocol import _definition
 
 
 BODY = "# 判断出行\n\n根据情境判断是否应当出门。\n\n<!-- PROMPT:START -->\n检查天气。\n<!-- PROMPT:END -->\n\n下雨且没有伞时不要出门。"
 MARKDOWN = "---\nname: decide-outing\ndescription: 判断出行\nllm_type: decision\n---\n" + BODY
-CHAT = {"provider": "vllm", "base_url": "http://127.0.0.1:8888/v1", "model": "chat-test"}
+CHAT = {"provider": "vllm", "base_url": "http://127.0.0.1:8888/v1", "model": "chat-test",
+        "temperature": 0, "max_tokens": 4096}
 
 
 class Extractor:
@@ -120,49 +116,45 @@ def test_compile_transport_failure_redacts_key_and_does_not_retry(monkeypatch):
 
 @pytest.fixture
 def author(tmp_path, monkeypatch):
-    database = create_database(f"sqlite:///{(tmp_path / 'studio.db').as_posix()}")
-    Base.metadata.create_all(database.engine)
-    registry = DatabaseSkillRegistry(database, cache_root=tmp_path / "cache")
-    registry.create(name="decide-outing", description="判断出行")
-    resources = StudioResourceService(database)
+    config = tmp_path / "services.toml"
+    config.write_text(
+        '[decision_compiler]\nbase_url = "https://compiler.example/remote/v2"\nmodel = "host-author"\n'
+        'credential_env = "TEST_COMPILE_KEY"\ntemperature = 0.6\nmax_tokens = 543\n'
+        'timeout_seconds = 39\nenable_thinking = true\n', encoding="utf-8")
+    monkeypatch.setenv("GA_SERVICES_CONFIG", str(config))
+    monkeypatch.setenv("TEST_COMPILE_KEY", "test-author-secret")
     client = Extractor({"go_out": {"type": "noul"}})
     settings = []
+
     def create(config, **kwargs):
         settings.append(config)
         return client
+
     monkeypatch.setattr("generative_agents.ga_runtime.skills.decision_compile.create_llm_model", create)
-    app = FastAPI()
-    app.include_router(create_resource_router(database, registry))
-    app.include_router(create_model_service_router(database, tmp_path))
-    app.include_router(create_experiment_resource_router(database, tmp_path))
+    app = create_studio_app(database_url=f"sqlite:///{(tmp_path / 'studio.db').as_posix()}", var_dir=tmp_path)
     with TestClient(app) as http:
-        yield database, registry, resources, client, settings, http
-    database.close()
-
-
-def select_compiler(http, preset):
-    config = preset["config"]["chat"]
-    response = http.put(f"/api/studio/resources/model-services/{preset['id']}", json={
-        "name": preset["name"], "purpose": "chat", "base_url": config["base_url"],
-        "model": config["model"], "row_version": preset["row_version"], "decision_compiler": True})
-    assert response.status_code == 200, response.text
-    assert response.json()["decision_compiler"] is True
-    return response.json()
+        database, registry = app.state.database, app.state.skill_registry
+        registry.create(name="decide-outing", description="判断出行")
+        yield database, registry, StudioResourceService(database), client, settings, http
 
 
 def test_public_compile_uses_chat_and_only_save_persists_current_results(author, monkeypatch):
     database, registry, resources, model, settings, http = author
     monkeypatch.setenv("TEST_COMPILE_KEY", "private-compile-key")
-    select_compiler(http, resources.create_model_preset(name="解析模型", preset_key="compile-chat",
-        config={"chat": {**CHAT, "credential_env": "TEST_COMPILE_KEY", "retry_attempts": 5}}))
+    resources.create_model_preset(name="普通公共模型", preset_key="ordinary", config={"chat": CHAT})
     original = registry.author_detail("decide-outing")
     response = http.post("/api/studio/resources/skills/decide-outing/decision-compile", json={"markdown": MARKDOWN})
     assert response.status_code == 200, response.text
     compiled = response.json()
-    assert compiled["model"] == "chat-test"
+    assert compiled["model"] == "host-author"
     assert "private-compile-key" not in response.text
     assert settings[0]["api_key"] == "private-compile-key"
     assert settings[0]["retry_attempts"] == 1
+    assert settings[0]["base_url"] == "https://compiler.example/remote/v2"
+    assert settings[0]["enable_thinking"] is True
+    assert settings[0]["timeout_seconds"] == 39
+    assert model.calls[0][1]["max_tokens"] == 543
+    assert model.calls[0][1]["temperature"] == 0.6
     assert registry.author_detail("decide-outing")["markdown"] == original["markdown"]
     assert len(model.calls) == 1
     saved = http.put("/api/studio/resources/skills/decide-outing", json={"markdown": compiled["markdown"]})
@@ -175,42 +167,35 @@ def test_public_compile_uses_chat_and_only_save_persists_current_results(author,
     assert len(model.calls) == 1
 
 
-@pytest.mark.parametrize("failure", ["missing", "deleted", "nonchat", "archived"])
-def test_public_compile_requires_unified_chat_and_keeps_failure_unsaved(author, failure):
+def test_public_compile_requires_its_configured_credential_and_ignores_old_selection(author, monkeypatch):
     database, registry, resources, model, settings, http = author
-    preset = resources.create_model_preset(name="已有生成式模型", preset_key="compile-chat", config={"chat": CHAT})
-    if failure != "missing":
-        select_compiler(http, preset)
-    if failure == "deleted":
-        resources.delete("model", preset["id"])
-    elif failure == "archived":
-        resources.archive("model", preset["id"])
-    elif failure == "nonchat":
-        other = resources.create_model_preset(name="决策模型", preset_key="compile-decision", config={"decision": {
-            "provider": "unsloth", "base_url": "http://127.0.0.1:5003/v1", "model": "laya-multilingual"}})
-        StudioModelSettings(registry.cache_root.parent).set_decision_compiler(other["id"], True)
+    monkeypatch.delenv("TEST_COMPILE_KEY")
+    preset = resources.create_model_preset(name="普通公共模型", preset_key="unused", config={"chat": CHAT})
+    old = registry.cache_root.parent / "studio-model-settings.json"
+    old.write_text(json.dumps({"decision_compiler_model_id": preset["id"]}))
     original = registry.author_detail("decide-outing")["markdown"]
     response = http.post("/api/studio/resources/skills/decide-outing/decision-compile",
-        json={"markdown": MARKDOWN})
-    assert response.status_code == 422
-    assert response.json()["detail"]["code"] == ("SKILL_DECISION_COMPILER_NOT_CONFIGURED"
-        if failure == "missing" else "SKILL_DECISION_COMPILER_UNAVAILABLE")
+                         json={"markdown": MARKDOWN})
+    assert response.status_code == 422, response.text
+    detail = response.json()["detail"]
+    assert detail["code"] == "SKILL_MODEL_CREDENTIAL_MISSING"
+    assert "TEST_COMPILE_KEY" in detail["message"] and "services.toml" in detail["message"]
     assert registry.author_detail("decide-outing")["markdown"] == original
     assert model.calls == []
 
 
 def test_public_compile_rejects_per_skill_model_override(author):
     database, registry, resources, model, settings, http = author
-    preset = select_compiler(http, resources.create_model_preset(name="统一解析模型", preset_key="compile-chat",
-        config={"chat": CHAT}))
-    response = http.post("/api/studio/resources/skills/decide-outing/decision-compile",
-        json={"markdown": MARKDOWN, "model_preset_id": preset["id"]})
-    assert response.status_code == 422
+    preset = resources.create_model_preset(name="普通公共模型", preset_key="other", config={"chat": CHAT})
+    for fields in ({"model_preset_id": preset["id"]}, {"config": CHAT}, {"credential_env": "ANOTHER_KEY"}):
+        response = http.post("/api/studio/resources/skills/decide-outing/decision-compile",
+                             json={"markdown": MARKDOWN, **fields})
+        assert response.status_code == 422
     assert model.calls == []
 
 
 @pytest.mark.parametrize("with_scripts", [False, True])
-def test_experiment_compile_uses_unified_author_chat_and_keeps_runtime_model(author, tmp_path, with_scripts):
+def test_experiment_compile_uses_unified_author_chat_and_keeps_runtime_model(author, tmp_path, with_scripts, monkeypatch):
     database, registry, resources, model, settings, http = author
     public = resources.create_model_preset(name="统一解析模型", preset_key="public-chat", config={"chat": CHAT})
     definition = _definition()
@@ -232,40 +217,57 @@ def test_experiment_compile_uses_unified_author_chat_and_keeps_runtime_model(aut
     record = StudioPackageCatalogService(database).upsert(root)
     prefix = f"/api/studio/experiments/{record.package_id}/resources/skills/decide-outing"
     original = {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()}
+    monkeypatch.delenv("TEST_COMPILE_KEY")
     missing = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN, "scripts": {}})
     assert missing.status_code == 422, missing.text
-    assert missing.json()["detail"]["code"] == "SKILL_DECISION_COMPILER_NOT_CONFIGURED"
+    assert missing.json()["detail"]["code"] == "SKILL_MODEL_CREDENTIAL_MISSING"
     assert model.calls == []
-    select_compiler(http, public)
+    vault = HostModelCredentials(database, tmp_path)
+    assert vault.store("encrypted-compiler-key", alias="TEST_COMPILE_KEY") == "TEST_COMPILE_KEY"
     if with_scripts:
         blocked = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN})
         assert blocked.status_code == 422, blocked.text
         assert model.calls == []
     response = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN, "scripts": {}})
     assert response.status_code == 200, response.text
-    assert response.json()["model"] == "chat-test"
-    assert settings[0]["model"] == "chat-test"
+    assert response.json()["model"] == "host-author"
+    assert settings[0]["model"] == "host-author"
+    assert settings[0]["api_key"] == "encrypted-compiler-key"
+    assert "encrypted-compiler-key" not in response.text
     assert len(model.calls) == 1
     assert {path.relative_to(root): path.read_bytes() for path in root.rglob("*") if path.is_file()} == original
-    invalid = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN, "model_preset_id": public["id"]})
-    assert invalid.status_code == 422
+    for fields in ({"model_preset_id": public["id"]}, {"base_url": CHAT["base_url"]}, {"api_key": "wrong"}):
+        invalid = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN, **fields})
+        assert invalid.status_code == 422
     assert len(model.calls) == 1
     current = http.get(prefix).json()
     saved = http.put(prefix, json={"markdown": response.json()["markdown"], "scripts": {}, "row_version": current["row_version"]})
     assert saved.status_code == 200, saved.text
     from generative_agents.ga_protocol.packages.definition import _experiment_definition
     assert _experiment_definition(root)[1]["models"]["chat"]["model"] == "copied-chat"
-    assert not list(root.rglob("studio-model-settings.json"))
+    for member in root.rglob("*"):
+        if member.is_file():
+            data = member.read_bytes()
+            assert b"compiler.example" not in data and b"encrypted-compiler-key" not in data
     assert "decision_compiler_model_id" not in saved.text
     stale = http.put(prefix, json={"markdown": response.json()["markdown"] + "\n新的规则。", "scripts": {},
                                  "row_version": saved.json()["row_version"]})
     assert stale.status_code == 422, stale.text
     assert len(model.calls) == 1
 
+    archive = seal_directory(root, tmp_path / "sealed.gaexp")
+    StudioPackageCatalogService(database).upsert(archive)
+    digest = hashlib.sha256(archive.read_bytes()).hexdigest()
+    def unexpected_credential_read(*args):
+        pytest.fail("SEALED must reject before resolving credentials")
+    monkeypatch.setattr(HostModelCredentials, "resolve", unexpected_credential_read)
+    sealed = http.post(prefix + "/decision-compile", json={"markdown": MARKDOWN, "scripts": {}})
+    assert sealed.status_code == 409
+    assert hashlib.sha256(archive.read_bytes()).hexdigest() == digest and len(model.calls) == 1
+
 
 def test_public_compile_uses_draft_script_removal_and_preserves_saved_scripts(author):
     database, registry, resources, model, settings, http = author
-    select_compiler(http, resources.create_model_preset(name="解析模型", preset_key="compile-chat", config={"chat": CHAT}))
     skill = registry.get("decide-outing")
     registry.save(skill.name, skill.markdown, scripts={"scripts/old.py": "def run(): return 'old'\n"})
     prefix = "/api/studio/resources/skills/decide-outing"

@@ -68,6 +68,7 @@ class BrainRuntime:
     ) -> dict[str, Any]:
         agent = game.get_agent(agent_key)
         tile = agent.get_tile()
+        ground = getattr(game, "ground", None)
         consume_observations = getattr(game, "consume_external_observations", None)
         external_observations = (
             tuple(consume_observations(agent_key))
@@ -84,14 +85,15 @@ class BrainRuntime:
             now=game.context.clock.get_date(),
             stride_minutes=stride_minutes,
             coord=tuple(agent.coord) if agent.coord is not None else None,
-            address=tuple(tile.get_address()) if tile is not None else (),
-            spatial_semantics=tuple(
+            address=tuple(ground.location(agent.coord)) if ground else tuple(tile.get_address()) if tile is not None else (),
+            spatial_semantics=tuple(ground.semantics(agent.coord)) if ground else tuple(
                 dict(item) for item in getattr(tile, "spatial_semantics", ())
             ),
             variables=self._agent_variables(
                 agent, external_observations=external_observations
             ),
             environment_type=getattr(game, "environment_type", "spatial_2d"),
+            yaw_deg=agent.yaw_deg if ground else None,
             space_id=getattr(game, "space_id", None),
             presentation=getattr(game, "presentation", None),
             space_description=getattr(game, "world_definition", {}).get("description", ""),

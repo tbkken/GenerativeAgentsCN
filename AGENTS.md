@@ -6,13 +6,13 @@
 
 内核提供可验证、可恢复、可回放的仿真能力，负责身份、校验、世界提交、事实与监督；自然语言 Brain/子 Skill/对象 Skill 决定调用目的、顺序、条件和停止方式。ReAct、排程、反思只是可选 Brain 模式，不得固化为系统流水线或用可视化编排器替代。
 
-产品源码位于 `src/generative_agents/`，业务数据只通过自包含文件交换：`Studio → 实验目录/.gaexp → Runtime → Run目录/.garun → Replay`。
+产品源码位于 `src/generative_agents/`，本项目自身的业务数据通过自包含文件交换：`Studio → 实验目录/.gaexp → Runtime → Run目录/.garun → Replay`。
 
 | 模块 | 职责与主要目录 | 允许的项目依赖 |
 | --- | --- | --- |
 | `ga_protocol` | `schemas/` 文件合同；`packages/` 安全归档、完整性、原子文件；`spatial/` 几何、索引、碰撞、导航；`skills/` 文档与闭包；`facts/` 事实、恢复与质量格式 | 自身；无数据库、Web、模型客户端 |
 | `ga_studio` | `resources/` 公共作者资源；`experiments/` 导入、编辑、预检、封存；`catalog/` 可重建包索引；`storage/` 数据库、素材、凭据；`bundled/` 显式导入素材 | 自身、Protocol；唯一数据库所有者 |
-| `ga_runtime` | `lifecycle/` Run/Attempt 装配；`engine/` 世界、Scheduler、ActorState；`capabilities/` 身份绑定接口；`skills/` 执行；`memory/` 文件记忆；`models/` 网关、重试、审计；`storage/` 提交与恢复；`supervision/` 监督 | 自身、Protocol；只消费包内内容 |
+| `ga_runtime` | `lifecycle/` Run/Attempt 装配；`engine/` 世界、Scheduler、ActorState；`capabilities/` 身份绑定接口；`skills/` 执行；`memory/` 文件记忆；`models/` 网关、重试、审计；`storage/` 提交与恢复；`supervision/` 监督 | 自身、Protocol；1D/2D 只消费包内内容；3D 通过主机配置的 SimWorld 接口执行 |
 | `ga_replay` | `reader.py` 已提交事实；`projections/` 状态与页面投影；`cache.py` 可丢弃缓存 | 自身、Protocol；不执行 Skill、加载 Brain 或调用模型 |
 | `adapters` | `cli/` 参数、输出、退出码；`web/` 应用、路由、静态页面 | 四模块公开 API、Protocol DTO；不直接查询 ORM |
 
@@ -24,7 +24,7 @@
 
 - Map、Spatial Asset、Agent、Crowd、Brain、Skill、Evaluator、Model Preset 均按稳定 ID 直接编辑；不设业务 Revision、发布、派生、跟随最新或引用锁。各类资源、实验和 Run 均须支持删除或归档。
 - 不提供默认地图或隐式地图选择；公共 Agent 全由用户创建，编辑/归档/删除规则相同，不保留系统 Agent、只读分组、种子或内置图片回退。
-- 资源选入实验时立即递归展开并物理复制完整内容：地图、素材、渲染/碰撞、Agent/Crowd、Brain/子 Skill/对象 Skill、Evaluator、模型配置、脚本和模板。导入后与公共资源断开；双方修改、归档或删除互不影响。
+- 本项目管理的资源选入实验时立即递归展开并物理复制完整内容：地图、素材、渲染/碰撞、Agent/Crowd、Brain/子 Skill/对象 Skill、Evaluator、模型配置、脚本和模板。导入后与公共资源断开；双方修改、归档或删除互不影响。
 - 实验仅有 `DRAFT → SEALED`。草稿只修改包内副本；封存后不可修改，调整须复制为新的独立实验，不建 Revision、base/fork 或升级关系。草稿替换地图是全量重新导入，不能自动沿用旧坐标含义。
 - Skill 仅以包内 `skill_key` 引用；同 key 同内容可合并，同 key 异内容必须阻断并诊断；依赖缺失或非法依赖环必须在封存前失败。不得留下公共资源 ID、Revision、素材外键或运行期数据库查询条件。
 - Studio 公共 Skill 保存在数据库，由用户创建或显式导入，不自动填充内置 Skill 或 Brain。源码 `SKILL.md` 用于手写实验、导入导出或开发；测试样例仅属于测试。实验和 Run 使用各自物理副本。Run 启动时完整嵌入 `.gaexp`，之后不读当前实验目录或公共资源。
@@ -64,7 +64,7 @@ assets/...                        commits/step-000001.json
 ```
 
 - 实验 `manifest.json` 保存协议身份、`experiment_id`、展示元数据和安全的包内相对 POSIX 入口路径。`resources/index.json` 保存唯一一份资源内容及附件引用，2D 地图内含空间语义索引，1D 地图保存场所说明与规则；`runtime/assembly.json` 指定唯一 Brain、地图、模型用途、2D Agent 出生位置或 1D 场所成员关系、人群与运行参数。执行视图按需装配，不重复持久化 Skill registry 或旧分散 entrypoints。
-- 运行配置禁止 `map_id`、`map_snapshot_hash`、`revision_id`、`brain_revision_id`、`skill_revision_id`、`secret_ref` 等外部活引用。模型密钥不进包，只声明环境变量名（如 `GA_CHAT_API_KEY`），由目标机器注入。
+- 上述 3D 远端场景 ID 是独立服务的引用，不是本地数据库外键。运行配置禁止 `map_id`、`map_snapshot_hash`、`revision_id`、`brain_revision_id`、`skill_revision_id`、`secret_ref` 等外部活引用。模型密钥不进包，只声明环境变量名（如 `GA_CHAT_API_KEY`），由目标机器注入。
 - `integrity/sha256.json` 覆盖清单及所有内容文件，排序计算 Bundle Hash，包含地图、Agent、Skill 文本/脚本、模型参数和素材等全部行为内容。内容哈希决定行为身份，不使用资源版本字段。
 - `run.json` 创建后不可变，含 `run_id`、请求步数、内嵌 `experiment_id`/根哈希和可选来源 Run；原子更新的 `status.json` 保存状态、当前 Attempt、最后提交 Step；`attempt.json` 保存启动边界与结局。
 - ZIP 拒绝绝对路径、`..`、重复成员、符号链接、超量文件/展开体积；目录包也拒绝符号链接。JSON 使用 UTF-8、排序键、规范分隔符；归档使用排序成员与固定时间戳，确保同内容同字节。
@@ -74,7 +74,8 @@ assets/...                        commits/step-000001.json
 
 ## 4. 空间、时间与上下文
 
-- 地图类型分为 1D 社交环境与 2D 空间环境；3D/SimWorld 仅为后续方向。1D 创建时选择群聊或论坛，一张地图仅一种形态，两者均支持私聊。1D 使用场所身份与实验参与者，不伪造坐标、Tile 或四层地址。
+- 1D 社交环境创建时选择群聊或论坛，一张地图仅一种形态，两者均支持私聊。1D 使用场所身份与实验参与者，不伪造坐标、Tile 或四层地址。3D 场景、几何、设施、角色模型、机位、图片和 UE 资源完全由独立 SimWorld 服务管理。本项目选择在线目录中的场景，实验只保存 `simworld_scene_id`。Studio、实验/Run 包、缓存、日志和审计不得复制 SimWorld 内容或原始接口响应。实时画面只转发；Runtime 只提交动作、实际位置/轨迹、对话、对象变化及恢复所需的本项目事实。3D 执行和实景回放依赖相应远端服务及场景可用；仅有本项目事实时可离线审计，不承诺还原场景外观或在离线时推进 3D 动作。历史包不迁移、不改写。
+- 「基础配置 → 地图」和「当前实验 → 地图」共用一个 3D 实景查看器。页面入口只适配所选场景、会话来源和返回导航；画面布局、机位、相机输入、加载/断线反馈与会话释放在公共模块维护。公共目录按场景 ID 开在线会话，实验和 Run 从包内读取同一 ID；角色视角由当前会话提供的参与者决定。改动查看器时，两种来源都必须覆盖。
 - 2D 地图固定 `World → Sector → Arena → Game Object` 四层，均可定义语义；仅 Game Object 可绑定一个根 Skill，并通过子 Skill 组合行为。Tile 仅用于渲染、碰撞、寻路，不是公共感知合同。
 - 2D 封存时生成包内空间语义索引。Runtime/Replay 使用同一索引；感知按相交节点返回紧凑、唯一的层级语义及附近 Agent、Event、对象，不逐 Tile 重建语义树。
 - 2D 的 `vision_radius` 是硬上限，模型只能缩小；`attention_bandwidth` 必须限制候选输出，同时保留当前位置的层级语义锚点。1D 公开内容对场所内所有参与者可感知，私聊仅参与者可感知，单次输出仍受注意力带宽约束。节点/对象按稳定 ID 去重，Event 按完整事实身份处理，不按名称或文本合并。

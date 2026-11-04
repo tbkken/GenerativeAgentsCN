@@ -11,6 +11,7 @@ from typing import Literal
 from uuid import uuid4
 
 from generative_agents.ga_protocol.packages.definition import write_experiment_definition
+from generative_agents.ga_protocol.packages.attachments import AttachmentFiles
 from generative_agents.ga_protocol.packages.io import (
     PackageError, atomic_write_json, checked_package_path, iter_package_files,
     seal_directory, write_integrity_manifest,
@@ -106,11 +107,13 @@ class ExperimentPackageBuilder:
             resources.resources.append(record)
         for logical, source in (asset_sources or {}).items():
             logical = validate_package_path(logical)
-            content = source if isinstance(source, bytes) else checked_package_path(Path(source)).read_bytes()
+            content = source if isinstance(source, bytes) else checked_package_path(Path(source))
             # The shared ResourceSet may already own a map/Agent attachment
             # also collected while materializing the experiment definition.
-            if logical in resources.files and resources.files[logical] != content:
-                raise PackageError(f"conflicting resource attachment: {logical}")
+            if logical in resources.files:
+                supplied = AttachmentFiles({logical: content})
+                if resources.files.digest(logical) != supplied.digest(logical):
+                    raise PackageError(f"conflicting resource attachment: {logical}")
             resources.files[logical] = content
         manifest = ExperimentManifest(experiment=ExperimentIdentity(
             experiment_id=experiment_id or str(uuid4()), key=str(identity.get("key") or "experiment"),

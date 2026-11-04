@@ -86,8 +86,8 @@
       byId('deleteCrowdBtn').addEventListener('click', () => this.deleteCrowd(this.detail?.id, this.detail?.name).catch(error => this.fail(error)));
       [byId('manageCrowdAgentsBtn'), byId('manageCrowdAgentsInlineBtn')].forEach(button => button.addEventListener('click', () => this.openAgentManager().catch(error => this.fail(error))));
       byId('confirmCreateCrowd').addEventListener('click', () => this.createCrowd().catch(error => this.fail(error)));
-      ['closeCreateCrowd', 'cancelCreateCrowd'].forEach(id => byId(id).addEventListener('click', () => this.modal('close', 'createCrowdModal')));
-      ['closeCrowdAgentManager', 'cancelCrowdAgentManager'].forEach(id => byId(id).addEventListener('click', () => this.modal('close', 'crowdAgentManagerModal')));
+      byId('closeCreateCrowd').addEventListener('click', () => this.modal('close', 'createCrowdModal'));
+      byId('closeCrowdAgentManager').addEventListener('click', () => this.modal('close', 'crowdAgentManagerModal'));
       byId('confirmCrowdAgentManager').addEventListener('click', () => this.applyAgentSelection().catch(error => this.fail(error)));
       byId('createPublicAgentBtn').addEventListener('click', () => this.openAgentEditor().catch(error => this.fail(error)));
       byId('crowdAgentSearch').addEventListener('input', () => {this.memberPage=1; clearTimeout(this.searchTimer); this.searchTimer=setTimeout(() => this.loadAgents().then(() => this.renderAgentList()).catch(error => this.fail(error)),250);});

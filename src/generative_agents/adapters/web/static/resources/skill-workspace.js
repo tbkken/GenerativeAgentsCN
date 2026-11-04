@@ -348,18 +348,21 @@
   function renderDecisionSettings() {
     const draft = decisionDraft(), readonly = state.current.editable === false;
     const parsed = decisionIsCurrent(), running = draft.status === 'running' && draft.request?.body === decisionBody();
-    return `<div class="skill-decision-actions"><button type="button" class="btn btn-sm" id="skillCompileDecision" ${readonly || running ? 'disabled' : ''}>${parsed ? '重新解析' : '解析正文'}</button></div><div id="skillDecisionResult">${renderDecisionResult()}</div>`;
+    return `<div class="skill-decision-actions"><button type="button" class="btn btn-sm" id="skillCompileDecision" ${readonly || running ? 'disabled' : ''}>${parsed ? '重新解析' : '解析正文'}</button>${readonly ? '' : '<small>解析模型由 <code>services.toml</code> 的 <code>[decision_compiler]</code> 指定。</small>'}</div><div id="skillDecisionResult">${renderDecisionResult()}</div>`;
   }
 
   function renderDecisionResult() {
     const draft = decisionDraft(), parsed = decisionIsCurrent();
     const running = draft.status === 'running' && draft.request?.body === decisionBody();
-    const status = running ? '正在解析 SKILL 正文…' : parsed ? '已解析' : draft.error ? '解析失败' : '需要解析';
+    let status = parsed ? '已解析' : '需要解析';
+    if (draft.error) status = parsed ? '重新解析失败，保留上次结果' : '解析失败';
+    if (running) status = '正在解析 SKILL 正文…';
+    const model = parsed && draft.compilerModel && !running ? ` · 解析模型 ${escapeHtml(draft.compilerModel)}` : '';
     let questions;
     try { questions = skillDecisionQuestions(); }
     catch (_) { questions = {}; }
     const rows = parsed ? Object.entries(questions).map(([key, question]) => `<article class="skill-decision-result"><strong>${escapeHtml(key)} · ${escapeHtml({noul:'是 / 否', choice:'多类别', score:'评分'}[question.type] || question.type)}</strong>${question.criteria ? `<pre>${escapeHtml(JSON.stringify(question.criteria, null, 2))}</pre>` : '<p>返回“是”的概率（0～1）。</p>'}<details><summary>完整问题说明</summary><pre>${escapeHtml(question.instructions || '')}</pre></details></article>`).join('') : '';
-    return `<p class="skill-decision-status" role="status">${status}</p>${draft.error ? `<p class="skill-decision-error" role="alert">${escapeHtml(draft.error)}</p>` : ''}${rows}`;
+    return `<p class="skill-decision-status" role="status">${status}${model}</p>${draft.error ? `<p class="skill-decision-error" role="alert">${escapeHtml(draft.error)}</p>` : ''}${rows}`;
   }
 
   function syncModelSettings() {
@@ -423,6 +426,7 @@
         item.decision_prompt_sha256 = result.decision_prompt_sha256;
         draft.compiledBody = body; draft.compiledQuestions = skillHeaderValue('decision_questions');
         draft.compiledHash = skillHeaderValue('decision_prompt_sha256'); draft.status = 'done';
+        draft.compilerModel = result.model;
         publishModelSettings();
         return true;
       } catch (error) {
@@ -747,7 +751,7 @@
       $('skillSource')?.addEventListener('input', sourceChanged);
       $('skillInsertInterface')?.addEventListener('click', openInterfacePicker);
       $('skillInterfacePickerClose')?.addEventListener('click', () => closeInterfacePicker());
-      $('skillInterfacePicker')?.addEventListener('cancel', event => {event.preventDefault(); closeInterfacePicker();});
+      $('skillInterfacePicker')?.addEventListener('cancel', event => event.preventDefault());
       $('skillInterfaceSearch')?.addEventListener('input', event => {
         if (!pickerIsCurrent()) return;
         state.interfacePicker.query = event.target.value;

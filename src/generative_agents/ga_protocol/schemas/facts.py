@@ -5,11 +5,17 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass, field, is_dataclass
 from datetime import datetime
 from enum import StrEnum
+import math
+import re
 from typing import Any, Mapping
 from uuid import UUID, uuid5
 
 from generative_agents.ga_protocol.schemas.memory import MemoryDeltaKind
 from generative_agents.ga_protocol.facts.movement import normalize_movement_activity
+
+
+def is_presentation_clip(value: object) -> bool:
+    return isinstance(value, str) and re.fullmatch(r"[a-z][a-z0-9_]{0,31}", value) is not None
 
 
 class ActivityKind(StrEnum):
@@ -46,9 +52,12 @@ class ActionSnapshot:
     emoji: str | None = None
     object_description: str | None = None
     movement_activity: Mapping[str, Any] | None = None
+    presentation_clip: str | None = None
 
     def __post_init__(self) -> None:
         normalize_movement_activity(self.movement_activity)
+        if self.presentation_clip is not None and not is_presentation_clip(self.presentation_clip):
+            raise ValueError("invalid presentation_clip identifier")
 
 
 @dataclass(frozen=True, slots=True)
@@ -56,9 +65,9 @@ class AgentStepResult:
     """单个智能体在当前步骤的位置、剩余路径和动作结果。"""
 
     agent_key: str
-    from_coord: tuple[int, int] | None
-    to_coord: tuple[int, int] | None
-    path: tuple[tuple[int, int], ...]
+    from_coord: tuple[int, int] | tuple[float, float, float] | None
+    to_coord: tuple[int, int] | tuple[float, float, float] | None
+    path: tuple[tuple[int, int] | tuple[float, float, float], ...]
     action: ActionSnapshot
     activity_kind: ActivityKind
     location: tuple[str, ...]
@@ -66,8 +75,15 @@ class AgentStepResult:
     schedule_item_id: str | None = None
     path_source: str = "OBSERVED"
     decision_context: Mapping[str, Any] = field(default_factory=dict)
+    from_yaw_deg: float | None = None
+    to_yaw_deg: float | None = None
 
     def __post_init__(self) -> None:
+        if self.to_coord is not None and len(self.to_coord) == 3:
+            if (not self.from_coord or any(len(p) != 3 or not all(math.isfinite(v) for v in p)
+                                           for p in (self.from_coord, self.to_coord, *self.path))
+                    or not all(yaw is not None and math.isfinite(yaw) for yaw in (self.from_yaw_deg, self.to_yaw_deg))):
+                raise ValueError("3D Agent facts require finite XYZ positions, path and both orientations")
         if self.from_coord is None or self.to_coord is None:
             if self.from_coord is not None or self.to_coord is not None or self.path or self.location:
                 raise ValueError("non-spatial Agent facts must not contain coordinates, paths or addresses")
@@ -309,7 +325,32 @@ class StepResult:
         """Reject replay facts that disagree with the committed Agent state."""
 
         agents = {item.agent_key: item for item in self.agents}
+        clips = {}
         for event in self.domain_events:
+            structured = event.payload.get("structured_payload")
+            receipt = structured.get("simworld_action") if isinstance(structured, Mapping) else None
+            if receipt is not None:
+                kind = {"AGENT_MOVED":"MOVE", "GAME_OBJECT_INTERACTED":"INTERACT"}.get(event.event_type)
+                if (not kind or len(event.agent_keys) != 1 or event.agent_keys[0] not in agents
+                        or not isinstance(receipt, Mapping) or not receipt.get("scene_id")
+                        or receipt.get("kind") != kind or receipt.get("actor_id") != event.agent_keys[0]
+                        or receipt.get("run_id") != str(self.run_id) or receipt.get("step_no") != self.step_no
+                        or len(agents[event.agent_keys[0]].to_coord or ()) != 3):
+                    raise ValueError("SimWorld action receipt disagrees with committed actor, Run or Step")
+                if kind == "INTERACT":
+                    observation = structured.get("observation") or {}
+                    if not observation.get("request_id") or not observation.get("object_key") or observation.get("interacted") is not True:
+                        raise ValueError("SimWorld interaction requires a confirmed target and request identity")
+            arguments = structured.get("arguments") if isinstance(structured, Mapping) else None
+            if isinstance(arguments, Mapping) and "presentation_clip" in arguments:
+                if event.event_type not in {"AGENT_MOVED", "AGENT_ACTED", "AGENT_WAITED", "AGENT_SPOKE", "GAME_OBJECT_INTERACTED"}:
+                    raise ValueError("presentation_clip requires a committed Agent action")
+                if len(event.agent_keys) != 1 or event.agent_keys[0] not in agents:
+                    raise ValueError("presentation_clip must belong to a committed Agent action")
+                key = event.agent_keys[0]
+                if key in clips or len(agents[key].to_coord or ()) != 3:
+                    raise ValueError("presentation_clip requires one committed 3D action per Agent")
+                clips[key] = arguments["presentation_clip"]
             if event.event_type != "AGENT_MOVED":
                 continue
             if len(event.agent_keys) != 1 or event.agent_keys[0] not in agents:
@@ -329,6 +370,10 @@ class StepResult:
             after_address = tuple(structured.get("after_address") or ())
             if from_coord != tuple(agent.from_coord) or to_coord != tuple(agent.to_coord):
                 raise ValueError("AGENT_MOVED coordinates disagree with AgentStepResult")
+            if len(to_coord) == 3 and (structured.get("from_yaw_deg") != agent.from_yaw_deg
+                                       or structured.get("to_yaw_deg") != agent.to_yaw_deg
+                                       or structured.get("units") != "m"):
+                raise ValueError("3D movement pose disagrees with AgentStepResult")
             if from_coord == to_coord or not executed_path:
                 raise ValueError("AGENT_MOVED must contain an actual displacement")
             if executed_path != tuple(agent.path):
@@ -353,6 +398,9 @@ class StepResult:
                 reached = not structured.get("remaining_path") and to_coord == target
                 if type(structured["reached_target"]) is not bool or structured["reached_target"] != reached:
                     raise ValueError("AGENT_MOVED reached_target disagrees with the committed displacement")
+        if clips != {key: agent.action.presentation_clip for key, agent in agents.items()
+                     if agent.action.presentation_clip is not None}:
+            raise ValueError("presentation_clip disagrees with the committed World action")
 
     def _project_effects(self) -> tuple[StepEffectRecord, ...]:
         """执行`project``effects`的内部处理，供当前模块或类复用。
@@ -458,7 +506,14 @@ class StepResult:
         返回:
             返回以字段名或业务键组织的结构化映射。
         """
-        return _wire_value(self)
+        wire = _wire_value(self)
+        for agent in wire["agents"]:
+            if agent["action"]["presentation_clip"] is None:
+                agent["action"].pop("presentation_clip")
+            if agent["to_yaw_deg"] is None:
+                agent.pop("from_yaw_deg")
+                agent.pop("to_yaw_deg")
+        return wire
 
     @classmethod
     def from_dict(cls, value: Mapping[str, Any]) -> "StepResult":
@@ -500,6 +555,7 @@ class StepResult:
                     schedule_item_id=item.get("schedule_item_id"),
                     path_source=item.get("path_source", "OBSERVED"),
                     decision_context=item.get("decision_context") or {},
+                    from_yaw_deg=item.get("from_yaw_deg"), to_yaw_deg=item.get("to_yaw_deg"),
                 )
                 for item in value.get("agents", ())
             ),

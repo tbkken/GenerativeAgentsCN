@@ -96,7 +96,7 @@ def compile_skill_decision(markdown, *, config, api_key="", kind="skill", script
 
     try:
         client = model_client if model_client is not None else create_llm_model(settings, control=control)
-        response = client.chat_completion(messages, temperature=0, max_tokens=4096,
+        response = client.chat_completion(messages, temperature=settings["temperature"], max_tokens=settings["max_tokens"],
             purpose="skill_decision_compile", prompt_key="decision-compile", retry=1,
             response_validator=validate)
         questions = validate(response)

@@ -31,7 +31,7 @@ function harness() {
   const context = { state, $: node, document, HTMLElement: Element, AbortController,
     requestAnimationFrame: callback => callback(),
     setBackgroundInert: value => { document.inert = value; },
-    modalFocusableElements: () => [node('closeModelTrace'), node('closeModelTraceDone')],
+    modalFocusableElements: () => [node('closeModelTrace')],
     escapeHtml: value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;'),
     api: (url, options) => new Promise((resolve, reject) => pending.push({ url, options, resolve, reject })),
     reportError: error => errors.push(error),
@@ -63,13 +63,16 @@ test('opening a raw trace immediately shows the modal and preserves the initiati
   assert.equal(h.document.inert, false);
 });
 
-test('Escape cancels the pending request and an abort-ignoring response cannot change the closed modal', async () => {
+test('Escape preserves a pending trace; closing it rejects an abort-ignoring response', async () => {
   const h = harness();
   const opening = h.openModelTrace('attempt:2', h.node('tree-button'));
   const request = h.pending.shift();
   let prevented = false;
   h.handleModalKeydown({ key: 'Escape', preventDefault() { prevented = true; } }, h.node('modelTraceModal'));
   assert.equal(prevented, true);
+  assert.equal(h.state.activeModalId, 'modelTraceModal');
+  assert.equal(request.options.signal.aborted, false);
+  h.closeModal('modelTraceModal');
   assert.equal(request.options.signal.aborted, true);
   request.resolve(detail('late payload'));
   await opening;

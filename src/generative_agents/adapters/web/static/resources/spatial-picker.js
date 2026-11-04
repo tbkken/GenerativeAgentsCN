@@ -145,14 +145,13 @@
     const tree = element('div', 'spatial-picker-tree'); tree.setAttribute('role', 'tree'); tree.setAttribute('aria-label', '四层空间树');
     const preview = element('aside', 'spatial-picker-preview'); preview.setAttribute('aria-live', 'polite');
     const footer = element('footer', 'spatial-picker-footer');
-    const cancel = button('btn spatial-picker-cancel', '取消', () => close());
     const confirm = button('btn btn-primary spatial-picker-confirm', '确认选择', () => {
       if (!canSelect(selected)) return;
       const result = {path: [...selected.path], coord: mode === 'spawn' ? [...selected.coord] : null,
         objects: mode === 'space' && selected.kind === 'GAME_OBJECT' ? [selected.name] : []};
       close(); if (typeof onSelect === 'function') onSelect(result);
     });
-    footer.append(cancel, confirm); content.append(tree, preview);
+    footer.append(confirm); content.append(tree, preview);
     dialog.append(header, help, search, content, footer); backdrop.append(dialog); document.body.append(backdrop);
     function canSelect(node) {
       return !!node && (mode === 'spawn' ? !!node.coord && node.path.length >= 3 :
@@ -233,7 +232,7 @@
     function nodeIndex(node) { return nodeIndices.get(node.id); }
     function onKeydown(event) {
       if (event.key === 'Escape') {
-        event.preventDefault(); event.stopImmediatePropagation(); close();
+        event.preventDefault(); event.stopImmediatePropagation();
       } else if (event.key === 'Tab') {
         event.stopImmediatePropagation();
         const focusable = [...dialog.querySelectorAll('button:not([disabled]), input')];
@@ -252,7 +251,6 @@
       if (activePicker?.close === close) activePicker = null;
       if (previousFocus?.isConnected) previousFocus.focus();
     }
-    backdrop.onclick = event => { if (event.target === backdrop) close(); };
     search.oninput = renderTree;
     document.addEventListener('keydown', onKeydown, true);
     renderTree(); search.focus();

@@ -3,18 +3,24 @@
   'use strict';
   const pending = new Map();
   const root = '/static/console/';
+  const replayPlayer = 'replay/replay-player.js';
+  const sceneViewer = 'resources/scene-map-viewer.js';
+  const mapStyle = 'resources/map-workspace.css';
   const groups = {
-    maps: ['resources/spatial-asset-workspace.js', 'resources/map-workspace.js'],
+    maps: ['resources/spatial-asset-workspace.js', 'resources/simworld-scenes.js', 'resources/map-workspace.js'],
     'map-editor': ['resources/render-materials.js', 'resources/map-navigation.js', 'resources/map-editor-v2.js', 'resources/social-map-editor.js'],
+    'scene-map-viewer': [sceneViewer],
     crowds: ['resources/crowd-workspace.js'],
     skills: ['resources/skill-workspace.js'],
     models: ['resources/model-workspace.js'],
     spatial: ['resources/spatial-picker.js'],
-    replay: ['resources/render-materials.js', 'vendor/phaser.min.js', 'replay/replay-player.js'],
+    replay: ['resources/render-materials.js', 'vendor/phaser.min.js', replayPlayer],
     'social-replay': ['replay/social-replay.js'],
+    'street-replay': [replayPlayer, sceneViewer, 'replay/street-camera.js', 'replay/street-replay.js'],
   };
   const styles = {
-    maps: ['resources/map-workspace.css'], crowds: ['resources/crowd-workspace.css'],
+    maps: [mapStyle], crowds: ['resources/crowd-workspace.css'],
+    'street-replay': [mapStyle, 'replay/street-replay.css'],
     skills: ['resources/skill-workspace.css'], models: ['resources/model-workspace.css'],
     spatial: ['resources/spatial-picker.css'],
     'social-replay': ['replay/social-replay.css'],

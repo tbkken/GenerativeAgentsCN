@@ -36,6 +36,10 @@ def build_semantic_index(world: dict) -> tuple[dict, dict]:
     if environment_type(prepared) == "social_1d":
         prepared["definition"] = SocialWorldDefinition.model_validate(definition).model_dump()
         return prepared, {}
+    if environment_type(prepared) == "spatial_3d":
+        from generative_agents.ga_protocol.schemas.environments import SimWorldMap
+        prepared["definition"] = SimWorldMap.model_validate(definition).model_dump()
+        return prepared, {}
     from generative_agents.ga_protocol.spatial.navigation import compile_collision
 
     if definition.get("editor_v2"):

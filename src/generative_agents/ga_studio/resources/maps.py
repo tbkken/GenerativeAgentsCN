@@ -23,7 +23,7 @@ from generative_agents.ga_protocol.schemas.spatial_assets import SpatialAssetCon
 from generative_agents.ga_protocol.schemas.spatial_assets import SpatialSceneExtension
 from generative_agents.ga_studio.storage.database import Database
 from generative_agents.ga_studio.storage.models import SpatialAssetDefinition
-from generative_agents.ga_studio.storage.models import WorldMap
+from generative_agents.ga_studio.storage.models import Asset, WorldMap
 from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
 from generative_agents.ga_protocol.skills.documents import SkillRegistryError
 from generative_agents.ga_studio.resources.errors import ServiceError
@@ -66,7 +66,7 @@ def normalize_public_world(world: WorldConfig | dict[str, Any]) -> WorldConfig:
         mode="json", exclude_none=False
     )
     payload["definition"] = copy.deepcopy(payload.get("definition") or {})
-    if environment_type(payload) == "social_1d":
+    if environment_type(payload) != "spatial_2d":
         return WorldConfig.model_validate(payload)
     payload["definition"]["size_unit"] = "TILE"
     if payload["definition"].get("editor_v2"):
@@ -961,6 +961,9 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
     if environment_type(world) == "social_1d":
         SocialWorldDefinition.model_validate(world.definition)
         return []
+    if environment_type(world) == "spatial_3d":
+        return [{"code": "SIMWORLD_ONLINE_ONLY", "path": "definition",
+                 "message": "请从 SimWorld 在线目录使用 3D 地图"}]
     definition = world.definition
     errors: list[dict[str, str]] = []
     size = definition.get("size") if isinstance(definition, dict) else None
@@ -1128,6 +1131,8 @@ def _validate_spatial_scene(
         返回以字段名或业务键组织的结构化映射。
     """
 
+    if environment_type(world) == "spatial_3d":
+        return []
     raw_scene = world.definition.get("spatial_scene")
     if raw_scene is None:
         return []
@@ -1261,7 +1266,7 @@ def _referenced_spatial_asset_ids(world: WorldConfig) -> set[str]:
 
 def _hydrate_spatial_assets(session: Session, world: WorldConfig) -> WorldConfig:
     """Resolve mutable authoring asset ids into a self-contained world document."""
-    if environment_type(world) == "social_1d":
+    if environment_type(world) != "spatial_2d":
         return world.model_copy(deep=True)
     payload = world.model_dump(mode="json", exclude_none=False)
     definition = payload["definition"]
@@ -1327,6 +1332,8 @@ def _validate_map_editor_v2(
     返回:
         返回以字段名或业务键组织的结构化映射。
     """
+    if environment_type(world) == "spatial_3d":
+        return [], []
     raw_document = world.definition.get("editor_v2")
     if raw_document is None:
         return [], []
@@ -1443,10 +1450,12 @@ class WorldMapService:
                 "地图稳定键必须由小写字母、数字和连字符组成",
                 status_code=422,
             )
+        if environment_type == "spatial_3d":
+            raise ServiceError("PREBUILT_SCENE_REQUIRED", "请从 SimWorld 在线目录选择 3D 场景", status_code=422)
         if environment_type not in {"social_1d", "spatial_2d"}:
-            raise ServiceError("UNSUPPORTED_ENVIRONMENT", "当前支持 1D 社交地图与 2D 空间地图", status_code=422)
-        if environment_type == "social_1d" and blueprint_key:
-            raise ServiceError("MAP_CREATE_SOURCE_CONFLICT", "1D 地图不能使用空间构建蓝图", status_code=422)
+            raise ServiceError("UNSUPPORTED_ENVIRONMENT", "地图类型不受支持", status_code=422)
+        if environment_type != "spatial_2d" and blueprint_key:
+            raise ServiceError("MAP_CREATE_SOURCE_CONFLICT", "此构建蓝图仅适用于 2D 地图", status_code=422)
         if environment_type == "spatial_2d" and not (1 <= width <= 240 and 1 <= height <= 240 and 8 <= tile_size <= 128):
             raise ServiceError(
                 "INVALID_MAP_DIMENSIONS",
@@ -1478,6 +1487,8 @@ class WorldMapService:
                 if source_map is None:
                     raise not_found("map", source_map_id)
                 world = normalize_public_world(source_map.world_json)
+                if world.definition.get("environment_type") == "spatial_3d":
+                    raise ServiceError("PREBUILT_SCENE_REQUIRED", "请从 SimWorld 在线目录选择 3D 场景", status_code=422)
                 if world.definition.get("environment_type") == "social_1d":
                     description = description or world.definition["description"]
                     world = WorldConfig(world_key=stable_key, world_name=name, assets=world.assets,
@@ -1614,6 +1625,7 @@ class WorldMapService:
         page: int = 1,
         page_size: int = 5,
         archived: str = "active",
+        for_experiment: bool = False,
     ) -> dict[str, Any]:
         """查询`maps`。
 
@@ -1637,15 +1649,23 @@ class WorldMapService:
                 "INVALID_ARCHIVE_FILTER", "地图归档筛选无效", status_code=422
             )
         with self.database.session_factory() as session:
+            definition = WorldMap.world_json["definition"]
+            kind = func.coalesce(definition["environment_type"].as_string(), "spatial_2d")
+            selectable = WorldMap.archived_at.is_(None) & (kind != "spatial_3d")
             statement = select(WorldMap.id, WorldMap.map_key, WorldMap.name, WorldMap.description,
                                WorldMap.row_version, WorldMap.archived_at,
+                               selectable.label("available_for_experiment"),
                                WorldMap.updated_at, WorldMap.created_at,
                                WorldMap.world_json["definition"]["size"].label("dimensions"),
                                WorldMap.world_json["definition"]["tile_size"].as_integer().label("tile_size"),
                                WorldMap.world_json["definition"]["environment_type"].as_string().label("environment_type"),
                                WorldMap.world_json["definition"]["presentation"].as_string().label("presentation"),
                                WorldMap.validation_json["valid"].as_boolean().label("valid"))
-            count_statement = select(func.count()).select_from(WorldMap)
+            statement = statement.where(kind != "spatial_3d")
+            count_statement = select(func.count()).select_from(WorldMap).where(kind != "spatial_3d")
+            if for_experiment:
+                statement = statement.where(selectable)
+                count_statement = count_statement.where(selectable)
             archive_predicate = (
                 WorldMap.archived_at.is_(None)
                 if archived == "active"
@@ -1749,7 +1769,7 @@ class WorldMapService:
         digest = world_hash(normalized)
         now = _utc_now()
         metadata = ({"name": normalized.world_name, "description": normalized.definition["description"]}
-                    if environment_type(normalized) == "social_1d" else {})
+                    if environment_type(normalized) in {"social_1d", "spatial_3d"} else {})
         with self.database.session_factory.begin() as session:
             result = session.execute(update(WorldMap).where(
                 WorldMap.id == map_id,
@@ -1831,23 +1851,27 @@ class WorldMapService:
                 session, world, skill_registry=self.skill_registry
             )
             errors = [*world_errors, *spatial_errors, *editor_errors]
-            checks = [
-                {
-                    "code": "EDITOR_V2_HIERARCHY_AND_SKILLS",
-                    "message": "四层空间层级、Game Object 与对象 Skill 引用",
-                    "status": "FAILED" if editor_errors else "PASSED",
-                },
-                {
-                    "code": "WORLD_TILE_GRID",
-                    "message": "地图尺寸、Tile 坐标、碰撞与语义地址",
-                    "status": "FAILED" if world_errors else "PASSED",
-                },
-                {
-                    "code": "SPATIAL_SCENE_CONTRACTS",
-                    "message": "空间资产、放置和初始状态合同",
-                    "status": "FAILED" if spatial_errors else "PASSED",
-                },
-            ]
+            if environment_type(world) == "spatial_3d":
+                checks = [{"code": "SCENE_3D", "message": "街区路网、站位与对象 Skill",
+                           "status": "FAILED" if errors else "PASSED"}]
+            else:
+                checks = [
+                    {
+                        "code": "EDITOR_V2_HIERARCHY_AND_SKILLS",
+                        "message": "四层空间层级、Game Object 与对象 Skill 引用",
+                        "status": "FAILED" if editor_errors else "PASSED",
+                    },
+                    {
+                        "code": "WORLD_TILE_GRID",
+                        "message": "地图尺寸、Tile 坐标、碰撞与语义地址",
+                        "status": "FAILED" if world_errors else "PASSED",
+                    },
+                    {
+                        "code": "SPATIAL_SCENE_CONTRACTS",
+                        "message": "空间资产、放置和初始状态合同",
+                        "status": "FAILED" if spatial_errors else "PASSED",
+                    },
+                ]
             public_map.validation_json = {
                 "valid": not errors,
                 "errors": errors,
@@ -1893,6 +1917,11 @@ class WorldMapService:
         )
         definition = world.definition
         size = definition.get("size") if isinstance(definition, dict) else None
+        asset_ids = {}
+        if environment_type(world) == "spatial_3d" and world.assets:
+            by_digest = {ref.asset_hash.removeprefix("sha256:"): ref.logical_path for ref in world.assets}
+            for digest, asset_id in session.execute(select(Asset.sha256, Asset.id).where(Asset.sha256.in_(by_digest))):
+                asset_ids[by_digest[digest]] = asset_id
         return {
             "id": public_map.id,
             "map_key": public_map.map_key,
@@ -1905,6 +1934,7 @@ class WorldMapService:
             "world_hash": world_hash(world),
             "validation": copy.deepcopy(public_map.validation_json),
             "world": world.model_dump(mode="json", exclude_none=False),
+            **({"asset_ids_by_path": asset_ids} if asset_ids else {}),
             "archived_at": iso_utc(public_map.archived_at)
             if public_map.archived_at
             else None,
@@ -1929,6 +1959,8 @@ class WorldMapService:
                 "MAP_UNAVAILABLE", "实验选择的地图已不存在", status_code=409
             )
         snapshot = self.materialize_world(session, public_map)
+        if environment_type(snapshot) == "spatial_3d":
+            raise ServiceError("SIMWORLD_ONLINE_ONLY", "请直接选择 SimWorld 在线场景", status_code=422)
         editor_errors, editor_warnings = _validate_map_editor_v2(
             snapshot, skill_registry=self.skill_registry
         )

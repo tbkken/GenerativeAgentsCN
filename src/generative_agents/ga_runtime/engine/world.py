@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from generative_agents.ga_runtime.storage.execution import execution_span
+from generative_agents.ga_runtime.storage.scene_intents import SceneIntents
 
 import copy
 import json
@@ -12,6 +13,7 @@ from typing import Any, Mapping
 from uuid import NAMESPACE_URL, UUID, uuid5
 
 from generative_agents.ga_protocol.facts.movement import movement_activity_from_predicate
+from generative_agents.ga_runtime.capabilities.simworld import SceneActionRejected, SceneUnavailable
 from generative_agents.ga_runtime.storage.logging import split_line
 from generative_agents.ga_runtime.memory.action import Action
 from generative_agents.ga_runtime.memory.event import Event
@@ -44,6 +46,7 @@ class Game:
         conversation: dict,
         *,
         context: SimulationContext,
+        scene=None,
     ):
         """初始化当前对象，保存依赖并建立后续操作所需的初始状态。
 
@@ -72,8 +75,14 @@ class Game:
         self.space_id = config.get("space_id")
         self.world_name = config.get("world_name", "")
         self.presentation = maze_definition.get("presentation")
-        self.maze = (None if self.environment_type == "social_1d" else
-                     Maze(copy.deepcopy(maze_definition), self.logger, context.random))
+        self.ground = scene
+        if self.environment_type == "spatial_3d" and self.ground is None:
+            raise ValueError("3D Run 必须连接其外部 SimWorld 场景")
+        self.scene_intents = SceneIntents(context) if self.ground else None
+        self.ground_events = {}
+        self.remote_object_states = {}
+        self.maze = (Maze(copy.deepcopy(maze_definition), self.logger, context.random)
+                     if self.environment_type == "spatial_2d" else None)
         self.game_object_interactions = GameObjectInteractionSystem(
             maze_definition,
             clock=context.clock,
@@ -111,6 +120,7 @@ class Game:
                 self.logger,
                 clock=context.clock,
                 random_source=context.random,
+                ground=self.ground,
             )
             self.agents[agent_key] = agent
             agents_by_name[agent_name] = agent
@@ -323,13 +333,11 @@ class Game:
         brain_runtime = getattr(self.context, "brain_runtime", None)
         if brain_runtime is None:
             raise RuntimeError("SimulationContext requires a BrainRuntime")
-        outcome = brain_runtime.run_step(
-            self,
-            agent_key,
-            step_no=step_no,
-            total_steps=total_steps,
-            stride_minutes=stride_minutes,
-        )
+        def decide():
+            return brain_runtime.run_step(self, agent_key, step_no=step_no,
+                                          total_steps=total_steps, stride_minutes=stride_minutes)
+        intents = getattr(self, "scene_intents", None)
+        outcome = intents.decide(self, agent_key, step_no, decide) if intents else decide()
         info = outcome.setdefault("info", {})
         title = "{}.summary @ {}".format(
             agent_key, self.context.clock.get_date("%Y%m%d-%H:%M:%S")
@@ -353,13 +361,53 @@ class Game:
         action = dict(outcome.get("world_action") or {})
         action_type = str(action.get("action_type") or "WAIT").upper()
         arguments = dict(action.get("arguments") or {})
+        if "presentation_clip" in arguments:
+            agent.validate_presentation_clip(arguments["presentation_clip"])
         planned_path = tuple(
             tuple(coord) for coord in (action.get("path") or ())
         )
         from_coord = tuple(agent.coord)
-        before_address = tuple(agent.get_tile().get_address())
+        ground = getattr(self, "ground", None)
+        def address_at(point):
+            return tuple(ground.location(point) if ground else self.maze.tile_at(point).get_address())
+        before_address = address_at(from_coord)
         consumed = planned_path[:movement_budget] if action_type == "MOVE" else ()
         remaining = planned_path[len(consumed) :] if action_type == "MOVE" else ()
+        remote_yaw = None
+        visibility_change = None
+        movement_blocked = False
+        if ground and action_type in {"MOVE", "INTERACT"}:
+            try:
+                if action_type == "MOVE":
+                    if not planned_path or tuple(arguments.get("target_coord") or ()) != planned_path[-1]:
+                        raise ValueError("MOVE requires the validated navigation target")
+                    consumed, from_yaw, remote_yaw, movement_blocked = ground.move(
+                        agent._current_step_no, agent_key, from_coord, planned_path[-1], stride_minutes * 75.0)
+                    if abs((from_yaw-agent.yaw_deg+180) % 360-180) > 0.01:
+                        raise SceneUnavailable("SimWorld 移动起始朝向与 Run 不一致")
+                    if not consumed or consumed[-1] == from_coord:
+                        raise SceneActionRejected("SimWorld 未观察到实际位移")
+                    remaining = () if consumed[-1] == planned_path[-1] else (planned_path[-1],)
+                else:
+                    target = (action.get("observation") or {}).get("object_key")
+                    if not target:
+                        raise ValueError("在线交互缺少已感知的目标")
+                    request_id = str(uuid5(self.context.run_id, f"interaction:{agent._current_step_no}:{agent_key}:{target}"))
+                    visibility_change = ground.interact(agent._current_step_no, agent_key, target, request_id,
+                                                        str(arguments.get("request") or ""))
+                    action["observation"] = {"object_key": target, "request_id": request_id,
+                                             "agent_key": agent_key, "interacted": True}
+                    if (visibility_change and target in self.remote_object_states
+                            and self.remote_object_states[target] != visibility_change[0]):
+                        raise SceneUnavailable("SimWorld 的设施状态与上次提交不一致")
+                    outcome["world_action"] = action
+            except SceneActionRejected as exc:
+                reason = str(exc)
+                arguments = {"action_type":"WAIT", "wait_reason":reason, "description":reason,
+                             "rejected_action_type":action_type}
+                action_type, planned_path, consumed, remaining = "WAIT", (), (), ()
+                action = {"action_type":action_type, "arguments":arguments}
+                outcome["world_action"] = action
         target_address = tuple(arguments.get("target_address") or ())
         requested_description = str(arguments.get("description") or "").strip()
         requested_predicate = str(arguments.get("predicate") or "").strip()
@@ -381,9 +429,7 @@ class Game:
             planned_destination = tuple(planned_path[-1])
             if tuple(arguments.get("target_coord") or ()) != planned_destination:
                 raise ValueError("MOVE target_coord does not match its validated path")
-            planned_destination_address = tuple(
-                self.maze.tile_at(planned_destination).get_address()
-            )
+            planned_destination_address = address_at(planned_destination)
             if target_address != planned_destination_address:
                 raise ValueError("MOVE target_address does not match its target_coord")
             emoji = emoji or "➡️"
@@ -434,7 +480,7 @@ class Game:
             object_value = object_value or object_key
             description = description or f"{agent.name} 与 {object_key} 交互"
             emoji = emoji or "🤝"
-            if observation:
+            if observation and not ground:
                 step_no = int(outcome["info"]["iteration_context"]["step"]["number"])
                 request_id = str(uuid5(self.context.run_id, f"interaction:{step_no}:{agent_key}:{object_key}"))
                 observation = self.game_object_interactions.enqueue_request(observation, request_id)
@@ -445,6 +491,16 @@ class Game:
                     subject=agent_key, predicate="请求", object_value=object_key,
                     structured_payload={**observation, "address": list(before_address),
                                         "description": description},
+                ))
+            if visibility_change is not None:
+                before, after = visibility_change
+                self.remote_object_states[object_key] = after
+                extra_events.append(self._world_domain_event(
+                    "GAME_OBJECT_STATE_CHANGED", (agent_key,),
+                    subject=object_key, predicate="状态变为", object_value=json.dumps(after, sort_keys=True),
+                    structured_payload={"object_key":object_key, "before":before, "after":after,
+                        "actor_agent_key":agent_key, "request_id":observation["request_id"],
+                        "state_patch":after, "coord":list(from_coord), "address":list(before_address)},
                 ))
         elif action_type == "SET_OBJECT_STATE":
             object_key = str(arguments.get("object_key") or "")
@@ -489,7 +545,7 @@ class Game:
             emoji = emoji or "⏳"
 
         to_coord = tuple(consumed[-1]) if consumed else from_coord
-        current_address = tuple(self.maze.tile_at(to_coord).get_address())
+        current_address = address_at(to_coord)
         if action_type == "MOVE":
             if to_coord == from_coord:
                 raise ValueError("MOVE must commit an actual coordinate change")
@@ -523,6 +579,7 @@ class Game:
                 describe=description,
                 emoji=emoji,
                 movement_activity=movement_activity,
+                presentation_clip=arguments.get("presentation_clip"),
             ),
             object_event,
             duration=stride_minutes,
@@ -531,6 +588,16 @@ class Game:
         # Moving also projects the current action into the map's event index.
         # Install this committed action first so an old event is never carried
         # to the new coordinate (or left one action behind for an in-place ACT).
+        if ground:
+            before_yaw = agent.yaw_deg
+            if remote_yaw is not None:
+                agent.yaw_deg = remote_yaw
+            outcome["from_yaw_deg"] = before_yaw
+            step_number = agent._current_step_no
+            fact_id = str(uuid5(self.context.run_id, f"spatial-activity:{step_number}:{agent_key}"))
+            self.ground_events[agent_key] = {"id": fact_id, "step_no": step_number, "agent_key": agent_key,
+                "coord": list(to_coord), "predicate": predicate, "object": object_value, "description": description,
+                "participants": [agent_key, *arguments.get("participant_agent_keys", [])] if action_type == "SPEAK" else []}
         agent.move(to_coord, list(remaining))
         address_text = ":".join(str(part) for part in current_address if str(part))
         current_status = (
@@ -570,9 +637,16 @@ class Game:
             }
             if action_type == "MOVE":
                 structured_payload["movement_activity"] = movement_activity
+                if ground:
+                    structured_payload.update(from_yaw_deg=before_yaw, to_yaw_deg=agent.yaw_deg, units="m",
+                                              movement_blocked=movement_blocked)
                 # This is arrival at this MOVE's explicit target, not the
                 # completion of the actor's task or intended whole journey.
                 structured_payload["reached_target"] = reached_target
+            if ground and action_type in {"MOVE", "INTERACT"}:
+                structured_payload["simworld_action"] = {"scene_id": ground.scene_id,
+                    "run_id": str(self.context.run_id), "step_no": agent._current_step_no,
+                    "actor_id": agent_key, "kind": action_type}
             if action.get("observation"):
                 structured_payload["observation"] = dict(action["observation"])
             extra_events.append(
@@ -585,6 +659,8 @@ class Game:
                     structured_payload=structured_payload,
                 )
             )
+            if ground:
+                extra_events[-1]["event_id"] = fact_id
         outcome["events"] = tuple(outcome.get("events") or ()) + tuple(extra_events)
         return {
             "outcome": outcome,
@@ -730,6 +806,7 @@ class Game:
             "agents": {
                 agent_key: {
                     **agent.to_dict(),
+                    **({"yaw_deg": agent.yaw_deg} if getattr(self, "ground", None) else {}),
                     **({"space_id": agent.space_id} if agent.coord is None else
                        {"coord": list(agent.coord), "path": [list(coord) for coord in agent.path or []]}),
                 }
@@ -756,6 +833,8 @@ class Game:
             ),
             "conversation_sequence": getattr(self, "_conversation_sequence", 0),
             "social": self.social.snapshot() if getattr(self, "social", None) is not None else None,
+            **({"ground_events": copy.deepcopy(self.ground_events)} if getattr(self, "ground", None) else {}),
+            **({"simworld_object_states": copy.deepcopy(self.remote_object_states)} if getattr(self, "ground", None) else {}),
         }
 
     def restore_runtime_state(self, snapshot: dict) -> None:
@@ -814,6 +893,9 @@ class Game:
             str(key): str(value) for key, value in open_threads.items()
         }
         self._conversation_sequence = int(snapshot.get("conversation_sequence") or 0)
+        if getattr(self, "ground", None):
+            self.ground_events = copy.deepcopy(snapshot["ground_events"])
+            self.remote_object_states = copy.deepcopy(snapshot.get("simworld_object_states", {}))
         if getattr(self, "social", None) is not None:
             value = snapshot.get("social")
             if not isinstance(value, Mapping):

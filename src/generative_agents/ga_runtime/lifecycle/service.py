@@ -94,11 +94,16 @@ class RunService:
         run_root = self.create(experiment_package, destination, requested_steps=requested_steps)
         return execute_run_directory(run_root)
 
-    def resume(self, run_package: str | Path, *, extracted_destination: str | Path | None = None) -> RunStatus:
+    def resume(self, run_package: str | Path, *, extracted_destination: str | Path | None = None,
+               launch_token: str | None = None) -> RunStatus:
         from generative_agents.ga_runtime.lifecycle.executor import execute_run_directory
 
-        run_root = self.materialize(run_package, extracted_destination=extracted_destination)
-        return execute_run_directory(run_root)
+        source = Path(run_package)
+        # The executor validates a workspace after acquiring worker.lock. In
+        # particular, a dispatched child should claim its slot before doing
+        # expensive package validation.
+        run_root = source if source.is_dir() else self.materialize(source, extracted_destination=extracted_destination)
+        return execute_run_directory(run_root, launch_token=launch_token)
 
     def rerun(
         self,
@@ -169,15 +174,19 @@ class RunService:
         FileRunControl(run_directory).request_cancel()
 
     def seal(self, run_directory: str | Path, archive: str | Path) -> Path:
+        from generative_agents.ga_runtime.supervision.ownership import ACTIVE, reconcile_run
+
         run_root = Path(run_directory).resolve()
         archive = Path(archive).resolve()
         if archive.suffix.casefold() != ".garun":
             raise PackageError("Run archives must use the .garun suffix")
         manifest = validate_run_directory(run_root)
-        status = RunStatus.model_validate(read_json(run_root / "status.json"))
-        if status.status in {RunState.QUEUED, RunState.RUNNING, RunState.FINALIZING}:
+        if reconcile_run(run_root).status in ACTIVE:
             raise PackageError("an active Run cannot be sealed")
         with FileLock(str(run_root / "worker.lock"), timeout=0):
+            status = RunStatus.model_validate(read_json(run_root / "status.json"))
+            if status.status in ACTIVE:
+                raise PackageError("an active Run cannot be sealed")
             temporary = Path(tempfile.mkdtemp(prefix="ga-run-seal-"))
             staging = temporary / "run"
             staging.mkdir()
@@ -190,6 +199,8 @@ class RunService:
                         continue
                     relative = path.relative_to(run_root).as_posix()
                     if relative in excluded or relative.endswith(".lock"):
+                        continue
+                    if relative == "simworld-pending-step.json" and read_json(path)["step"] <= status.committed_step:
                         continue
                     target = staging / relative
                     target.parent.mkdir(parents=True, exist_ok=True)

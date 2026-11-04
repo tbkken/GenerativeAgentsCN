@@ -11,6 +11,7 @@ from generative_agents.ga_protocol.facts.movement import movement_activity_from_
 from generative_agents.ga_protocol.skills.interfaces import simulation_interface_catalog
 
 from generative_agents.ga_runtime.engine.iteration import IterationContext
+from generative_agents.ga_runtime.capabilities import ground
 
 
 @dataclass(frozen=True, slots=True)
@@ -94,10 +95,17 @@ class SimulationAPI:
                     "visibility=private and one participant sends a private message. Only a new forum topic needs title. "
                     "Use real reply/quote IDs; a successful action ends this iteration. WAIT with wait_reason means silence.")
             elif descriptor["name"] == "world-act":
+                clips = self._observer().presentation_clips if getattr(self.game, "ground", None) else ()
+                if clips:
+                    properties["presentation_clip"]["enum"] = list(clips)
+                else:
+                    properties.pop("presentation_clip", None)
                 for key in ("visibility", "title", "reply_to_message_id", "quoted_message_id"):
                     properties.pop(key, None)
             elif descriptor["name"] == "memory-stream-append" and not social:
                 properties.pop("source_event_id", None)
+        if getattr(self.game, "ground", None):
+            return ground.describe_ground_interfaces(descriptors)
         return [item for item in descriptors if not (social and item["name"] == "world-navigate")]
 
     def invoke(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
@@ -156,6 +164,13 @@ class SimulationAPI:
             return {"ok": False, "error": str(exc)}
 
     def _navigate(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
+        if getattr(self.game, "ground", None):
+            path = ground.route(self, arguments)
+            if path is None:
+                return {"reachable": False, "reason": "BLOCKED_OR_DISCONNECTED"}
+            return {"reachable": True, "distance_m": ground.path_length(self.iteration.coord, path),
+                    "next_coord": list(path[0] if path else self.iteration.coord),
+                    "movement_required": bool(path), "requested_target": dict(arguments)}
         if set(arguments) - {"target_coord", "target_address"} or len(arguments) != 1:
             raise ValueError("navigation requires exactly one target; identity is injected")
         agent = self.game.get_agent(self.iteration.agent_key)
@@ -208,6 +223,8 @@ class SimulationAPI:
     def _perceive(self, arguments: Mapping[str, Any]) -> dict[str, Any]:
         if getattr(self.game, "social", None) is not None:
             return self.game.social.perceive(self.memory_owner_key, arguments)
+        if getattr(self.game, "ground", None):
+            return ground.perceive(self, arguments)
         agent = self._observer()
         percept_config = getattr(agent, "percept_config", {}) or {}
         vision_radius = max(0, int(percept_config.get("vision_r", 4)))
@@ -452,6 +469,8 @@ class SimulationAPI:
             raise ValueError(f"unsupported world action: {action_type}")
         payload = copy.deepcopy(dict(arguments))
         payload["action_type"] = action_type
+        if "presentation_clip" in payload:
+            self._observer().validate_presentation_clip(payload["presentation_clip"])
         path: tuple[tuple[int, int], ...] = ()
         observation: Mapping[str, Any] | None = None
         if action_type == "MOVE":
@@ -462,9 +481,9 @@ class SimulationAPI:
             requested_coord = payload.get("target_coord")
             path = self._resolve_path(payload)
             destination = tuple(path[-1])
-            destination_address = tuple(
-                str(part) for part in self.game.maze.tile_at(destination).get_address()
-            )
+            scene = getattr(self.game, "ground", None)
+            destination_address = (tuple(scene.location(destination)) if scene else
+                                   tuple(self.game.maze.tile_at(destination).get_address()))
             if not destination_address:
                 raise ValueError("MOVE destination has no spatial address")
             payload["requested_target_address"] = (
@@ -487,9 +506,10 @@ class SimulationAPI:
             current_address = tuple(self.iteration.address)
             requested_coord = payload.get("target_coord")
             if requested_coord is not None:
-                if not isinstance(requested_coord, (list, tuple)) or len(requested_coord) != 2:
-                    raise ValueError("ACT target_coord must contain exactly two integers")
-                if tuple(int(item) for item in requested_coord) != current_coord:
+                if (not isinstance(requested_coord, (list, tuple)) or len(requested_coord) != len(current_coord)
+                        or any(type(item) not in {float, int} for item in requested_coord)):
+                    raise ValueError("ACT target_coord must match the current coordinate dimensions")
+                if tuple(requested_coord) != current_coord:
                     raise ValueError(
                         "ACT can only occur at the current coordinate; use MOVE first "
                         "and ACT in a later iteration"
@@ -551,14 +571,24 @@ class SimulationAPI:
             selection_key = str(payload.get("selection_key") or "").strip()
             if not selection_key:
                 raise ValueError("INTERACT requires selection_key")
-            observation = self.game.game_object_interactions.interact_selected(
-                self.game.get_agent(self.iteration.agent_key),
-                selection_key,
-                step_no=self.iteration.step_no,
-                request=str(payload.get("request") or "").strip() or None,
-            )
+            if getattr(self.game, "ground", None):
+                available = [choice["selection_key"] for obj in ground.perceive(self, {})["game_objects"]
+                             for choice in obj["interactions"]]
+                if selection_key not in available:
+                    raise ValueError("3D interaction is not visible at this stand position")
+                observation = {"object_key": selection_key.removesuffix("/interact"),
+                               "agent_decision": "PENDING", "selection_key": selection_key}
+            else:
+                observation = self.game.game_object_interactions.interact_selected(
+                    self.game.get_agent(self.iteration.agent_key),
+                    selection_key,
+                    step_no=self.iteration.step_no,
+                    request=str(payload.get("request") or "").strip() or None,
+                )
             payload["selection_key"] = selection_key
         elif action_type == "SET_OBJECT_STATE":
+            if getattr(self.game, "ground", None):
+                raise ValueError("3D Agents must use INTERACT; objects control their own state")
             object_key = str(payload.get("object_key") or "").strip()
             if getattr(self.game.game_object_interactions, "has_skill", lambda key: False)(object_key):
                 raise ValueError("a Skill-bound object controls its own state; use INTERACT to request a change")
@@ -600,6 +630,11 @@ class SimulationAPI:
         return {"accepted": True, "action": self._action.as_dict()}
 
     def _resolve_path(self, payload: Mapping[str, Any], *, navigation=False) -> tuple[tuple[int, int], ...]:
+        if getattr(self.game, "ground", None):
+            path = ground.route(self, payload)
+            if not path:
+                raise ValueError("MOVE target is the current position or unreachable")
+            return path
         current = tuple(self.iteration.coord)
         target_coord = payload.get("target_coord")
         target_address = payload.get("target_address")

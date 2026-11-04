@@ -1,12 +1,10 @@
 """Replay HTTP routes."""
 from __future__ import annotations
-from typing import Any
-from fastapi import HTTPException, Query, Response, Request
+from fastapi import HTTPException, Query, Request
 from generative_agents.adapters.web.media import package_asset_response
 from generative_agents.ga_protocol.packages.io import PackageError
 from generative_agents.ga_protocol.packages.reading import read_package_json
 from generative_agents.ga_replay.api import ReplayReader
-from generative_agents.ga_replay.api import read_run_overview
 from generative_agents.ga_replay.api import replay_web_manifest, replay_web_step
 from generative_agents.ga_replay.api import read_slice, read_metadata, read_state, read_run_status
 

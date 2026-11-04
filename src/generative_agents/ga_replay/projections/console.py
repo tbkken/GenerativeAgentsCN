@@ -251,7 +251,7 @@ def replay_web_manifest(run_id: str, facts: dict[str, Any]) -> dict[str, Any]:
     environment_type = definition.get('environment_type', 'spatial_2d')
     social = environment_type == 'social_1d'
     definition.pop('semantic_index', None)
-    if not social:
+    if environment_type == 'spatial_2d':
         definition['tiles'] = [{key: tile[key] for key in ('coord', 'tile', 'palette_key', 'visual_slice_id', 'visual_slice_part') if key in tile} if isinstance(tile, dict) else tile for tile in definition.get('tiles') or []]
     editor = definition.get('editor') or {}
     editor_v2 = dict(definition.get('editor_v2') or {})
@@ -279,10 +279,20 @@ def replay_web_manifest(run_id: str, facts: dict[str, Any]) -> dict[str, Any]:
                              'renderer': 'SOCIAL_FORUM' if definition['presentation'] == 'forum' else 'SOCIAL_CHAT'}
                             if social else {'status': 'READY', 'source': 'RUN_PACKAGE', 'renderer': 'SPATIAL_GRID', 'pixels_per_tile': max(8, min(int(definition.get('tile_size') or 16), 64)), 'palette': palette, 'objects': objects})
     agents = []
+    street = environment_type == 'spatial_3d'
+    if street:
+        world['render_asset'] = {'status': 'ONLINE', 'source': 'SIMWORLD', 'renderer': 'SPATIAL_3D'}
+        first_positions = {agent["agent_key"]: agent.get("from_coord") for frame in facts.get("frames", [])[:1]
+                           for agent in frame.get("agents", [])}
     for item in facts['definitions']:
         if not item.get('enabled', True):
             continue
         key = str(item.get('agent_key') or '')
+        if street:
+            agents.append({'agent_key': key, 'display_name': item.get('name') or key,
+                           'initial_coord': first_positions.get(key), 'yaw_deg': item.get('yaw_deg', 0),
+                           'portrait_url': packaged_asset_url(run_id, item.get('portrait_asset'))})
+            continue
         if social:
             agents.append({'agent_key': key, 'display_name': item.get('name') or item.get('display_name') or key,
                            'portrait_url': packaged_asset_url(run_id, item.get('portrait_asset')),
@@ -304,4 +314,4 @@ def replay_web_manifest(run_id: str, facts: dict[str, Any]) -> dict[str, Any]:
     return result
 
 def replay_web_step(frame: dict[str, Any], *, checkpoint: bool, attempt_boundary: bool) -> dict[str, Any]:
-    return {'step_no': frame['step_no'], 'virtual_time': frame['virtual_time'], 'attempt_id': frame.get('attempt_id'), 'attempt_boundary': attempt_boundary, 'checkpoint': checkpoint, 'agents': [{'agent_key': item.get('agent_key'), 'from_coord': list(item.get('from_coord') or []), 'coord': list(item.get('to_coord') or item.get('coord') or []), 'path': list(item.get('path') or []), 'path_source': item.get('path_source') or 'OBSERVED', 'action': dict(item.get('action') or {}), 'address': list(item.get('location') or item.get('address') or []), 'currently': item.get('currently'), 'schedule_item_id': item.get('schedule_item_id'), 'decision_context': dict(item.get('decision_context') or {})} for item in frame.get('agents') or []], 'conversations': list(frame.get('conversations') or []), 'memory_deltas': list(frame.get('memory_deltas') or []), 'schedule_revisions': list(frame.get('schedule_revisions') or []), 'domain_events': list(frame.get('domain_events') or []), 'effects': list(frame.get('effects') or [])}
+    return {'step_no': frame['step_no'], 'virtual_time': frame['virtual_time'], 'attempt_id': frame.get('attempt_id'), 'attempt_boundary': attempt_boundary, 'checkpoint': checkpoint, 'agents': [{'agent_key': item.get('agent_key'), 'from_coord': list(item.get('from_coord') or []), 'coord': list(item.get('to_coord') or item.get('coord') or []), **({'to_yaw_deg': item['to_yaw_deg']} if item.get('to_yaw_deg') is not None else {}), 'path': list(item.get('path') or []), 'path_source': item.get('path_source') or 'OBSERVED', 'action': dict(item.get('action') or {}), 'address': list(item.get('location') or item.get('address') or []), 'currently': item.get('currently'), 'schedule_item_id': item.get('schedule_item_id'), 'decision_context': dict(item.get('decision_context') or {})} for item in frame.get('agents') or []], 'conversations': list(frame.get('conversations') or []), 'memory_deltas': list(frame.get('memory_deltas') or []), 'schedule_revisions': list(frame.get('schedule_revisions') or []), 'domain_events': list(frame.get('domain_events') or []), 'effects': list(frame.get('effects') or [])}

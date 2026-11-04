@@ -95,7 +95,7 @@ def test_public_map_editor_auto_saves_and_keeps_a_local_recovery_copy():
     assert "window.addEventListener('beforeunload'" in workspace
     assert "if (this.publicEditor.changed || this.savePromise)" in workspace
     assert "acceptSavedWorld(saved.world, editorRevision)" in workspace
-    assert "request(`/maps/${mapId}`).then(value => this.requireCompleteMap(value, '加载'))" in workspace
+    assert "request(`/maps/${encodeURIComponent(mapId)}`).then(value => this.requireCompleteMap(value, '加载'))" in workspace
     assert "WorkspaceLoader.load('map-editor')" in workspace
     assert "requireCompleteMap(await request(`/maps/${mapId}`," in workspace
     assert "地图${operation}响应缺少完整 world" in workspace

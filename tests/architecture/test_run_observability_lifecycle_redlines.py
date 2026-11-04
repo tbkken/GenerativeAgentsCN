@@ -293,7 +293,8 @@ def test_def_054_replay_player_is_packaged_external_and_not_dom_dot_fallback():
     assert 'vendor/phaser.min.js' not in shell and 'replay/replay-player.js' not in shell
     assert loader.count('vendor/phaser.min.js') == 1
     assert loader.count('replay/replay-player.js') == 1
-    assert "WorkspaceLoader.load(social ? 'social-replay' : 'replay')" in console
+    assert "WorkspaceLoader.load(social ? 'social-replay' : street ? 'street-replay' : 'replay')" in console
+    assert loader.count('replay/street-replay.js') == 1
     assert loader.count('replay/social-replay.js') == 1
     assert (PLAYER.parent / 'social-replay.js').is_file()
     assert not [
@@ -303,7 +304,7 @@ def test_def_054_replay_player_is_packaged_external_and_not_dom_dot_fallback():
     ]
     assert ".map-agent" not in shell
     assert "button.className = 'map-agent'" not in console
-    assert "const Player = social ? window.GASocialReplayPlayer : GAReplayPlayer;" in console
+    assert "const Player = social ? window.GASocialReplayPlayer : street ? window.GAStreetReplayPlayer : GAReplayPlayer;" in console
     assert "new Player({" in console
     assert "resultMapCanvas" in console
 

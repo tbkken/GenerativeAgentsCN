@@ -474,7 +474,7 @@ body:not(.experiment-workspace) .experiment-scope,
 .experiment-workspace .foundation-scope { display: none !important; }
 .experiment-home { margin-top: auto; text-decoration: none; }
 .experiment-scope-notice { display: none; }
-.experiment-workspace .experiment-scope-notice { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 18px; padding: 10px 32px; border-bottom: 1px solid #c8e3dc; background: #edf8f4; color: #346254; font-size: 12px; }
+:is(.experiment-workspace, .standalone-run) .experiment-scope-notice { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 18px; padding: 10px 32px; border-bottom: 1px solid #c8e3dc; background: #edf8f4; color: #346254; font-size: 12px; }
 .experiment-workspace:has(#page-results.active) .experiment-scope-notice { display: none; }
 #page-public-agents .crowd-agent-group-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(340px,1fr)); gap: 16px; }
 #page-public-agents input[type="checkbox"], #page-public-agents .crowd-agent-select { display: none; }
@@ -499,6 +499,8 @@ body:not(.experiment-workspace) .experiment-scope,
 /* Execution evidence stays separate from committed replay progress. */
 .execution-progress { margin-bottom: 16px; padding: 10px 16px; overflow-x: auto; border: 1px solid #ccded7; border-radius: 8px; background: #f5faf7; font-size: 13px; line-height: 1.5; white-space: nowrap; }
 .execution-progress[hidden] { display: none; }
+#runSupervisionNotice { white-space: normal; background: #fcf7ee; border-color: #e6d6b5; }
+.standalone-run :is(#cloneBtn, #deleteExperimentBtn, #deleteRunBtn, #experimentHeaderMeta, #statusPill, [data-result-tab="parameters"], [data-result-tab="models"]) { display: none; }
 .execution-progress span { color: var(--muted); }
 .execution-progress strong { color: #266853; font-size: inherit; }
 .execution-progress p { margin: 6px 0 0; color: var(--danger, #b42318); font-size: 11px; white-space: normal; }

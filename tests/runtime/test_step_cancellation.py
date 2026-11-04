@@ -198,18 +198,21 @@ def test_submit_preserves_new_cancel_and_resets_only_explicit_resume_controls(tm
     atomic_write_json(run_root / "status.json", status)
     FileRunControl(run_root).request_cancel()
     observed = []
+    tokens = []
 
-    def start_worker(*_args, **_kwargs):
+    def start_worker(*_args, **kwargs):
+        tokens.append(kwargs["env"][processes.LAUNCH_ENV])
         control = FileRunControl(run_root)
         observed.append(control.cancel_requested)
         assert read_json(run_root / "status.json")["status"] == "QUEUED"
         control.request_cancel()
         return SimpleNamespace(pid=123)
 
-    monkeypatch.setattr(processes.subprocess, "Popen", start_worker)
-    monkeypatch.setattr(processes.threading, "Thread", lambda **_: SimpleNamespace(start=lambda: None))
-    processes.FileRunSupervisor().submit(run_root)
-    result = execute_run_directory(run_root)
+    with monkeypatch.context() as submit_patch:
+        submit_patch.setattr(processes.subprocess, "Popen", start_worker)
+        submit_patch.setattr(processes.threading, "Thread", lambda **_: SimpleNamespace(start=lambda: None))
+        processes.FileRunSupervisor().submit(run_root)
+    result = execute_run_directory(run_root, launch_token=tokens[0])
 
     assert observed == [initial is RunState.CREATED]
     assert result.status is RunState.CANCELLED

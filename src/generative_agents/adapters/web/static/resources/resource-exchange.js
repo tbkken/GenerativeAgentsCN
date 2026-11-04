@@ -272,7 +272,7 @@
     $('importResourcePackageBtn').addEventListener('click', () => open('import'));
     $('exportResourcePackageBtn').addEventListener('click', () => open('export'));
     $('resourceExchangeClose').addEventListener('click', () => dialog.close());
-    $('resourceExchangeCancel').addEventListener('click', () => dialog.close());
+    dialog.addEventListener('cancel', event => event.preventDefault());
     dialog.addEventListener('close', () => { invalidate(); preview = null; busy = false; });
     $('resourceExchangeFile').addEventListener('change', upload);
     $('resourceExchangeDependencies').addEventListener('change', updateButton);

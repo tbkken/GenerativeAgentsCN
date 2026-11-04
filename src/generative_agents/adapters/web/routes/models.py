@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException, Query
 from generative_agents.ga_protocol.schemas.errors import ServiceError
 from generative_agents.ga_studio.api import ModelService, ModelServiceInput
 
-def create_model_service_router(database, root):
+def create_model_service_router(database, root, *, model_urls: dict[str, str]):
     service = ModelService(database, root)
     router = APIRouter(prefix='/api/studio/resources/model-services', tags=['models'])
     def call(operation):
@@ -16,7 +16,8 @@ def create_model_service_router(database, root):
     @router.get('')
     def list_models(q: str=Query(default='', max_length=200), page: int=Query(default=1, ge=1),
                     page_size: int=Query(default=20, ge=1, le=100), purpose: Literal['chat', 'embedding', 'decision'] | None=None):
-        return call(lambda: service.list_models(query=q, page=page, page_size=page_size, purpose=purpose))
+        result = call(lambda: service.list_models(query=q, page=page, page_size=page_size, purpose=purpose))
+        return {**result, "suggested_urls": model_urls}
 
     @router.get('/{model_id}')
     def detail(model_id: str):

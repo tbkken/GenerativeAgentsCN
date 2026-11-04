@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -41,11 +42,21 @@ def _experiment(args) -> object:
 def _run(args) -> object:
     if args.action in {"status"}:
         from generative_agents.ga_replay.api import ReplayReader
+        from generative_agents.ga_runtime.api import process_observation, reconcile_run
 
+        workspace = Path(args.package)
+        if workspace.is_dir():
+            reconcile_run(workspace)
         with ReplayReader(args.package) as replay:
-            return replay.summary()
+            summary = replay.summary()
+            summary.update(reason=replay.status.reason, active_attempt_id=replay.status.active_attempt_id)
+            if workspace.is_dir() and replay.status.status.value in {"QUEUED", "RUNNING", "FINALIZING"}:
+                summary["process"] = process_observation(workspace)
+            return summary
     from generative_agents.ga_runtime.api import RunService
 
+    from generative_agents.adapters.service_config import scene_url
+    os.environ.setdefault("GA_SIMWORLD_URL", scene_url())
     service = RunService()
     if args.action == "create":
         root = service.create(args.experiment, args.destination, requested_steps=args.steps)
@@ -54,7 +65,8 @@ def _run(args) -> object:
         status = service.start(args.experiment, args.destination, requested_steps=args.steps)
         return status.model_dump(mode="json")
     if args.action == "resume":
-        status = service.resume(args.package, extracted_destination=args.destination)
+        status = service.resume(args.package, extracted_destination=args.destination,
+                                launch_token=os.environ.pop("GA_RUNTIME_LAUNCH_TOKEN", None))
         return status.model_dump(mode="json")
     if args.action == "rerun":
         status = service.rerun(args.package, args.destination, requested_steps=args.steps)

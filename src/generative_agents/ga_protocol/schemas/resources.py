@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Annotated, Any, Literal
 
-from pydantic import Field, StringConstraints, field_validator
+from pydantic import Field, FiniteFloat, StringConstraints, field_validator
 
 from generative_agents.ga_protocol.schemas.manifests import ProtocolModel, Sha256, validate_package_path
 from generative_agents.ga_protocol.schemas.experiment import AgentPerceptionLimits, AgentScratch
@@ -49,6 +49,9 @@ class AgentCore(ProtocolModel):
     enabled: bool = True
     portrait_asset: str | None = None
     sprite_asset: str | None = None
+    avatar_3d_asset: str | None = None
+    avatar_ue_asset: str | None = None
+    avatar_ue_manifest_asset: str | None = None
     sprite_layout: Literal["4x3", "4x4"] = "4x4"
     sprite_display_tiles: float | None = Field(default=None, ge=0.5, le=6.0)
     model_override: str | None = None
@@ -58,7 +61,7 @@ class AgentCore(ProtocolModel):
     scratch: AgentScratch
     perception: AgentPerceptionLimits = Field(default_factory=AgentPerceptionLimits)
 
-    _asset_path = field_validator("portrait_asset", "sprite_asset")(
+    _asset_path = field_validator("portrait_asset", "sprite_asset", "avatar_3d_asset", "avatar_ue_asset", "avatar_ue_manifest_asset")(
         lambda path: validate_package_path(path) if path is not None else path
     )
 
@@ -74,11 +77,17 @@ class SocialExperimentPlacement(ProtocolModel):
     space_id: ResourceKey
 
 
+class Spatial3DExperimentPlacement(ProtocolModel):
+    agent: ResourceRef
+    spawn_anchor: str = Field(default="auto", min_length=1, max_length=120)
+    yaw_deg: FiniteFloat = 0
+
+
 class ExperimentAssembly(ProtocolModel):
     schema_version: Literal[2] = 2
     map: ResourceRef
     brain: ResourceRef
-    placements: list[ExperimentPlacement | SocialExperimentPlacement] = Field(default_factory=list)
+    placements: list[ExperimentPlacement | SocialExperimentPlacement | Spatial3DExperimentPlacement] = Field(default_factory=list)
     crowds: list[ResourceRef] = Field(default_factory=list)
     models: dict[Literal["chat", "embedding", "decision"], ResourceRef]
     simulation: dict[str, Any]

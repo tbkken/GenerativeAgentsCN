@@ -28,7 +28,7 @@ class TrialScene:
     experiment_id: str
 
 
-def build_trial_scene(root: Path, request: dict, *, paths, attempt_id, control, recorder) -> TrialScene:
+def build_trial_scene(root: Path, request: dict, *, paths, attempt_id, control, recorder, required_interfaces) -> TrialScene | None:
     relative = validate_package_path(request["experiment_directory"])
     scene_root = checked_package_path(root / relative)
     scene_root.relative_to(root.resolve())
@@ -37,6 +37,13 @@ def build_trial_scene(root: Path, request: dict, *, paths, attempt_id, control, 
     agent_key = str(request.get("agent_key") or "")
     if not any(agent.agent_key == agent_key and agent.enabled for agent in definition.agents):
         raise SkillTrialError("SKILL_AGENT_NOT_IN_EXPERIMENT", "请选择当前实验中已启用的 Agent。")
+    if definition.world.definition.get("environment_type") == "spatial_3d":
+        if required_interfaces:
+            scene_id = definition.world.definition["simworld_scene_id"]
+            raise SkillTrialError("SKILL_REQUIRES_LIVE_3D_RUN",
+                f"场景 {scene_id} 的临时试运行没有远端世界。请在正式 3D 实验中运行 "
+                f"{agent_key} 的 Skill，以使用 {', '.join(required_interfaces)}。")
+        return None
     clock = SimulationClock(definition.simulation.start_time)
     logger = logging.LoggerAdapter(logging.getLogger("generative_agents.skill_trial"), {})
     memory = FileMemoryStream(paths.root / "memory", run_id=paths.run_id,

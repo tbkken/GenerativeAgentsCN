@@ -25,7 +25,7 @@ class IterationContext:
     total_steps: int
     now: datetime
     stride_minutes: int
-    coord: tuple[int, int] | None
+    coord: tuple[int, int] | tuple[float, float, float] | None
     address: tuple[str, ...]
     spatial_semantics: tuple[Mapping[str, Any], ...] = ()
     variables: Mapping[str, Any] = field(default_factory=dict)
@@ -34,6 +34,7 @@ class IterationContext:
     presentation: str | None = None
     space_description: str = ""
     space_rules: str = ""
+    yaw_deg: float | None = None
 
     def __post_init__(self) -> None:
         if self.step_no < 1:
@@ -71,6 +72,9 @@ class IterationContext:
             result["environment"] = {"environment_type": self.environment_type,
                                      "space_id": self.space_id, "presentation": self.presentation,
                                      "description": self.space_description, "rules": self.space_rules}
+        elif self.environment_type == "spatial_3d":
+            result["environment"] = {"environment_type": self.environment_type, "units": "m", "up_axis": "Z"}
+            result["agent"]["yaw_deg"] = self.yaw_deg
         return result
 
 

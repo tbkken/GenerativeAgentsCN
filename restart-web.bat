@@ -5,8 +5,7 @@ rem Always run from the repository that contains this script.
 cd /d "%~dp0"
 
 set "GA_RESTART_PROJECT_ROOT=%~dp0"
-set "GA_RESTART_PORT=8000"
-if defined GA_PORT set "GA_RESTART_PORT=%GA_PORT%"
+if not defined GA_SERVICES_CONFIG set "GA_SERVICES_CONFIG=%~dp0services.toml"
 set "GA_RESTART_VAR_DIR=%~dp0var\studio"
 if defined GA_VAR_DIR set "GA_RESTART_VAR_DIR=%GA_VAR_DIR%"
 for %%I in ("%GA_RESTART_VAR_DIR%") do set "GA_RESTART_VAR_DIR=%%~fI"
@@ -36,23 +35,44 @@ echo [INFO] Checking the installed Web entry point...
 "%GA_RESTART_PYTHON%" -m generative_agents.adapters.web.main --help >"%GA_RESTART_PREFLIGHT_LOG%" 2>&1
 if errorlevel 1 goto import_failed
 
+rem Read only the three validated fields printed by the shared Python resolver.
+set "GA_RESTART_HOST="
+set "GA_RESTART_PORT="
+set "GA_RESTART_URL="
+for /f "tokens=1-3" %%A in ('""%%GA_RESTART_PYTHON%%" -m generative_agents.adapters.service_config web"') do (
+    set "GA_RESTART_HOST=%%A"
+    set "GA_RESTART_PORT=%%B"
+    set "GA_RESTART_URL=%%C"
+)
+if not defined GA_RESTART_URL (
+    echo [ERROR] The service configuration did not provide a Studio address.
+    exit /b 1
+)
 echo [INFO] Checking port %GA_RESTART_PORT%...
 
 rem Stop only the Web entry point listening on the configured port. Simulation
 rem and artifact workers use different module names and are intentionally kept.
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "$ErrorActionPreference = 'Stop';" ^
+    "$literal = $null;" ^
+    "$bindAddresses = if ([Net.IPAddress]::TryParse($env:GA_RESTART_HOST, [ref]$literal)) { $literal } else { [Net.Dns]::GetHostAddresses($env:GA_RESTART_HOST) };" ^
+    "$wildcards = @([Net.IPAddress]::Any, [Net.IPAddress]::IPv6Any);" ^
     "$connections = @(Get-NetTCPConnection -LocalPort ([int]$env:GA_RESTART_PORT) -State Listen -ErrorAction SilentlyContinue);" ^
-    "$seen = @{};" ^
+    "$owners = @{};" ^
     "foreach ($connection in $connections) {" ^
+    "  $address = [Net.IPAddress]::Parse($connection.LocalAddress);" ^
+    "  $overlap = @($bindAddresses | Where-Object { $_.AddressFamily -eq $address.AddressFamily -and ($_ -eq $address -or $wildcards -contains $_ -or $wildcards -contains $address) });" ^
+    "  if (-not $overlap.Count) { continue };" ^
     "  $processId = [int]$connection.OwningProcess;" ^
-    "  if ($seen.ContainsKey($processId)) { continue };" ^
-    "  $seen[$processId] = $true;" ^
+    "  if ($owners.ContainsKey($processId)) { continue };" ^
     "  $processInfo = Get-CimInstance Win32_Process -Filter ('ProcessId = ' + $processId);" ^
     "  if ($null -eq $processInfo) { continue };" ^
-    "  if ($processInfo.CommandLine -notmatch 'generative_agents\.(?:adapters\.)?web\.main') {" ^
-    "    throw ('Port ' + $env:GA_RESTART_PORT + ' is occupied by another program. PID=' + $processId + '; command=' + $processInfo.CommandLine)" ^
+    "  if ($processInfo.Name -ne 'python.exe' -or $processInfo.CommandLine -notmatch '^\s*(?:\x22[^\x22]+\x22|[^\s\x22]+)\s+-m\s+generative_agents\.adapters\.web\.main(?:\s|$)') {" ^
+    "    throw ('Port ' + $env:GA_RESTART_PORT + ' is occupied by another program. PID=' + $processId)" ^
     "  };" ^
+    "  $owners[$processId] = $true" ^
+    "};" ^
+    "foreach ($processId in $owners.Keys) {" ^
     "  Write-Host ('[INFO] Stopping old Web service. PID=' + $processId);" ^
     "  Stop-Process -Id $processId -Force;" ^
     "  try { Wait-Process -Id $processId -Timeout 10 -ErrorAction Stop } catch { }" ^
@@ -65,6 +85,9 @@ if errorlevel 1 (
 
 echo [INFO] Starting Web service in the background...
 
+rem Redirected Python streams must reach the log files as soon as they are written.
+set "PYTHONUNBUFFERED=1"
+set "PYTHONIOENCODING=utf-8"
 set "GA_RESTART_WEB_PID="
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "$ErrorActionPreference = 'Stop';" ^
@@ -72,7 +95,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "  '-m', 'generative_agents.adapters.web.main'," ^
     "  '--database-url', ([char]34 + $env:GA_RESTART_DATABASE_URL + [char]34)," ^
     "  '--var-dir', ([char]34 + $env:GA_RESTART_VAR_DIR + [char]34)," ^
-    "  '--host', '127.0.0.1'," ^
+    "  '--host', $env:GA_RESTART_HOST," ^
     "  '--port', $env:GA_RESTART_PORT," ^
     "  '--max-concurrent-runs', '2'" ^
     ");" ^
@@ -88,17 +111,17 @@ if exist "%GA_RESTART_VAR_DIR%\web.pid" set /p GA_RESTART_WEB_PID=<"%GA_RESTART_
 
 if not defined GA_RESTART_WEB_PID (
     echo [ERROR] Failed to start the Web service.
-    if exist "%GA_RESTART_STDERR%" powershell -NoProfile -Command "Get-Content -LiteralPath $env:GA_RESTART_STDERR -Tail 30"
+    if exist "%GA_RESTART_STDERR%" powershell -NoProfile -Command "Get-Content -LiteralPath $env:GA_RESTART_STDERR -Encoding UTF8 -Tail 30"
     exit /b 1
 )
 
 echo [INFO] New Web process started. PID=%GA_RESTART_WEB_PID%
 echo [INFO] Waiting for the health endpoint...
-echo [INFO] Health URL: http://127.0.0.1:%GA_RESTART_PORT%/api/studio/health
+echo [INFO] Health URL: %GA_RESTART_URL%/api/studio/health
 
 powershell -NoProfile -ExecutionPolicy Bypass -Command ^
     "$ErrorActionPreference = 'Stop';" ^
-    "$healthUrl = 'http://127.0.0.1:' + $env:GA_RESTART_PORT + '/api/studio/health';" ^
+    "$healthUrl = $env:GA_RESTART_URL + '/api/studio/health';" ^
     "$lastHealthError = 'No health response was received.';" ^
     "$watch = [Diagnostics.Stopwatch]::StartNew();" ^
     "while ($watch.Elapsed.TotalSeconds -lt 30) {" ^
@@ -119,7 +142,7 @@ if not errorlevel 1 goto service_ready
 
 echo [ERROR] stdout log: "%GA_RESTART_STDOUT%"
 echo [ERROR] stderr log: "%GA_RESTART_STDERR%"
-if exist "%GA_RESTART_STDERR%" powershell -NoProfile -Command "Get-Content -LiteralPath $env:GA_RESTART_STDERR -Tail 30"
+if exist "%GA_RESTART_STDERR%" powershell -NoProfile -Command "Get-Content -LiteralPath $env:GA_RESTART_STDERR -Encoding UTF8 -Tail 30"
 exit /b 1
 
 :import_failed
@@ -133,5 +156,8 @@ echo   "%GA_RESTART_PYTHON%" -m pip install -e ".[runtime,studio,web]"
 exit /b 1
 
 :service_ready
-echo [OK] Web service restarted successfully: http://127.0.0.1:%GA_RESTART_PORT%/
-exit /b 0
+echo [OK] Web service restarted successfully: %GA_RESTART_URL%/
+if /i "%~1"=="--no-follow" exit /b 0
+echo [INFO] Following Web logs. Press Ctrl+C or close this window to leave Web running.
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\watch_web_logs.ps1"
+exit /b %errorlevel%

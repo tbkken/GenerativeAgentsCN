@@ -11,6 +11,7 @@ import hashlib
 import mimetypes
 import tempfile
 from collections import OrderedDict
+from contextlib import contextmanager
 from threading import RLock
 from pathlib import Path, PurePosixPath
 from urllib.parse import urlsplit, urlunsplit
@@ -22,6 +23,7 @@ from sqlalchemy.exc import IntegrityError
 from pydantic import TypeAdapter
 
 from generative_agents.ga_protocol.packages.io import PackageError, canonical_json_bytes, seal_directory, open_package, read_json
+from generative_agents.ga_protocol.packages.attachments import AttachmentFiles
 from generative_agents.ga_protocol.packages.resources import (
     ResourceRecord, ResourceRef, ResourceSet, read_resource_set,
     resource_content_hash, write_config_package, skill_document, validate_resource_set,
@@ -133,6 +135,10 @@ def _digest(value):
 
 
 def _media_type(data, path):
+    if PurePosixPath(path).suffix.lower() == ".pak":
+        return "application/x-unreal-pak"
+    if data.startswith(b"glTF"):
+        return "model/gltf-binary"
     if data.startswith(b"\x89PNG\r\n\x1a\n"):
         return "image/png"
     if data.startswith(b"\xff\xd8\xff"):
@@ -142,11 +148,11 @@ def _media_type(data, path):
     return mimetypes.guess_type(str(path))[0] or "application/octet-stream"
 
 
-def _asset_path(data, path):
+def _asset_path(digest, media_type, path):
     extension = {"image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp"}.get(
-        _media_type(data, path), PurePosixPath(str(path)).suffix.lower() or ".bin"
+        media_type, PurePosixPath(str(path)).suffix.lower() or ".bin"
     )
-    return f"assets/{hashlib.sha256(data).hexdigest()}{extension}"
+    return f"assets/{digest}{extension}"
 
 
 def _replace_paths(value, mapping):
@@ -268,14 +274,15 @@ class ResourceExchangeService:
         if asset is None:
             raise ResourceExchangeError("资源引用的附件不存在，无法导出完整配置")
         try:
-            data = bytes(asset.content_blob) if asset.content_blob is not None else self.asset_store.resolve(
+            source = bytes(asset.content_blob) if asset.content_blob is not None else self.asset_store.resolve(
                 asset.relative_path, expected_sha256=asset.sha256
-            ).read_bytes()
+            )
+            files = AttachmentFiles({"asset": source})
+            if files.digest("asset") != asset.sha256 or files.size("asset") != asset.size_bytes:
+                raise ValueError("invalid asset bytes")
         except (OSError, ValueError) as exc:
             raise ResourceExchangeError(f"附件不存在或校验失败：{asset.logical_name}") from exc
-        if hashlib.sha256(data).hexdigest() != asset.sha256 or len(data) != asset.size_bytes:
-            raise ResourceExchangeError(f"附件校验失败：{asset.logical_name}")
-        return data
+        return source
 
     def _image(self, session, files, *, asset_id=None, digest=None, path=None, metadata_only=False):
         asset = session.get(Asset, asset_id, options=[defer(Asset.content_blob)]) if asset_id else None
@@ -299,7 +306,7 @@ class ResourceExchangeService:
                 asset.media_type, PurePosixPath(asset.logical_name).suffix.lower() or ".bin")
             return f"assets/{asset.sha256}{extension}", asset
         data = self._asset_bytes(asset)
-        target = _asset_path(data, asset.logical_name)
+        target = _asset_path(asset.sha256, asset.media_type, asset.logical_name)
         files[target] = data
         return target, asset
 
@@ -316,6 +323,8 @@ class ResourceExchangeService:
             definition = copy.deepcopy(row.definition_json)
             definition.pop("agent_key", None)
             definition.pop("name", None)
+            for role in ("avatar_3d", "avatar_ue", "avatar_ue_manifest"):
+                definition.pop(f"{role}_asset_id", None)
             for role in ("portrait", "sprite"):
                 asset_id = definition.pop(f"{role}_asset_id", None)
                 definition[f"{role}_asset"] = None
@@ -370,6 +379,8 @@ class ResourceExchangeService:
             for field in ("map_id", "map_snapshot_hash", "world_key", "world_name"):
                 definition.pop(field, None)
             world = definition.setdefault("definition", {})
+            if world.get("environment_type") == "spatial_3d":
+                raise ResourceExchangeError("SimWorld 场景只能从在线目录选择，不能复制到公共资源")
             editor = world.get("editor_v2") or {}
             editor.pop("ui_state", None)
             path_map = {}
@@ -543,12 +554,12 @@ class ResourceExchangeService:
 
     def materialize_resources(self, selections, *, include_dependencies=True):
         """Copy selected public (kind, ID) resources without an archive round trip."""
-        records, files, roots = {}, {}, []
+        records, files, roots = {}, AttachmentFiles(), []
         for kind, resource_id in selections:
             selected = self.resource_set(kind, resource_id, include_dependencies=include_dependencies)
             for record in selected.resources:
                 records[record.identity] = record
-            files.update(selected.files)
+            files.include(selected.files, {path:path for path in selected.files})
             roots.extend(selected.roots)
         return ResourceSet(resources=list(records.values()), files=files,
                            roots=list({item.identity: item for item in roots}.values()))
@@ -571,7 +582,7 @@ class ResourceExchangeService:
         if signature is not None:
             if file_fingerprint(path) != signature:
                 raise ResourceExchangeError("资源包在校验期间变化，请重新上传")
-            size = sum(len(content) for content in result.files.values())
+            size = sum(result.files.size(path) for path in result.files)
             size += sum(len(canonical_json_bytes(record.model_dump(mode="json"))) for record in result.resources)
             if size <= 32 * 1024 * 1024:
                 with self._imports_lock:
@@ -584,7 +595,7 @@ class ResourceExchangeService:
     @staticmethod
     def _normalize(resources):
         """Canonical asset locations make identical imports independent of sender paths."""
-        files, records = {}, []
+        files, records = AttachmentFiles(), []
         for record in resources.resources:
             mapping = {}
             if record.kind == "skill":
@@ -594,9 +605,10 @@ class ResourceExchangeService:
                     mapping[path] = f"skills/items/{record.key}/{relative.as_posix()}"
             else:
                 for path in record.attachments:
-                    mapping[path] = _asset_path(resources.files[path], path)
-            for old, new in mapping.items():
-                files[new] = resources.files[old]
+                    with resources.files.open(path) as source:
+                        media_type = _media_type(source.read(16), path)
+                    mapping[path] = _asset_path(resources.files.digest(path), media_type, path)
+            files.include(resources.files, mapping)
             definition = _replace_paths(record.definition, mapping)
             if record.kind == "model":
                 definition = _model_definition(definition)
@@ -691,6 +703,9 @@ class ResourceExchangeService:
     def import_resources(self, package, selections, *, include_dependencies=None):
         resources = self._load(package)
         selected = self._selection(resources, selections, include_dependencies)
+        return self._import_selected(resources, selected)
+
+    def _import_selected(self, resources, selected):
         if not selected:
             raise ResourceExchangeError("请至少选择一个资源")
         try:
@@ -699,6 +714,8 @@ class ResourceExchangeService:
                 if preview["conflicts"]:
                     raise ResourceExchangeError("资源 key 冲突，整次导入已取消", code="RESOURCE_KEY_CONFLICT", status_code=409, details=preview["conflicts"])
                 records = [item for item in resources.resources if _identity(item) in selected]
+                if any(item.kind == "map" and item.definition.get("definition", {}).get("environment_type") == "spatial_3d" for item in records):
+                    raise ResourceExchangeError("SimWorld 场景由在线目录管理，不能导入公共资源")
                 local_ids, imported, reused = {}, [], []
                 # Allocate every identity before materializing relationships.
                 for record in records:
@@ -779,9 +796,13 @@ class ResourceExchangeService:
     def _store_assets(self, session, resources, records):
         result = {}
         for path in sorted({path for record in records if record.kind != "skill" for path in record.attachments}):
-            data = resources.files[path]
-            digest = hashlib.sha256(data).hexdigest()
+            digest = resources.files.digest(path)
             row = session.scalar(select(Asset).where(Asset.sha256 == digest))
+            with resources.files.open(path) as source:
+                media_type = _media_type(source.read(16), path)
+            if media_type in {"model/gltf-binary", "application/x-unreal-pak"}:
+                raise ResourceExchangeError("SimWorld 模型和关卡不能存入 Studio")
+            data = resources.files[path]
             if row is None:
                 row = Asset(id=str(uuid4()), sha256=digest, logical_name=PurePosixPath(path).name,
                             media_type=_media_type(data, path), size_bytes=len(data), relative_path="", content_blob=data)
@@ -797,9 +818,12 @@ class ResourceExchangeService:
         common = {"id": row_id, "name": record.name or record.key, "description": record.description}
         if record.kind == "agent":
             definition.update(agent_key=record.key, name=common["name"])
+            for role in ("avatar_3d", "avatar_ue", "avatar_ue_manifest"):
+                if definition.pop(f"{role}_asset", None):
+                    raise ResourceExchangeError("SimWorld 角色附件不能存入 Studio")
             for role in ("portrait", "sprite"):
                 path = definition.pop(f"{role}_asset", None)
-                if path:
+                if path and role in ("portrait", "sprite"):
                     AssetService._validate_agent_png(resources.files[path], kind=role)
                 definition[f"{role}_asset_id"] = asset_ids.get(path)
             definition = StudioAgentDefinition.model_validate(definition).model_dump(mode="json")

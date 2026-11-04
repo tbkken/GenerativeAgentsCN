@@ -42,6 +42,9 @@ class StudioAgentDefinition(BaseModel):
     name: Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=120)]
     portrait_asset_id: Annotated[str, StringConstraints(min_length=1, max_length=36)] | None = None
     sprite_asset_id: Annotated[str, StringConstraints(min_length=1, max_length=36)] | None = None
+    avatar_3d_asset_id: Annotated[str, StringConstraints(min_length=1, max_length=36)] | None = None
+    avatar_ue_asset_id: Annotated[str, StringConstraints(min_length=1, max_length=36)] | None = None
+    avatar_ue_manifest_asset_id: Annotated[str, StringConstraints(min_length=1, max_length=36)] | None = None
     sprite_layout: Literal["4x3", "4x4"] = "4x4"
     sprite_display_tiles: float | None = Field(default=None, ge=0.5, le=6.0)
     model_override: str | None = None
@@ -50,6 +53,12 @@ class StudioAgentDefinition(BaseModel):
     currently: str = ""
     scratch: AgentScratch
     perception: AgentPerceptionLimits = Field(default_factory=AgentPerceptionLimits)
+
+    def author_payload(self):
+        if self.avatar_3d_asset_id or self.avatar_ue_asset_id or self.avatar_ue_manifest_asset_id:
+            raise StudioResourceError("SimWorld 角色由外部服务管理，不能绑定本地三维模型")
+        return self.model_dump(mode="json", exclude={
+            "avatar_3d_asset_id", "avatar_ue_asset_id", "avatar_ue_manifest_asset_id"})
 
 
 def _now() -> datetime:
@@ -130,7 +139,7 @@ class StudioResourceService:
         agent_id: str | None = None,
     ) -> dict[str, Any]:
         parsed = StudioAgentDefinition.model_validate(definition)
-        payload = parsed.model_dump(mode="json")
+        payload = parsed.author_payload()
         with self.database.session_factory.begin() as session:
             if session.scalar(select(StudioAgent.id).where(StudioAgent.agent_key == parsed.agent_key)):
                 raise StudioResourceError(f"Agent key already exists: {parsed.agent_key}")
@@ -155,7 +164,7 @@ class StudioResourceService:
         description: str | None = None,
     ) -> dict[str, Any]:
         parsed = StudioAgentDefinition.model_validate(definition)
-        payload = parsed.model_dump(mode="json")
+        payload = parsed.author_payload()
         with self.database.session_factory.begin() as session:
             row = session.get(StudioAgent, agent_id)
             self._current(row, "Agent", agent_id)

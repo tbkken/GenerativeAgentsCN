@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import copy
-import hashlib
 import json
 from pathlib import Path
 from collections import OrderedDict
@@ -17,7 +16,7 @@ from generative_agents.ga_protocol.packages.resources import (
 )
 from generative_agents.ga_protocol.packages.semantic_index import build_semantic_index
 from generative_agents.ga_protocol.schemas.manifests import ExperimentManifest, SkillPackageEntry, SkillPackageRegistry
-from generative_agents.ga_protocol.schemas.resources import ExperimentAssembly, ExperimentPlacement, SocialExperimentPlacement, ResourceIndex
+from generative_agents.ga_protocol.schemas.resources import ExperimentAssembly, ExperimentPlacement, SocialExperimentPlacement, Spatial3DExperimentPlacement, ResourceIndex
 from generative_agents.ga_protocol.schemas.experiment import DecisionModelConfig
 from generative_agents.ga_protocol.packages.reading import file_fingerprint, read_package_json
 
@@ -72,8 +71,7 @@ def assemble_experiment_definition(manifest: ExperimentManifest, resources: Reso
         record = resources.get(placement.agent)
         if record.kind != "agent":
             raise PackageError("experiment placement must identify an Agent")
-        location = (dict(space_id=placement.space_id) if isinstance(placement, SocialExperimentPlacement)
-                    else dict(coord=list(placement.coord), spatial=copy.deepcopy(placement.spatial)))
+        location = placement.model_dump(mode="json", exclude={"agent"})
         agents.append(dict(copy.deepcopy(record.definition), agent_key=record.key, name=record.name, **location))
     crowds = []
     for reference in assembly.crowds:
@@ -167,7 +165,7 @@ def assemble_skill_registry(resources: ResourceSet, assembly: ExperimentAssembly
             kind="brain" if record.key == assembly.brain.key else "object" if record.key in objects else "sub_skill",
             editor_kind=record.definition["skill_kind"], path=path,
             dependencies=[ref.key for ref in record.dependencies],
-            content_sha256=hashlib.sha256(resources.files[path]).hexdigest() if path in resources.files else None,
+            content_sha256=resources.files.digest(path) if path in resources.files else None,
         ))
     return SkillPackageRegistry(brain_skill=assembly.brain.key, object_roots=sorted(objects), skills=entries)
 
@@ -193,7 +191,7 @@ def write_experiment_definition(root: str | Path, definition: dict, *, resource_
     if prior is None:
         prior = read_resource_index(root, manifest.entrypoints.resources) if (root / manifest.entrypoints.resources).exists() else ResourceSet()
     old = prior.by_ref()
-    files = dict(prior.files)
+    files = copy.deepcopy(prior.files)
     previous_assembly = (read_experiment_assembly(root) if (root / manifest.entrypoints.assembly).exists() else None)
     records = [record.model_copy(deep=True) for record in prior.resources if record.kind in {"skill", "spatial_asset"}]
     world = copy.deepcopy(definition.get("world"))
@@ -222,6 +220,9 @@ def write_experiment_definition(root: str | Path, definition: dict, *, resource_
                 placement = SocialExperimentPlacement(agent=ResourceRef(kind="agent", key=key), space_id=core.pop("space_id"))
                 if placement.space_id != world_key:
                     raise PackageError(f"Agent {key} belongs to a different public space")
+            elif world.get("definition", {}).get("environment_type") == "spatial_3d":
+                placement = Spatial3DExperimentPlacement(agent=ResourceRef(kind="agent", key=key),
+                    spawn_anchor=core.pop("spawn_anchor"), yaw_deg=core.pop("yaw_deg"))
             else:
                 placement = ExperimentPlacement(agent=ResourceRef(kind="agent", key=key), coord=core.pop("coord"), spatial=core.pop("spatial"))
         except KeyError as exc:
@@ -284,8 +285,8 @@ def write_experiment_definition(root: str | Path, definition: dict, *, resource_
         source.relative_to(root)
         if not source.is_file():
             raise PackageError(f"experiment resource attachment is missing: {path}")
-        files[path] = source.read_bytes()
-    resources = ResourceSet(records, {path: files[path] for path in sorted(owned)}, [])
+        files[path] = source
+    resources = ResourceSet(records, files.subset(sorted(owned)), [])
     resources.roots = [assembly.map, assembly.brain, *(placement.agent for placement in placements),
                        *crowd_refs, *selected_models.values(), *evaluator_refs]
     resources.roots = list({reference.identity: reference for reference in resources.roots}.values())

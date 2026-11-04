@@ -198,6 +198,14 @@ test('batch changes that leave location alone preserve coordinates and the entir
   assert.deepEqual(plain(updated), {...agent, enabled: false});
 });
 
+test('a 3D batch edit cannot apply coordinates left over from a 2D map',()=>{
+  const {context,state,node}=setup();
+  state.batchAgentLocation={coord:[7,6],path:DESK};
+  state.draft.definition.world.definition={environment_type:'spatial_3d',simworld_scene_id:'map-15'};
+  node('batchAgentEnabled').value='true';
+  assert.deepEqual(plain(context.requestedAgentBatchChanges()),{enabled:true});
+});
+
 test('all address entry modes open the current experiment world and deliver the current selection', () => {
   const {context, state, opened} = setup();
   for (const mode of ['spawn', 'address', 'space']) {

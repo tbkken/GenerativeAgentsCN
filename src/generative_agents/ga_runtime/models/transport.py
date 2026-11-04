@@ -8,7 +8,7 @@ from pathlib import Path
 import ssl
 import time
 from urllib.parse import urlsplit
-from urllib.request import proxy_bypass
+from urllib.request import getproxies, proxy_bypass
 
 import httpx
 
@@ -36,10 +36,14 @@ async def _request_json(method, url, headers, payload, deadline, control, metada
             "capath" if Path(ca_bundle).is_dir() else "cafile": ca_bundle,
         }) if ca_bundle else True
     )
-    transport = (
-        httpx.AsyncHTTPTransport(retries=0, verify=verify)
-        if proxy_bypass(urlsplit(url).hostname or "") else None
-    )
+    target = urlsplit(url)
+    direct = proxy_bypass(target.hostname or "") or not getproxies()
+    if (direct and target.scheme == "http" and not ca_bundle
+            and not os.environ.get("SSL_CERT_FILE") and not os.environ.get("SSL_CERT_DIR")):
+        # This request cannot negotiate TLS. Loading Windows trust roots here can
+        # exhaust a short model budget before sending the first byte.
+        verify = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    transport = httpx.AsyncHTTPTransport(retries=0, verify=verify) if direct else None
     async with httpx.AsyncClient(timeout=remaining, transport=transport, verify=verify) as client:
         remaining = deadline - time.monotonic()
         if remaining <= 0:

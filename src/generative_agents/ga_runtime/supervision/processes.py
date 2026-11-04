@@ -7,16 +7,11 @@ import os
 import sys
 import threading
 from collections.abc import Callable
-from datetime import UTC, datetime
 from pathlib import Path
 
-from generative_agents.ga_protocol.packages.io import PackageError
-from generative_agents.ga_protocol.schemas.manifests import RunState
-from generative_agents.ga_protocol.schemas.manifests import RunStatus
-from generative_agents.ga_protocol.packages.io import atomic_write_json
-from generative_agents.ga_protocol.packages.io import read_json
+from generative_agents.ga_protocol.packages.io import checked_package_path
 from generative_agents.ga_protocol.packages.validation import validate_run_directory
-from generative_agents.ga_runtime.lifecycle.control import FileRunControl
+from generative_agents.ga_runtime.supervision.ownership import LAUNCH_ENV, process_observation, reconcile_run, submit_launch
 
 
 class FileRunSupervisor:
@@ -30,96 +25,58 @@ class FileRunSupervisor:
     ) -> None:
         if max_concurrent_runs < 1:
             raise ValueError("max_concurrent_runs must be positive")
-        self._slots = threading.BoundedSemaphore(max_concurrent_runs)
+        self._max_concurrent_runs = max_concurrent_runs
         self._on_complete = on_complete
         self._processes: dict[str, subprocess.Popen] = {}
         self._lock = threading.Lock()
 
     def submit(self, run_directory: str | Path, *, environment: dict[str, str] | None = None) -> str:
-        run_root = Path(run_directory).resolve()
+        run_root = checked_package_path(Path(run_directory))
         manifest = validate_run_directory(run_root)
-        status_path = run_root / "status.json"
-        status = RunStatus.model_validate(read_json(status_path))
-        if status.status not in {RunState.CREATED, RunState.PAUSED, RunState.FAILED}:
-            raise PackageError(f"Run cannot be submitted from {status.status.value}")
-        if not self._slots.acquire(blocking=False):
-            raise RuntimeError("no local Runtime execution slot is available")
-        # A resume is the point at which old pause/cancel flags are cleared.
-        # The worker must preserve any new control received after QUEUED.
-        if status.status in {RunState.PAUSED, RunState.FAILED}:
-            FileRunControl(run_root).reset()
-        status.status = RunState.QUEUED
-        status.reason = None
-        status.updated_at = datetime.now(UTC)
-        atomic_write_json(status_path, status.model_dump(mode="json"))
         logs = run_root / "logs"
-        logs.mkdir(parents=True, exist_ok=True)
-        log_handle = (logs / "runtime-process.log").open("ab")
+        checked_package_path(logs / "runtime-process.log")
         creation_flags = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
-        try:
-            process = subprocess.Popen(
-                [
-                    sys.executable,
-                    "-m",
-                    "generative_agents.adapters.cli.main",
-                    "run",
-                    "resume",
-                    str(run_root),
-                ],
-                cwd=str(Path.cwd()),
-                stdin=subprocess.DEVNULL,
-                stdout=log_handle,
-                stderr=subprocess.STDOUT,
-                creationflags=creation_flags,
-                env={**os.environ, **(environment or {}), "PYTHONUTF8": "1", "PYTHONIOENCODING": "utf-8"},
-            )
-        except Exception:
-            log_handle.close()
-            self._slots.release()
-            status.status = RunState.CREATED
-            status.reason = "Runtime process could not be started"
-            status.updated_at = datetime.now(UTC)
-            atomic_write_json(status_path, status.model_dump(mode="json"))
-            raise
-        finally:
-            # Popen duplicates/inherits the OS handle; the Studio process must
-            # not keep its own handle open across checkpoint or archive work.
-            if not log_handle.closed:
-                log_handle.close()
+        with submit_launch(run_root, self._max_concurrent_runs) as token:
+            logs.mkdir(parents=True, exist_ok=True)
+            with (logs / "runtime-process.log").open("ab") as log_handle:
+                process = subprocess.Popen(
+                    [sys.executable, "-m", "generative_agents.adapters.cli.main", "run", "resume", str(run_root)],
+                    cwd=str(Path.cwd()), stdin=subprocess.DEVNULL, stdout=log_handle, stderr=subprocess.STDOUT,
+                    creationflags=creation_flags,
+                    env={**os.environ, **(environment or {}), "PYTHONUTF8": "1",
+                         "PYTHONIOENCODING": "utf-8", LAUNCH_ENV: token},
+                )
         with self._lock:
             self._processes[manifest.run_id] = process
         thread = threading.Thread(
             target=self._wait,
-            args=(manifest.run_id, run_root, process),
+            args=(manifest.run_id, run_root, process, token),
             name=f"ga-runtime-{manifest.run_id}",
             daemon=True,
         )
         thread.start()
         return manifest.run_id
 
-    def process_status(self, run_id: str) -> dict:
+    def process_status(self, run_id: str, run_directory: str | Path | None = None) -> dict:
         with self._lock:
             process = self._processes.get(run_id)
+        observation = process_observation(Path(run_directory)) if run_directory is not None else {}
         return {
+            **observation,
             "run_id": run_id,
-            "process_id": process.pid if process else None,
+            "process_id": observation.get("process_id") or (process.pid if process else None),
             "return_code": process.poll() if process else None,
             "owned_by_this_studio": process is not None,
         }
 
-    def _wait(self, run_id: str, run_root: Path, process: subprocess.Popen) -> None:
+    def _wait(self, run_id: str, run_root: Path, process: subprocess.Popen, token: str) -> None:
         try:
             return_code = process.wait()
-            if return_code and (run_root / "status.json").is_file():
-                status = RunStatus.model_validate(read_json(run_root / "status.json"))
-                if status.status in {RunState.QUEUED, RunState.RUNNING, RunState.FINALIZING}:
-                    status.status = RunState.FAILED
-                    status.reason = f"Runtime process exited with code {return_code}"
-                    status.updated_at = datetime.now(UTC)
-                    atomic_write_json(run_root / "status.json", status.model_dump(mode="json"))
+            if (run_root / "status.json").is_file():
+                reconcile_run(run_root, expected_token=token, reason=f"仿真执行进程退出，退出码 {return_code}。")
             if self._on_complete is not None:
                 self._on_complete(run_root)
         finally:
             with self._lock:
-                self._processes.pop(run_id, None)
-            self._slots.release()
+                if self._processes.get(run_id) is process:
+                    self._processes.pop(run_id)
