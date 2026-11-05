@@ -1,6 +1,7 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
+const vm=require('node:vm');
 global.window={};
 global.document={pointerLockElement:null};
 require('../../src/generative_agents/adapters/web/static/resources/scene-map-viewer.js');
@@ -89,13 +90,40 @@ test('Run capture follows the displayed width, debounces tier crossings, and res
   } finally {clearTimeout(viewer.captureTimer);global.fetch=original;}
 });
 
-test('an experiment distinguishes local maps from SimWorld scene IDs without writing a copy',()=>{
-  const old=global.fetch;
-  try {
-    global.fetch=()=>assert.fail('selecting a scene must not write to the service');
-    assert.deepEqual(window.SimWorldScenes.selection('public-map'),{map_id:'public-map'});
-    assert.deepEqual(window.SimWorldScenes.selection('simworld:harbor'),{simworld_scene_id:'harbor'});
-  } finally {global.fetch=old;}
+test('scene selection supplies only the remote ID for creating a public map reference',()=>{
+  assert.equal(window.SimWorldScenes.sceneId('simworld:harbor'),'harbor');
+  assert.throws(()=>window.SimWorldScenes.sceneId(''),/请先选择/);
+  assert.throws(()=>window.SimWorldScenes.sceneId('public-map'),/请先选择/);
+});
+
+test('creating a 3D map saves local metadata and opens the created resource instead of a remote scene key',async()=>{
+  const source=fs.readFileSync('src/generative_agents/adapters/web/static/resources/map-workspace.js','utf8');
+  const code=source.slice(source.indexOf('    async create()'),source.indexOf('    async savePublic('));
+  const values={newMapName:'教学街区',newMapKey:'teaching-map',newMapDescription:'课程使用',newMapEnvironmentType:'spatial_3d',newMapScene:'simworld:harbor'};
+  let body;const opened=[];
+  const context={window:{SimWorldScenes:window.SimWorldScenes},document:{getElementById:id=>{
+    assert.ok(id in values,`3D creation must not read ${id}`);return {value:values[id]};
+  }},normalizeOptionalMapKey:key=>key,request:async(path,options)=>{
+    assert.equal(path,'/maps');assert.equal(options.method,'POST');body=JSON.parse(options.body);
+    return {id:'local-map-resource',map_key:'teaching-map'};
+  },modal(){},notify(){}};
+  vm.createContext(context);vm.runInContext(`this.manager={${code}}`,context);
+  Object.assign(context.manager,{loadMaps:async()=>{},openMap:async id=>opened.push(id)});
+  await context.manager.create();
+  assert.deepEqual(body,{name:'教学街区',map_key:'teaching-map',description:'课程使用',environment_type:'spatial_3d',simworld_scene_id:'harbor'});
+  assert.deepEqual(opened,['local-map-resource']);
+});
+
+test('experiment map choices retain local 3D resources and never read the online scene directory',async()=>{
+  const source=fs.readFileSync('src/generative_agents/adapters/web/static/resources/map-workspace.js','utf8');
+  const code=source.slice(source.indexOf('    async loadMapChoices('),source.indexOf('    async openReplacement('));
+  const maps=[{id:'social',environment_type:'social_1d'},{id:'scene-reference',environment_type:'spatial_3d'}];
+  let offered;
+  const context={document:{getElementById:()=>({})},window:{ResourceList:{choices:async(_select,options)=>{offered=await options.loadPage(1);}}},
+    fetch:async url=>{assert.equal(url,'/api/studio/resources/maps?page=1&page_size=20&for_experiment=true');return Response.json({items:maps});}};
+  vm.createContext(context);vm.runInContext(`this.manager={${code}}`,context);
+  await context.manager.loadMapChoices('newExperimentMap');
+  assert.deepEqual(offered.items,maps);
 });
 
 test('the map workspace supplies context to one scope-independent 3D viewer',()=>{

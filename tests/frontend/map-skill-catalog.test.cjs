@@ -5,7 +5,7 @@ const vm = require('node:vm');
 
 const editorSource = fs.readFileSync('src/generative_agents/adapters/web/static/resources/map-editor-v2.js', 'utf8');
 const workspaceSource = fs.readFileSync('src/generative_agents/adapters/web/static/resources/map-workspace.js', 'utf8');
-const activateSource = workspaceSource.slice(workspaceSource.indexOf('    async activate()'), workspaceSource.indexOf('    async loadBlueprints()'));
+const activateSource = workspaceSource.slice(workspaceSource.indexOf('    async activate()'), workspaceSource.indexOf('    async loadMaps()'));
 const response = items => ({ok: true, json: async () => ({items})});
 
 function setup(experimentId = null) {
@@ -53,7 +53,7 @@ function setup(experimentId = null) {
   Object.defineProperty(editor.inspector, 'innerHTML', {set() {throw new Error('inspector form replaced');}});
   const manager = context.manager;
   Object.assign(manager, {publicEditor: editor, selectedMapId: experimentId || 'traffic-map',
-    init() {}, loadMaps: async () => {}, loadBlueprints: async () => {},
+    init() {}, loadMaps: async () => {},
     openMap: async (...args) => openedMaps.push(args),
   });
   return {context, editor, manager, scope, selector, semanticField, requests, notices, openedMaps,

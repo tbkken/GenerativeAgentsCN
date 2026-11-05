@@ -16,14 +16,14 @@ from pydantic import ValidationError
 
 from generative_agents.ga_protocol.packages.hashing import canonical_json_bytes
 from generative_agents.ga_studio.resources.map_document import MapEditorDocumentV2
-from generative_agents.ga_protocol.schemas.environments import SocialWorldDefinition, environment_type
+from generative_agents.ga_protocol.schemas.environments import SimWorldMap, SocialWorldDefinition, environment_type
 from generative_agents.ga_protocol.spatial.navigation import compile_collision
 from generative_agents.ga_protocol.schemas.experiment import WorldConfig
 from generative_agents.ga_protocol.schemas.spatial_assets import SpatialAssetContract
 from generative_agents.ga_protocol.schemas.spatial_assets import SpatialSceneExtension
 from generative_agents.ga_studio.storage.database import Database
 from generative_agents.ga_studio.storage.models import SpatialAssetDefinition
-from generative_agents.ga_studio.storage.models import Asset, WorldMap
+from generative_agents.ga_studio.storage.models import WorldMap
 from generative_agents.ga_studio.resources.skills import DatabaseSkillRegistry
 from generative_agents.ga_protocol.skills.documents import SkillRegistryError
 from generative_agents.ga_studio.resources.errors import ServiceError
@@ -198,705 +198,6 @@ def _compile_editor_v2_runtime_addresses(world: WorldConfig) -> WorldConfig:
     return WorldConfig.model_validate(payload)
 
 
-MAP_BLUEPRINTS: tuple[dict[str, Any], ...] = (
-    {
-        "key": "two-day-commute",
-        "name": "住宅—公司两日通勤",
-        "summary": "从空白网格逐步配置住宅、公司、两个三车道路口、行人网络、信号灯、门禁与停车位。",
-        "width": 96,
-        "height": 56,
-        "tile_size": 32,
-        "steps": [
-            {"step": 1, "key": "zones", "name": "住宅区与公司园区", "tool": "区域"},
-            {"step": 2, "key": "road", "name": "双向六车道主路", "tool": "道路"},
-            {
-                "step": 3,
-                "key": "intersection-a",
-                "name": "三车道路口 A",
-                "tool": "模块",
-            },
-            {
-                "step": 4,
-                "key": "intersection-b",
-                "name": "复制三车道路口 B",
-                "tool": "模块",
-            },
-            {
-                "step": 5,
-                "key": "pedestrian-network",
-                "name": "人行道与步行网络",
-                "tool": "人行",
-            },
-            {
-                "step": 6,
-                "key": "signals",
-                "name": "8 个信号灯与等待区",
-                "tool": "信号灯",
-            },
-            {
-                "step": 7,
-                "key": "facilities",
-                "name": "车辆门禁与 P01–P03",
-                "tool": "设施",
-            },
-            {
-                "step": 8,
-                "key": "semantics",
-                "name": "空间语义与导航校验",
-                "tool": "语义",
-            },
-        ],
-    },
-)
-
-
-def _map_blueprint(key: str) -> dict[str, Any] | None:
-    """执行地图`blueprint`的内部处理，供当前模块或类复用。
-
-    参数:
-        key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
-
-    返回:
-        返回以字段名或业务键组织的结构化映射。 没有可用结果时返回 `None`。
-    """
-    return next(
-        (copy.deepcopy(item) for item in MAP_BLUEPRINTS if item["key"] == key), None
-    )
-
-
-def _commute_blueprint_editor_document(
-    *, name: str, stable_key: str, width: int, height: int, tile_size: int, step: int
-) -> dict[str, Any]:
-    """Build the canonical four-level authoring tree for the commute blueprint."""
-
-    root_id = f"world-{stable_key}"
-    nodes: list[dict[str, Any]] = []
-
-    def add_node(
-        node_id: str,
-        kind: str,
-        parent_id: str | None,
-        node_name: str,
-        bounds: tuple[int, int, int, int],
-        semantic: str,
-        sort_order: int,
-    ) -> None:
-        x, y, node_width, node_height = bounds
-        nodes.append(
-            {
-                "id": node_id,
-                "kind": kind,
-                "parent_id": parent_id,
-                "name": node_name,
-                "sort_order": sort_order,
-                "bounds": {
-                    "x": x,
-                    "y": y,
-                    "width": node_width,
-                    "height": node_height,
-                },
-                "semantic": semantic,
-                "material_slice_id": None,
-                "render_recipe_id": None,
-                "render_mode": "LAYER_BACKED",
-                "interaction_mode": "STATIC",
-                "skill_bindings": [],
-                "extensions": {},
-            }
-        )
-
-    add_node(
-        root_id,
-        "WORLD",
-        None,
-        name,
-        (0, 0, width, height),
-        "包含住宅、通勤道路和公司园区的两日通勤实验世界。",
-        0,
-    )
-    if step >= 1:
-        add_node(
-            "sector-home",
-            "SECTOR",
-            root_id,
-            "住宅区",
-            (0, 35, 25, 21),
-            "居民出发、返家和步行接驳区域。",
-            0,
-        )
-        add_node(
-            "arena-home",
-            "ARENA",
-            "sector-home",
-            "林晨住宅",
-            (3, 37, 16, 16),
-            "林晨居住并开始每日通勤的住宅场所。",
-            0,
-        )
-        add_node(
-            "object-home-building",
-            "GAME_OBJECT",
-            "arena-home",
-            "住宅建筑",
-            (7, 41, 9, 9),
-            "住宅建筑本体；可被感知，但不绑定对象 Skill。",
-            0,
-        )
-        add_node(
-            "sector-office",
-            "SECTOR",
-            root_id,
-            "公司园区",
-            (74, 0, 22, 24),
-            "办公、门禁和停车发生的公司园区。",
-            1,
-        )
-        add_node(
-            "arena-office-building",
-            "ARENA",
-            "sector-office",
-            "办公楼区域",
-            (76, 2, 18, 10),
-            "员工工作的办公楼及其入口区域。",
-            0,
-        )
-        add_node(
-            "object-office-building",
-            "GAME_OBJECT",
-            "arena-office-building",
-            "办公楼",
-            (80, 4, 11, 8),
-            "办公楼建筑本体。",
-            0,
-        )
-        add_node(
-            "arena-office-entry",
-            "ARENA",
-            "sector-office",
-            "园区入口与停车场",
-            (76, 12, 18, 12),
-            "车辆和行人进入园区、通过门禁并停车的区域。",
-            1,
-        )
-    if step >= 2:
-        add_node(
-            "sector-transport",
-            "SECTOR",
-            root_id,
-            "城市道路",
-            (0, 0, width, height),
-            "连接住宅区与公司园区的公共通勤道路网络。",
-            2,
-        )
-        add_node(
-            "arena-commute-corridor",
-            "ARENA",
-            "sector-transport",
-            "东西向通勤主路",
-            (0, 0, width, height),
-            "包含机动车道、人行道、路口和过街设施的通勤走廊。",
-            0,
-        )
-    for required_step, key, center_x in ((3, "a", 34), (4, "b", 60)):
-        if step < required_step:
-            continue
-        add_node(
-            f"object-intersection-{key}",
-            "GAME_OBJECT",
-            "arena-commute-corridor",
-            f"三车道路口 {key.upper()}",
-            (center_x - 7, 20, 14, 17),
-            "机动车、行人与信号控制发生冲突和协商的四向路口。",
-            required_step,
-        )
-    if step >= 6:
-        for key, center_x in (("a", 34), ("b", 60)):
-            for order, (side, x, y) in enumerate(
-                (
-                    ("north", center_x - 5, 22),
-                    ("east", center_x + 4, 22),
-                    ("south", center_x + 4, 33),
-                    ("west", center_x - 5, 33),
-                )
-            ):
-                add_node(
-                    f"object-signal-{key}-{side}",
-                    "GAME_OBJECT",
-                    "arena-commute-corridor",
-                    f"路口 {key.upper()} {side} 信号灯",
-                    (x, y, 1, 1),
-                    "控制车辆与行人通行次序的交通信号灯。",
-                    10 + order,
-                )
-    if step >= 7:
-        add_node(
-            "object-office-gate",
-            "GAME_OBJECT",
-            "arena-office-entry",
-            "园区车辆门禁",
-            (80, 20, 1, 1),
-            "核验车辆进入公司园区资格的门禁。",
-            0,
-        )
-        for order, x in enumerate((85, 88, 91), start=1):
-            add_node(
-                f"object-parking-p{order:02d}",
-                "GAME_OBJECT",
-                "arena-office-entry",
-                f"停车位 P{order:02d}",
-                (x, 14, 1, 1),
-                "可记录占用状态的园区停车位。",
-                order,
-            )
-
-    def layer(layer_id: str, layer_name: str, level: str, z_index: int) -> dict[str, Any]:
-        return {
-            "id": layer_id,
-            "name": layer_name,
-            "display_level": level,
-            "z_index": z_index,
-            "width": width,
-            "height": height,
-            "raw_gids": [],
-            "cell_overrides": [],
-            "recipe_placements": [],
-            "visible": True,
-            "opacity": 1.0,
-        }
-    document = {
-        "schema_version": "ga-map-editor/v2",
-        "root_node_id": root_id,
-        "material_sources": [],
-        "material_slices": [],
-        "material_canvases": [],
-        "render_recipes": [],
-        "visual_layers": [
-            layer("layer-world", "地图底图", "MAP", 0),
-            layer("layer-sector", "Sector", "SECTOR", 10),
-            layer("layer-arena", "Arena", "ARENA", 20),
-            layer("layer-object", "Game Object", "GAME_OBJECT", 30),
-        ],
-        "hierarchy_nodes": nodes,
-        "import_metadata": {
-            "importer": "two-day-commute-blueprint/v2",
-            "width": width,
-            "height": height,
-            "tile_size": tile_size,
-            "used_gid_count": 0,
-            "collision_coords": [],
-            "source_sha256": "",
-        },
-        "tile_overrides": {},
-        "tile_override_parts": {},
-        "tile_override_layers": {},
-        "ui_state": {},
-    }
-    return MapEditorDocumentV2.model_validate(document).model_dump(
-        mode="json", exclude_none=False
-    )
-
-
-def _commute_blueprint_world(
-    session: Session,
-    *,
-    name: str,
-    stable_key: str,
-    step: int,
-) -> WorldConfig:
-    """执行`commute``blueprint`世界的内部处理，供当前模块或类复用。
-
-    参数:
-        session: 当前数据库会话；事务提交与回滚由调用边界约定。 类型：`Session`。
-        name: 目标对象的人类可读名称。 类型：`str`。
-        stable_key: 用于稳定定位`stable`的键。 类型：`str`。
-        step: 当前处理、查询或恢复的仿真步记录或编号。 类型：`int`。
-
-    返回:
-        返回 `WorldConfig` 类型的处理结果。
-
-    异常:
-        ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-    """
-
-    blueprint = _map_blueprint("two-day-commute")
-    assert blueprint is not None
-    if not 0 <= step <= len(blueprint["steps"]):
-        raise ServiceError(
-            "MAP_BLUEPRINT_STEP_INVALID",
-            "地图蓝图步骤超出范围",
-            status_code=422,
-        )
-    required_asset_keys = {
-        "tile-ground",
-        "tile-road-asphalt",
-        "tile-sidewalk",
-        "marking-crosswalk",
-        "object-traffic-light",
-        "zone-pedestrian-wait",
-        "marking-vehicle-stop-line",
-        "object-vehicle-gate",
-        "zone-parking-slot",
-    }
-    assets = list(
-        session.scalars(
-            select(SpatialAssetDefinition).where(
-                SpatialAssetDefinition.asset_key.in_(required_asset_keys)
-            )
-        )
-    )
-    assets_by_key = {asset.asset_key: asset for asset in assets}
-    if set(assets_by_key) != required_asset_keys:
-        raise ServiceError(
-            "MAP_BLUEPRINT_ASSET_UNAVAILABLE",
-            "两日通勤蓝图依赖的地图资产不完整",
-            status_code=503,
-        )
-
-    width, height, tile_size = (
-        blueprint["width"],
-        blueprint["height"],
-        blueprint["tile_size"],
-    )
-    world = _blank_public_world(
-        name=name,
-        stable_key=stable_key,
-        width=width,
-        height=height,
-        tile_size=tile_size,
-    ).model_dump(mode="json", exclude_none=False)
-    definition = world["definition"]
-    palette = [
-        {"id": "ground", "name": "基础地面", "color": "#c9d9bd", "collision": False},
-        {"id": "home-zone", "name": "住宅区", "color": "#dbe8ce", "collision": False},
-        {
-            "id": "office-zone",
-            "name": "公司园区",
-            "color": "#c9ded7",
-            "collision": False,
-        },
-        {"id": "building", "name": "建筑", "color": "#f0e4cf", "collision": True},
-        {"id": "road", "name": "六车道道路", "color": "#53605d", "collision": False},
-        {"id": "sidewalk", "name": "人行道", "color": "#d5ddd7", "collision": False},
-        {"id": "crosswalk", "name": "斑马线", "color": "#f7faf8", "collision": False},
-        {"id": "parking", "name": "停车区域", "color": "#b7d8cc", "collision": False},
-    ]
-    cells: dict[str, dict[str, str]] = {
-        f"{x},{y}": {"kind": "ground"} for y in range(height) for x in range(width)
-    }
-    tiles = {tuple(tile["coord"]): tile for tile in definition["tiles"]}
-
-    def paint(
-        x1: int,
-        y1: int,
-        x2: int,
-        y2: int,
-        kind: str,
-        *,
-        address: list[str] | None = None,
-        collision: bool | None = None,
-    ) -> None:
-        """执行 的`paint`操作。
-
-        参数:
-            x1: 传入当前算法的`x1`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
-            y1: 传入当前算法的`y1`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
-            x2: 传入当前算法的`x2`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
-            y2: 传入当前算法的`y2`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
-            kind: 用于选择解析、校验或执行分支的稳定类型判别值。 类型：`str`。
-            address: 由层级名称组成的空间地址，用于定位地图中的区域、场所或对象。 类型：`list[str] | None`。 默认值：`None`。
-            collision: 路径或移动过程中检测到的碰撞信息。 类型：`bool | None`。 默认值：`None`。
-
-        返回:
-            无返回值。
-        """
-        for y in range(max(0, y1), min(height - 1, y2) + 1):
-            for x in range(max(0, x1), min(width - 1, x2) + 1):
-                cells[f"{x},{y}"] = {"kind": kind}
-                tile = tiles[(x, y)]
-                tile["tile"] = kind
-                if address is not None:
-                    tile["address"] = list(address)
-                if collision is not None:
-                    tile["collision"] = collision
-
-    module_map = session.scalar(
-        select(WorldMap).where(WorldMap.map_key == "standard-3lane-intersection")
-    )
-    module_map_id = module_map.id if module_map is not None else None
-    module_instances: list[dict[str, Any]] = []
-    intersections: list[dict[str, Any]] = []
-    placements: list[dict[str, Any]] = []
-
-    def placement(
-        key: str,
-        asset_key: str,
-        x: float,
-        y: float,
-        rotation: float = 0,
-        state: dict[str, Any] | None = None,
-    ) -> None:
-        """向地图蓝图添加一个空间资源实例及其初始状态覆盖。
-
-        参数:
-            key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
-            asset_key: 用于稳定定位资源的键。 类型：`str`。
-            x: 空间坐标的水平分量。 类型：`float`。
-            y: 空间坐标的垂直分量。 类型：`float`。
-            rotation: 空间资源实例相对于默认方向的旋转角度。 类型：`float`。 默认值：`0`。
-            state: 空间资源实例的初始状态覆盖映射；为空时使用资源定义中的默认状态。 类型：`dict[str, Any] | None`。 默认值：`None`。
-
-        返回:
-            无返回值。
-        """
-        placements.append(
-            {
-                "instance_key": key,
-                "spatial_asset_id": assets_by_key[asset_key].id,
-                "x_tiles": x,
-                "y_tiles": y,
-                "rotation_degrees": rotation,
-                "state_overrides": state or {},
-            }
-        )
-
-    def intersection(key: str, cx: int) -> None:
-        """执行 的`intersection`操作。
-
-        参数:
-            key: 用于定位目标记录、配置项或技能的稳定键。 类型：`str`。
-            cx: 传入当前算法的`cx`；其结构与有效范围由类型注解和调用协议共同限定。 类型：`int`。
-
-        返回:
-            无返回值。
-        """
-        paint(
-            cx - 3,
-            0,
-            cx + 2,
-            height - 1,
-            "road",
-            address=["城市道路", f"三车道路口 {key}"],
-        )
-        paint(
-            cx - 3,
-            21,
-            cx + 2,
-            23,
-            "crosswalk",
-            address=["城市道路", f"三车道路口 {key}", "北侧斑马线"],
-        )
-        paint(
-            cx - 3,
-            32,
-            cx + 2,
-            34,
-            "crosswalk",
-            address=["城市道路", f"三车道路口 {key}", "南侧斑马线"],
-        )
-        paint(
-            cx - 6,
-            25,
-            cx - 4,
-            30,
-            "crosswalk",
-            address=["城市道路", f"三车道路口 {key}", "西侧斑马线"],
-        )
-        paint(
-            cx + 3,
-            25,
-            cx + 5,
-            30,
-            "crosswalk",
-            address=["城市道路", f"三车道路口 {key}", "东侧斑马线"],
-        )
-        module_instances.append(
-            {
-                "instance_key": f"intersection-{key.casefold()}",
-                "module_key": "standard-3lane-intersection",
-                "source_map_id": module_map_id,
-                "center": [cx, 28],
-                "rotation_degrees": 0,
-            }
-        )
-        intersections.append(
-            {
-                "intersection_key": key.casefold(),
-                "center": [cx, 28],
-                "lanes_per_direction": 3,
-                "lane_width_tiles": 1.0,
-                "crosswalk_keys": [
-                    f"{key.casefold()}-{side}"
-                    for side in ("north", "east", "south", "west")
-                ],
-            }
-        )
-
-    if step >= 1:
-        paint(3, 37, 18, 52, "home-zone", address=["住宅区", "林晨住宅"])
-        paint(
-            7,
-            41,
-            15,
-            49,
-            "building",
-            address=["住宅区", "林晨住宅", "住宅建筑"],
-            collision=True,
-        )
-        paint(76, 2, 92, 17, "office-zone", address=["公司园区"])
-        paint(80, 4, 90, 11, "building", address=["公司园区", "办公楼"], collision=True)
-    if step >= 2:
-        paint(0, 25, width - 1, 30, "road", address=["城市道路", "东西向通勤主路"])
-        paint(0, 23, width - 1, 24, "sidewalk", address=["城市道路", "北侧人行道"])
-        paint(0, 31, width - 1, 32, "sidewalk", address=["城市道路", "南侧人行道"])
-        paint(11, 31, 14, 40, "road", address=["住宅区", "车辆出入口"])
-        paint(79, 12, 82, 24, "road", address=["公司园区", "车辆入口"])
-    if step >= 3:
-        intersection("A", 34)
-    if step >= 4:
-        intersection("B", 60)
-    if step >= 5:
-        definition["navigation_networks"] = [
-            {
-                "network_key": "vehicle-commute",
-                "mode": "CAR",
-                "route": [
-                    "home.driveway",
-                    "intersection.a",
-                    "intersection.b",
-                    "office.gate",
-                    "parking.P03",
-                ],
-                "distance_km": 1.8,
-            },
-            {
-                "network_key": "pedestrian-commute",
-                "mode": "PEDESTRIAN",
-                "route": ["home.entry", "crosswalk.a", "crosswalk.b", "office.entry"],
-                "distance_km": 1.2,
-            },
-        ]
-        paint(15, 33, 15, 40, "sidewalk", address=["住宅区", "步行出口"])
-        paint(83, 12, 83, 23, "sidewalk", address=["公司园区", "步行入口"])
-    if step >= 6:
-        for key, cx, offset in (("a", 34, 0), ("b", 60, 8_000)):
-            signal_specs = (
-                ("north", cx - 5, 22, 0, "wait-east"),
-                ("east", cx + 4, 22, 90, "wait-north"),
-                ("south", cx + 4, 33, 180, "wait-west"),
-                ("west", cx - 5, 33, 270, "wait-south"),
-            )
-            for index, (side, x, y, rotation, wait_side) in enumerate(signal_specs):
-                placement(
-                    f"signal-{key}-{side}",
-                    "object-traffic-light",
-                    x,
-                    y,
-                    rotation,
-                    {
-                        "state": "VEHICLE_GREEN" if index % 2 else "VEHICLE_RED",
-                        "phase": "VEHICLE_GREEN" if index % 2 else "VEHICLE_RED",
-                    },
-                )
-            for side, x, y in (
-                ("north", cx, 20),
-                ("east", cx + 7, 28),
-                ("south", cx, 36),
-                ("west", cx - 7, 28),
-            ):
-                placement(f"{key}-wait-{side}", "zone-pedestrian-wait", x, y)
-    if step >= 7:
-        placement(
-            "gate-office-entry",
-            "object-vehicle-gate",
-            80,
-            20,
-            0,
-            {"state": "closed", "required_credential": "company.vehicle.enter"},
-        )
-        for index, x in enumerate((85, 88, 91), start=1):
-            placement(
-                f"parking-p{index:02d}",
-                "zone-parking-slot",
-                x,
-                14,
-                0,
-                {"occupied": index < 3, "slot_key": f"P{index:02d}"},
-            )
-        paint(83, 12, 93, 16, "parking", address=["公司园区", "停车场"])
-    if step >= 8:
-        definition["commute_semantics"] = {
-            "home": "sector.home",
-            "office": "sector.office",
-            "intersection_waiting_zones": [
-                "a-wait-north",
-                "a-wait-east",
-                "a-wait-south",
-                "a-wait-west",
-                "b-wait-north",
-                "b-wait-east",
-                "b-wait-south",
-                "b-wait-west",
-            ],
-            "gate_credential": "company.vehicle.enter",
-            "parking_slots": ["P01", "P02", "P03"],
-        }
-
-    definition["palette"] = [
-        {
-            "key": item["id"],
-            "label": item["name"],
-            "color": item["color"],
-            "collision": item["collision"],
-        }
-        for item in palette
-    ]
-    definition["traffic_layout"] = {
-        "intersection_type": "FOUR_WAY",
-        "approaches": ["NORTH", "EAST", "SOUTH", "WEST"],
-        "lanes_per_direction": 3,
-        "lane_width_tiles": 1.0,
-        "intersection_instances": intersections,
-        "crosswalk_count": len(intersections) * 4,
-    }
-    definition["spatial_scene"] = {
-        "schema_version": "ga-spatial-scene/v2",
-        "palette_refs": {
-            "ground": assets_by_key["tile-ground"].id,
-            "road": assets_by_key["tile-road-asphalt"].id,
-            "sidewalk": assets_by_key["tile-sidewalk"].id,
-            "crosswalk": assets_by_key["marking-crosswalk"].id,
-        },
-        "placements": placements,
-    }
-    definition["editor"] = {
-        "schema_version": 1,
-        "palette": palette,
-        "cells": cells,
-        "spatial_assets": {
-            asset.id: copy.deepcopy(asset.contract_json)
-            for asset in assets_by_key.values()
-        },
-        "module_instances": module_instances,
-        "build_guide": {
-            "blueprint_key": blueprint["key"],
-            "name": blueprint["name"],
-            "current_step": step,
-            "total_steps": len(blueprint["steps"]),
-            "steps": blueprint["steps"],
-            "complete": step == len(blueprint["steps"]),
-        },
-    }
-    definition["editor_v2"] = _commute_blueprint_editor_document(
-        name=name,
-        stable_key=stable_key,
-        width=width,
-        height=height,
-        tile_size=tile_size,
-        step=step,
-    )
-    return WorldConfig.model_validate(world)
-
-
 def _blank_public_world(
     *, name: str, stable_key: str, width: int, height: int, tile_size: int
 ) -> WorldConfig:
@@ -962,8 +263,8 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
         SocialWorldDefinition.model_validate(world.definition)
         return []
     if environment_type(world) == "spatial_3d":
-        return [{"code": "SIMWORLD_ONLINE_ONLY", "path": "definition",
-                 "message": "请从 SimWorld 在线目录使用 3D 地图"}]
+        SimWorldMap.model_validate(world.definition)
+        return []
     definition = world.definition
     errors: list[dict[str, str]] = []
     size = definition.get("size") if isinstance(definition, dict) else None
@@ -1099,20 +400,6 @@ def _validate_world_definition(world: WorldConfig) -> list[dict[str, str]]:
                 "code": "WORLD_TILE_GRID_INCOMPLETE",
                 "path": "definition.tiles",
                 "message": f"地图应包含 {expected_tiles} 个 Tile，当前为 {len(seen)} 个",
-            }
-        )
-    editor = definition.get("editor") if isinstance(definition, dict) else None
-    build_guide = editor.get("build_guide") if isinstance(editor, dict) else None
-    if isinstance(build_guide, dict) and not build_guide.get("complete"):
-        errors.append(
-            {
-                "code": "MAP_BLUEPRINT_INCOMPLETE",
-                "path": "definition.editor.build_guide",
-                "message": (
-                    "地图构建向导尚未完成："
-                    f"当前 {build_guide.get('current_step', 0)} / "
-                    f"{build_guide.get('total_steps', '?')} 步"
-                ),
             }
         )
     return errors
@@ -1398,37 +685,25 @@ class WorldMapService:
             cache_root="var/skill-runtime-cache",
         )
 
-    @staticmethod
-    def list_blueprints() -> list[dict[str, Any]]:
-        """查询`blueprints`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-        """
-        return [copy.deepcopy(item) for item in MAP_BLUEPRINTS]
-
     def create_map(
         self,
         *,
         name: str,
         description: str = "",
-        source_map_id: str | None = None,
-        blueprint_key: str | None = None,
+        simworld_scene_id: str | None = None,
         map_key: str | None = None,
         width: int = 48,
         height: int = 32,
         tile_size: int = 32,
         environment_type: str = "spatial_2d",
         presentation: str = "chat",
-        rules: str = "",
     ) -> dict[str, Any]:
         """创建地图。
 
         参数:
             name: 目标对象的人类可读名称。 类型：`str`。
             description: 目标对象的人类可读说明；会按业务规则去除无效空白。 类型：`str`。 默认值：`''`。
-            source_map_id: 需要复制的源地图标识。 类型：`str | None`。 默认值：`None`。
-            blueprint_key: 用于稳定定位`blueprint`的键。 类型：`str | None`。 默认值：`None`。
+            simworld_scene_id: 3D 地图引用的远端场景身份，不保存远端内容。
             map_key: 用于稳定定位地图的键。 类型：`str | None`。 默认值：`None`。
             width: 地图宽度，单位为 Tile 格数。 类型：`int`。 默认值：`48`。
             height: 地图高度，单位为 Tile 格数。 类型：`int`。 默认值：`32`。
@@ -1450,30 +725,15 @@ class WorldMapService:
                 "地图稳定键必须由小写字母、数字和连字符组成",
                 status_code=422,
             )
-        if environment_type == "spatial_3d":
-            raise ServiceError("PREBUILT_SCENE_REQUIRED", "请从 SimWorld 在线目录选择 3D 场景", status_code=422)
-        if environment_type not in {"social_1d", "spatial_2d"}:
+        if environment_type not in {"social_1d", "spatial_2d", "spatial_3d"}:
             raise ServiceError("UNSUPPORTED_ENVIRONMENT", "地图类型不受支持", status_code=422)
-        if environment_type != "spatial_2d" and blueprint_key:
-            raise ServiceError("MAP_CREATE_SOURCE_CONFLICT", "此构建蓝图仅适用于 2D 地图", status_code=422)
+        if environment_type != "spatial_3d" and simworld_scene_id is not None:
+            raise ServiceError("INVALID_SCENE_REFERENCE", "只有 3D 地图可以引用 SimWorld 场景", status_code=422)
         if environment_type == "spatial_2d" and not (1 <= width <= 240 and 1 <= height <= 240 and 8 <= tile_size <= 128):
             raise ServiceError(
                 "INVALID_MAP_DIMENSIONS",
                 "地图宽高必须是 1–240 的整数格数；1 表示一个 Tile。Tile 尺寸需在 8–128 像素之间",
                 status_code=422,
-            )
-        if source_map_id and blueprint_key:
-            raise ServiceError(
-                "MAP_CREATE_SOURCE_CONFLICT",
-                "复制地图与使用构建蓝图不能同时选择",
-                status_code=422,
-            )
-        blueprint = _map_blueprint(blueprint_key) if blueprint_key else None
-        if blueprint_key and blueprint is None:
-            raise ServiceError(
-                "MAP_BLUEPRINT_NOT_FOUND",
-                "地图构建蓝图不存在",
-                status_code=404,
             )
         with self.database.session_factory.begin() as session:
             if session.scalar(
@@ -1482,42 +742,17 @@ class WorldMapService:
                 raise ServiceError(
                     "MAP_KEY_CONFLICT", "地图稳定键已被使用", status_code=409
                 )
-            source_map = session.get(WorldMap, source_map_id) if source_map_id else None
-            if source_map_id:
-                if source_map is None:
-                    raise not_found("map", source_map_id)
-                world = normalize_public_world(source_map.world_json)
-                if world.definition.get("environment_type") == "spatial_3d":
-                    raise ServiceError("PREBUILT_SCENE_REQUIRED", "请从 SimWorld 在线目录选择 3D 场景", status_code=422)
-                if world.definition.get("environment_type") == "social_1d":
-                    description = description or world.definition["description"]
-                    world = WorldConfig(world_key=stable_key, world_name=name, assets=world.assets,
-                                        definition={**world.definition, "description": description})
-            elif environment_type == "social_1d":
+            if environment_type in {"social_1d", "spatial_3d"}:
                 try:
-                    content = SocialWorldDefinition(presentation=presentation, description=description, rules=rules)
+                    content = (SocialWorldDefinition(presentation=presentation, description=description)
+                               if environment_type == "social_1d" else SimWorldMap(simworld_scene_id=simworld_scene_id))
                 except ValidationError as exc:
-                    raise ServiceError("INVALID_SOCIAL_MAP", str(exc), status_code=422) from exc
+                    raise ServiceError("INVALID_MAP_DEFINITION", str(exc), status_code=422) from exc
                 world = WorldConfig(world_key=stable_key, world_name=name, definition=content.model_dump())
-            elif blueprint is not None:
-                world = normalize_public_world(
-                    _commute_blueprint_world(
-                        session,
-                        name=name,
-                        stable_key=stable_key,
-                        step=0,
-                    )
-                )
             else:
-                world = normalize_public_world(
-                    _blank_public_world(
-                        name=name,
-                        stable_key=stable_key,
-                        width=width,
-                        height=height,
-                        tile_size=tile_size,
-                    )
-                )
+                world = normalize_public_world(_blank_public_world(
+                    name=name, stable_key=stable_key, width=width, height=height, tile_size=tile_size,
+                ))
             now = _utc_now()
             public_map = WorldMap(
                 id=str(uuid4()),
@@ -1535,88 +770,6 @@ class WorldMapService:
             session.add(public_map)
             session.flush()
             return self._map_detail(session, public_map)
-
-    def apply_blueprint_step(
-        self,
-        map_id: str,
-        *,
-        expected_lock_version: int,
-        step: int,
-    ) -> dict[str, Any]:
-        """应用`blueprint`仿真步。
-
-        参数:
-            map_id: 地图的唯一标识。 类型：`str`。
-            expected_lock_version: 调用方读取草稿时看到的乐观锁版本；不一致表示发生并发修改。 类型：`int`。
-            step: 当前处理、查询或恢复的仿真步记录或编号。 类型：`int`。
-
-        返回:
-            返回以字段名或业务键组织的结构化映射。
-
-        异常:
-            ServiceError: 当输入、资源状态或业务状态不满足服务层约束时抛出。
-        """
-
-        now = _utc_now()
-        with self.database.session_factory.begin() as session:
-            public_map = session.get(WorldMap, map_id)
-            if public_map is None:
-                raise not_found("map", map_id)
-            if public_map.row_version != expected_lock_version:
-                raise ServiceError(
-                    "MAP_CONFLICT",
-                    "地图已变化，请重新载入后继续构建",
-                    status_code=409,
-                    details={
-                        "expected_lock_version": expected_lock_version,
-                        "actual_lock_version": public_map.row_version,
-                    },
-                )
-            current_world = WorldConfig.model_validate(public_map.world_json)
-            editor = current_world.definition.get("editor") or {}
-            guide = editor.get("build_guide") or {}
-            blueprint_key = guide.get("blueprint_key")
-            if blueprint_key != "two-day-commute":
-                raise ServiceError(
-                    "MAP_BLUEPRINT_NOT_ATTACHED",
-                    "当前地图没有两日通勤构建向导",
-                    status_code=409,
-                )
-            current_step = int(guide.get("current_step") or 0)
-            if step != current_step + 1:
-                raise ServiceError(
-                    "MAP_BLUEPRINT_STEP_OUT_OF_ORDER",
-                    "地图蓝图必须按顺序构建",
-                    status_code=409,
-                    details={"current_step": current_step, "requested_step": step},
-                )
-            world = normalize_public_world(
-                _commute_blueprint_world(
-                    session,
-                    name=public_map.name,
-                    stable_key=public_map.map_key,
-                    step=step,
-                )
-            )
-            digest = world_hash(world)
-            result = session.execute(update(WorldMap).where(
-                WorldMap.id == map_id,
-                WorldMap.row_version == expected_lock_version,
-            ).values(
-                world_json=world.model_dump(mode="json", exclude_none=False),
-                world_hash=digest,
-                validation_json=None,
-                row_version=WorldMap.row_version + 1,
-                updated_at=now,
-            ))
-            if result.rowcount != 1:
-                raise ServiceError(
-                    "MAP_CONFLICT",
-                    "地图已变化，请重新载入后继续构建",
-                    status_code=409,
-                )
-            session.flush()
-            return self._map_detail(session, session.get(WorldMap, map_id))
 
     def list_maps(
         self,
@@ -1649,9 +802,7 @@ class WorldMapService:
                 "INVALID_ARCHIVE_FILTER", "地图归档筛选无效", status_code=422
             )
         with self.database.session_factory() as session:
-            definition = WorldMap.world_json["definition"]
-            kind = func.coalesce(definition["environment_type"].as_string(), "spatial_2d")
-            selectable = WorldMap.archived_at.is_(None) & (kind != "spatial_3d")
+            selectable = WorldMap.archived_at.is_(None)
             statement = select(WorldMap.id, WorldMap.map_key, WorldMap.name, WorldMap.description,
                                WorldMap.row_version, WorldMap.archived_at,
                                selectable.label("available_for_experiment"),
@@ -1661,8 +812,7 @@ class WorldMapService:
                                WorldMap.world_json["definition"]["environment_type"].as_string().label("environment_type"),
                                WorldMap.world_json["definition"]["presentation"].as_string().label("presentation"),
                                WorldMap.validation_json["valid"].as_boolean().label("valid"))
-            statement = statement.where(kind != "spatial_3d")
-            count_statement = select(func.count()).select_from(WorldMap).where(kind != "spatial_3d")
+            count_statement = select(func.count()).select_from(WorldMap)
             if for_experiment:
                 statement = statement.where(selectable)
                 count_statement = count_statement.where(selectable)
@@ -1769,8 +919,13 @@ class WorldMapService:
         digest = world_hash(normalized)
         now = _utc_now()
         metadata = ({"name": normalized.world_name, "description": normalized.definition["description"]}
-                    if environment_type(normalized) in {"social_1d", "spatial_3d"} else {})
+                    if environment_type(normalized) == "social_1d" else {})
         with self.database.session_factory.begin() as session:
+            current = session.get(WorldMap, map_id)
+            if current is None:
+                raise not_found("map", map_id)
+            if environment_type(normalized) == "spatial_3d" or environment_type(current.world_json) == "spatial_3d":
+                raise ServiceError("SIMWORLD_MAP_READONLY", "3D 地图创建后仅支持查看 SimWorld 场景", status_code=422)
             result = session.execute(update(WorldMap).where(
                 WorldMap.id == map_id,
                 WorldMap.row_version == expected_lock_version,
@@ -1836,7 +991,7 @@ class WorldMapService:
             if environment_type(world) == "social_1d":
                 public_map.validation_json = {
                     "valid": True, "errors": [], "warnings": [],
-                    "checks": [{"code": "SOCIAL_SPACE_CONTRACT", "message": "社交场所类型、展示方式与规则", "status": "PASSED"}],
+                    "checks": [{"code": "SOCIAL_SPACE_CONTRACT", "message": "社交场所类型、展示方式与背景说明", "status": "PASSED"}],
                 }
                 public_map.updated_at = _utc_now()
                 session.flush()
@@ -1852,7 +1007,7 @@ class WorldMapService:
             )
             errors = [*world_errors, *spatial_errors, *editor_errors]
             if environment_type(world) == "spatial_3d":
-                checks = [{"code": "SCENE_3D", "message": "街区路网、站位与对象 Skill",
+                checks = [{"code": "SIMWORLD_SCENE_REFERENCE", "message": "SimWorld 场景引用合同",
                            "status": "FAILED" if errors else "PASSED"}]
             else:
                 checks = [
@@ -1917,11 +1072,6 @@ class WorldMapService:
         )
         definition = world.definition
         size = definition.get("size") if isinstance(definition, dict) else None
-        asset_ids = {}
-        if environment_type(world) == "spatial_3d" and world.assets:
-            by_digest = {ref.asset_hash.removeprefix("sha256:"): ref.logical_path for ref in world.assets}
-            for digest, asset_id in session.execute(select(Asset.sha256, Asset.id).where(Asset.sha256.in_(by_digest))):
-                asset_ids[by_digest[digest]] = asset_id
         return {
             "id": public_map.id,
             "map_key": public_map.map_key,
@@ -1934,7 +1084,7 @@ class WorldMapService:
             "world_hash": world_hash(world),
             "validation": copy.deepcopy(public_map.validation_json),
             "world": world.model_dump(mode="json", exclude_none=False),
-            **({"asset_ids_by_path": asset_ids} if asset_ids else {}),
+            "editable": environment_type(world) != "spatial_3d",
             "archived_at": iso_utc(public_map.archived_at)
             if public_map.archived_at
             else None,
@@ -1954,13 +1104,11 @@ class WorldMapService:
         if not map_id:
             raise ServiceError("MAP_REQUIRED", "实验必须选择地图", status_code=422)
         public_map = session.get(WorldMap, map_id)
-        if public_map is None:
+        if public_map is None or public_map.archived_at is not None:
             raise ServiceError(
-                "MAP_UNAVAILABLE", "实验选择的地图已不存在", status_code=409
+                "MAP_UNAVAILABLE", "实验选择的地图已不存在或已归档", status_code=409
             )
         snapshot = self.materialize_world(session, public_map)
-        if environment_type(snapshot) == "spatial_3d":
-            raise ServiceError("SIMWORLD_ONLINE_ONLY", "请直接选择 SimWorld 在线场景", status_code=422)
         editor_errors, editor_warnings = _validate_map_editor_v2(
             snapshot, skill_registry=self.skill_registry
         )

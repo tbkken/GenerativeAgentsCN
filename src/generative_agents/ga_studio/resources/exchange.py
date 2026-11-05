@@ -379,8 +379,6 @@ class ResourceExchangeService:
             for field in ("map_id", "map_snapshot_hash", "world_key", "world_name"):
                 definition.pop(field, None)
             world = definition.setdefault("definition", {})
-            if world.get("environment_type") == "spatial_3d":
-                raise ResourceExchangeError("SimWorld 场景只能从在线目录选择，不能复制到公共资源")
             editor = world.get("editor_v2") or {}
             editor.pop("ui_state", None)
             path_map = {}
@@ -714,8 +712,6 @@ class ResourceExchangeService:
                 if preview["conflicts"]:
                     raise ResourceExchangeError("资源 key 冲突，整次导入已取消", code="RESOURCE_KEY_CONFLICT", status_code=409, details=preview["conflicts"])
                 records = [item for item in resources.resources if _identity(item) in selected]
-                if any(item.kind == "map" and item.definition.get("definition", {}).get("environment_type") == "spatial_3d" for item in records):
-                    raise ResourceExchangeError("SimWorld 场景由在线目录管理，不能导入公共资源")
                 local_ids, imported, reused = {}, [], []
                 # Allocate every identity before materializing relationships.
                 for record in records:

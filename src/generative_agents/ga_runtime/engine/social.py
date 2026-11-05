@@ -61,8 +61,7 @@ class SocialWorld:
         visible_participants = participants[offset:offset + bandwidth]
         return {"environment_type": "social_1d", "presentation": self.game.presentation,
                 "space": {"space_id": self.game.space_id, "name": self.game.world_name,
-                          "description": self.game.world_definition.get("description", ""),
-                          "rules": self.game.world_definition.get("rules", "")},
+                          "description": self.game.world_definition.get("description", "")},
                 "observer": {"agent_key": agent_key, "name": agent.name},
                 "participants": visible_participants,
                 "next_participant_offset": offset + bandwidth if bandwidth and offset + bandwidth < len(participants) else None,

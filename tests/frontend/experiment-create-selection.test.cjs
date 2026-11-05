@@ -107,7 +107,7 @@ test('wizard navigation keeps an explicit choice and opening a new wizard clears
 test('wizard confirmation follows the selected map source when switching back and forth',async()=>{
   const {context,open,node}=setup();
   await open();
-  for(const [value,expected] of [['simworld:map-15',/3D 地图只保存 SimWorld 场景 ID/],['public-map',/地图复制进实验/]]){
+  for(const [value,expected] of [['scene-map-resource',/3D 地图只携带本地信息和 SimWorld 场景引用/],['public-map',/地图复制进实验/]]){
     node('newExperimentMap').value=value;
     context.renderWizardStep();
     assert.match(node('createSummaryResourcePolicy').textContent,expected);

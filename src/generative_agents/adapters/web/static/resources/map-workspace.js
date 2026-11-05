@@ -127,8 +127,6 @@
 
   const manager = {
     maps: [],
-    selectorMaps: [],
-    blueprints: [],
     selectedMapId: null,
     detail: null,
     draft: null,
@@ -152,9 +150,6 @@
       const publicEditorRoot = document.getElementById('publicMapEditor');
 
       document.getElementById('createMapBtn').addEventListener('click', () => this.openCreate());
-      document.getElementById('openPublicScene').addEventListener('click', () =>
-        this.previewSelectedScene(document.getElementById('publicScene')).catch(error => this.fail(error)));
-      document.getElementById('refreshPublicScenes').addEventListener('click', () => this.loadSceneDirectory());
       document.getElementById('replaceExperimentMap').addEventListener('click', () => this.openReplacement().catch(error => this.fail(error)));
       document.getElementById('closeReplaceMap').addEventListener('click', () => modal('close','replaceMapModal'));
       document.getElementById('confirmReplaceMap').addEventListener('click', () => this.replaceExperimentMap().catch(error => this.fail(error)));
@@ -165,7 +160,6 @@
       publicEditorRoot.addEventListener('map-editor-v2:change', () => this.handlePublicEditorChange());
       publicEditorRoot.addEventListener('map-editor-v2:save', () => this.savePublic({ manual: true }).catch(error => this.fail(error)));
       publicEditorRoot.addEventListener('map-editor-v2:request-edit', event => this.handlePublicEditorEditRequest(event).catch(error => this.fail(error)));
-      publicEditorRoot.addEventListener('map-editor-v2:apply-blueprint-step', () => this.applyBlueprintStep().catch(error => this.fail(error)));
       window.addEventListener('experiment-map:uploaded', event => {
         if (experimentScope && this.draft) this.draft.row_version = event.detail.content_sha256;
       });
@@ -191,8 +185,6 @@
       document.getElementById('closeCreateMap').addEventListener('click', () => modal('close', 'createMapModal'));
       document.getElementById('closeCreateCanvas').addEventListener('click', () => modal('close', 'createCanvasModal'));
       document.getElementById('confirmCreateCanvas').addEventListener('click', () => this.confirmCreateCanvas().catch(error => this.fail(error)));
-      document.getElementById('newMapBlueprint').addEventListener('change', () => this.updateCreateMode('blueprint'));
-      document.getElementById('newMapSource').addEventListener('change', () => this.updateCreateMode('source'));
       ['newMapWidth', 'newMapHeight', 'newMapTileSize'].forEach(id => {
         document.getElementById(id).addEventListener('input', () => this.updateCreatePixelSize());
       });
@@ -218,34 +210,11 @@
       this.query = saved.query;
       this.page = saved.page;
       document.getElementById('mapSearch').value = this.query;
-      if (!new URLSearchParams(location.search).has('map_id')) this.loadSceneDirectory();
       await Promise.all([this.loadMaps(), skillCatalogRefresh]);
       if (selectionGeneration !== (this.openGeneration || 0)) return;
       const mapId = new URLSearchParams(location.search).get('map_id');
       if (mapId && (mapId !== this.selectedMapId || this.publicEditor?.sessionBase && !this.publicEditor.active)) await this.openMap(mapId, false);
       else if (!mapId && this.selectedMapId && this.publicEditor?.leaveScene) await this.showCatalog();
-    },
-
-    async loadBlueprints() {
-      const result = await request('/map-blueprints');
-      this.blueprints = result.items || [];
-      const select = document.getElementById('newMapBlueprint');
-      const current = select.value;
-      select.innerHTML = '<option value="">空白地图（自由绘制）</option>' + this.blueprints
-        .map(item => `<option value="${escapeHtml(item.key)}">构建向导 · ${escapeHtml(item.name)} · ${item.steps.length} 步</option>`)
-        .join('');
-      select.value = this.blueprints.some(item => item.key === current) ? current : '';
-    },
-
-    loadSceneDirectory() {
-      document.getElementById('publicSceneDirectory').hidden=false;
-      return window.SimWorldScenes.populate(document.getElementById('publicScene'),document.getElementById('publicSceneStatus'));
-    },
-
-    async previewSelectedScene(select) {
-      const scene=select.selectedOptions[0]?.scene;
-      if (!scene?.previewable) {select.focus(); throw Error('请先选择一个 SimWorld 场景');}
-      await this.openMap(select.value,true,scene);
     },
 
     async loadMaps() {
@@ -258,19 +227,9 @@
       const params = new URLSearchParams({ page: '1', page_size: '100' });
       if (this.query) params.set('q', this.query);
       if (this.status) params.set('status', this.status);
-      const selectorParams = new URLSearchParams({ page: '1', page_size: '100' });
       let result;
-      let selectorResult;
       try {
-        if (!this.query && !this.status) {
-          result = await request(`/maps?${params}`);
-          selectorResult = result;
-        } else {
-          [result, selectorResult] = await Promise.all([
-            request(`/maps?${params}`),
-            request(`/maps?${selectorParams}`),
-          ]);
-        }
+        result = await request(`/maps?${params}`);
       } catch (error) {
         if (generation !== this.listGeneration) return;
         grid.innerHTML = `<div class="empty-state resource-load-error" role="alert"><strong>地图列表加载失败</strong><span>${escapeHtml(error.message || '请稍后重试')}</span><button class="btn btn-sm" type="button" data-retry-map-list>重新加载</button></div>`;
@@ -285,7 +244,6 @@
         || requestState.status !== this.status
         || requestState.query !== this.query) return;
       this.maps = result.items;
-      this.selectorMaps = selectorResult.items;
       grid.innerHTML = this.maps.length ? this.maps.map(item => `
         <article class="resource-card-shell"><button class="map-card" data-map-id="${item.id}">
           <span class="map-card-top"><span class="map-state draft">实时地图</span><code>${escapeHtml(item.map_key)}</code></span>
@@ -298,7 +256,6 @@
       footer.hidden = result.total === 0;
       if (result.total) document.getElementById('mapCatalogCount').textContent = `共 ${result.total} 张地图`;
       this.updateMapStatusCounts(result.status_counts || {});
-      this.populateMapSelectors();
     },
 
     async loadAuthorMaps() {
@@ -377,40 +334,28 @@
       });
     },
 
-    populateMapSelectors() {
-      const catalog = this.selectorMaps.length ? this.selectorMaps : this.maps;
-      const source = document.getElementById('newMapSource');
-      const currentSource = source.value;
-      source.innerHTML = '<option value="">不复制</option>' + catalog.filter(item=>item.environment_type!=='spatial_3d')
-        .map(item => `<option value="${item.id}">${escapeHtml(item.name)}</option>`).join('');
-      source.value = currentSource;
-    },
-
     async prepareExperimentCreate() {
       this.init();
-      await this.loadMapChoices('newExperimentMap','experimentSceneInfo');
+      await this.loadMapChoices('newExperimentMap');
     },
 
-    async loadMapChoices(selectId,statusId) {
+    async loadMapChoices(selectId) {
       const select=document.getElementById(selectId);
-      const local=window.ResourceList.choices(select, {
+      await window.ResourceList.choices(select, {
         loadPage: async page => {
           const response=await fetch(`/api/studio/resources/maps?page=${page}&page_size=20&for_experiment=true`);
           if (!response.ok) throw Error('公共地图目录加载失败');
-          const result=await response.json();
-          return {...result,items:result.items.filter(item=>item.environment_type!=='spatial_3d')};
+          return response.json();
         }, placeholder:'请选择地图',
         label: item => `${item.name} · ${environmentLabel(item)}`,
       });
-      window.SimWorldScenes.populate(select,document.getElementById(statusId));
-      await local;
     },
 
     async openReplacement() {
       if (!experimentScope || !this.draft?.editable) return;
       modal('open','replaceMapModal','replacementMap');
       document.getElementById('replacementMap').value='';
-      await this.loadMapChoices('replacementMap','replacementSceneInfo');
+      await this.loadMapChoices('replacementMap');
     },
 
     async replaceExperimentMap() {
@@ -423,7 +368,7 @@
         if (this.publicEditor?.changed || this.savePromise) await this.savePublic({manual:false});
         const id=window.ResourceScope.experimentId;
         await request(`/maps/${encodeURIComponent(id)}/selection`,{method:'PUT',body:JSON.stringify({
-          ...window.SimWorldScenes.selection(select.value),expected_content_sha256:this.draft.row_version
+          map_id:select.value,expected_content_sha256:this.draft.row_version
         })});
         modal('close','replaceMapModal');
         await this.openMap(id,false);
@@ -575,21 +520,23 @@
     },
 
     sceneViewContext(detail) {
+      const mapInfo={name:detail.name,key:detail.map_key,description:detail.description};
       if (experimentScope) return {
+        mapInfo,
         sessionBase:`/api/studio/simworld/experiments/${encodeURIComponent(window.ResourceScope.experimentId)}/sessions`,
         actions:detail.editable ? [{label:'更换实验地图',run:()=>this.openReplacement().catch(error=>this.fail(error))}] : [],
       };
       const sceneId=detail.world.definition.simworld_scene_id;
       return {
+        mapInfo,
         sessionBase:sceneId ? `/api/studio/simworld/scenes/${encodeURIComponent(sceneId)}/sessions` : null,
         actions:[
           {label:'← 公共地图列表',run:()=>this.showCatalog().catch(error=>this.fail(error))},
-          {label:'从 SimWorld 目录选图',run:()=>this.openCreate('spatial_3d'),unavailableOnly:true},
         ],
       };
     },
 
-    async openMap(mapId, push = true, scene = null) {
+    async openMap(mapId, push = true) {
       this.init();
       if (!experimentScope && push) window.ResourceList.capture('maps');
       const generation = this.openGeneration = (this.openGeneration || 0) + 1;
@@ -598,16 +545,7 @@
         await this.savePublic({ manual: false });
       }
       this.cancelScheduledSaves();
-      const remote=!experimentScope && mapId.startsWith('simworld:');
-      let detail;
-      if (remote) {
-        const id=mapId.slice('simworld:'.length);
-        // A deep link may be opened while the catalog is offline; the viewer provides reconnect.
-        const name=scene?.name || document.getElementById('publicScene').querySelector(`option[value="${CSS.escape(mapId)}"]`)?.text || id;
-        detail={name,editable:false,world:{world_name:name,definition:{environment_type:'spatial_3d',simworld_scene_id:id}}};
-      } else {
-        detail=await request(`/maps/${encodeURIComponent(mapId)}`).then(value => this.requireCompleteMap(value, '加载'));
-      }
+      const detail=await request(`/maps/${encodeURIComponent(mapId)}`).then(value => this.requireCompleteMap(value, '加载'));
       if (generation !== this.openGeneration) return;
       const kind = detail.world.definition.environment_type;
       if (kind === 'spatial_3d') await window.WorkspaceLoader.load('scene-map-viewer');
@@ -617,6 +555,7 @@
       if (!(this.publicEditor instanceof Editor)) {
         this.publicEditor?.destroy?.();
         const root = document.getElementById('publicMapEditor');
+        root.className = 'map-editor-host';
         const mount = document.createElement('div');
         root.replaceChildren(mount);
         if (root.previousElementSibling?.classList.contains('map-editor-tabs')) root.previousElementSibling.hidden = true;
@@ -625,7 +564,7 @@
       this.publicEditor.refreshSkillCatalog();
       this.detail = detail;
       this.selectedMapId = mapId;
-      this.draft = remote ? null : this.detail;
+      this.draft = this.detail;
       if (kind === 'spatial_3d') this.publicEditor.setWorld(detail.world,this.sceneViewContext(detail));
       else this.publicEditor.setWorld(this.draft.world);
       document.getElementById('mapCatalogShell').hidden = true;
@@ -641,17 +580,16 @@
       document.getElementById('saveMapBtn').hidden = kind === 'spatial_3d';
       document.getElementById('mapAutosaveStatus').hidden = kind === 'spatial_3d';
       document.getElementById('replaceExperimentMap').hidden = !experimentScope || !editable;
-      document.getElementById('deleteMapBtn').hidden = remote || experimentScope;
-      document.getElementById('publishMapBtn').hidden = remote;
+      document.getElementById('deleteMapBtn').hidden = experimentScope;
+      document.getElementById('publishMapBtn').hidden = kind === 'spatial_3d';
       this.publicEditor.setReadOnly(!editable);
       const state = document.getElementById('mapEditorState');
-      state.textContent = experimentScope ? (editable ? '实验地图' : '已封存 · 只读') : remote ? '在线场景' : '实时地图';
+      state.textContent = experimentScope ? (editable ? '实验地图' : '已封存 · 只读') : '实时地图';
       state.classList.add('draft');
       document.getElementById('publishMapBtn').textContent = '校验地图';
       this.lastSavedAt = null;
       const recovered = editable && kind !== 'spatial_3d' && await this.restoreLocalRecovery(mapId, this.draft);
       if (!recovered) this.setAutoSaveStatus('saved');
-      this.renderBuildGuide();
       this.renderAudit();
       window.dispatchEvent(new CustomEvent('map-workspace:selection', { detail: { mapId } }));
       if (push) this.replaceMapUrl(mapId);
@@ -668,7 +606,7 @@
       document.getElementById('mapEditorShell').hidden = true;
       window.dispatchEvent(new CustomEvent('map-workspace:selection', { detail: { mapId: null } }));
       this.replaceMapUrl(null);
-      if (!experimentScope) { this.loadSceneDirectory(); await this.loadMaps(); window.ResourceList.restore('maps'); }
+      if (!experimentScope) { await this.loadMaps(); window.ResourceList.restore('maps'); }
     },
 
     replaceMapUrl(mapId) {
@@ -747,8 +685,12 @@
 
     renderAudit() {
       if (!this.draft || this.draft.world.definition.environment_type === 'spatial_3d') return;
-      if (!document.querySelector('[data-map-audit-cards]') || !document.querySelector('[data-map-revisions]')) return;
+      const cards = document.querySelector('[data-map-audit-cards]');
+      const revisions = document.querySelector('[data-map-revisions]');
+      const validationRoot = document.querySelector('[data-map-validation]');
+      if (!cards && !revisions && !validationRoot) return;
       const definition = this.draft.world.definition;
+      const social = definition.environment_type === 'social_1d';
       const tiles = definition.tiles || [];
       const collisions = tiles.filter(tile => tile.collision).length;
       const addressed = tiles.filter(tile => tile.address?.length).length;
@@ -756,13 +698,12 @@
       const spatialAssets = spatialScene
         ? Object.keys(spatialScene.palette_refs || {}).length + (spatialScene.placements || []).length
         : 0;
-      document.querySelector('[data-map-audit-cards]').innerHTML = definition.environment_type === 'social_1d' ? `<div class="map-audit-card"><span>地图类型</span><strong>1D · ${definition.presentation === 'forum' ? '论坛' : '群聊'}</strong></div><div class="map-audit-card"><span>交流权限</span><strong>公开交流 / 私聊</strong></div>` : `
+      if (cards) cards.innerHTML = social ? '' : `
         <div class="map-audit-card"><span>地图尺寸（格）</span><strong>${definition.size[1]} × ${definition.size[0]}</strong></div>
         <div class="map-audit-card"><span>渲染尺寸（px）</span><strong>${definition.size[1] * definition.tile_size} × ${definition.size[0] * definition.tile_size}</strong></div>
         <div class="map-audit-card"><span>碰撞 Tile</span><strong>${collisions.toLocaleString('zh-CN')}</strong></div>
         <div class="map-audit-card"><span>语义 Tile</span><strong>${addressed.toLocaleString('zh-CN')}</strong></div>
         <div class="map-audit-card"><span>关联空间素材</span><strong>${spatialAssets.toLocaleString('zh-CN')}</strong></div>`;
-      const validationRoot = document.querySelector('[data-map-validation]');
       const validation = this.draft.validation;
       if (validationRoot) {
         const checks = validation?.checks || [];
@@ -775,84 +716,12 @@
             ${checks.map(item => `<div class="map-validation-row ${item.status === 'PASSED' ? 'passed' : 'failed'}"><b>${item.status === 'PASSED' ? '✓' : '×'}</b><span><strong>${escapeHtml(item.message)}</strong><code>${escapeHtml(item.code)}</code></span></div>`).join('')}
             ${errors.map(item => `<div class="map-validation-row failed"><b>×</b><span><strong>${escapeHtml(issueMessage(item))}</strong><code>${escapeHtml(item.path || item.code || '')}</code></span></div>`).join('')}
             ${warnings.map(item => `<div class="map-validation-row warning"><b>!</b><span><strong>${escapeHtml(issueMessage(item))}</strong><code>${escapeHtml(item.code || item.path || '')}</code></span></div>`).join('')}
-          </div>` : `<div class="map-validation-empty"><strong>尚未执行地图校验</strong><span>${definition.environment_type === 'social_1d' ? '将地图选入实验时会复制场所说明与规则；实验封存前还会校验参与者与完整依赖。' : '将地图选入实验时会完整复制地图、空间素材与对象 Skill；实验封存前还会校验包内内容。'}</span></div>`;
+          </div>` : social ? '' : '<div class="map-validation-empty"><strong>尚未执行地图校验</strong><span>将地图选入实验时会完整复制地图、空间素材与对象 Skill；实验封存前还会校验包内内容。</span></div>';
+        validationRoot.hidden = social && !validation;
       }
-      document.querySelector('[data-map-revisions]').innerHTML = `
+      if (revisions) revisions.innerHTML = social ? '' : `
         <h3>当前内容</h3>
         <div class="map-revision-row"><strong>${experimentScope ? '实验包内当前内容' : `第 ${this.draft.row_version} 次保存`}</strong><code>${escapeHtml((this.draft.world_hash || '').slice(0, 16))}…</code><span>${this.draft.updated_at ? new Date(this.draft.updated_at).toLocaleString('zh-CN') : ''}</span><span class="map-state draft">实时生效</span></div>`;
-    },
-
-    renderBuildGuide() {
-      const root = document.getElementById('mapBuildGuide');
-      if (!root) return;
-      const guide = this.draft?.world?.definition?.editor?.build_guide;
-      root.hidden = !guide;
-      if (!guide) return;
-      const current = Number(guide.current_step || 0);
-      const total = Number(guide.total_steps || guide.steps?.length || 0);
-      document.getElementById('mapBuildGuideTitle').textContent = guide.name || '地图构建向导';
-      document.getElementById('mapBuildGuideProgress').textContent = `${current} / ${total}`;
-      document.getElementById('mapBuildGuideList').innerHTML = (guide.steps || []).map(item => {
-        const status = item.step <= current ? 'done' : item.step === current + 1 ? 'active' : '';
-        return `<div class="map-build-guide-step ${status}"><span>${item.step <= current ? '✓' : item.step}</span><div><strong>${escapeHtml(item.name)}</strong><small>${escapeHtml(item.tool)}工具</small></div></div>`;
-      }).join('');
-      const button = document.getElementById('applyMapBlueprintStep');
-      button.disabled = Boolean(guide.complete);
-      button.textContent = guide.complete ? '构建完成' : `应用第 ${current + 1} 步`;
-      document.getElementById('mapBuildGuideHint').textContent = guide.complete
-        ? '完整地图已经保存；仍可继续编辑，已有实验不受影响。'
-        : '每一步都由服务器直接写入当前地图，刷新页面不会丢失进度。';
-    },
-
-    async applyBlueprintStep() {
-      const guide = this.draft?.world?.definition?.editor?.build_guide;
-      if (!guide || guide.complete) return;
-      const nextStep = Number(guide.current_step || 0) + 1;
-      const button = document.getElementById('applyMapBlueprintStep');
-      button.disabled = true;
-      button.textContent = `正在应用第 ${nextStep} 步…`;
-      try {
-        if (this.publicEditor.changed || this.savePromise) await this.savePublic({ manual: false });
-        const saved = this.requireCompleteMap(await request(`/maps/${this.selectedMapId}/blueprint-steps/${nextStep}`, {
-          method: 'POST',
-          body: JSON.stringify({ row_version: this.draft.row_version }),
-        }), '构建');
-        this.draft = saved;
-        this.publicEditor.setWorld(saved.world);
-        this.clearLocalRecovery(this.selectedMapId);
-        this.lastSavedAt = new Date();
-        this.setAutoSaveStatus('saved', this.formatSaveTime(this.lastSavedAt));
-        this.renderBuildGuide();
-        this.renderAudit();
-        const step = saved.world.definition.editor.build_guide.steps[nextStep - 1];
-        notify(`${step.name} 已写入当前地图。`, `构建进度 ${nextStep} / ${guide.total_steps}`);
-      } catch (error) {
-        this.renderBuildGuide();
-        throw error;
-      }
-    },
-
-    updateCreateMode(changed) {
-      const blueprint = document.getElementById('newMapBlueprint');
-      const source = document.getElementById('newMapSource');
-      if (changed === 'blueprint' && blueprint.value) source.value = '';
-      if (changed === 'source' && source.value) blueprint.value = '';
-      const selected = this.blueprints.find(item => item.key === blueprint.value);
-      if (selected) {
-        document.getElementById('newMapWidth').value = String(selected.width);
-        document.getElementById('newMapHeight').value = String(selected.height);
-        document.getElementById('newMapTileSize').value = String(selected.tile_size);
-        if (!document.getElementById('newMapName').value.trim()) document.getElementById('newMapName').value = selected.name;
-        if (!document.getElementById('newMapKey').value.trim()) document.getElementById('newMapKey').value = 'commute-home-office';
-      }
-      document.getElementById('newMapBlueprintHint').textContent = selected
-        ? `${selected.summary} 创建后从第 1 步开始，当前不会直接生成成品图。`
-        : '创建一个不继承斯坦福小镇的空白地图。';
-      const fixedDimensions = Boolean(selected || source.value);
-      ['newMapWidth', 'newMapHeight', 'newMapTileSize'].forEach(id => {
-        document.getElementById(id).disabled = fixedDimensions;
-      });
-      this.updateCreatePixelSize();
     },
 
     updateCreatePixelSize() {
@@ -870,25 +739,17 @@
     },
 
     openCreate(type='social_1d') {
-      this.loadBlueprints().catch(error => this.fail(error));
-      window.ResourceList.choices(document.getElementById('newMapSource'), {loadPage: async page => {
-        const result=await request(`/maps?page=${page}&page_size=20&for_experiment=true`);
-        return {...result,items:result.items.filter(item=>item.environment_type!=='spatial_3d')};
-      }, placeholder:'不复制'}).catch(error => this.fail(error));
       document.getElementById('newMapName').value = '';
       document.getElementById('newMapDescription').value = '';
-      document.getElementById('newMapSource').value = '';
-      document.getElementById('newMapBlueprint').value = '';
       document.getElementById('newMapKey').value = '';
       document.getElementById('newMapWidth').value = '48';
       document.getElementById('newMapHeight').value = '32';
       document.getElementById('newMapTileSize').value = '32';
       document.getElementById('newMapEnvironmentType').value = type;
       document.getElementById('newMapPresentation').value = 'chat';
-      document.getElementById('newMapRules').value = '';
       this.updateEnvironmentFields();
-      this.updateCreateMode('blueprint');
-      modal('open', 'createMapModal', type==='spatial_3d'?'newMapScene':'newMapName');
+      this.updateCreatePixelSize();
+      modal('open', 'createMapModal', 'newMapName');
     },
 
     updateEnvironmentFields() {
@@ -896,8 +757,7 @@
       const social = type === 'social_1d';
       const spatial3d = type === 'spatial_3d';
       document.getElementById('mapScenePicker').hidden = !spatial3d;
-      for (const id of ['newMapName','newMapKey','newMapDescription']) document.getElementById(id).closest('.field').hidden = spatial3d;
-      document.getElementById('confirmCreateMap').textContent = spatial3d ? '查看在线场景' : '创建并编辑';
+      document.getElementById('confirmCreateMap').textContent = spatial3d ? '创建并查看' : '创建并编辑';
       if (spatial3d) {
         const select=document.getElementById('newMapScene');
         select.replaceChildren(new Option('请选择场景',''));
@@ -905,23 +765,9 @@
       }
       document.querySelectorAll('[data-map-create-spatial]').forEach(node => { node.hidden = type !== 'spatial_2d'; });
       document.querySelectorAll('[data-map-create-social]').forEach(node => { node.hidden = !social; });
-      if (type !== 'spatial_2d') {
-        document.getElementById('newMapSource').value = '';
-        document.getElementById('newMapBlueprint').value = '';
-      }
     },
 
     async create() {
-      if (document.getElementById('newMapEnvironmentType').value === 'spatial_3d') {
-        const select = document.getElementById('newMapScene');
-        const button = document.getElementById('confirmCreateMap');
-        button.disabled = true;
-        try {
-          await this.previewSelectedScene(select);
-          modal('close', 'createMapModal');
-        } finally { button.disabled = false; }
-        return;
-      }
       const name = document.getElementById('newMapName').value.trim();
       if (!name) return document.getElementById('newMapName').focus();
       const keyInput = document.getElementById('newMapKey');
@@ -930,6 +776,12 @@
       keyInput.value = normalizedKey || '';
       const environmentType = document.getElementById('newMapEnvironmentType').value;
       const social = environmentType === 'social_1d';
+      let sceneId = null;
+      if (environmentType === 'spatial_3d') {
+        const select = document.getElementById('newMapScene');
+        try { sceneId = window.SimWorldScenes.sceneId(select.value); }
+        catch (error) { select.focus(); throw error; }
+      }
       const dimensions = [
         { id: 'newMapWidth', label: '宽度（格）', min: 1, max: 240 },
         { id: 'newMapHeight', label: '高度（格）', min: 1, max: 240 },
@@ -951,10 +803,9 @@
         body: JSON.stringify({
           name,
           environment_type: environmentType,
-          ...(social ? {presentation: document.getElementById('newMapPresentation').value, rules: document.getElementById('newMapRules').value.trim()} : {}),
+          ...(social ? {presentation: document.getElementById('newMapPresentation').value} : {}),
           description: document.getElementById('newMapDescription').value.trim(),
-          source_map_id: document.getElementById('newMapSource').value || null,
-          blueprint_key: document.getElementById('newMapBlueprint').value || null,
+          ...(sceneId ? {simworld_scene_id:sceneId} : {}),
           map_key: normalizedKey,
           ...(environmentType === 'spatial_2d' ? {width: Number(document.getElementById('newMapWidth').value), height: Number(document.getElementById('newMapHeight').value), tile_size: Number(document.getElementById('newMapTileSize').value)} : {}),
         }),
@@ -967,7 +818,7 @@
           ? `稳定键已规范为 ${normalizedKey}。`
           : `输入的稳定键不符合格式，已自动生成 ${created.map_key}。`
         : '';
-      notify(`${keyMessage}已创建独立地图，可直接编辑。`, '地图已创建');
+      notify(`${keyMessage}${environmentType === 'spatial_3d' ? '已创建地图，可查看关联的 SimWorld 场景。' : '已创建独立地图，可直接编辑。'}`, '地图已创建');
     },
 
     async savePublic({ manual = false } = {}) {
@@ -1014,7 +865,6 @@
           this.clearLocalRecovery(mapId, draftId);
           this.setAutoSaveStatus('saved', this.formatSaveTime(this.lastSavedAt));
         }
-        this.renderBuildGuide();
         this.renderAudit();
         return saved;
       })();
@@ -1036,7 +886,7 @@
         return this.savePublic({ manual: true });
       }
       if (manual && this.selectedMapId === mapId) {
-        notify(this.draft.world.definition.environment_type === 'social_1d' ? '场所说明与规则已写入当前地图。' : '最新地图内容已保存。', '地图已保存');
+        notify('最新地图内容已保存。', '地图已保存');
       }
       return saved;
     },
@@ -1136,7 +986,6 @@
   window.MapWorkspace = {
     activate: () => manager.activate(),
     deactivate: () => { manager.openGeneration = (manager.openGeneration || 0) + 1; manager.publicEditor?.leaveScene?.(); },
-    applyBlueprintStep: () => manager.applyBlueprintStep().catch(error => manager.fail(error)),
     setExperimentContext: context => manager.setExperimentContext(context),
     refresh: () => manager.loadMaps(),
     prepareExperimentCreate: () => manager.prepareExperimentCreate(),

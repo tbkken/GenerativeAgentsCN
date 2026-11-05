@@ -6,7 +6,7 @@ Studio 用于编辑公共作者资源和实验；Runtime 执行自包含实验�
 
 架构约束、文件协议、代码入口与验收规则统一见 [AGENTS.md](AGENTS.md)。
 
-在根目录的 [services.toml](services.toml) 配置 Studio 和 SimWorld 服务地址。「基础配置 → 地图」直接查看服务端已安装的场景；新建实验时可选远端场景。实验只存场景 ID，公共地图和实验共用在线查看器。3D 运行通过服务执行动作，Run 保存已提交的实际位置、动作和对话。服务不在线时可读历史事实，不能打开 UE 实景。[3D 集成与能力边界](docs/simworld-3d-scene-design.md)
+在根目录的 [services.toml](services.toml) 配置 Studio 和 SimWorld 服务地址。在「基础配置 → 地图」新建 3D 地图，填写本系统的名称、稳定键和用途说明，再选择 SimWorld 场景。创建后地图进入本系统列表，打开时仅查看远端实景；创建实验和更换地图统一从本系统地图目录选择。实验复制本地地图元数据和场景 ID，不复制远端场景内容。公共地图和实验共用在线查看器。3D 运行通过服务执行动作，Run 保存已提交的实际位置、动作和对话。服务不在线时可读历史事实，不能打开 UE 实景。[3D 集成与能力边界](docs/simworld-3d-scene-design.md)
 
 本机查看东京街区，双击 [start-simworld.bat](start-simworld.bat)。控制台和 UE 游戏窗口会保持打开；关闭网页只释放相机。再次双击会替换所配置端口上属于该服务的进程和 UE。日志在 `%LOCALAPPDATA%\GenerativeAgentsCN\SimWorld-<端口>\logs`。
 

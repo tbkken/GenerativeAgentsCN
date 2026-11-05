@@ -605,7 +605,7 @@ for (const decisionId of ['', 'chosen-decision']) {
     const source = read('shell/console-api.js');
     const start = source.indexOf('  async function createExperiment()');
     const code = source.slice(start, source.indexOf('  function setDuplicateStatus(', start));
-    const values = {newExperimentBrain: 'brain-resource', newExperimentMap: decisionId ? 'simworld:map-15' : 'map-resource', newExperimentChatModel: 'chat-resource',
+    const values = {newExperimentBrain: 'brain-resource', newExperimentMap: decisionId ? 'scene-map-resource' : 'map-resource', newExperimentChatModel: 'chat-resource',
       newExperimentEmbeddingModel: 'embedding-resource', newExperimentDecisionModel: decisionId, newExperimentName: '决策实验',
       newExperimentGoal: '判断并执行', newExperimentOwner: '作者', newExperimentTag: '决策，测试'};
     let submitted;
@@ -620,8 +620,8 @@ for (const decisionId of ['', 'chosen-decision']) {
     vm.runInContext(read('resources/simworld-scenes.js'), context);
     vm.runInContext(code, context);
     await context.createExperiment();
-    assert.equal(submitted.map_id,decisionId ? undefined : 'map-resource');
-    assert.equal(submitted.simworld_scene_id,decisionId ? 'map-15' : undefined);
+    assert.equal(submitted.map_id,decisionId ? 'scene-map-resource' : 'map-resource');
+    assert.equal(submitted.simworld_scene_id,undefined);
     assert.equal(submitted.model_preset_id, 'chat-resource');
     assert.equal(submitted.embedding_model_preset_id, 'embedding-resource');
     assert.equal(submitted.brain_skill_id, 'brain-resource');

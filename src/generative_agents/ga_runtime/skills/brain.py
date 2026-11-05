@@ -97,7 +97,6 @@ class BrainRuntime:
             space_id=getattr(game, "space_id", None),
             presentation=getattr(game, "presentation", None),
             space_description=getattr(game, "world_definition", {}).get("description", ""),
-            space_rules=getattr(game, "world_definition", {}).get("rules", ""),
         )
         interfaces = SimulationAPI(
             game,

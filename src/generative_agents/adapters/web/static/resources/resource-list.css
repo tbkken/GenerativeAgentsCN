@@ -37,7 +37,6 @@
 .resource-list-footer .pagination {display:flex;align-items:center;gap:5px}
 .resource-list-footer .page-button {width:32px;height:32px;padding:0}
 .pagination-gap {padding:0 3px}
-#catalogDescription {display:block;font-size:12px;font-weight:400;color:#66786d;margin-top:4px}
 body:not(.experiment-workspace) #mapStatusFilters,body:not(.experiment-workspace) #crowdStatusFilters {display:none!important}
 body:not(.experiment-workspace) .map-catalog-grid.resource-rows,body:not(.experiment-workspace) .crowd-catalog-grid.resource-rows {display:block;gap:0}
 body:not(.experiment-workspace) #publicAgentList.resource-rows {display:block}
@@ -53,4 +52,4 @@ body:not(.experiment-workspace) .resource-row.is-selected {background:#eef6f1!im
 .model-catalog-editor-head {display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:18px}
 .model-catalog-editor-head .inline-actions {display:flex;gap:8px}
 @media(max-width:620px){body:not(.experiment-workspace) .sidebar{min-height:0}body:not(.experiment-workspace) .topbar{flex-wrap:wrap;gap:10px;padding:14px 18px}body:not(.experiment-workspace) .topbar .experiment-title{flex-basis:100%}body:not(.experiment-workspace) #hubActions{margin-left:auto}body:not(.experiment-workspace) .resource-row-main{min-width:140px}body:not(.experiment-workspace) .resource-row-actions{flex-basis:100%;justify-content:flex-end}}
-@media(max-width:700px){.resource-row,body:not(.experiment-workspace) #page-experiments .experiment-card.resource-row{padding:15px;gap:12px;flex-wrap:wrap}.resource-row-actions{margin-left:auto}.resource-thumb{width:38px;height:38px;flex-basis:38px}.resource-description{-webkit-line-clamp:2}.resource-toolbar .search{width:100%}.resource-toolbar{align-items:stretch}.resource-toolbar label{margin-left:auto}.resource-list-footer{gap:10px}.resource-meta{gap:4px 10px}#catalogDescription{max-width:42ch}.resource-name{font-size:14px}}
+@media(max-width:700px){.resource-row,body:not(.experiment-workspace) #page-experiments .experiment-card.resource-row{padding:15px;gap:12px;flex-wrap:wrap}.resource-row-actions{margin-left:auto}.resource-thumb{width:38px;height:38px;flex-basis:38px}.resource-description{-webkit-line-clamp:2}.resource-toolbar .search{width:100%}.resource-toolbar{align-items:stretch}.resource-toolbar label{margin-left:auto}.resource-list-footer{gap:10px}.resource-meta{gap:4px 10px}.resource-name{font-size:14px}}

@@ -1105,7 +1105,6 @@
               <strong id="topbarTitle">实验</strong>
               <span class="result-duration-meta" id="resultDurationMeta" hidden><span id="resultDurationLabel">实际耗时</span><strong id="resultDurationMetric">—</strong></span><span class="draft-pill" id="statusPill" hidden>草稿</span>
             </div>
-            <span id="catalogDescription">打开实验后，进入独立的实验工作区。</span>
             <div class="experiment-header-meta" id="experimentHeaderMeta" hidden>
               <div class="header-meta-field"><span>负责人</span><span class="header-meta-value" id="experimentOwnerMeta">未设置</span></div>
               <div class="header-meta-field tags"><span>标签</span><span class="header-meta-value" id="experimentTagsMeta">未设置</span></div>
@@ -1227,13 +1226,6 @@
 
         <section class="page" id="page-maps">
           <div class="map-catalog-shell resource-catalog" id="mapCatalogShell" data-resource-catalog>
-            <section class="simworld-directory" id="publicSceneDirectory" aria-label="SimWorld 在线场景" hidden>
-              <label for="publicScene">SimWorld 在线场景</label>
-              <select class="control" id="publicScene"><option value="">请选择 3D 场景</option></select>
-              <button type="button" class="btn" id="openPublicScene">查看在线场景</button>
-              <button type="button" class="btn btn-sm" id="refreshPublicScenes">刷新场景</button>
-              <small role="status" id="publicSceneStatus" hidden></small>
-            </section>
             <div class="toolbar map-catalog-toolbar resource-toolbar">
               <div class="filter-tabs" id="mapStatusFilters" role="tablist" aria-label="地图状态筛选">
                 <button class="filter-tab active" data-map-filter="all">全部地图</button>
@@ -1710,7 +1702,7 @@
           </div>
         </div>
         <div class="wizard-panel" data-wizard-panel="2">
-          <div class="section-title"><h3>选择大脑、地图与人群</h3><button type="button" class="help-tip" aria-label="实验资源说明" data-tooltip="大脑、Skill、人群和模型配置复制进实验。1D、2D 地图也会复制；3D 地图只保存 SimWorld 场景 ID。">?</button></div>
+          <div class="section-title"><h3>选择大脑、地图与人群</h3><button type="button" class="help-tip" aria-label="实验资源说明" data-tooltip="大脑、Skill、人群、模型和所选地图的本地配置复制进实验。3D 地图复制本系统的名称、稳定键、用途说明和场景引用，实景由 SimWorld 提供。">?</button></div>
           <div class="creation-resource-grid">
             <div class="field"><label for="newExperimentChatModel">生成式模型</label><select class="control" id="newExperimentChatModel"><option value="">请选择已配置模型</option></select></div>
           <div class="field"><label for="newExperimentDecisionModel">决策模型（可选）</label><select class="control" id="newExperimentDecisionModel"><option value="">不配置决策模型</option></select><small>大脑的调用链包含决策 Skill 时，请选择决策模型。</small></div>
@@ -1723,8 +1715,8 @@
             <div class="field">
               <label for="newExperimentMap">地图</label>
               <select class="control" id="newExperimentMap"><option value="">正在加载地图…</option></select>
-              <small id="experimentSceneInfo" role="status" hidden></small>
-              <small>1D、2D 地图复制进实验。3D 地图只保存场景 ID，使用时连接 SimWorld。</small>
+
+              <small>所选地图的本地配置复制进实验；3D 实景通过保存的场景引用连接 SimWorld。</small>
             </div>
             <div class="field creation-crowd-field">
               <label id="newExperimentCrowdsLabel">人群（可多选）</label>
@@ -1861,7 +1853,7 @@
   <div class="modal-backdrop" id="replaceMapModal" role="dialog" aria-modal="true" aria-labelledby="replaceMapTitle">
     <div class="modal">
       <div class="modal-head"><h2 id="replaceMapTitle">更换实验地图</h2><button class="close" id="closeReplaceMap" aria-label="关闭">×</button></div>
-      <div class="modal-body"><div class="field"><label for="replacementMap">新地图</label><select class="control" id="replacementMap"><option value="">请选择地图</option></select><small id="replacementSceneInfo" role="status" hidden></small><small>更换后需按新地图安排参与者的位置。</small></div></div>
+      <div class="modal-body"><div class="field"><label for="replacementMap">新地图</label><select class="control" id="replacementMap"><option value="">请选择地图</option></select><small>更换后需按新地图安排参与者的位置。</small></div></div>
       <div class="modal-foot"><button class="btn btn-primary" id="confirmReplaceMap">更换地图</button></div>
     </div>
   </div>
@@ -1869,14 +1861,11 @@
     <div class="modal">
       <div class="modal-head"><h2 id="createMapTitle">新建公共地图</h2><button class="close" id="closeCreateMap" aria-label="关闭">×</button></div>
       <div class="modal-body map-inline-form">
-        <div class="field full"><label for="newMapEnvironmentType">地图类型</label><select class="control" id="newMapEnvironmentType"><option value="social_1d">1D 社交空间</option><option value="spatial_2d">2D 平面空间</option><option value="spatial_3d">3D 具身智能</option></select></div>
-        <div class="field full" id="mapScenePicker" hidden><label for="newMapScene">SimWorld 预制场景</label><select class="control" id="newMapScene"><option value="">请选择场景</option></select><small id="mapSceneInfo" role="status" hidden></small></div>
-        <div class="field full" data-map-create-social hidden><label for="newMapPresentation">展现方式</label><select class="control" id="newMapPresentation"><option value="chat">群聊</option><option value="forum">论坛</option></select><small>每张地图固定一种展现方式，两者均支持私聊。</small></div>
-        <div class="field full" data-map-create-social hidden><label for="newMapRules">场所规则（可选）</label><textarea class="control" id="newMapRules" rows="4" placeholder="例如：引用他人观点时，请回复原发言。"></textarea><small>参与者每轮都会读到这些交流约定。</small></div>
         <div class="field"><label for="newMapName">地图名称</label><input class="control" id="newMapName" maxlength="120" placeholder="例如：海滨小镇" /></div>
         <div class="field"><label for="newMapKey">稳定键（可选）</label><input class="control" id="newMapKey" maxlength="64" autocapitalize="none" spellcheck="false" placeholder="例如：commute-home-office" /><small>支持小写字母、数字和连字符；留空或无法规范化时自动生成。</small></div>
-        <div class="field full" data-map-create-spatial><label for="newMapBlueprint">构建方式</label><select class="control" id="newMapBlueprint"><option value="">空白地图（自由绘制）</option></select><small id="newMapBlueprintHint">创建一个不继承斯坦福小镇的空白地图。</small></div>
-        <div class="field full" data-map-create-spatial><label for="newMapSource">复制现有地图（可选）</label><select class="control" id="newMapSource"><option value="">不复制</option></select><small>选择现有地图后，将不再使用上面的构建向导。</small></div>
+        <div class="field full"><label for="newMapEnvironmentType">地图类型</label><select class="control" id="newMapEnvironmentType"><option value="social_1d">1D 社交空间</option><option value="spatial_2d">2D 平面空间</option><option value="spatial_3d">3D 具身智能</option></select></div>
+        <div class="field full" id="mapScenePicker" hidden><label for="newMapScene">SimWorld 预制场景</label><select class="control" id="newMapScene"><option value="">请选择场景</option></select><small id="mapSceneInfo" role="status" hidden></small></div>
+        <div class="field full" data-map-create-social hidden><label for="newMapPresentation">展现方式</label><select class="control" id="newMapPresentation"><option value="chat">群聊</option><option value="forum">论坛</option></select></div>
         <div class="field" data-map-create-spatial><label for="newMapWidth">宽度（格）</label><div class="input-unit"><input class="control" id="newMapWidth" type="number" min="1" max="240" step="1" value="48" /><span>格</span></div></div>
         <div class="field" data-map-create-spatial><label for="newMapHeight">高度（格）</label><div class="input-unit"><input class="control" id="newMapHeight" type="number" min="1" max="240" step="1" value="32" /><span>格</span></div></div>
         <div class="field" data-map-create-spatial><label for="newMapTileSize">单格 Tile 尺寸</label><div class="input-unit"><input class="control" id="newMapTileSize" type="number" min="8" max="128" step="1" value="32" /><span>px</span></div></div>

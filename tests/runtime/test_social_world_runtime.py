@@ -247,12 +247,13 @@ def test_packaged_brain_run_pause_resume_seal_and_replay(tmp_path, monkeypatch, 
 
     definition = _definition()
     definition["world"] = {"world_key": "discussion", "world_name": "交流空间", "assets": [], "definition": {
-        "environment_type": "social_1d", "presentation": presentation, "description": "交流测试", "rules": "尊重事实"}}
+        "environment_type": "social_1d", "presentation": presentation, "description": "交流测试"}}
     definition["agents"] = [{"agent_key": key, "name": key.upper(), "space_id": "discussion",
                              "scratch": {"age": 30}} for key in ("aa", "bb", "cc")]
     source = tmp_path / "author" / "SKILL.md"
     source.parent.mkdir()
     source.write_text("---\nname: test-brain\ndescription: 交流\n---\n# Brain\n"
+                      "尊重事实，有依据地讨论；没有新观点时可以保持沉默。"
                       "调用 @world-perceive，按需用 @memory-stream-append 保存观察。"
                       "用 @memory-stream-search 回忆。最后 @world-act 发言或等待。", encoding="utf-8")
     ExperimentPackageBuilder().build_directory(tmp_path / "experiment", definition=definition,
@@ -264,7 +265,9 @@ def test_packaged_brain_run_pause_resume_seal_and_replay(tmp_path, monkeypatch, 
         context = json.loads(messages[1]["content"].split("output schema):\n", 1)[1])["IterationContext"]
         key, step = context["agent"]["agent_key"], context["step"]["number"]
         assert "coord" not in context["agent"]
-        assert context["environment"]["rules"] == "尊重事实"
+        assert context["environment"] == {"environment_type": "social_1d", "space_id": "discussion",
+                                           "presentation": presentation, "description": "交流测试"}
+        assert "尊重事实，有依据地讨论；没有新观点时可以保持沉默。" in messages[0]["content"]
         tool_results = [item for item in messages if item["role"] == "tool"]
         if not tool_results:
             seen.append((key, step))
@@ -272,7 +275,9 @@ def test_packaged_brain_run_pause_resume_seal_and_replay(tmp_path, monkeypatch, 
                 FileRunControl(run_root).request_pause()
             return "world-perceive", {}
         if tool_results[-1]["name"] == "world-perceive":
-            observed = json.loads(tool_results[-1]["content"])["messages"]
+            perception = json.loads(tool_results[-1]["content"])
+            assert perception["space"] == {"space_id": "discussion", "name": "交流空间", "description": "交流测试"}
+            observed = perception["messages"]
             if observed:
                 return "memory-stream-append", {"content": observed[-1]["content"], "source_event_id": observed[-1]["source_event_id"]}
             return "world-act", {"action_type": "SPEAK", "message": "第一个观点", **({"title": "共同讨论"} if presentation == "forum" else {})}

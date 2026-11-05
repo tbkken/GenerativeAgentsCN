@@ -43,7 +43,7 @@ def social_studio(database, tmp_path):
 def test_social_map_selection_package_edit_and_exchange_are_coordinate_free(social_studio, database, tmp_path, presentation):
     maps, workspace, brain, agent, model = social_studio
     public = maps.create_map(name="讨论空间", map_key="discussion-room", environment_type="social_1d",
-                             presentation=presentation, description="公开交流", rules="有依据地讨论")
+                             presentation=presentation, description="公开交流")
     assert public["environment_type"] == "social_1d"
     assert public["presentation"] == presentation
     assert public["dimensions"] is None
@@ -52,15 +52,12 @@ def test_social_map_selection_package_edit_and_exchange_are_coordinate_free(soci
     checked = maps.validate_map(public["id"], expected_lock_version=public["lock_version"])
     assert checked["validation"]["valid"]
     assert [item["code"] for item in checked["validation"]["checks"]] == ["SOCIAL_SPACE_CONTRACT"]
-    cloned = maps.create_map(name="独立副本", map_key="copied-room", source_map_id=public["id"])
-    assert cloned["world"]["world_key"] == "copied-room" and cloned["world"]["world_name"] == "独立副本"
-    assert cloned["world"]["definition"] == public["world"]["definition"]
     created = workspace.create(ExperimentSelection(name="社交实验", goal="讨论", map_id=public["id"],
         brain_skill_id=brain, model_preset_id=model, agent_ids=(agent,)))
     root = Path(created["location"])
     definition = _experiment_definition(root)[1]
     copied = definition["world"]["definition"]
-    assert copied == {"environment_type": "social_1d", "presentation": presentation, "description": "公开交流", "rules": "有依据地讨论"}
+    assert copied == {"environment_type": "social_1d", "presentation": presentation, "description": "公开交流"}
     assert definition["agents"][0]["space_id"] == "discussion-room"
     assert not {"coord", "spatial"} & definition["agents"][0].keys()
     assembly = read_experiment_assembly(root)
@@ -72,10 +69,10 @@ def test_social_map_selection_package_edit_and_exchange_are_coordinate_free(soci
     assert "coord" not in editor.read(identity, "agents", {})["items"][0]
     assert editor.read(identity, "agents/alice", {})["definition"]["space_id"] == "discussion-room"
     changed = copy.deepcopy(definition["world"])
-    changed["definition"]["rules"] = "允许保持沉默"
+    changed["definition"]["description"] = "实验内的讨论空间"
     editor.write(identity, f"maps/{identity}", "PUT", {"row_version": created["content_sha256"], "world": changed})
-    assert _experiment_definition(root)[1]["world"]["definition"]["rules"] == "允许保持沉默"
-    assert maps.get_map(public["id"])["world"]["definition"]["rules"] == "有依据地讨论"
+    assert _experiment_definition(root)[1]["world"]["definition"]["description"] == "实验内的讨论空间"
+    assert maps.get_map(public["id"])["world"]["definition"]["description"] == "公开交流"
     validate_experiment_directory(root)
     archive = seal_directory(root, tmp_path / "social.gaexp")
     packaged = read_resource_set(archive)
@@ -103,8 +100,8 @@ def test_social_map_selection_package_edit_and_exchange_are_coordinate_free(soci
     assert restored["world"]["definition"] == copied
 
 
-@pytest.mark.parametrize("extra", [{"tiles": []}, {"editor": {}}, {"environment_type": "spatial_3d"}, {"presentation": "mixed"}])
-def test_social_map_rejects_geometry_unknown_types_and_mixed_presentation(extra):
+@pytest.mark.parametrize("extra", [{"tiles": []}, {"editor": {}}, {"environment_type": "spatial_3d"}, {"presentation": "mixed"}, {"rules": "遵守讨论规则"}])
+def test_social_map_rejects_geometry_unknown_types_mixed_presentation_and_behavior_rules(extra):
     with pytest.raises(ValidationError):
         WorldConfig(world_key="discussion-room", world_name="Room", definition={"environment_type": "social_1d", "presentation": "chat", **extra})
 
@@ -129,16 +126,24 @@ def test_social_membership_rejects_coordinates_and_foreign_space_atomically(soci
 def test_social_map_http_contract_does_not_require_spatial_fields(database_url, presentation):
     with TestClient(create_test_studio(database_url=database_url)) as client:
         response = client.post("/api/studio/resources/maps", json={"name": "公开讨论", "map_key": "public-discussion",
-            "environment_type": "social_1d", "presentation": presentation, "rules": "可以选择沉默"})
+            "environment_type": "social_1d", "presentation": presentation, "description": "公开讨论空间"})
         assert response.status_code == 201, response.text
         detail = response.json()
         assert detail["environment_type"] == "social_1d" and detail["presentation"] == presentation
         validated = client.post(f"/api/studio/resources/maps/{detail['id']}/validate", params={"row_version": detail["row_version"]})
         assert validated.status_code == 200 and validated.json()["validation"]["valid"]
         world = detail["world"]
-        world["definition"]["rules"] = "引用真实消息后回复"
+        world["definition"]["description"] = "分享观点的公共空间"
         saved = client.put(f"/api/studio/resources/maps/{detail['id']}", json={"row_version": detail["row_version"], "world": world})
         assert saved.status_code == 200, saved.text
-        assert saved.json()["world"]["definition"]["rules"] == "引用真实消息后回复"
+        assert saved.json()["world"]["definition"]["description"] == "分享观点的公共空间"
+        assert "rules" not in saved.json()["world"]["definition"]
+        rejected = client.post("/api/studio/resources/maps", json={"name": "错误规则字段", "environment_type": "social_1d",
+            "presentation": presentation, "rules": "引用真实消息后回复"})
+        assert rejected.status_code == 422
+        world["definition"]["rules"] = "引用真实消息后回复"
+        rejected = client.put(f"/api/studio/resources/maps/{detail['id']}", json={"row_version": saved.json()["row_version"], "world": world})
+        assert rejected.status_code == 422
+        assert client.get(f"/api/studio/resources/maps/{detail['id']}").json()["world"] == saved.json()["world"]
         rejected = client.post("/api/studio/resources/maps", json={"name": "未知地图", "environment_type": "unsupported"})
         assert rejected.status_code == 422

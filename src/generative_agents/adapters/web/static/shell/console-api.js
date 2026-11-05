@@ -356,10 +356,6 @@
     if (pageName !== 'brains') document.body.classList.remove('brain-editor-mode');
     const catalogNames = {experiments:'实验', maps:'地图', 'public-agents':'智能体', crowds:'智能体', skills:'技能', brains:'技能', 'model-catalog':'模型'};
     $('topbarTitle').textContent = window.ResourceScope?.experimentId ? state.currentExperimentName : catalogNames[pageName] || state.currentExperimentName || '当前实验';
-    $('catalogDescription').hidden = !isGlobal;
-    $('catalogDescription').textContent = pageName === 'experiments' ? '打开实验后，进入独立的实验工作区。'
-      : pageName === 'public-agents' ? '基础配置 · 出生位置与空间在实验内设置。'
-      : pageName === 'maps' ? '1D、2D 地图可复制到实验；3D 地图使用 SimWorld 在线场景。' : '基础配置 · 管理可供实验选用的资源。';
     $('statusPill').hidden = isGlobal;
     $('experimentHeaderMeta').hidden = isGlobal;
     $('backToHub').classList.toggle('visible', !isGlobal);
@@ -637,8 +633,7 @@
     if ($('createSummaryMap')) $('createSummaryMap').textContent = mapOption?.textContent?.replace(/ · v\d+(?: · 默认)?$/, '') || '未选择';
     const mapChoice=$('newExperimentMap').value;
     $('createSummaryResourcePolicy').textContent = !mapChoice ? '选择地图后查看'
-      : mapChoice.startsWith('simworld:') ? '大脑、Skill、人群和模型配置复制进实验；3D 地图只保存 SimWorld 场景 ID。'
-      : '大脑、Skill、人群、模型配置和地图复制进实验。';
+      : '大脑、Skill、人群、模型配置和地图复制进实验；3D 地图只携带本地信息和 SimWorld 场景引用。';
     const crowdSummary = window.CrowdWorkspace?.getCreationSummary?.() || { names: [], crowdCount: 0, agentCount: 0, duplicateCount: 0 };
     if ($('createSummaryCrowds')) $('createSummaryCrowds').textContent = crowdSummary.names.length ? crowdSummary.names.join('、') : '未选择';
     if ($('createSummaryAgents')) $('createSummaryAgents').textContent = crowdSummary.crowdCount
@@ -3570,7 +3565,7 @@
         goal: $('newExperimentGoal').value.trim(),
         owner: $('newExperimentOwner').value.trim(),
         tags: $('newExperimentTag').value.split(/[,，]/).map(item => item.trim()).filter(Boolean),
-        ...window.SimWorldScenes.selection(mapChoice.value),
+        map_id: mapChoice.value,
         brain_skill_id: brainResourceId,
         model_preset_id: modelPresetId,
         embedding_model_preset_id: embeddingModelPresetId,

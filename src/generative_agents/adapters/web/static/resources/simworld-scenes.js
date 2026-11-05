@@ -34,8 +34,9 @@
       showCatalogStatus(status,'暂时无法连接 SimWorld 场景目录。');
     }
   }
-  function selection(value) {
-    return value.startsWith(prefix) ? {simworld_scene_id:value.slice(prefix.length)} : {map_id:value};
+  function sceneId(value) {
+    if (!value.startsWith(prefix) || !value.slice(prefix.length)) throw Error('请先选择一个 SimWorld 场景');
+    return value.slice(prefix.length);
   }
-  window.SimWorldScenes={list,populate,selection};
+  window.SimWorldScenes={list,populate,sceneId};
 })();

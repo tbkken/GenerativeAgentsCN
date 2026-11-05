@@ -51,8 +51,7 @@ class ExperimentWorkspaceCreate(PortableRequest):
     tags: list[str] = Field(default_factory=list, max_length=20)
     key: str | None = None
     timezone: str = 'Asia/Shanghai'
-    map_id: str | None = None
-    simworld_scene_id: str | None = Field(default=None, min_length=1, max_length=120, pattern=r'^[a-z0-9][a-z0-9-]*$')
+    map_id: str = Field(min_length=1)
     brain_skill_id: str
     model_preset_id: str
     embedding_model_preset_id: str | None = None

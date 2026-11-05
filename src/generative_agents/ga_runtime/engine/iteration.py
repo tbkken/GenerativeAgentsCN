@@ -33,7 +33,6 @@ class IterationContext:
     space_id: str | None = None
     presentation: str | None = None
     space_description: str = ""
-    space_rules: str = ""
     yaw_deg: float | None = None
 
     def __post_init__(self) -> None:
@@ -71,7 +70,7 @@ class IterationContext:
             result.pop("spatial_semantics")
             result["environment"] = {"environment_type": self.environment_type,
                                      "space_id": self.space_id, "presentation": self.presentation,
-                                     "description": self.space_description, "rules": self.space_rules}
+                                     "description": self.space_description}
         elif self.environment_type == "spatial_3d":
             result["environment"] = {"environment_type": self.environment_type, "units": "m", "up_axis": "Z"}
             result["agent"]["yaw_deg"] = self.yaw_deg

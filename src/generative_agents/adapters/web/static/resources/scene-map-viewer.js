@@ -61,11 +61,12 @@
     return true;
     }
     constructor(root) { this.root=root;this.generation=0;this.readonly=true;this.changed=false;this.keys=new Set(); }
-    setWorld(world,{sessionBase=null,actions=[],replay=null}={}) {
+    setWorld(world,{sessionBase=null,actions=[],replay=null,mapInfo=null}={}) {
       this.replayPose=null;this.sceneCameras={};
       this.leaveScene();this.world=world;this.definition=world.definition;
       this.sessionBase=this.definition.simworld_scene_id?sessionBase:null;
       this.replay=replay;
+      this.mapInfo=mapInfo;
       this.actions=actions;this.agentIds=new Set();
       this.render();
       if (this.sessionBase) this.connect();
@@ -79,18 +80,23 @@
       this.controlSize?.disconnect();
       this.aspect=null;
       const live=Boolean(this.sessionBase);
-      this.root.innerHTML=live ? `<section class="scene-viewer scene-viewer-live" aria-label="地图视角">
+      this.root.innerHTML=live ? `<section class="scene-viewer scene-viewer-live${this.mapInfo?' scene-viewer-map':''}" aria-label="地图视角">
         <div class="scene-surface"><div class="scene-stage" tabindex="0" aria-label="实时场景。按操作说明查看键盘控制">
           <img data-live alt="UE 实时场景" hidden>
           <div class="scene-feedback" data-feedback><span role="status" data-status></span><button type="button" data-reconnect hidden>重连</button></div>
         </div></div>
+        <div class="scene-panel">
+        ${this.mapInfo?`<div class="scene-map-info" aria-label="地图信息">
+          <strong data-map-name></strong><div class="scene-map-key">稳定键 <span data-map-key></span></div>
+          <p data-map-description></p>
+        </div>`:''}
         <div class="scene-controls" aria-label="场景相机">
           <div class="scene-navigation" data-actions></div>
           <div class="scene-views" role="group" aria-label="地图机位" data-presets></div>
           <div class="scene-views" role="group" aria-label="智能体初始视角" data-agents hidden></div>
           <button type="button" data-return hidden>返回自由视角</button>
           <div class="scene-utilities"><details><summary aria-label="查看相机操作说明">操作说明</summary><p>点画面后移动鼠标环视，滚轮变焦，Esc 释放鼠标。自由视角可用 WASD 漫游、Q/E 升降。<span data-agent-help hidden>智能体视角在其实验初始位置转头观察。</span></p></details><button type="button" data-fullscreen>全屏</button></div>
-        </div></section>`
+        </div></div></section>`
         : `<section class="scene-viewer scene-unavailable"><div><strong data-name></strong>
           <p role="status" data-status></p><div class="scene-controls" data-actions></div></div></section>`;
       const find=k=>this.root.querySelector(`[data-${k}]`);
@@ -98,6 +104,12 @@
       this.status=find('status');this.feedback=find('feedback');this.presets=find('presets');this.agents=find('agents');
       this.returnButton=find('return');this.retry=find('reconnect');
       this.agentHelp=find('agent-help');
+      if (live && this.mapInfo) {
+        find('map-name').textContent=this.mapInfo.name || this.world.world_name;
+        find('map-key').textContent=this.mapInfo.key || this.world.world_key;
+        find('map-description').textContent=this.mapInfo.description || '';
+        find('map-description').hidden=!this.mapInfo.description;
+      }
       for (const action of this.actions) {
         if(live && action.unavailableOnly) continue;
         const button=document.createElement('button');button.type='button';button.textContent=action.label;
@@ -110,11 +122,13 @@
         this.retry.onclick=()=>{this.connect();this.replay?.retry();};
         if (this.returnButton) this.returnButton.onclick=()=>this.chooseView('free','');
         const fullscreen=find('fullscreen'), card=this.root.firstElementChild;
-        this.controlSize=new ResizeObserver(entries=>{
-          const height=entries[0].target.getBoundingClientRect().height;
-          card.style.setProperty('--scene-controls-height',Math.ceil(height)+'px');
-        });
-        this.controlSize.observe(card.querySelector('.scene-controls'));
+        if (!this.mapInfo) {
+          this.controlSize=new ResizeObserver(entries=>{
+            const height=entries[0].target.getBoundingClientRect().height;
+            card.style.setProperty('--scene-controls-height',Math.ceil(height)+'px');
+          });
+          this.controlSize.observe(card.querySelector('.scene-controls'));
+        }
         fullscreen.hidden=!document.fullscreenEnabled;
         fullscreen.onclick=async()=>{
           try { if(document.fullscreenElement===card) await document.exitFullscreen(); else await card.requestFullscreen(); }

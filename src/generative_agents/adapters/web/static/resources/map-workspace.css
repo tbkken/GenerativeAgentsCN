@@ -44,10 +44,6 @@
 
 .map-catalog-toolbar .search { max-width: 440px; width: 100%; }
 .map-catalog-toolbar .filter-tabs { flex: 0 0 auto; }
-.simworld-directory {display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:12px 0}
-.simworld-directory label {font-weight:600}
-.simworld-directory select {flex:1 1 200px;max-width:440px;min-width:0}
-.simworld-directory small {flex-basis:100%;color:var(--muted)}
 
 .map-catalog-grid {
   display: grid;
@@ -137,6 +133,17 @@
 .map-editor-shell[hidden],
 .map-catalog-shell[hidden] { display: none; }
 
+/* The shared host sizes one editor; each map type owns its internal layout. */
+.map-editor-host {
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+}
+.map-editor-host > div { width: 100%; height: 100%; min-width: 0; min-height: 0; }
+
 /* The formal editor owns the viewport below the global top bar. */
 body.map-editor-mode { overflow: hidden; }
 body.map-editor-mode .main {
@@ -160,13 +167,12 @@ body.map-editor-mode .map-editor-shell {
 }
 body.map-editor-mode .map-editor-v2 {
   display: grid;
-  grid-template-rows: 54px auto minmax(0, 1fr);
+  grid-template-rows: 54px minmax(0, 1fr);
   height: 100%;
   min-height: 0;
 }
 body.map-editor-mode .map-editor-v2 > .me2-tabs { grid-row: 1; }
-body.map-editor-mode .map-editor-v2 > .me2-build-guide { grid-row: 2; }
-body.map-editor-mode .map-editor-v2 > .me2-layout { grid-row: 3; }
+body.map-editor-mode .map-editor-v2 > .me2-layout { grid-row: 2; }
 body.map-editor-mode .me2-layout {
   height: auto;
   min-height: 0;
@@ -731,33 +737,6 @@ body.map-editor-mode .me2-layout {
 .map-inspector .field { margin-bottom: 12px; }
 .map-inspector .field label { display: block; font-size: 11px; font-weight: 700; margin-bottom: 5px; }
 .map-inspector .control { font-size: 12px; min-height: 36px; padding: 8px 9px; }
-.map-build-guide {
-  background: #f0f8f5;
-  border: 1px solid #bcded5;
-  border-radius: 11px;
-  margin: -3px -3px 18px;
-  padding: 12px;
-}
-.map-build-guide[hidden] { display: none; }
-.map-build-guide-head { align-items: flex-start; display: flex; gap: 8px; justify-content: space-between; }
-.map-build-guide-head span { color: #478276; display: block; font: 8px var(--mono); letter-spacing: .08em; margin-bottom: 4px; }
-.map-build-guide-head h3 { color: #145f50; font-size: 12px; margin: 0; }
-.map-build-guide-head > strong { color: #16715c; font: 10px var(--mono); }
-.map-build-guide-list { display: grid; gap: 4px; margin: 11px 0; max-height: 226px; overflow: auto; }
-.map-build-guide-step { align-items: center; border-radius: 7px; color: #71807b; display: grid; font-size: 9px; gap: 8px; grid-template-columns: 22px 1fr; padding: 5px 6px; }
-.map-build-guide-step > span { align-items: center; background: #e1e9e5; border-radius: 50%; display: flex; font: 8px var(--mono); height: 20px; justify-content: center; width: 20px; }
-.map-build-guide-step strong { display: block; font-size: 9px; font-weight: 650; }
-.map-build-guide-step small { color: #8b9995; display: block; font-size: 8px; margin-top: 1px; }
-.map-build-guide-step.active { background: #fff; color: #145f50; box-shadow: 0 2px 8px rgba(20, 95, 80, .08); }
-.map-build-guide-step.active > span { background: #16715c; color: #fff; }
-.map-build-guide-step.done { color: #327967; }
-.map-build-guide-step.done > span { background: #cce9df; color: #126451; }
-.map-build-guide > p { color: #54756c; font-size: 8px; line-height: 1.5; margin: 8px 0 0; }
-.map-editor-v2 > .me2-build-guide { margin: 10px 12px 0; padding: 10px 12px; position: relative; z-index: 2; }
-.map-editor-v2 > .me2-build-guide .map-build-guide-list { grid-template-columns: repeat(4, minmax(150px, 1fr)); margin: 8px 0; max-height: none; }
-.me2-build-guide-action { align-items: center; display: flex; gap: 16px; justify-content: space-between; }
-.me2-build-guide-action p { color: #54756c; font-size: 10px; margin: 0; }
-.me2-build-guide-action .btn { flex: 0 0 auto; }
 .map-coordinate {
   background: #edf2ef;
   border-radius: 8px;
@@ -829,10 +808,18 @@ body.map-editor-mode .me2-layout {
   .spatial-assets-toolbar { align-items:flex-start; flex-direction:column; }.spatial-assets-toolbar .search { width:100%; }.spatial-asset-create { grid-template-columns:1fr; }
 }
 
-.social-map-editor {max-width: 850px; margin: 0 auto; padding: 32px; display: grid; gap: 24px;}
-.social-map-editor header p,.social-map-example p {line-height: 1.8; color: var(--muted, #586e64);}
-.social-map-editor textarea {min-height: 110px; resize: vertical;}
-.social-map-example {padding: 20px; border: 1px solid #dce7e0; border-radius: 12px; background: #f5f9f6;}
+.social-map-editor {width:100%; max-width:850px; padding:24px; display:grid; gap:24px; border:1px solid var(--line); border-radius:12px; background:#fff;}
+.social-map-fields {display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:20px 24px;}
+.social-map-fields .field {min-width:0; margin:0;}
+.social-map-fields .control {height:40px; font-size:14px;}
+.social-map-description {grid-column:1/-1;}
+.social-map-description textarea.control {height:auto; min-height:104px; resize:vertical;}
+.social-map-fields .control[readonly] {background:#f5f8f6; color:#53665c; cursor:default;}
+.social-map-editor [data-map-validation]:empty {display:none;}
+@media(max-width:620px) {
+  .social-map-editor {padding:18px;}
+  .social-map-fields {grid-template-columns:minmax(0,1fr); gap:16px;}
+}
 [data-map-create-social][hidden],[data-map-create-spatial][hidden] {display:none !important;}
 .scene-viewer {display:grid; gap:14px; width:100%; min-width:0}
 .scene-viewer header,.scene-controls {display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px}
@@ -882,15 +869,36 @@ body.map-editor-mode .me2-layout {
 .scene-feedback[hidden],.scene-viewer-live [hidden]{display:none!important}
 .scene-viewer-live:fullscreen {background:#17221d; height:100%; width:100%; padding:8px}
 .scene-viewer-live:fullscreen .scene-view-label {color:#d2e1d6}
+.scene-viewer-map {position:relative; overflow:hidden}
+.scene-viewer-map .scene-surface {position:absolute; inset:0; display:block}
+.scene-viewer-map .scene-stage {width:100%; height:100%; aspect-ratio:auto}
+.scene-viewer-map .scene-stage img {object-fit:cover}
+.scene-viewer-map .scene-panel {
+  position:absolute; top:16px; left:16px; z-index:1; width:min(600px,calc(100% - 32px)); max-height:calc(100% - 32px);
+  overflow:auto; overscroll-behavior:contain; padding:14px; border:1px solid #ffffff45; border-radius:12px;
+  background:rgba(20,35,29,.9); color:#f1f7f3; box-shadow:0 6px 24px #07130e30; backdrop-filter:blur(12px);
+}
+.scene-map-info {overflow-wrap:anywhere; margin-bottom:12px}
+.scene-map-info strong {display:block; font-size:17px; line-height:1.4; font-weight:650}
+.scene-map-key {margin-top:5px; color:#bdcec4; font-size:12px}
+.scene-map-key span {margin-left:6px; color:#e1ece5}
+.scene-map-info p {margin:8px 0 0; max-height:6em; overflow:auto; color:#d4e2da; font-size:13px; line-height:1.6; white-space:pre-wrap}
+.scene-viewer-map .scene-controls {padding:12px 0 0; border-top:1px solid #ffffff26; gap:8px 12px}
+.scene-viewer-map .scene-utilities {margin-inline-start:0}
+.scene-viewer-map .scene-utilities details {position:static}
+.scene-viewer-map .scene-utilities details p {
+  inset:100% auto auto 0; position:static; width:auto; margin:8px 0 0; color:#254638;
+}
+.scene-viewer-map .scene-utilities details[open] {flex-basis:100%; order:1}
+.scene-viewer-map .scene-utilities:has(details[open]) {width:100%}
+.scene-viewer-map:fullscreen {padding:0}
 @media(max-width:620px) {
-  body.map-editor-mode:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) {overflow:auto}
-  body:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) .sidebar {min-height:0; height:auto}
-  .main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer),.main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) > .content,
-  #page-maps:has(.scene-viewer-live),#mapEditorShell:has(.scene-viewer-live),#publicMapEditor:has(.scene-viewer-live),
-  #publicMapEditor:has(.scene-viewer-live) > div {height:auto; overflow:visible}
-  .main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer) > .content {padding:0}
-  .scene-viewer-live:not(:fullscreen) {height:auto; container-type:normal}
-  .scene-viewer-live:not(:fullscreen) .scene-stage {width:100%}
+  .app-shell:has(#page-maps.active .scene-viewer-map) {display:flex; flex-direction:column; height:100dvh; min-height:0; overflow:hidden}
+  body:has(#page-maps.active .scene-viewer-map) .sidebar {flex:none; min-height:0; height:auto}
+  .main:has(#page-maps.active #mapEditorShell:not([hidden]) .scene-viewer-map) {flex:1; height:auto; overflow:hidden}
+  .scene-viewer-map .scene-panel {top:10px; left:10px; width:calc(100% - 20px); max-height:calc(100% - 20px); padding:12px}
+  .scene-viewer-live:not(.scene-viewer-map):not(:fullscreen) {height:auto; container-type:normal}
+  .scene-viewer-live:not(.scene-viewer-map):not(:fullscreen) .scene-stage {width:100%}
 }
 
 .scene-navigation:empty {display:none}

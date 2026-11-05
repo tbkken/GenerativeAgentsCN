@@ -85,7 +85,7 @@ class ExperimentSelection:
 
     name: str
     goal: str
-    map_id: str | None
+    map_id: str
     brain_skill_id: str
     model_preset_id: str
     embedding_model_preset_id: str | None = None
@@ -97,7 +97,6 @@ class ExperimentSelection:
     key: str | None = None
     timezone: str = "Asia/Shanghai"
     simulation: Mapping[str, Any] | None = None
-    simworld_scene_id: str | None = None
 
 
 class ExperimentWorkspaceService:
@@ -143,26 +142,17 @@ class ExperimentWorkspaceService:
     def simworld_scene_participants(self, experiment_id: str) -> list:
         return self.simworld_scene_selection(experiment_id)[1]
 
-    @staticmethod
-    def remote_world(scene_id: str) -> dict:
-        scene = SimWorldMap(simworld_scene_id=scene_id)
-        return {"world_key": "simworld-scene", "world_name": scene_id,
-                "definition": scene.model_dump(), "assets": []}
-
     def create(self, selection: ExperimentSelection) -> dict[str, Any]:
         experiment_id = str(uuid4())
         workspace = self.package_root / "experiments" / f"workspace-{uuid4().hex}"
         with self.database.session_factory() as session:
-            if bool(selection.map_id) == bool(selection.simworld_scene_id):
-                raise StudioResourceError("请选择一张公共地图或一个 SimWorld 场景")
-            if selection.simworld_scene_id:
-                world = self.remote_world(selection.simworld_scene_id)
-            else:
-                public_map = session.get(WorldMap, selection.map_id)
-                self._available(public_map, "Map", selection.map_id)
-                require_resolved_resource_dependencies(session, "map", public_map.id)
-                world = self.map_service.materialize_validated_world(
-                    session, public_map.id).model_dump(mode="json", exclude_none=False)
+            if not selection.map_id:
+                raise StudioResourceError("请选择一张公共地图")
+            public_map = session.get(WorldMap, selection.map_id)
+            self._available(public_map, "Map", selection.map_id)
+            require_resolved_resource_dependencies(session, "map", public_map.id)
+            world = self.map_service.materialize_validated_world(
+                session, public_map.id).model_dump(mode="json", exclude_none=False)
 
             selected_agent_ids = self._expand_agents(
                 session,
@@ -210,7 +200,7 @@ class ExperimentWorkspaceService:
             if selection.decision_model_preset_id and ("model", selection.decision_model_preset_id) not in model_selections:
                 model_selections.append(("model", selection.decision_model_preset_id))
             selected_resources = ResourceExchangeService(self.database, asset_store=self.asset_store).materialize_resources(
-                [*([("map", selection.map_id)] if selection.map_id else []), *[("agent", key) for key in selected_agent_ids],
+                [("map", selection.map_id), *[("agent", key) for key in selected_agent_ids],
                  *[("crowd", key) for key in selection.crowd_ids], *model_selections],
                 include_dependencies=False,
             )

@@ -72,7 +72,7 @@ def build_trial_scene(root: Path, request: dict, *, paths, attempt_id, control, 
         address=tuple(tile.get_address()) if tile is not None else (),
         spatial_semantics=tuple(dict(item) for item in getattr(tile, "spatial_semantics", ())),
         environment_type=game.environment_type, space_id=game.space_id, presentation=game.presentation,
-        space_description=game.world_definition.get("description", ""), space_rules=game.world_definition.get("rules", ""),
+        space_description=game.world_definition.get("description", ""),
         variables={
             "currently": agent.profile.currently,
             "profile": dict(agent.profile.config),

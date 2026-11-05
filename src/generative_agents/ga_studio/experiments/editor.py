@@ -15,6 +15,8 @@ from pathlib import Path
 from uuid import uuid4
 
 from generative_agents.ga_protocol.schemas.errors import ServiceError
+from generative_agents.ga_protocol.schemas.environments import environment_type
+from generative_agents.ga_protocol.schemas.experiment import WorldConfig
 from generative_agents.ga_protocol.schemas.trials import SkillTrialError
 
 from generative_agents.ga_protocol.packages.io import PackageError
@@ -157,11 +159,11 @@ class ExperimentResourceEditor:
             return detail
 
     @staticmethod
-    def map_detail(world, digest, editable, experiment_id, *, validated=False):
+    def map_detail(world, digest, editable, experiment_id, *, description="", validated=False):
         world = editor_world(world)
         world.pop("schema_version", None)
         return dict(id=experiment_id, map_key=world.get("world_key", "world"),
-                    name=world.get("world_name") or "实验地图", world=world,
+                    name=world.get("world_name") or "实验地图", description=description, world=world,
                     environment_type=world.get("definition", {}).get("environment_type", "spatial_2d"),
                     presentation=world.get("definition", {}).get("presentation"),
                     row_version=digest, editable=editable,
@@ -205,7 +207,7 @@ class ExperimentResourceEditor:
                     if key:
                         if key != experiment_id:
                             self.missing()
-                        return self.map_detail(world, digest, editable, experiment_id, validated=validate_execution)
+                        return self.map_detail(world, digest, editable, experiment_id, description=record.description, validated=validate_execution)
                     geometry = world.get("definition", {})
                     return listed([dict(summary(record), id=experiment_id, map_key=record.key,
                                         environment_type=geometry.get("environment_type", "spatial_2d"), presentation=geometry.get("presentation"),
@@ -393,31 +395,31 @@ class ExperimentResourceEditor:
 
     def select_map(self, body, definition, resources):
         """Replace the map and reset placements; public geometry never transfers between maps."""
-        map_id, scene_id = body.get("map_id"), body.get("simworld_scene_id")
-        if bool(map_id) == bool(scene_id):
-            raise ExperimentResourceError(422, "请选择一张公共地图或一个 SimWorld 场景")
-        if scene_id:
-            world = self.workspace.remote_world(scene_id)
-        else:
-            from generative_agents.ga_protocol.packages.resources import resource_content_hash
-            from generative_agents.ga_studio.resources.exchange import ResourceExchangeService
-            exchange = ResourceExchangeService(self.workspace.database, asset_store=self.workspace.asset_store)
-            incoming = exchange.resource_set("map", map_id, include_dependencies=True)
-            record = incoming.get(incoming.roots[0])
-            world = dict(copy.deepcopy(record.definition), world_key=record.key, world_name=record.name)
-            existing = resources.by_ref()
-            for item in incoming.resources:
-                if item.kind == "map":
-                    continue
-                previous = existing.get(item.identity)
-                if previous and resource_content_hash(previous, resources) != resource_content_hash(item, incoming):
-                    raise PackageError(f"替换地图的资源与草稿冲突：{item.key}")
-                if not previous:
-                    resources.resources.append(item)
-            for path in incoming.files:
-                if path in resources.files and resources.files.digest(path) != incoming.files.digest(path):
-                    raise PackageError(f"替换地图的附件与草稿冲突：{path}")
-            resources.files.include(incoming.files, set(incoming.files))
+        map_id = body.get("map_id")
+        if not isinstance(map_id, str) or not map_id.strip() or "simworld_scene_id" in body:
+            raise ExperimentResourceError(422, "请选择一张公共地图；实验不接受直接场景引用")
+        from generative_agents.ga_protocol.packages.resources import resource_content_hash
+        from generative_agents.ga_studio.resources.exchange import ResourceExchangeService
+        with self.workspace.database.session_factory() as session:
+            self.workspace.map_service.materialize_validated_world(session, map_id)
+        exchange = ResourceExchangeService(self.workspace.database, asset_store=self.workspace.asset_store)
+        incoming = exchange.resource_set("map", map_id, include_dependencies=True)
+        record = incoming.get(incoming.roots[0])
+        world = dict(copy.deepcopy(record.definition), world_key=record.key, world_name=record.name)
+        existing = resources.by_ref()
+        for item in incoming.resources:
+            if item.kind == "map":
+                continue
+            previous = existing.get(item.identity)
+            if previous and resource_content_hash(previous, resources) != resource_content_hash(item, incoming):
+                raise PackageError(f"替换地图的资源与草稿冲突：{item.key}")
+            if not previous:
+                resources.resources.append(item)
+        for path in incoming.files:
+            if path in resources.files and resources.files.digest(path) != incoming.files.digest(path):
+                raise PackageError(f"替换地图的附件与草稿冲突：{path}")
+        resources.files.include(incoming.files, {path: path for path in incoming.files})
+        resources.resources = [item for item in resources.resources if item.kind != "map"] + [record]
 
         kind = world["definition"].get("environment_type", "spatial_2d")
         tiles = iter(self.workspace._walkable_tiles(world)) if kind == "spatial_2d" else iter(())
@@ -457,6 +459,9 @@ class ExperimentResourceEditor:
                     if parts[2:] not in ([], ["validate"]):
                         raise ExperimentResourceError(404, "地图操作不存在")
                     world = copy.deepcopy(body.get("world") or definition["world"])
+                    if any(environment_type(item) == "spatial_3d" for item in (definition["world"], world)):
+                        if parts[2:] != ["validate"] or WorldConfig.model_validate(world) != WorldConfig.model_validate(definition["world"]):
+                            raise ExperimentResourceError(422, "3D 地图仅支持查看；更换地图请从公共地图目录选择")
                 assets = world.setdefault("assets", [])
                 known = {item["logical_path"] for item in assets}
                 for source in world.get("definition", {}).get("editor_v2", {}).get("material_sources", []):

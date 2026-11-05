@@ -138,11 +138,6 @@
           <button data-me2-tab="materials"><span>◇</span>素材</button>
           <button class="me2-panel-toggle" data-toggle-resource-panel aria-expanded="false">资源栏</button>
         </nav>
-        <section class="map-build-guide me2-build-guide" id="mapBuildGuide" hidden>
-          <div class="map-build-guide-head"><div><span>SCENE BUILD GUIDE</span><h3 id="mapBuildGuideTitle">地图构建向导</h3></div><strong id="mapBuildGuideProgress">0 / 0</strong></div>
-          <div class="map-build-guide-list" id="mapBuildGuideList"></div>
-          <div class="me2-build-guide-action"><p id="mapBuildGuideHint">每一步都会写入当前地图 Draft。</p><button class="btn btn-primary btn-sm" id="applyMapBlueprintStep">应用下一步</button></div>
-        </section>
         <div class="me2-layout">
           <aside class="me2-left">
             <header class="me2-pane-head"><strong data-left-title>地图底图</strong><span data-left-count></span></header>
@@ -204,9 +199,6 @@
       this.root.querySelector('[data-toggle-resource-panel]').addEventListener('click', event => {
         const expanded = this.root.classList.toggle('me2-resource-panel-open');
         event.currentTarget.setAttribute('aria-expanded', String(expanded));
-      });
-      this.root.querySelector('#applyMapBlueprintStep').addEventListener('click', () => {
-        this.root.dispatchEvent(new CustomEvent('map-editor-v2:apply-blueprint-step', { bubbles: true }));
       });
       this.root.querySelectorAll('[data-me2-tab]').forEach(button => button.addEventListener('click', () => {
         if (this.activeMapEdit) this.commitMapEdit();

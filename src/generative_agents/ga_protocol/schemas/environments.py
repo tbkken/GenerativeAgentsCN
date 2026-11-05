@@ -19,7 +19,6 @@ class SocialWorldDefinition(BaseModel):
     environment_type: Literal["social_1d"] = "social_1d"
     presentation: Literal["chat", "forum"]
     description: str = Field(default="", max_length=10_000)
-    rules: str = Field(default="", max_length=20_000)
 
 
 def environment_type(world: object) -> str:

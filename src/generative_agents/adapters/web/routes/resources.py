@@ -31,11 +31,9 @@ class MapCreate(Request):
     name: str = Field(min_length=1, max_length=120)
     description: str = ""
     map_key: str | None = None
-    source_map_id: str | None = None
-    blueprint_key: str | None = None
+    simworld_scene_id: str | None = None
     environment_type: Literal['spatial_2d', 'social_1d', 'spatial_3d'] = 'spatial_2d'
     presentation: Literal['chat', 'forum'] = 'chat'
-    rules: str = Field(default='', max_length=20000)
     width: int = Field(default=48, ge=1, le=240)
     height: int = Field(default=32, ge=1, le=240)
     tile_size: int = Field(default=32, ge=8, le=128)
@@ -44,10 +42,6 @@ class MapCreate(Request):
 class MapUpdate(Request):
     row_version: int = Field(ge=1)
     world: WorldConfig
-
-
-class MapBlueprintStep(Request):
-    row_version: int = Field(ge=1)
 
 
 class NavigationPreview(Request):
@@ -189,20 +183,14 @@ def create_resource_router(database, skill_registry, *, compiler_config=None) ->
                 name=body.name,
                 description=body.description,
                 map_key=body.map_key,
-                source_map_id=body.source_map_id,
-                blueprint_key=body.blueprint_key,
+                simworld_scene_id=body.simworld_scene_id,
                 environment_type=body.environment_type,
                 presentation=body.presentation,
-                rules=body.rules,
                 width=body.width,
                 height=body.height,
                 tile_size=body.tile_size,
             )
         )
-
-    @router.get("/map-blueprints")
-    def list_map_blueprints():
-        return {"items": maps.list_blueprints()}
 
     @router.get("/maps/{map_id}")
     def get_map(map_id: str):
@@ -222,16 +210,6 @@ def create_resource_router(database, skill_registry, *, compiler_config=None) ->
     def validate_map(map_id: str, row_version: int = Query(ge=1)):
         return call(
             lambda: maps.validate_map(map_id, expected_lock_version=row_version)
-        )
-
-    @router.post("/maps/{map_id}/blueprint-steps/{step}")
-    def apply_map_blueprint_step(map_id: str, step: int, body: MapBlueprintStep):
-        return call(
-            lambda: maps.apply_blueprint_step(
-                map_id,
-                expected_lock_version=body.row_version,
-                step=step,
-            )
         )
 
     @router.delete("/maps/{map_id}", status_code=204)
