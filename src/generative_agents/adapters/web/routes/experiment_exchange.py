@@ -14,7 +14,7 @@ from starlette.background import BackgroundTask
 
 from generative_agents.ga_protocol.packages.io import open_package, read_json, seal_directory, verify_integrity, write_integrity_manifest
 from generative_agents.ga_protocol.packages.locking import package_lock
-from generative_agents.ga_protocol.packages.validation import validate_run_directory
+from generative_agents.ga_protocol.packages.validation import validate_run_archive
 from generative_agents.ga_protocol.schemas.manifests import RunStatus
 from generative_agents.ga_studio.api import ExperimentExchangeService, ExperimentExchangeConflict
 
@@ -64,7 +64,7 @@ def install_routes(router, ctx):
                             status = RunStatus.model_validate(read_json(root / 'status.json'))
                             if status.status.value in ACTIVE:
                                 raise HTTPException(409, f'运行 {row.run_id} 尚未停止，请先暂停或等待完成，再导出含运行结果的资源包。')
-                            manifest = validate_run_directory(root, sealed=location.is_file())
+                            manifest = validate_run_archive(root, sealed=location.is_file())
                             if (manifest.run_id != row.run_id
                                     or manifest.experiment.experiment_id != experiment_id
                                     or manifest.experiment.root_sha256 != experiment_hash):

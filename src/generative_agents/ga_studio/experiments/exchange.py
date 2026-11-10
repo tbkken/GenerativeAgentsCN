@@ -19,7 +19,9 @@ from generative_agents.ga_protocol.packages.io import (
 from generative_agents.ga_protocol.packages.locking import package_lock
 from generative_agents.ga_protocol.packages.reading import read_package_json
 from generative_agents.ga_protocol.packages.run_snapshot import iter_run_snapshot_files
-from generative_agents.ga_protocol.packages.validation import validate_experiment_directory, validate_run_directory
+from generative_agents.ga_protocol.packages.validation import (
+    validate_experiment_directory, validate_experiment_integrity, validate_run_archive,
+)
 from generative_agents.ga_protocol.schemas.manifests import RunStatus
 from generative_agents.ga_studio.catalog.packages import PackageCatalogRecord, StudioPackageCatalogService
 from generative_agents.ga_studio.storage.models import StudioPackageCatalog
@@ -67,7 +69,11 @@ class ExperimentExchangeService:
             raise PackageError("实验不存在")
         location = checked_package_path(Path(row.location))
         with package_lock(location), open_package(location) as root:
-            manifest = validate_experiment_directory(root)
+            # A saved draft must be runnable before becoming an exchange archive.
+            # Sealed evidence keeps its original bytes, including historical
+            # resource fields which today's execution contracts no longer accept.
+            manifest = (validate_experiment_directory(root) if location.is_dir()
+                        else validate_experiment_integrity(root))
             if manifest.experiment.experiment_id != experiment_id:
                 raise PackageError("实验身份与目录索引不一致")
             if destination.exists() or (location.is_dir() and destination.is_relative_to(location)):
@@ -111,7 +117,7 @@ class ExperimentExchangeService:
                     if manifest.run_id != _RUN_MEMBER.fullmatch(member).group(1):
                         raise PackageError("Run 文件名与包内身份不一致")
                     runs.append((archive, run_root))
-            experiment = validate_experiment_directory(experiment_root)
+            experiment = validate_experiment_integrity(experiment_root)
             experiment_id = experiment.experiment.experiment_id
             digest = verify_integrity(experiment_root)["root_sha256"]
             records = [(experiment_archive, PackageCatalogRecord(
@@ -142,7 +148,7 @@ class ExperimentExchangeService:
 
     @staticmethod
     def _validate_run(root):
-        manifest = validate_run_directory(root, sealed=True)
+        manifest = validate_run_archive(root, sealed=True)
         status = RunStatus.model_validate(read_json(root / "status.json"))
         if status.status.value in _ACTIVE:
             raise PackageError("运行中的 Run 不能导入；请在来源系统暂停或完成运行后重新导出")
@@ -221,7 +227,7 @@ class ExperimentExchangeService:
     def _same_run_snapshot(location, archive):
         try:
             with FileLock(str(location / "worker.lock"), timeout=0):
-                validate_run_directory(location)
+                validate_run_archive(location)
                 status = RunStatus.model_validate(read_json(location / "status.json"))
                 if status.status.value in _ACTIVE:
                     raise ExperimentExchangeConflict("同一身份的本机 Run 正在运行，不能导入")

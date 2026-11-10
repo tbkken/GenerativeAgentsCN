@@ -23,6 +23,7 @@ from generative_agents.ga_protocol.packages.io import open_package
 from generative_agents.ga_protocol.packages.io import read_json
 from generative_agents.ga_protocol.packages.io import seal_directory
 from generative_agents.ga_protocol.packages.validation import validate_experiment_directory
+from generative_agents.ga_protocol.packages.validation import validate_run_archive
 from generative_agents.ga_protocol.packages.validation import validate_run_directory
 from generative_agents.ga_protocol.packages.io import verify_integrity
 from generative_agents.ga_protocol.packages.io import write_integrity_manifest
@@ -181,7 +182,7 @@ class RunService:
         archive = Path(archive).resolve()
         if archive.suffix.casefold() != ".garun":
             raise PackageError("Run archives must use the .garun suffix")
-        manifest = validate_run_directory(run_root)
+        validate_run_archive(run_root)
         if reconcile_run(run_root).status in ACTIVE:
             raise PackageError("an active Run cannot be sealed")
         with FileLock(str(run_root / "worker.lock"), timeout=0):
@@ -197,7 +198,7 @@ class RunService:
                     target.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copyfile(path, target)
                 write_integrity_manifest(staging)
-                validate_run_directory(staging, sealed=True)
+                validate_run_archive(staging, sealed=True)
                 return seal_directory(staging, archive)
             finally:
                 shutil.rmtree(temporary, ignore_errors=True)

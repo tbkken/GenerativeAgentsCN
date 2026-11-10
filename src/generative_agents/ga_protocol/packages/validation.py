@@ -362,11 +362,15 @@ def validate_run_integrity(root: Path, *, sealed: bool = False) -> RunManifest:
     return manifest
 
 
-def validate_run_directory(root: Path, *, sealed: bool = False) -> RunManifest:
-    """Validate a Run for execution, including the current experiment contracts."""
+def validate_run_archive(root: Path, *, sealed: bool = False) -> RunManifest:
+    """Validate transportable Run evidence without interpreting author configuration.
+
+    Historical v2 experiment bytes remain opaque during archive exchange. Run
+    identity, status, committed facts and the exact recovery boundary must still
+    be valid. Execution additionally requires validate_run_directory.
+    """
     root = checked_package_path(root)
     manifest = validate_run_integrity(root, sealed=sealed)
-    validate_experiment_directory(root / manifest.experiment.path, verify_hashes=False)
     from generative_agents.ga_protocol.schemas.manifests import RunStatus
     from generative_agents.ga_protocol.facts.commits import validate_committed_frames
     from generative_agents.ga_protocol.facts.recovery import boundary_snapshot
@@ -378,4 +382,12 @@ def validate_run_directory(root: Path, *, sealed: bool = False) -> RunManifest:
     validate_committed_frames(root, manifest.run_id, status.committed_step)
     if status.committed_step:
         boundary_snapshot(root, manifest.run_id, status.committed_step)
+    return manifest
+
+
+def validate_run_directory(root: Path, *, sealed: bool = False) -> RunManifest:
+    """Validate a Run for execution, including the current experiment contracts."""
+    root = checked_package_path(root)
+    manifest = validate_run_archive(root, sealed=sealed)
+    validate_experiment_directory(root / manifest.experiment.path, verify_hashes=False)
     return manifest
