@@ -1149,6 +1149,7 @@
             <button class="btn" id="operationHistoryBtn">操作历史</button>
             <button class="btn" id="importResourcePackageBtn" hidden>导入资源包</button>
             <button class="btn" id="exportResourcePackageBtn" hidden>导出资源包</button>
+            <button class="btn" id="importExperimentPackageBtn">导入实验包</button>
             <button class="btn btn-primary" id="createExperimentBtn">＋ 新建实验</button>
             <button class="btn btn-primary" id="createMapBtn" hidden>＋ 新建地图</button>
             <button class="btn btn-primary" id="createAgentResourceBtn" hidden>＋ 新建智能体</button>
@@ -1167,6 +1168,7 @@
               <button class="btn btn-danger-soft" id="deleteRunBtn" hidden>删除仿真</button>
             </div>
             <button class="btn" id="cloneBtn">复制实验</button>
+            <button class="btn" id="exportExperimentPackageBtn">导出资源包</button>
             <span class="experiment-operation-status" id="duplicateStatus" role="status" aria-live="polite" hidden></span>
             <button class="btn btn-sm" id="duplicateRetryBtn" type="button" hidden>重试复制</button>
             <button class="btn btn-danger-soft" id="deleteExperimentBtn">删除实验</button>
@@ -1627,10 +1629,31 @@
     <div class="modal-foot"><button class="btn btn-primary" id="resourceExchangeSubmit" disabled>导入所选资源</button></div>
   </dialog>
 
+  <dialog id="experimentExchangeDialog" class="resource-exchange-dialog" aria-labelledby="experimentExchangeTitle">
+    <div class="modal-head"><h2 id="experimentExchangeTitle">导入实验包</h2><button class="close" id="experimentExchangeClose" aria-label="关闭实验资源交换">×</button></div>
+    <div class="modal-body">
+      <div id="experimentExchangeImport">
+        <div class="field"><label for="experimentExchangeFile">选择实验资源包</label><input class="control" id="experimentExchangeFile" type="file" accept=".zip,.gaexp,.garun,application/zip"></div>
+        <p>支持实验包（.gaexp）、运行包（.garun）以及包含运行记录的实验资源包（.zip）。导入后保留实验、运行和 Attempt 身份，已有相同内容会跳过，身份相同但内容不同会提示冲突。</p>
+        <p>导入的实验为已封存状态；需要调整时可复制为新实验。模型密钥需在目标系统配置。</p>
+      </div>
+      <div id="experimentExchangeExport" hidden>
+        <p>实验：<strong id="experimentExchangeName"></strong></p>
+        <p>打包已保存的实验配置及地图、智能体、技能、模型配置和附件，可在另一套系统的“实验 → 导入实验包”中导入。导出不会封存当前草稿。</p>
+        <label class="exchange-option"><input id="experimentExchangeIncludeRuns" type="checkbox" checked>同时打包全部运行记录及结果</label>
+        <p>勾选后下载包含实验包和完整运行包的 ZIP，包括已提交帧、检查点、记忆、日志和报告。存在正在执行的运行时，请先安全暂停后再导出。</p>
+        <p>模型密钥不进入资源包。3D 地图保留场景引用，运行和实景回放仍需目标系统连接对应的 SimWorld 服务。</p>
+      </div>
+      <p id="experimentExchangeStatus" role="status" aria-live="polite"></p>
+    </div>
+    <div class="modal-foot"><a class="btn" id="experimentExchangeOpen" hidden>打开已导入实验</a><button class="btn btn-primary" id="experimentExchangeSubmit" disabled>导入实验</button></div>
+  </dialog>
+
   <div class="context-menu" id="experimentContextMenu" hidden>
     <button data-context-action="open">↗ 打开实验</button>
     <button data-context-action="results">查看结果</button>
     <button data-context-action="duplicate">◇ 复制实验</button>
+    <button data-context-action="export">导出资源包</button>
     <button data-context-action="archive">□ 归档实验</button>
     <button data-context-action="restore" hidden>↺ 恢复实验</button>
     <hr />
@@ -1953,6 +1976,7 @@
   <script src="/static/console/resources/resource-exchange.js"></script>
   <script src="/static/console/shell/workspace-loader.js"></script>
   <script src="/static/console/shell/execution-observer.js"></script>
+  <script src="/static/console/shell/experiment-exchange.js"></script>
   <script src="/static/console/shell/console-api.js?v=20260909-agent-scale1"></script>
 </body>
 </html>

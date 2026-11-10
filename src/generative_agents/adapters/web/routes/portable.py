@@ -4,7 +4,7 @@ from generative_agents.adapters.web.context import WebContext
 from generative_agents.adapters.web.operations import WebOperations
 from generative_agents.adapters.web.routes.simworld import create_simworld_router
 from generative_agents.adapters.web.routes.scene_sessions import create_scene_session_router
-from generative_agents.adapters.web.routes import experiments, runs, results, artifacts, packages, authoring, replay, resource_exchange
+from generative_agents.adapters.web.routes import experiments, runs, results, artifacts, packages, authoring, replay, resource_exchange, experiment_exchange
 
 def create_portable_router(database, *, package_root, max_concurrent_runs=2):
     ctx = WebContext(database, package_root=package_root, max_concurrent_runs=max_concurrent_runs)
@@ -22,5 +22,6 @@ def create_portable_router(database, *, package_root, max_concurrent_runs=2):
     router.include_router(create_simworld_router())
     router.include_router(create_scene_session_router(ctx))
     resource_exchange.install_routes(router, ctx)
+    experiment_exchange.install_routes(router, ctx)
     replay.install_routes(router, ctx)
     return router

@@ -27,6 +27,7 @@ from generative_agents.ga_protocol.packages.validation import validate_run_direc
 from generative_agents.ga_protocol.packages.io import verify_integrity
 from generative_agents.ga_protocol.packages.io import write_integrity_manifest
 from generative_agents.ga_protocol.packages.constants import INTEGRITY_MANIFEST
+from generative_agents.ga_protocol.packages.run_snapshot import iter_run_snapshot_files
 from generative_agents.ga_protocol.packages.definition import _experiment_definition
 
 from generative_agents.ga_runtime.lifecycle.control import FileRunControl
@@ -191,17 +192,7 @@ class RunService:
             staging = temporary / "run"
             staging.mkdir()
             try:
-                excluded = {"worker.lock", "checkpoint.lock", "artifact.lock", "runtime-preview.json", INTEGRITY_MANIFEST}
-                for path in sorted(run_root.rglob("*")):
-                    if path.is_symlink():
-                        raise PackageError(f"Run contains a symbolic link: {path}")
-                    if not path.is_file():
-                        continue
-                    relative = path.relative_to(run_root).as_posix()
-                    if relative in excluded or relative.endswith(".lock"):
-                        continue
-                    if relative == "simworld-pending-step.json" and read_json(path)["step"] <= status.committed_step:
-                        continue
+                for relative, path in iter_run_snapshot_files(run_root, committed_step=status.committed_step):
                     target = staging / relative
                     target.parent.mkdir(parents=True, exist_ok=True)
                     shutil.copyfile(path, target)

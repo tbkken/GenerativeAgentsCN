@@ -146,6 +146,11 @@
   };
 
   const $ = id => document.getElementById(id);
+  state.experimentExchange = window.ExperimentExchange?.mount(window, {
+    getExperiment: () => ({id: state.selectedExperimentId, name: state.currentExperimentName, dirty: state.dirty || state.formDirty}),
+    onImported: () => state.workspacePage === 'experiments' ? loadExperiments({fresh: true}) : undefined,
+    onOperation: (title, message, level) => recordOperation(title, message, level, null, 'experiments'),
+  });
   state.executionObserver = window.ExecutionObserver?.create({ document, api, onTrace: openModelTrace });
   // Preserve the established experiment workspace: configuration stays in
   // Overview / Models, while Results remains a read-only Run and replay view.
@@ -339,6 +344,7 @@
     if (isGlobal) clearDuplicateFeedback();
     window.SkillWorkspace?.deactivateTopbar?.();
     state.workspacePage = pageName;
+    state.experimentExchange?.setContext(pageName, state.selectedExperimentId);
     state.replayPlayer?.setSceneVisible?.(pageName === 'results' && state.resultTab === 'timeline');
     resourceTabs.sync(pageName);
     window.ResourceExchange?.setPage(pageName);
@@ -4809,6 +4815,7 @@
     if (action === 'open') openExperiment(contextExperimentId).catch(reportError);
     else if (action === 'results') openExperiment(contextExperimentId, 'results').catch(reportError);
     else if (action === 'duplicate') duplicateExperiment(contextExperimentId).catch(reportError);
+    else if (action === 'export') state.experimentExchange?.openExport({id: contextExperimentId, name: contextExperimentName});
     else if (action === 'archive' || action === 'restore') {
       api(`/experiments/${contextExperimentId}/${action}`, { method: 'POST', body: '{}' })
         .then(() => loadExperiments({fresh: true})).catch(reportError);
